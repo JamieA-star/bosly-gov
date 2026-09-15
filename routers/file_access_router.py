@@ -27,6 +27,7 @@ from routers.snippet_cache import (
 PROJECT_REPO_ROOTS = {
     "bosly-accord": Path("/home/bosly_accord/bosly-1.0").resolve(),
     "bosly-keep": Path("/home/bosly_accord/bosly-keep").resolve(),
+    "bosly-gov": Path("/home/bosly_accord/bosly-gov").resolve(),
 }
 
 # Default to Accord for backward compatibility (non-project chat routes)

@@ -1,0 +1,36 @@
+# Bosly Gov check manifest.
+#
+# Declares which checks run in which tier for each project.
+# Gov's runners/run_checks.py reads this file, runs the matching
+# commands, aggregates results, writes JSON reports.
+#
+# Each check has:
+#   id        - unique, dotted namespace (project.checkname)
+#   severity  - critical | high | medium | low
+#   command   - shell command to run, relative to the project root
+
+projects:
+
+  accord:
+    root: /home/bosly_accord/bosly-1.0
+    tiers:
+      fast:
+        - id: accord.env_public_vars
+          severity: high
+          command: npx tsx scripts/test-fast.ts
+      slow: []
+
+  keep:
+    root: /home/bosly_accord/bosly-keep
+    tiers:
+      fast:
+        - id: keep.invariants
+          severity: high
+          command: bash scripts/run-tests.sh
+      slow: []
+
+  gov:
+    root: /home/bosly_accord/bosly-gov
+    tiers:
+      fast: []
+      slow: []
