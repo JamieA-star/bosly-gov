@@ -133,23 +133,23 @@ Then add more.
     .env.production and .env.example, fail if any referenced
     variable is missing from either.
 
-[ ] Step 3 — Write bosly-1.0/scripts/test-fast.ts. Find all
+[x] Step 3 — Write bosly-1.0/scripts/test-fast.ts. Find all
     tests/invariants/*.ts, run via npx tsx, aggregate results,
     exit non-zero on fail.
 
-[ ] Step 4 — Create bosly-gov-v4/manifests/checks.yml. One file
+[x] Step 4 — Create bosly-gov-v4/manifests/checks.yml. One file
     listing both projects' fast-tier checks. Accord calls
     test-fast.ts, Keep calls run-tests.sh.
 
-[ ] Step 5 — Create bosly-gov-v4/runners/run_checks.py. Reads the
+[x] Step 5 — Create bosly-gov-v4/runners/run_checks.py. Reads the
     manifest, runs each check, writes JSON reports to
     /mnt/bosly/bosly-data/reports/YYYY-MM-DD/, prints a summary.
 
-[ ] Step 6 — Test all of it manually. Prove the pipeline works.
+[x] Step 6 — Test all of it manually. Prove the pipeline works.
 
-[ ] Step 7 — Add one cron entry: nightly at 5:00am.
+[x] Step 7 — Add one cron entry: nightly at 5:00am.
 
-[ ] Step 8 — Add email-on-failure. Gov reads SMTP creds from
+[x] Step 8 — Add email-on-failure. Gov reads SMTP creds from
     .env.production, sends via Python's smtplib.
 
 ================================================================
@@ -191,11 +191,11 @@ WHAT NOT TO DO
 CURRENT STATUS
 ================================================================
 
-Phase 1, Step 2 complete. env-public-vars.ts runs, passes, and
-found two real issues on its first run. Committed as 2b51a16.
+Phase 1 COMPLETE as of 15 September 2026. Pipeline runs nightly at
+5am. Checks: accord.env_public_vars, keep.invariants. Alerts by email
+on failure, silent on success. Verified both paths end to end.
 
-Next action: Step 3 — write scripts/test-fast.ts (the runner that
-invokes all tests/invariants/*.ts and aggregates results).
+Next: Phase 2 — add more invariant checks, one per bug class.
 
 Next action: create tests/invariants/ and write env-public-vars.ts.
 
