@@ -32,5 +32,8 @@ projects:
   gov:
     root: /home/bosly_accord/bosly-gov
     tiers:
-      fast: []
+      fast:
+        - id: gov.memory_schema
+          severity: high
+          command: python3 checks/memory_schema.py
       slow: []
