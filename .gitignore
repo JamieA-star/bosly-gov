@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Test audio artefacts (not part of the repo)
+*.wav
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editor and OS
+.DS_Store
+*.swp
+*.swo
+
+# Local logs and state
+*.log
+logs/
+
+# Local backups (superseded by git history)
+*.bak
+*.backup-*
+*.bosly.bak
