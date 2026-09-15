@@ -176,6 +176,34 @@ LLM-fallback decisions. Trend it downward over time. Eventually run
 core reasoning without external models.
 
 ================================================================
+PHASE 2 — PROGRESS
+================================================================
+
+Add one invariant check per bug class. Each check maps to a bug
+that has actually happened.
+
+[x] gov.memory_schema (Gov) — memory files, well-formed items.
+    Found 113 items in bosly-accord memory missing project_slug.
+    Backfilled.
+
+[x] keep.verify-fk-integrity (Keep) — every row referencing
+    Asset.id points at a real asset.
+
+[x] keep.verify-currency-pence (Keep) — GBp/GBX handling in
+    toGBP and fromGBP. The bug that inflated UK stocks 100x.
+
+[ ] accord.service_worker_registration — verify enableNotifications
+    registers a worker before awaiting ready.
+
+[ ] accord.payload_shape_contract — API routes accept the shape
+    the client sends.
+
+[ ] accord.dead_ui_wiring — named state and handlers are rendered.
+
+[ ] keep.currency_gbp_shortcircuit — toGBP(x, "GBP") should not
+    fetch live FX rates. Small refactor.
+
+================================================================
 WHAT NOT TO DO
 ================================================================
 
@@ -192,10 +220,18 @@ CURRENT STATUS
 ================================================================
 
 Phase 1 COMPLETE as of 15 September 2026. Pipeline runs nightly at
-5am. Checks: accord.env_public_vars, keep.invariants. Alerts by email
-on failure, silent on success. Verified both paths end to end.
+5am. Alerts by email on failure, silent on success.
 
-Next: Phase 2 — add more invariant checks, one per bug class.
+Phase 2 STARTED same day. Three fast-tier checks live:
+  - accord.env_public_vars
+  - keep.invariants (8 verify scripts, 65 tests)
+  - gov.memory_schema
+
+Total pipeline runtime ~9 seconds. Four Phase 2 checks still to
+write; see PHASE 2 — PROGRESS above.
+
+Next: write accord.service_worker_registration, the check that
+would have caught the six stacked push notification bugs.
 
 Next action: create tests/invariants/ and write env-public-vars.ts.
 
