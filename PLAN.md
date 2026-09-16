@@ -192,13 +192,13 @@ that has actually happened.
 [x] keep.verify-currency-pence (Keep) — GBp/GBX handling in
     toGBP and fromGBP. The bug that inflated UK stocks 100x.
 
-[ ] accord.service_worker_registration — verify enableNotifications
+[x] accord.service_worker_registration — verify enableNotifications
     registers a worker before awaiting ready.
 
-[ ] accord.payload_shape_contract — API routes accept the shape
+[x] accord.payload_shape_contract — API routes accept the shape
     the client sends.
 
-[ ] accord.dead_ui_wiring — named state and handlers are rendered.
+[x] accord.dead_ui_wiring — named state and handlers are rendered.
 
 [ ] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
     Assert every client fetch() that mutates sends the content-type
@@ -207,7 +207,7 @@ that has actually happened.
     feature.ai_receptionist for the pattern this class of bug
     belongs to.
 
-[ ] keep.currency_gbp_shortcircuit — toGBP(x, "GBP") should not
+[x] keep.currency_gbp_shortcircuit — toGBP(x, "GBP") should not
     fetch live FX rates. Small refactor.
 
 ================================================================
@@ -408,17 +408,23 @@ CURRENT STATUS
 Phase 1 COMPLETE as of 15 September 2026. Pipeline runs nightly at
 5am. Alerts by email on failure, silent on success.
 
-Phase 2 STARTED same day. Three fast-tier checks live:
-  - accord.env_public_vars
+Phase 2 IN PROGRESS. Fast-tier checks live:
+  - accord.invariants (env vars, service-worker guards,
+    payload shape contract — 3 checks via scripts/test-fast.ts)
   - keep.invariants (8 verify scripts, 65 tests)
   - gov.memory_schema
 
-Total pipeline runtime ~9 seconds. Four Phase 2 checks still to
-write; see PHASE 2 — PROGRESS above.
+Total pipeline runtime ~10 seconds. Remaining Phase 2 items:
+  - keep.payload_shape_contract (mirror of Accord's, deferred)
 
-Next: write accord.service_worker_registration, the check that
-would have caught the six stacked push notification bugs.
+Completed this session:
+  - accord.service_worker_registration (found 4 real bugs)
+  - accord.payload_shape_contract (calibrated, 0 findings)
+  - accord.dead_ui_wiring (verified wired)
+  - keep.currency_gbp_shortcircuit (fixed, moved above rate lookup)
 
-Next action: create tests/invariants/ and write env-public-vars.ts.
+Next: Phase 3 — constitution checks. Verify encryption actually
+encrypts, privacy promise holds, ethical exclusions enforced,
+consent gating works.
 
 When a step is done, tick the box and update this section.
