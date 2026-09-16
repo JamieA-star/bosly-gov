@@ -15,7 +15,7 @@ projects:
     root: /home/bosly_accord/bosly-1.0
     tiers:
       fast:
-        - id: accord.env_public_vars
+        - id: accord.invariants
           severity: high
           command: npx tsx scripts/test-fast.ts
       slow: []
