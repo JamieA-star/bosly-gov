@@ -208,6 +208,22 @@ that has actually happened.
     runtime bugs. Also: tsconfig excludes backups/ now, which removed
     13 noise errors — keep that in place.
 
+[ ] accord.invoices_encryption — Invoice and InvoiceLineItem
+    currently store financial data in plaintext. Requires schema
+    migration (add encryptedData Json?), route hardening on
+    /api/invoices POST/PATCH to reject plaintext, client encryption
+    in InvoiceEditor.tsx, and update to the standalone /invoice
+    tool. Also affects /api/invoices/[id] and the LLM system prompt
+    schema block. Tracked as a known gap by
+    no-plaintext-leaves-client. When done, move the entry from
+    known_gaps into routes in route-contracts.yml with class
+    "encrypted".
+
+[ ] accord.spaces_encryption — Shared space creation stores name in
+    plaintext. Lower priority — spaces are not a shipped feature.
+    When done, move the entry from known_gaps into routes with
+    class "encrypted".
+
 [ ] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
     Assert every client fetch() that mutates sends the content-type
     and body the route expects. Deferred: Accord first, Keep once
