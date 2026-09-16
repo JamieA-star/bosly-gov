@@ -457,3 +457,8 @@ session.
 
 Read these before working on: LLM chat features, new invariant
 checks, or any audit that verifies a promise.
+
+2026-09-16 (continued): one more entry.
+
+  bosly-gov:
+    - pattern-20260916-note-pattern-in-checks
