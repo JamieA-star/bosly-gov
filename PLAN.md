@@ -200,6 +200,14 @@ that has actually happened.
 
 [x] accord.dead_ui_wiring — named state and handlers are rendered.
 
+[ ] accord.typecheck_clean — npx tsc --noEmit should report 0
+    errors. Currently reports 10 pre-existing errors in VaultProvider,
+    ActivePill, FinancePill, helpers.ts (reasoning_content),
+    workspace/page.tsx (invoiceAnalytics on PillKey), and dataBridge.ts
+    (crypto typing). Build passes; these are type-safety gaps, not
+    runtime bugs. Also: tsconfig excludes backups/ now, which removed
+    13 noise errors — keep that in place.
+
 [ ] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
     Assert every client fetch() that mutates sends the content-type
     and body the route expects. Deferred: Accord first, Keep once
