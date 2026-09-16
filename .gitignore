@@ -27,3 +27,4 @@ logs/
 *.bak
 *.backup-*
 *.bosly.bak
+patch_*.py
