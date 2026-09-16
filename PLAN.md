@@ -436,3 +436,24 @@ encrypts, privacy promise holds, ethical exclusions enforced,
 consent gating works.
 
 When a step is done, tick the box and update this section.
+
+================================================================
+MEMORY UPDATES
+================================================================
+
+2026-09-16: seven entries written after the LLM-financial-leak
+session.
+
+  bosly-accord:
+    - incident-20260916-llm-financial-leak-three-layers
+    - decision-20260916-llm-is-conductor-not-bookkeeper
+    - pattern-20260916-tsconfig-excludes-before-typecheck
+    - pattern-20260916-read-code-not-comments
+
+  bosly-gov:
+    - pattern-20260916-new-checks-need-calibration
+    - fact-20260916-invariant-glob-asymmetry
+    - fact-20260916-layer3-alongside-layer1
+
+Read these before working on: LLM chat features, new invariant
+checks, or any audit that verifies a promise.
