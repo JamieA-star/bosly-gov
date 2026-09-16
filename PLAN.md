@@ -478,8 +478,7 @@ When a step is done, tick the box and update this section.
 MEMORY UPDATES
 ================================================================
 
-2026-09-16: seven entries written after the LLM-financial-leak
-session.
+2026-09-16: memory entries written during the session.
 
   bosly-accord:
     - incident-20260916-llm-financial-leak-three-layers
@@ -495,7 +494,7 @@ session.
 Read these before working on: LLM chat features, new invariant
 checks, or any audit that verifies a promise.
 
-2026-09-16 (continued): one more entry.
+2026-09-16 (continued): more entries.
 
   bosly-gov:
     - pattern-20260916-note-pattern-in-checks
