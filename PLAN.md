@@ -200,6 +200,13 @@ that has actually happened.
 
 [ ] accord.dead_ui_wiring — named state and handlers are rendered.
 
+[ ] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
+    Assert every client fetch() that mutates sends the content-type
+    and body the route expects. Deferred: Accord first, Keep once
+    the Accord check has proven itself. See FUTURE FEATURES >
+    feature.ai_receptionist for the pattern this class of bug
+    belongs to.
+
 [ ] keep.currency_gbp_shortcircuit — toGBP(x, "GBP") should not
     fetch live FX rates. Small refactor.
 
