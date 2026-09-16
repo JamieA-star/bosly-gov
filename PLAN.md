@@ -315,6 +315,85 @@ OUT OF SCOPE FOR THE FOUNDATION ENTRY
 - Number provisioning mechanics
 
 
+----------------------------------------------------------------
+feature.voice_dumping
+----------------------------------------------------------------
+
+Type:       feature (small build)
+Plan:       base plan (£25/mo) — input tool, feeds AI learning
+Status:     planned — ready to schedule
+Blocked by: decision on STT approach (browser vs server)
+
+Motivation:
+  Voice is the lowest-friction input for ADHD brains. The chat
+  interface currently accepts typed text only — there is no
+  voice capture. Making voice dumping a first-class input
+  increases engagement with the chatbot, which increases memory
+  density, which improves the AI learning engine. Same reason
+  it stays in the base plan: more use = more data = smarter
+  system.
+
+WHAT IT ACTUALLY IS
+-------------------
+
+Greenfield. Voice capture does not currently exist in the chat.
+Three pieces:
+
+  1. Capture — a mic button in ChatDrawer that records speech
+     and transcribes it into the existing input field
+  2. Discoverability — users are told the chatbot accepts voice
+     and what dumping is for
+  3. Awareness — the chatbot's system prompt acknowledges voice
+     input and responds to rambling rather than demanding
+     structure
+
+PRINCIPLES (locked — must not be violated)
+------------------------------------------
+
+1. No silent recording. Voice capture only happens when the
+   user explicitly presses the mic. No always-on listening.
+
+2. Zero-access where possible. If the server handles audio or
+   transcripts, the provider must be contractually excluded
+   from training, and any stored transcript goes through the
+   existing encrypted chat path — not a parallel one.
+
+3. Same trust model as Accord. Voice dumping uses existing
+   chat memory and encryption.
+
+4. Honest UI. The mic button says what it does. No pretending
+   it's something else.
+
+FOUNDATION QUESTIONS (decide at build time)
+-------------------------------------------
+
+- STT approach: browser Web Speech API (free, no server, Chrome
+  and Safari only, lower accuracy) vs MediaRecorder + server
+  Whisper (cost, privacy considerations, works everywhere)?
+- Where does the mic button live — inside the input field, or
+  next to send?
+- Does a voice dump go straight to send, or does the transcript
+  land in the input field for review before sending?
+- Does the system prompt need a specific note about voice
+  input, or is the existing "user may ramble" handling enough?
+
+ACCEPTANCE (for when it's built)
+--------------------------------
+
+- A user can press a mic button, speak a rambling thought, and
+  have it land in the chat as text without leaving the drawer
+- The chatbot responds to a voice dump the same way it would
+  to a typed one, without demanding structure
+- Nothing about voice capture is hidden or surprising
+
+OUT OF SCOPE
+------------
+
+- Separate voice UI (the chat is the UI)
+- Wake words / always-on listening
+- Bosly Voice (the stopped process) — unrelated
+- Voice output / TTS responses
+
 ================================================================
 CURRENT STATUS
 ================================================================
