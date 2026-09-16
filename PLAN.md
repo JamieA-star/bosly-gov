@@ -462,3 +462,10 @@ checks, or any audit that verifies a promise.
 
   bosly-gov:
     - pattern-20260916-note-pattern-in-checks
+
+2026-09-16 (continued): three more entries from the route work.
+
+  bosly-accord:
+    - pattern-20260916-parent-route-forgotten
+    - pattern-20260916-missing-route-or-dead-code
+    - pattern-20260916-read-write-path-drift
