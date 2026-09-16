@@ -216,6 +216,106 @@ WHAT NOT TO DO
 - Don't make alerting noisy. Report only failures.
 
 ================================================================
+FUTURE FEATURES
+================================================================
+
+Feature entries lock in principles. They do not specify
+implementation. When build starts, read the principles first —
+they are not negotiable.
+
+----------------------------------------------------------------
+feature.ai_receptionist
+----------------------------------------------------------------
+
+Type:       feature
+Plan:       paid toggle (£50-75/mo)
+Status:     FOUNDATION ONLY — not building yet
+Blocked by: ICO registration, privacy policy update, telephony
+            vendor decision.
+
+Motivation:
+  75% of UK small business owners say calls interrupt other work;
+  ~40% lose up to 2 hrs/day to the phone. Real cost of a UK
+  receptionist is roughly £35,046/yr. RingCentral AI Receptionist
+  validated the market (3,000+ US businesses, UK launch Sept 2025).
+  Strong fit for ADHD sole traders who lose work to unplanned calls.
+
+PRINCIPLES (locked — must not be violated when built)
+------------------------------------------------------
+
+1. Zero-access encryption. Call recordings and transcripts are
+   encrypted client-side. The server never sees plaintext. Same
+   keystore and key ceremony as Accord — one trust model, not two.
+
+2. No training on user data. Any third-party STT/TTS/LLM provider
+   must be contractually excluded from using call data for training.
+   If terms can't be guaranteed, use a provider that can, or run
+   local.
+
+3. Consent as a first-class object. Two consents, both logged:
+     - Caller consent for recording (captured at call start)
+     - Client consent for processing on their behalf (at setup)
+   Stored via the existing consent flow, not a parallel system.
+
+4. Client becomes a data controller. During setup, the client is
+   explicitly told they are a controller and prompted to register
+   with the ICO. Not optional. Not buried in a ToS.
+
+5. Transparency by default. Callers are told they're speaking to an
+   AI assistant, and that the call may be recorded, before any
+   capture begins.
+
+6. Retention is explicit and user-configurable. No silent "keep
+   forever". Default retention stated in the UI, adjustable per
+   workspace.
+
+7. Deletion is complete. Every table with userId or ownerUserId is
+   cleaned on account deletion. Extends the account-deletion fix
+   from 28 Aug — not a new pattern.
+
+8. One codebase, toggled per workspace. Feature flag
+   ai_receptionist, off by default. No client-specific forks.
+
+9. No hard dependency on a single telephony vendor. Abstract the
+   telephony layer so the provider can be swapped without a
+   rewrite.
+
+FOUNDATION QUESTIONS (decide at build time — not now)
+----------------------------------------------------
+
+- Telephony: Twilio / Vonage / SIP / other?
+- STT/TTS: local Whisper vs API? Training-exclusion terms verified?
+- UK call recording: one-party or two-party consent for this use
+  case, and how is it captured and evidenced?
+- Number provisioning: per-workspace number, or shared pool with
+  routing?
+- Call storage: EBS path, encryption envelope, default retention?
+- Cost model: does £50-75/mo cover telephony + STT + LLM at
+  realistic call volumes, or does the toggle need a usage component?
+- Onboarding: how is the client walked through ICO registration
+  without it feeling like homework?
+
+ACCEPTANCE (for when it's built)
+--------------------------------
+
+- Call answered when the client is busy or after hours
+- Caller name, number, and reason captured
+- Appointment booked directly into the client's calendar
+- Summary delivered to the client's workspace
+- All of the above with zero plaintext leaving the client, and all
+  consents logged
+
+OUT OF SCOPE FOR THE FOUNDATION ENTRY
+-------------------------------------
+
+- Choice of telephony vendor
+- Choice of STT/TTS engine
+- UI design
+- Pricing tier finalisation (sketch exists in the blueprint)
+- Number provisioning mechanics
+
+
+================================================================
 CURRENT STATUS
 ================================================================
 
