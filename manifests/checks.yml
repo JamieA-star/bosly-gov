@@ -36,4 +36,7 @@ projects:
         - id: gov.memory_schema
           severity: high
           command: python3 checks/memory_schema.py
+        - id: gov.consent_gating
+          severity: critical
+          command: python3 checks/consent_gating.py
       slow: []

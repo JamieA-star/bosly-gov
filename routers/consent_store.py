@@ -20,7 +20,8 @@ LOG_FILE = PENDING_DIR / "consent-log.jsonl"
 
 ALLOWED_WRITE_ROOTS = [
     Path("/home/bosly_accord/bosly-1.0").resolve(),
-    Path("/home/bosly_accord/bosly-1.0").resolve(),
+    Path("/home/bosly_accord/bosly-keep").resolve(),
+    Path("/home/bosly_accord/bosly-gov").resolve(),
 ]
 
 DENY_PATH_PATTERNS = [
@@ -30,6 +31,17 @@ DENY_PATH_PATTERNS = [
     re.compile(r"(^|/)shadow$"),
     re.compile(r"(^|/)passwd$"),
     re.compile(r"(^|/)etc/"),
+    # Extended 16 Sept 2026 — standard sensitive set
+    re.compile(r"\.pem$"),
+    re.compile(r"\.p12$"),
+    re.compile(r"\.pfx$"),
+    re.compile(r"(^|/)\.ssh/"),
+    re.compile(r"(^|/)\.gnupg/"),
+    re.compile(r"(^|/)\.aws/credentials$"),
+    re.compile(r"(^|/)\.npmrc$"),
+    re.compile(r"(^|/)\.pypirc$"),
+    re.compile(r"(^|/)\.git/config$"),
+    re.compile(r"(^|/)credentials$"),
 ]
 
 MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024
