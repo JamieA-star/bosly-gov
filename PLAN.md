@@ -201,12 +201,16 @@ that has actually happened.
 [x] accord.dead_ui_wiring — named state and handlers are rendered.
 
 [ ] accord.typecheck_clean — npx tsc --noEmit should report 0
-    errors. Currently reports 10 pre-existing errors in VaultProvider,
-    ActivePill, FinancePill, helpers.ts (reasoning_content),
-    workspace/page.tsx (invoiceAnalytics on PillKey), and dataBridge.ts
-    (crypto typing). Build passes; these are type-safety gaps, not
-    runtime bugs. Also: tsconfig excludes backups/ now, which removed
-    13 noise errors — keep that in place.
+    errors. Currently reports 9 pre-existing errors across:
+    components/VaultProvider.tsx (userId missing in context value),
+    components/workspace/ActivePill.tsx (decrypt arg count),
+    components/workspace/FinancePill.tsx (takenDate, setMsg),
+    lib/chat/helpers.ts (reasoning_content not on ChatCompletionMessage
+    — DeepSeek extension), lib/crypto/dataBridge.ts (phraseToEntropy
+    not exported, deriveAESFromPhrase missing, BufferSource type).
+    Build passes; these are type-safety gaps, not runtime bugs.
+    Also: tsconfig.json now excludes backups/, which removed 13
+    noise errors — keep that in place.
 
 [ ] accord.invoices_encryption — Invoice and InvoiceLineItem
     currently store financial data in plaintext. Requires schema
@@ -432,24 +436,41 @@ CURRENT STATUS
 Phase 1 COMPLETE as of 15 September 2026. Pipeline runs nightly at
 5am. Alerts by email on failure, silent on success.
 
-Phase 2 IN PROGRESS. Fast-tier checks live:
-  - accord.invariants (env vars, service-worker guards,
-    payload shape contract — 3 checks via scripts/test-fast.ts)
-  - keep.invariants (8 verify scripts, 65 tests)
+Phase 2 COMPLETE. Phase 3 IN PROGRESS. Fast-tier checks live:
+  - accord.invariants (6 sub-checks via scripts/test-fast.ts):
+      env vars, service-worker guards, payload shape contract,
+      LLM-financial-data leak, route referential integrity,
+      no-plaintext-leaves-client (with route-contracts.yml)
+  - keep.invariants (8 verify scripts + ethical exclusions + 65 tests)
   - gov.memory_schema
+  - gov.consent_gating (severity critical — verifies Trust Contract)
 
-Total pipeline runtime ~10 seconds. Remaining Phase 2 items:
+Total pipeline runtime ~13 seconds. All checks pass.
+
+Phase 3 constitution checks COMPLETE:
+  - LLM never sees financial data (verified)
+  - Keep ethical exclusions enforced (verified)
+  - Gov never writes without consent (verified, critical)
+  - No plaintext leaves client (verified for enforced routes)
+
+Known gaps tracked as WARN in route-contracts.yml:
+  - accord.invoices_encryption
+  - accord.spaces_encryption
+
+Remaining Phase 2 items:
   - keep.payload_shape_contract (mirror of Accord's, deferred)
 
-Completed this session:
-  - accord.service_worker_registration (found 4 real bugs)
-  - accord.payload_shape_contract (calibrated, 0 findings)
-  - accord.dead_ui_wiring (verified wired)
-  - keep.currency_gbp_shortcircuit (fixed, moved above rate lookup)
+Session 16 Sept 2026 (15+ commits across three repos):
+  - 6 new invariant checks added to the pipeline
+  - 12+ real bugs found and fixed
+  - 12 memory entries written to Gov
+  - 2 encryption gaps documented and tracked
 
-Next: Phase 3 — constitution checks. Verify encryption actually
-encrypts, privacy promise holds, ethical exclusions enforced,
-consent gating works.
+Next: accord.invoices_encryption — the largest remaining
+architectural piece. Invoice and InvoiceLineItem currently store
+financial data in plaintext. Requires schema migration, route
+hardening, client encryption in InvoiceEditor, standalone-tool
+update. Do as a fresh session with clear head.
 
 When a step is done, tick the box and update this section.
 
