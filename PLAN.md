@@ -429,6 +429,304 @@ OUT OF SCOPE
 - Bosly Voice (the stopped process) — unrelated
 - Voice output / TTS responses
 
+
+================================================================
+TRANSPARENCY AS A FIRST-CLASS PRINCIPLE
+================================================================
+
+Locked 17 September 2026. Part of the Accord.
+
+Every interaction with the LLM explains itself. Not as
+boilerplate, not as a privacy disclaimer — as the way the
+assistant speaks.
+
+Three layers, adapted to context:
+
+  1. What happened        "I've drafted the invoices."
+  2. What I saw / didn't  "I can see there are 10. I can't
+                          see who they are."
+  3. Why                  "Because your data's encrypted on
+                          your device."
+
+The LLM composes the wording from facts and principles. The
+facts are locked. The wording adapts. A first-time user gets
+the full explanation. A familiar user gets a one-line
+reminder. The truth never changes; the phrasing does.
+
+WHY THIS IS THE USP
+-------------------
+
+Every AI assistant explains what it does. Almost none explain
+how they work with your data. Bosly's model is the inverse of
+the industry:
+
+  - Industry: collect everything, explain nothing, hope
+    nobody asks.
+  - Bosly:    see nothing sensitive, explain everything,
+              invite the awkward question.
+
+The user doesn't just trust Bosly. They understand it.
+Understanding is stickier than trust, because trust is a
+feeling that can be shaken and understanding is a fact that
+can't.
+
+WHAT THE LLM CAN, CANNOT, AND WILL NOT DO
+-----------------------------------------
+
+The chatbot answers questions about itself honestly, in the
+same voice it uses to work:
+
+  CAN      - counts, statuses, dates, actions signalled to
+             the browser, metadata.
+  CANNOT   - client names, amounts, encrypted message bodies,
+             health content, anything encrypted client-side.
+  WILL NOT - soften the promise, invent capabilities,
+             pretend to see data it can't, or hide behind
+             vagueness.
+
+If a user asks "what can you see?", the LLM answers plainly.
+It never deflects. It never over-promises. It explains the
+encryption model and how each interaction flows through the
+browser.
+
+APPLICATION
+-----------
+
+Applied feature-by-feature as each feature gets its encryption
+pass. Invoicing is the first full instance (see the invoicing
+implementation plan below). The pattern extends to: inbox,
+calendar, health, finance, spaces, and any future feature.
+
+  [ ] accord.transparency_in_llm_responses - once invoicing
+      proves the pattern, audit every LLM interaction for
+      compliance with this principle.
+
+
+================================================================
+accord.invoices_encryption - IMPLEMENTATION PLAN
+================================================================
+
+Status: designed 17 Sept 2026. Ready to execute.
+Scope: two sessions - one to design (done), one to build.
+Depends on: transparency principle, LLM conductor
+principle (see memory).
+
+CURRENT STATE
+-------------
+
+Invoice and InvoiceLineItem store financial data in plaintext:
+  - Invoice: clientName, clientEmail, amount, taskDescription
+  - InvoiceLineItem: description, quantity, unitPrice, total
+
+The LLM was already blocked from seeing this data on 16 Sept
+(tool schema + helper hardening). But the storage layer still
+holds plaintext. Anyone with database access can read it.
+
+Approximately 35 test invoices in the database. All test data
+("Test Client", INV-001, £450). Safe to delete.
+InvoiceLineItem table is empty (0 rows).
+
+Tracked in route-contracts.yml as a known_gap. Once fixed,
+move to routes with class: encrypted.
+
+NEW SCHEMA
+----------
+
+model Invoice {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id])
+  invoiceNumber       String
+  @@unique([userId, invoiceNumber])
+
+  // Encrypted client-side. Contains:
+  //   { clientName, clientEmail, amount, taskDescription,
+  //     businessName?, lineItems: [
+  //       { description, quantity, unitPrice, total }
+  //     ] }
+  encryptedData       Json?
+
+  // Metadata - safe in plaintext
+  currency            String   @default("GBP")
+  issueDate           DateTime @default(now())
+  dueDate             DateTime
+  status              String   @default("draft")
+  paidAt              DateTime?
+  paymentInstructions String?
+  taskId              String?
+  sentAt              DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+DELETED MODELS
+  - InvoiceLineItem (line items live inside encryptedData.lineItems[])
+
+DELETED COLUMNS on Invoice
+  - clientName, clientEmail, amount, taskDescription
+
+THE INVOICING FLOW (end to end)
+-------------------------------
+
+Batch flow, designed 17 Sept:
+
+  1. User: "Bosly, September invoicing."
+  2. Browser: decrypts contacts (hourlyRate) and calendar
+     events (hours worked per client this month). Identifies
+     clients with billable work not yet invoiced. Computes
+     the count.
+  3. Browser -> LLM: "10 clients have billable work."
+  4. LLM: "You've got 10 clients needing invoices. I can't
+     see their names or amounts - your data's encrypted on
+     your device. But I can see there's work to do. Want me
+     to draft them?"
+  5. User: "Yes, do all 10."
+  6. LLM: "No problem." [Full explanation first time. Brief
+     reminder on subsequent runs.]
+  7. Browser: for each client, computes line items
+     (hours x hourlyRate), encrypts payload, POSTs to
+     /api/invoices.
+  8. LLM: "Done. 10 drafts in the finance section."
+  9. User reviews and amends in the app.
+ 10. User: "I've checked them, send them all."
+ 11. LLM: "On it. The browser will build and send each
+     email - I'm just relaying them, I never see the
+     contents."
+ 12. Browser: for each invoice, decrypts, builds email HTML
+     client-side, POSTs to /api/invoices/[id]/send with
+     { to, subject, htmlBody, invoiceId }.
+ 13. Server: relays via SMTP, updates sentAt.
+ 14. LLM: "All 10 sent."
+
+Single invoice flow is a subset: browser identifies one
+client instead of ten.
+
+ROUTE CHANGES
+-------------
+
+/api/invoices POST
+  - Require encryptedData. Reject plaintext with 400.
+  - Compute invoiceNumber server-side (metadata).
+  - class: encrypted
+
+/api/invoices GET
+  - Return metadata + encryptedData.
+  - class: encrypted
+
+/api/invoices/[id] PATCH
+  - Require encryptedData for content edits.
+  - Allow metadata-only patches (status, dueDate) without.
+  - class: encrypted
+
+/api/invoices/[id]/send POST
+  - Accept { to, subject, htmlBody, invoiceId }.
+  - Server relays. Never inspects body content.
+  - Updates invoice.sentAt.
+  - class: metadata (relay only)
+
+/api/invoices/[id]/paid POST   -> class: metadata
+/api/invoices/[id]/delete POST -> class: metadata
+/api/invoices/status GET       -> class: metadata
+
+/api/invoices/draft-intent POST
+  - Extend to accept batch: { clientIds?: string[], count?: number }
+  - Signals browser to build drafts.
+  - class: metadata
+
+/api/invoices/suggestions GET
+  - REWORK: move computation client-side, or return count only.
+  - class: metadata
+
+READ CONSUMERS TO UPDATE
+------------------------
+
+/api/briefing
+  - Drop clientName, amount. Keep id, invoiceNumber, dueDate,
+    status.
+
+/api/bosly/briefing
+  - Same fix.
+
+/api/bosly/relationships
+  - Currently selects clientName, amount for per-client stats.
+  - REWORK: cannot compute server-side after encryption.
+  - DECISION PENDING (Session 2)
+
+/api/bosly/wellness-check
+  - Has "unusual invoice amounts" section reading
+    clientName, amount.
+  - REWORK: drop section or move client-side.
+  - DECISION PENDING (Session 2)
+
+/api/finance/transactions
+  - Reads paidInvoices with clientName, amount.
+  - Likely drop financial fields. Verify what it uses.
+
+/api/settings/export
+  - Include encryptedData. User owns their export.
+  - Note in export header explains encryption.
+
+/api/user/delete
+  - Just delete invoice (line-item table gone).
+
+DELETE (dead code)
+------------------
+
+  - app/api/finance/invoices/route.ts
+  - app/api/finance/invoices/[id]/route.ts
+  - app/api/quickadd invoice branch
+
+LLM SYSTEM PROMPT - NEW SECTION
+-------------------------------
+
+"Invoicing and the encryption model" - see transparency
+principle. Fluid phrasing, locked facts.
+
+CONTRACT FILE UPDATE
+--------------------
+
+route-contracts.yml:
+  - Move /api/invoices from known_gaps to routes
+    (class: encrypted)
+  - Add /api/invoices/[id]/send (class: metadata)
+  - Add /api/invoices/[id]/paid (class: metadata)
+  - Add /api/invoices/[id]/delete (class: metadata)
+  - Add /api/invoices/status (class: metadata)
+  - Add /api/invoices/draft-intent (class: metadata)
+  - Add /api/invoices/suggestions (class: metadata)
+  - Remove /api/finance/invoices/* entries (dead)
+  - Remove /api/quickadd invoice reference
+
+Standalone /invoice tool:
+  - New class: standalone
+  - Note: "Unauthenticated lead magnet. Not encrypted.
+    User data stays in their browser. If they want
+    encryption and zero-access, they sign up to Accord."
+
+ORDER OF EXECUTION (Session 2)
+------------------------------
+
+  1. Delete dead code
+  2. Schema migration (backup DB first, delete 35 test
+     invoices, db push, regenerate Prisma client)
+  3. Route changes
+  4. Client changes
+  5. LLM system prompt update
+  6. Contract file update
+  7. Re-run checks (no-plaintext-leaves-client should pass,
+     0 failures, 0 known gaps)
+  8. Manual test (create -> check DB -> reload -> send)
+  9. Commit in layers
+
+OPEN DECISIONS FOR SESSION 2
+----------------------------
+
+  - /api/bosly/relationships
+  - /api/bosly/wellness-check
+  - /api/invoices/suggestions
+
+Decided with the code open, not on paper.
+
 ================================================================
 CURRENT STATUS
 ================================================================
