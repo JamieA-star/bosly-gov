@@ -17,7 +17,7 @@ projects:
       fast:
         - id: accord.invariants
           severity: high
-          command: npx tsx scripts/test-fast.ts
+          command: bash -lc 'source ~/.nvm/nvm.sh && npx tsx scripts/test-fast.ts'
       slow: []
 
   keep:
