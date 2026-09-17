@@ -228,6 +228,18 @@ that has actually happened.
     When done, move the entry from known_gaps into routes with
     class "encrypted".
 
+[ ] accord.legacy_js_audit — there is a substantial body of
+    .js code tracked in the repo alongside the .ts/.tsx source:
+    app/config/*.js, app/sw-client.js, lib/imap.js, lib/user.js,
+    lib/social.js, lib/social/*.js, lib/inboxStore.js,
+    lib/email/safeHeaders.js, components/*.tsx.js, plus
+    app/robots.txt/route.js and app/sitemap.xml/route.js.
+    Some may be live (imported from .ts files), some dead. The
+    all-source-tracked check ignores .js, so this is invisible to
+    the pipeline. Determine live vs. dead; remove if dead; migrate
+    to .ts if live. Discovered 17 Sept 2026 during the
+    all_source_tracked false-positive analysis.
+
 [x] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
     Assert every client fetch() that mutates sends the content-type
     and body the route expects. Deferred: Accord first, Keep once
@@ -832,3 +844,13 @@ checks, or any audit that verifies a promise.
       never been committed (a "types/" line in .gitignore was
       silently excluding them). Now in the pipeline as the 9th
       sub-check of accord.invariants.
+
+2026-09-17 (continued): four entries written after the light session.
+
+  bosly-accord:
+    - pattern-20260917-gitignore-substring-trap
+    - pattern-20260917-dead-files-import-deleted-modules
+
+  bosly-gov:
+    - pattern-20260917-source-file-hygiene
+    - fact-20260917-tscheck-diagnostic-order
