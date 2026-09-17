@@ -228,6 +228,43 @@ that has actually happened.
     When done, move the entry from known_gaps into routes with
     class "encrypted".
 
+[ ] gov.evolve_loop - usage-driven and feedback-driven evolution.
+    Two halves, both reports rather than checks. Neither belongs
+    in the fast-tier pipeline. Both belong in Gov as separate
+    commands with a slower cadence (weekly or monthly).
+
+    HALF 1 - USAGE:
+      Read the AnalyticsEvent table and produce a periodic
+      digest. Which pills get opened? Which flows start but do
+      not finish? Which features are being ignored? Where is the
+      friction? Data source: AnalyticsEvent (already captured by
+      pill tracking and the /api/analytics/track route).
+      Output: a report. Suggested cadence: weekly.
+      Motivated by: bosly-evolve, which did this from a bash
+      script reading the same data.
+
+    HALF 2 - FEEDBACK:
+      Aggregate chatbot feedback (written to feedback.jsonl) and
+      surface it for review. Which items are open? Which have
+      been addressed? Close the loop by telling the user when
+      their feedback led to a change. Data source:
+      feedback.jsonl (already captured by the ChatDrawer
+      feedback flow, fixed 16 Sept).
+      Output: a report plus a small tracking store (open /
+      addressed). Suggested cadence: weekly.
+
+    DESIGN NOTES:
+      - Do not put either half in the fast tier. They read
+        usage data, they do not verify invariants.
+      - The usage digest should not identify individual users.
+        Aggregate only. Consistent with the transparency
+        principle: the user should know what is being measured
+        and why.
+      - The feedback loop is a two-way street. If a user takes
+        the time to report something, they should be able to
+        see that it was received and whether it changed
+        anything.
+
 [ ] accord.legacy_js_audit — there is a substantial body of
     .js code tracked in the repo alongside the .ts/.tsx source:
     app/config/*.js, app/sw-client.js, lib/imap.js, lib/user.js,
@@ -739,6 +776,45 @@ OPEN DECISIONS FOR SESSION 2
 
 Decided with the code open, not on paper.
 
+
+================================================================
+OPS COMMANDS vs PIPELINE
+================================================================
+
+Six /usr/local/bin/ scripts predate Bosly Gov's check pipeline.
+Status assessment, 17 September 2026.
+
+  bosly-audit         SUPERSEDED by the check pipeline. Retire
+                      after the pipeline has run reliably for a
+                      fortnight. 1000 lines of bash doing what
+                      nine TypeScript checks now do faster and
+                      with structured reports.
+
+  bosly-monitor       KEPT. Runtime health - disk, memory,
+                      process, API. Different job to the
+                      pipeline. Runs at 3:15am, unchanged.
+
+  bosly-health        SUPERSEDED. Retire with bosly-audit.
+
+  bosly-diagnose-v5   SUPERSEDED or wrap-as-check. Retire when
+                      we have confirmed nothing is lost.
+
+  bosly-analytics     KEPT. Aggregates usage events. Not a
+                      check. Becomes input to the evolve loop.
+
+  bosly-evolve        PENDING REPLACEMENT. Two halves -
+                      usage-driven evolution and feedback-driven
+                      evolution. Neither is a check. Both belong
+                      in Gov as reports, not in the fast-tier
+                      pipeline. See gov.evolve_loop below.
+
+Retirement is by neglect - the scripts stay on disk but stop
+being referenced or run. When the replacement lands, remove.
+
+Note: none of these commands were being used regularly, because
+they had to be run manually. The pipeline runs automatically at
+5am. That alone justifies the transition.
+
 ================================================================
 CURRENT STATUS
 ================================================================
@@ -854,3 +930,9 @@ checks, or any audit that verifies a promise.
   bosly-gov:
     - pattern-20260917-source-file-hygiene
     - fact-20260917-tscheck-diagnostic-order
+
+2026-09-17 (continued): two entries about the evolve loop.
+
+  bosly-gov:
+    - fact-20260917-evolve-is-not-superseded
+    - fact-20260917-command-word-status
