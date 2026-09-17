@@ -816,7 +816,7 @@ checks, or any audit that verifies a promise.
     - pattern-20260917-dead-routes-in-prompts
     - pattern-20260917-parser-dead-code
 
-[ ] accord.llm_prompt_route_refs — scan app/api/chat/route.ts
+[x] accord.llm_prompt_route_refs — scan app/api/chat/route.ts
     and lib/chat/ for /api/... path references. Assert each
     points to a route that exists. Same class as
     route-referential-integrity but for prompt strings rather
