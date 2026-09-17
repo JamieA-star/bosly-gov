@@ -803,3 +803,15 @@ checks, or any audit that verifies a promise.
     - pattern-20260916-parent-route-forgotten
     - pattern-20260916-missing-route-or-dead-code
     - pattern-20260916-read-write-path-drift
+
+2026-09-17: six entries written during the design session.
+
+  bosly-gov:
+    - pattern-20260917-environment-fragility-family
+    - pattern-20260917-design-before-build-migrations
+    - pattern-20260917-read-consumer-audit
+
+  bosly-accord:
+    - fact-20260917-env-loading-set-a-source
+    - pattern-20260917-dead-routes-in-prompts
+    - pattern-20260917-parser-dead-code
