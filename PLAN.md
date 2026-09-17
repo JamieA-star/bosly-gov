@@ -228,7 +228,7 @@ that has actually happened.
     When done, move the entry from known_gaps into routes with
     class "encrypted".
 
-[ ] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
+[x] keep.payload_shape_contract — mirror of accord.payload_shape_contract.
     Assert every client fetch() that mutates sends the content-type
     and body the route expects. Deferred: Accord first, Keep once
     the Accord check has proven itself. See FUTURE FEATURES >
