@@ -200,7 +200,7 @@ that has actually happened.
 
 [x] accord.dead_ui_wiring — named state and handlers are rendered.
 
-[ ] accord.typecheck_clean — npx tsc --noEmit should report 0
+[x] accord.typecheck_clean — npx tsc --noEmit should report 0
     errors. Currently reports 9 pre-existing errors across:
     components/VaultProvider.tsx (userId missing in context value),
     components/workspace/ActivePill.tsx (decrypt arg count),
