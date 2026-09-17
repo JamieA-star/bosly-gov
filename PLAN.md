@@ -823,3 +823,12 @@ checks, or any audit that verifies a promise.
     than fetch calls. Motivated by /api/quickadd remaining in
     the tool schema after the route was deleted (17 Sept).
 
+
+2026-09-17 (continued): accord.all_source_tracked written.
+
+  [x] accord.all_source_tracked — every .ts/.tsx in app/,
+      components/, lib/, types/ is tracked by git. Written
+      after discovering types/pill.ts and types/social.ts had
+      never been committed (a "types/" line in .gitignore was
+      silently excluding them). Now in the pipeline as the 9th
+      sub-check of accord.invariants.
