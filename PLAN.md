@@ -949,3 +949,17 @@ checks, or any audit that verifies a promise.
     so they fit the convention and sort as baseline knowledge.
 
   Backups: memory.json.bak-20260918 in each slug directory.
+
+2026-09-18 (continued):
+
+  [x] ops.working_agreement — WORKING_AGREEMENT.md
+  [x] ops.orientation_command — /usr/local/bin/bosly
+
+  Memory cleanup finished:
+    - bosly-accord: 114 legacy entries deleted (20 kept)
+    - bosly-gov: 2 principle- renamed to decision-, 1 stale
+      gap- deleted
+    - bosly-keep: 9 seed- renamed, 1 gap- deleted, 2 principle-
+      renamed, 1 requirement- renamed
+
+  All memory files now use standard prefixes only.
