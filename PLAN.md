@@ -936,3 +936,16 @@ checks, or any audit that verifies a promise.
   bosly-gov:
     - fact-20260917-evolve-is-not-superseded
     - fact-20260917-command-word-status
+
+2026-09-18 (continued): memory hygiene cleanup.
+
+  bosly-accord: deleted 114 legacy session-transcript entries
+    (from the pre-format consolidator). Kept 20 standard entries.
+
+  bosly-gov: renamed 2 principle- entries to decision-.
+    Deleted 1 stale gap- entry (already fixed).
+
+  bosly-keep: renamed 13 seed- entries to fact-20260901-seed-*
+    so they fit the convention and sort as baseline knowledge.
+
+  Backups: memory.json.bak-20260918 in each slug directory.
