@@ -212,7 +212,7 @@ that has actually happened.
     Also: tsconfig.json now excludes backups/, which removed 13
     noise errors — keep that in place.
 
-[ ] accord.invoices_encryption — Invoice and InvoiceLineItem
+[x] accord.invoices_encryption — Invoice and InvoiceLineItem
     currently store financial data in plaintext. Requires schema
     migration (add encryptedData Json?), route hardening on
     /api/invoices POST/PATCH to reject plaintext, client encryption
@@ -264,6 +264,40 @@ that has actually happened.
         the time to report something, they should be able to
         see that it was received and whether it changed
         anything.
+
+[ ] accord.unlogged_invoice_prompt — chat-driven replacement for
+    the retired email scanner and invoice upload route. When the
+    user asks "have I sent any invoices I haven't logged?", a thin
+    server route reads the Sent folder and returns metadata only
+    (subject, date, recipients — never the body). The browser
+    asks which to log, opens the editor for each. No server-side
+    parsing of content.
+
+[ ] accord.follow_up_prompt — chat-driven replacement for the
+    retired cards/schedule auto-follow-up. When the user asks
+    "which invoices need chasing?", the browser identifies overdue
+    invoices from decrypted data, prompts to send follow-ups, and
+    builds the emails client-side. Same pattern as the send route.
+
+[ ] accord.wellness_amount_check — client-side replacement for
+    the "unusual invoice amounts" section removed from
+    /api/bosly/wellness-check. The browser computes per-client
+    averages from decrypted data and surfaces anomalies locally.
+
+[ ] accord.email_relay_encryption — Option D for the email relay.
+    Encrypt the email body client-side with a per-request
+    throwaway key that the server decrypts in memory, uses for
+    the SMTP call, and immediately discards. Server never holds a
+    persistent view. Current state is Option B (documented
+    transparently).
+
+[ ] ops.commands_cleanup — /usr/local/bin/ has ~40 bosly-*
+    commands from the August architecture. Most are pre-migration
+    dead code. Audit each: keep, retire, or wrap as a check.
+    Document the outcome. Note: bosly-audit, bosly-health,
+    bosly-diagnose-v5 are superseded. bosly-monitor,
+    bosly-analytics are kept. bosly-evolve is pending replacement
+    (see gov.evolve_loop).
 
 [ ] accord.legacy_js_audit — there is a substantial body of
     .js code tracked in the repo alongside the .ts/.tsx source:
