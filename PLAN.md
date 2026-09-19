@@ -868,44 +868,51 @@ they had to be run manually. The pipeline runs automatically at
 CURRENT STATUS
 ================================================================
 
-Phase 1 COMPLETE as of 15 September 2026. Pipeline runs nightly at
-5am. Alerts by email on failure, silent on success.
+Phase 1 COMPLETE (15 Sept 2026). Pipeline runs nightly at 5am.
+Alerts by email on failure, silent on success.
 
-Phase 2 COMPLETE. Phase 3 IN PROGRESS. Fast-tier checks live:
-  - accord.invariants (6 sub-checks via scripts/test-fast.ts):
+Phase 2 COMPLETE. Phase 3 COMPLETE. Phase 4 IN PROGRESS.
+
+Fast-tier checks live (5, all passing, ~15s total):
+  - accord.invariants - 8 sub-checks:
       env vars, service-worker guards, payload shape contract,
       LLM-financial-data leak, route referential integrity,
-      no-plaintext-leaves-client (with route-contracts.yml)
-  - keep.invariants (8 verify scripts + ethical exclusions + 65 tests)
+      no-plaintext-leaves-client, LLM prompt route refs,
+      all source tracked
+  - keep.invariants - verify scripts + ethical exclusions +
+    payload shape contract + 65 tests
   - gov.memory_schema
-  - gov.consent_gating (severity critical — verifies Trust Contract)
+  - gov.consent_gating (severity: critical)
+  - gov.secrets_audit (severity: high)
 
-Total pipeline runtime ~13 seconds. All checks pass.
-
-Phase 3 constitution checks COMPLETE:
+Constitution checks COMPLETE:
   - LLM never sees financial data (verified)
   - Keep ethical exclusions enforced (verified)
   - Gov never writes without consent (verified, critical)
   - No plaintext leaves client (verified for enforced routes)
+  - Secrets not exposed (verified)
 
-Known gaps tracked as WARN in route-contracts.yml:
-  - accord.invoices_encryption
-  - accord.spaces_encryption
+Invoice encryption migration COMPLETE (18 Sept 2026).
+Five phases: schema, routes, client, LLM prompt, contract.
+Only /api/spaces remains a known gap.
 
-Remaining Phase 2 items:
-  - keep.payload_shape_contract (mirror of Accord's, deferred)
+Operational tooling COMPLETE:
+  - /usr/local/bin/bosly - orientation command
+  - WORKING_AGREEMENT.md - how we work
+  - docs/OPS_COMMANDS_AUDIT.md - 43 scripts audited
+  - memory cleaned: 216 to 103 items
 
-Session 16 Sept 2026 (15+ commits across three repos):
-  - 6 new invariant checks added to the pipeline
-  - 12+ real bugs found and fixed
-  - 12 memory entries written to Gov
-  - 2 encryption gaps documented and tracked
+Session 18-19 Sept 2026:
+  - Full invoice encryption migration
+  - Orientation command built
+  - Working agreement written
+  - Memory cleaned and standardised
+  - 32 legacy scripts retired
+  - gov.secrets_audit added
 
-Next: accord.invoices_encryption — the largest remaining
-architectural piece. Invoice and InvoiceLineItem currently store
-financial data in plaintext. Requires schema migration, route
-hardening, client encryption in InvoiceEditor, standalone-tool
-update. Do as a fresh session with clear head.
+Next: accord.spaces_encryption - same pattern as invoices,
+smaller surface. Then gov.evolve_loop. Manual invoice test
+pending (create, verify DB, reload, send, mark paid).
 
 When a step is done, tick the box and update this section.
 
