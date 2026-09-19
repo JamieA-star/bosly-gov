@@ -39,4 +39,7 @@ projects:
         - id: gov.consent_gating
           severity: critical
           command: python3 checks/consent_gating.py
+        - id: gov.secrets_audit
+          severity: high
+          command: python3 checks/secrets_audit.py
       slow: []
