@@ -295,8 +295,13 @@ that has actually happened.
     .env files in git-tracked directories, no secrets in PM2
     logs. Replaces the retired bosly-secrets script.
 
-[ ] ops.smoke_test_overlap — review bosly-smoke-test against the
+[x] ops.smoke_test_overlap — review bosly-smoke-test against the
     current pipeline. Keep what's not covered, retire the rest.
+
+[ ] ops.monitor_runtime_checks — fold the runtime checks from
+    bosly-smoke-test (app responding, security headers, PM2
+    online, database reachable, page loads) into bosly-monitor.
+    Retire bosly-smoke-test once done.
 
 [ ] ops.journey_test_overlap — review bosly-journey-test against
     scripts/e2e-full-test.ts. Same treatment.
