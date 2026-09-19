@@ -223,10 +223,15 @@ that has actually happened.
     known_gaps into routes in route-contracts.yml with class
     "encrypted".
 
-[ ] accord.spaces_encryption — Shared space creation stores name in
-    plaintext. Lower priority — spaces are not a shipped feature.
-    When done, move the entry from known_gaps into routes with
-    class "encrypted".
+[ ] accord.spaces_encryption — Shared spaces (connected workspaces
+    for organisations and individuals) is a future feature. The
+    route exists and works, but stores names in plaintext. Not
+    currently enforced because the feature isn't shipped.
+    Status: DEFERRED in route-contracts.yml.
+    When spaces is ready to ship, do the encryption (schema change,
+    route hardening, client encryption), then move /api/spaces from
+    `deferred` to `routes` with class `encrypted` in
+    route-contracts.yml.
 
 [ ] gov.evolve_loop - usage-driven and feedback-driven evolution.
     Two halves, both reports rather than checks. Neither belongs
