@@ -291,7 +291,17 @@ that has actually happened.
     persistent view. Current state is Option B (documented
     transparently).
 
-[ ] ops.commands_cleanup — /usr/local/bin/ has ~40 bosly-*
+[ ] gov.secrets_audit — check that .env.production is 600, no
+    .env files in git-tracked directories, no secrets in PM2
+    logs. Replaces the retired bosly-secrets script.
+
+[ ] ops.smoke_test_overlap — review bosly-smoke-test against the
+    current pipeline. Keep what's not covered, retire the rest.
+
+[ ] ops.journey_test_overlap — review bosly-journey-test against
+    scripts/e2e-full-test.ts. Same treatment.
+
+[x] ops.commands_cleanup — /usr/local/bin/ had 43 bosly-*
     commands from the August architecture. Most are pre-migration
     dead code. Audit each: keep, retire, or wrap as a check.
     Document the outcome. Note: bosly-audit, bosly-health,
