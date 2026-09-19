@@ -291,7 +291,7 @@ that has actually happened.
     persistent view. Current state is Option B (documented
     transparently).
 
-[ ] gov.secrets_audit — check that .env.production is 600, no
+[x] gov.secrets_audit — check that .env.production is 600, no
     .env files in git-tracked directories, no secrets in PM2
     logs. Replaces the retired bosly-secrets script.
 
