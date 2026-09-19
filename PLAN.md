@@ -303,6 +303,13 @@ that has actually happened.
 [x] ops.smoke_test_overlap — review bosly-smoke-test against the
     current pipeline. Keep what's not covered, retire the rest.
 
+[ ] accord.no_cwd_for_data — invariant check that no code writes
+    persistent data via process.cwd(). Motivated by the 54-file
+    fix on 19 Sept 2026 (Next.js standalone chdir). Should grep
+    for process.cwd() combined with .data/, data/, logs/, memory/,
+    .appdpa/ in app/ and lib/. Add to the pipeline.
+
+
 [ ] ops.monitor_runtime_checks — fold the runtime checks from
     bosly-smoke-test (app responding, security headers, PM2
     online, database reachable, page loads) into bosly-monitor.
