@@ -877,6 +877,220 @@ they had to be run manually. The pipeline runs automatically at
 5am. That alone justifies the transition.
 
 ================================================================
+SOCIAL MEDIA PLAN
+================================================================
+
+Cadence: Friday reel (default). Saturday reel optional — a
+different format from Friday's. No Saturday if energy is low.
+
+Format guide:
+  - Talking head = personal stories (Thread A)
+  - Path walk + voiceover = arguments (Thread B)
+  - Don't stack two of the same in a weekend. They compete.
+
+Review: Thursday evening for Friday's post. Saturday morning
+for Saturday's post, if posting. Otherwise, walk away.
+
+Engagement: post, stay active 30 min, check at 1hr and 2hr,
+reply to every comment in that window, then leave it alone.
+
+Hashtags: 3-5 max, specific to the post, front-load the caption
+with natural keywords before the tags.
+
+================================================================
+POSTED (keep for recycling — earliest recycle March 2027)
+================================================================
+
+29 Aug (Fri) — Product intro
+  First reveal. What Bosly does. Not on the app stores.
+
+4 Sept (Sat) — Car impounded / pulled over
+  Got pulled over, car impounded. ADHD tax.
+  Strongest post so far.
+
+5 Sept (Sat) — Path walk, data privacy
+  Walking a path, voiceover. Argument that our data isn't
+  really ours despite the laws. 231 views. Format worth
+  keeping for arguments.
+
+12 Sept (Fri) — Meds inconsistency
+  Taking meds, forgetting, sometimes double-dosing.
+  Asked for advice. Audience gave real, specific advice.
+  Strongest engagement. Proof that the audience participates
+  when asked for a specific kind of help.
+
+19 Sept (Fri) — Intro repost
+  Reposted the intro reel. Neurodiverse gardener, building
+  Bosly, not on app stores because 30%. Added a pin comment.
+
+================================================================
+SCHEDULED
+================================================================
+
+26 Sept (Fri) — Unsent invoice / lost client
+  Format: talking head
+  Four weeks angry at a client for not paying.
+  Sent follow-up. Nothing. Sent another. Less patient.
+  Nothing. Drafting angry emails in my head.
+  She replied: "I never got your invoice."
+  Checked drafts. It was sitting there. Never sent.
+  Lost the client.
+  Cost: not the money. The relationship.
+  Comment bait: "Tell me your worst version of this — the
+  thing you were self-righteous about, then found out was
+  your fault. And if you've got a system that stops you
+  doing it, share it. Mine clearly isn't working."
+
+3 Oct (Fri) — Founding Members ask
+  Format: talking head
+  Context: audience knows Bosly exists. This isn't a reveal.
+  Been working on it. Running my own life through it.
+  Need to know if it works for other ADHD brains.
+  Looking for 20 people to help shape what it becomes.
+  What they get: free AI features for life. £15/mo instead
+  of £25. Not a discount — a seat at the table.
+  What you get: real feedback from real users before launch.
+  Framing: same shape as the meds post. Asking for help
+  with a specific thing, not selling.
+  Comment bait: "If you're ADHD and running your own thing,
+  comment 'IN' or DM me. Tell me which of my fuck-ups you
+  related to most — that's how I know you're the right fit."
+  Note: this post goes up on Stories too. Repeat it over the
+  following week in different forms.
+
+10 Oct (Fri) — Path walk, no app stores
+  Format: path walk + voiceover
+  Argument: app stores ask for 30% and a hundred pages of
+  terms nobody reads. The trade is your data for convenience.
+  Bosly isn't on them because that trade breaks the promise.
+  Not about the 30% alone — about what agreeing to it means.
+  Turn: the data never leaves your control. That's the whole
+  reason.
+  Optional comment bait: "Would you give up an app store
+  listing to keep your data private? Genuine question."
+
+17 Oct (Fri) — Path walk, quantum readiness
+  Format: path walk + voiceover
+  Argument: most apps encrypt with today's standards. Quantum
+  computers will break those in 10-15 years. Data stored
+  today in plain AES becomes readable in 2040.
+  Bosly encrypts with post-quantum cryptography. Not because
+  it matters now. Because it will matter then.
+  Turn: building for 2040, not 2026.
+  Optional comment bait: "Do you care about encryption that
+  survives the next 15 years, or is today's enough?"
+
+================================================================
+BACKLOG
+================================================================
+
+Strong — pick from these first
+--------------------------------
+
+Almost deleted the app
+  Broke it trying to fix a build issue. Hours on it. Nearly
+  gave up. Restored from git and rebuilt. Works now.
+  Lesson: git is the safety net, panic is not the plan.
+
+Found my own app was lying
+  Discovered invoices were stored in plaintext despite the
+  encryption promise. Fixed it. The discovery was worse than
+  the fix.
+
+"I run the server. I still can't read your data."
+  Root access. Can see the database. Can't read a single
+  invoice, message, or health record. Design, not accident.
+
+Moved off AWS to a mini PC
+  Moved the whole thing to a box in the spare room. Not
+  about cost alone. About control and knowing where the
+  data lives.
+
+Passwords in my own logs
+  My code was printing credentials into a log file. Had
+  been for weeks. Found it by accident. Fixed it. Now
+  there's a check.
+
+Building with AI — what it actually feels like
+  Six months of working with an AI to build software.
+  Honest version. The good, the frustration, the
+  symbiosis.
+
+The day I realised I wasn't going backwards
+  Felt like I was losing ground. Then realised I was
+  seeing reality for the first time. Different thing.
+
+Good — solid material
+----------------------
+
+Audit score 53% → 157%
+  A code quality tool gave me 53% in July. Today it's
+  157%. Number went up because I stopped guessing and
+  started checking.
+
+66 tests, all passing
+  Wrote a test suite from scratch. Six months ago I didn't
+  know what a test was. Runs every night now.
+
+The warrant canary
+  A page on the site that updates daily. If it stops,
+  that's a signal. Most people don't know what it is.
+
+Wrote 24 posts in one sitting
+  Hyperfocus. Got it all done. Didn't post any of them
+  for weeks. The writing isn't the hard part.
+
+The first viral reel
+  One post got 2,770 views. Usual posts get 200. The one
+  that worked was the most embarrassing.
+
+The free invoice tool
+  Built a standalone invoice tool. No signup, no email,
+  no catch. It's on the site. Why it's built that way.
+
+Later — when the audience is bigger
+----------------------------
+
+423 test users
+  Database has 423 users. Nearly all robots from the test
+  script. Funny. Also a real point about testing.
+
+The 10-clients batch flow
+  Designed a flow where the AI can't see client names but
+  can still help you invoice. Novel. Worth a post once
+  people understand the encryption model.
+
+The chatbot explains what it can't see
+  The transparency principle as a feature.
+
+Ethical investing in Keep
+  Second product. Won't let you buy certain companies.
+  Why.
+
+30-day build summary
+  Moved off AWS, built a test pipeline, found 40 bugs,
+  cleaned six months of debt. What I learned building
+  alone.
+
+Every week, find the moment you were wrong about
+something. Post about it. That's the whole strategy.
+
+================================================================
+RECYCLING
+================================================================
+
+Earliest safe recycle: March 2027 (6 months after the
+first posts).
+
+Ideal: 12 months.
+
+When recycling, do NOT repost exactly. Reframe with a
+new caption, or re-record the same story with a different
+angle.
+
+================================================================
+
+================================================================
 CURRENT STATUS
 ================================================================
 
