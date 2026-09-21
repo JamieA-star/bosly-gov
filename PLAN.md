@@ -513,6 +513,22 @@ that has actually happened.
     36 days. See incident-20260920-monitor-shebang-silent-failure.
     The five folded checks all pass on current state.
 
+[x] ops.scripts_dir_audit (Accord) — DONE 21 Sept. scripts/ had
+    25 files across multiple eras. Three live (test-fast.ts,
+    migrate.sh, postbuild.sh). Retired 16 to legacy/scripts/:
+    three production-affecting test scripts (e2e-full-test.ts,
+    accord-test.ts, seed-test-data.sh), three superseded
+    (bosly-monitor.sh, command_router.py,
+    behavioral-checksum.sh), and ten probably-dead. Deleted
+    __pycache__/ and three 1-byte .bak files. Same pattern as
+    the /usr/local/bin/bosly-* audit on 17 Sept.
+
+[x] ops.scripts_dir_audit (Accord) — DONE 21 Sept. scripts/ had
+    25 files across multiple eras. Three live (test-fast.ts,
+    migrate.sh, postbuild.sh). Retired 16 to legacy/scripts/.
+    Deleted __pycache__/ and three 1-byte .bak files. Same
+    pattern as the /usr/local/bin/bosly-* audit on 17 Sept.
+
 [ ] ops.repo_root_cleanup — the accord repo root has
     accumulated debris that needs attention: zero-byte files
     (=, bosly@0.1.0, bosly.db, next, node, .critical.tmp), a
