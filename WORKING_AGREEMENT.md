@@ -118,3 +118,55 @@ Warm-up cost: about 30 seconds.
 ---
 
 *Locked 18 September 2026. Living document.*
+
+---
+
+## Workflow
+
+How a session actually runs.
+
+**The founder brings facts. The chat reasons.**
+
+- The founder runs shell commands in the terminal (`cat`, `grep`, `sed`,
+  `psql`, `git`, `npx tsc`). The output is the ground truth about the
+  state of the system.
+- The founder pastes the output into a browser Claude session.
+- The chat does the reasoning: reads, compares, proposes, drafts.
+- Every command the chat proposes is meant to be pasted back into the
+  terminal, run, and the output returned to the chat.
+
+There is no separate "talk to Gov" step. Gov is the source of truth
+for state (plan, memory, checks, code), read via filesystem commands.
+The chat is the interface.
+
+**Bosly Gov's own Copilot** (via `routers/direct_llm.py` on
+localhost:3102) exists and works. Its UI is localhost-only, so it is
+reachable from the founder's Mac only via an SSH tunnel:
+
+    ssh -L 3102:localhost:3102 bosly
+
+then browse `http://localhost:3102` on the Mac. Using Gov's Copilot
+improves it over time — this is deliberate. It is the teaching loop.
+
+**Trust contract reminders that apply to the workflow itself**
+
+- Nothing changes on the box without the founder running the command.
+- The chat drafts; the founder executes.
+- Every non-trivial change is backed up before being applied.
+- Every change is verified by running a check or a test after.
+
+**Where things live**
+
+- Accord (the main app): `/home/bosly_accord/bosly-1.0`
+- Keep (the second app): `/home/bosly_accord/bosly-keep`
+- Gov (the custodian): `/home/bosly_accord/bosly-gov`
+- Plan: `/home/bosly_accord/bosly-gov/PLAN.md`
+- Memory: `/mnt/bosly/bosly-data/copilot-knowledge/<slug>/memory.json`
+- Reports: `/mnt/bosly/bosly-data/reports/YYYY-MM-DD/`
+- Data: `/mnt/bosly/bosly-data`
+
+**Orientation command**
+
+Type `bosly` to print a summary: pipeline state, top open plan items,
+recent commits, recent memory, locations. Paste that output at the
+start of a new chat.

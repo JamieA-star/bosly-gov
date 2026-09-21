@@ -223,6 +223,10 @@ that has actually happened.
     known_gaps into routes in route-contracts.yml with class
     "encrypted".
 
+[x] accord.ceremony_interrupt_safety — DONE 21 Sept. Committed 2b1df67. The key ceremony could be closed mid-flight between generateKeys() and storeKeys(), losing the phrase permanently. Added a disclaimer sub-step before display, sessionStorage stash, and a resume UI. See pattern-20260921-plumbing-without-taps (this is the inverse: a vulnerability that had no check).
+
+[x] accord.server_side_key_visibility — DONE 21 Sept. Committed 2219b73. The client was sending the exported AES key to /api/auth/update-key. Nothing read it server-side. Removed from signup and recovery. Route now accepts all fields as optional. The zero-access claim is true: the server never sees key material. The User.publicKey DB column still exists but new users get null.
+
 [ ] accord.spaces_encryption — Shared spaces (connected workspaces
     for organisations and individuals) is a future feature. The
     route exists and works, but stores names in plaintext. Not
@@ -233,6 +237,176 @@ that has actually happened.
     `deferred` to `routes` with class `encrypted` in
     route-contracts.yml.
 
+[x] accord.analytics_event_scope — DONE 21 Sept. prisma/schema.prisma now documents that AnalyticsEvent is marketing/lead-magnet analytics and UsageEvent is product usage. The two are distinct; the plan previously conflated them. clarify in code comments
+    and the plan that AnalyticsEvent captures the standalone
+    /invoice lead-magnet, NOT product usage. Product usage
+    goes through UsageEvent. Two tables, two purposes. Named
+    to prevent future confusion.
+
+[x] accord.crypto_fix_1_rename_types — DONE 21 Sept. Committed 093ae57. Rename the crypto types
+    and fields to stop lying about X25519. In lib/crypto/types.ts:
+    drop KeyPair, replace with VaultKeyMaterial (one field for the
+    base64 AES key). Rename StoredKeyMaterial.encryptedX25519Private
+    Key to recoveryPhrase. Rename every caller. Verify: tsc --noEmit
+    surfaces every call site — that list is the file-touch
+    checklist for the following items.
+
+[x] accord.crypto_fix_2_generatekeys_shape — DONE 21 Sept. Absorbed into crypto_fix_1 (the rename included the generateKeys() shape). Fix generateKeys() in
+    lib/crypto/keygen.ts to return a symmetric key descriptor, not a
+    fake keypair. Remove x25519PublicKey/x25519KeyPair fields. Keep
+    deriveAESFromEntropy and deriveAESFromPhrase untouched — they
+    are correct. Verify: manual call in a scratch script, confirm
+    deriveAESFromEntropy(entropy) reproduces the same key bytes.
+
+[x] accord.crypto_fix_3_recovery_path — DONE 21 Sept. Committed c4985bd. Invariant crypto_recovery_roundtrip passes. Fix app/signin/recover/
+    page.tsx to call deriveAESFromPhrase() instead of the stub
+    reconstructKeys(). Write the phrase itself (not a hash) into
+    the renamed field, matching exactly what app/signup/keys/page.tsx
+    writes at signup. Delete reconstructKeys() entirely from
+    lib/crypto/keygen.ts. Verify: full phrase -> recover -> same key
+    round trip (see accord.crypto_recovery_roundtrip invariant).
+
+[x] accord.crypto_fix_4_update_key_contract — DONE 21 Sept. Committed 629cee7 (API rename) + 2219b73 (server-side key visibility fix). Fix app/api/auth/
+    update-key/route.ts AND app/api/auth/key-backup/route.ts to
+    stop requiring a "publicKey" field that nothing legitimate
+    generates. The key-backup route currently returns 400 if
+    publicKey is missing — that will break when Step 2 stops
+    producing one. Grep the Prisma schema and any route reading
+    User.publicKey before deciding what to persist. Verify:
+    signup completes, both routes return 200, DB row inspected.
+
+[x] accord.crypto_fix_5_remaining_callers — DONE 21 Sept. Zero remaining references found; absorbed into crypto_fix_1 and crypto_fix_4. Fix remaining readers
+    of the old field names: components/VaultProvider.tsx (boot and
+    recoverFromBackup), lib/crypto/dataBridge.ts (the includes(' ')
+    check that discriminates phrase vs hex), components/MailKey
+    AutoUnlock.tsx (scans all IndexedDB records). Verify: repo-wide
+    grep for encryptedX25519PrivateKey / x25519PublicKey /
+    x25519PrivateKey returns zero hits outside intentional
+    back-compat.
+
+    Migration note (21 Sept): both existing test accounts
+    (jr-arnott@outlook.com, jarmario85@hotmail.co.uk) were
+    DELETED on 21 Sept. When crypto_fix_1-3 land, the founder
+    will sign up FRESH with the corrected flow and test end
+    to end. No data migration is needed — there is no live
+    user data to migrate. This is the test case for the fix.
+
+[ ] accord.crypto_fix_6_regression — MANUAL. Requires a browser.
+    Four flows: (a) signup -> reload -> decrypts; (b)
+    signup -> signout -> signin -> decrypts; (c) signup ->
+    clear IndexedDB -> recover with phrase -> decrypts;
+    (d) PIN backup recovery. Do this before 3 Oct. Run four flows end to end:
+    (a) fresh signup -> reload -> data decrypts; (b) signup -> sign
+    out -> normal signin -> data decrypts; (c) signup -> clear
+    IndexedDB -> /signin/recover with phrase -> data decrypts;
+    (d) PIN-backup recovery (recoverFromBackup) still works.
+    Copilot-estimated 2-4 focused days total for steps 1-6.
+
+[x] accord.user_deletion_cascade — DONE 21 Sept. Committed 674da01. Wrapped in $transaction; 13 missing tables added; failures now return errors instead of { ok: true }. The in-app delete route
+    (app/api/user/delete/route.ts) attempts to delete from 35
+    of the 40 tables that reference User(id). It misses:
+    MemoryFact, DataHealthFinding, DataHealthScanRun,
+    DataHealthSectionState, DataHealthSnapshot,
+    MonitoredIdentity, ActivityEvent, CreditReportReminder.
+    It also wraps each delete in an individual try/catch, so if
+    any fail — including the final user.delete — the route
+    still returns { ok: true }. Consequence: a user with a
+    MemoryFact row who hits "delete account" sees success,
+    gets logged out, and their data remains in the database.
+    Found 21 Sept while trying to delete two test accounts
+    manually. Fix: (a) add missing tables; (b) wrap the whole
+    delete in prisma.$transaction(); (c) if the transaction
+    fails, return an error; (d) prefer schema-driven cascade
+    over a manual table list. Before the 3 Oct reel.
+
+[x] accord.delete_route_coverage — DONE 21 Sept. Committed 674da01 as tests/invariants/delete-route-coverage.ts. Parses schema.prisma and the delete route, asserts every model with userId/ownerUserId is deleted. Currently PASSES. Gov check: every Prisma
+    model with a userId or ownerUserId field must appear in
+    the delete route's table list. Parses prisma/schema.prisma
+    and app/api/user/delete/route.ts, diffs the sets, fails on
+    any missing model. Fast-tier viable. Would have caught the
+    eight missing tables found on 21 Sept. Motivates and
+    supports accord.user_deletion_cascade.
+
+[x] accord.crypto_recovery_roundtrip — DONE 21 Sept. Committed 5a3aba0 as tests/invariants/crypto-recovery-roundtrip.ts. Encrypts with signup-derived key, recovers via phrase, asserts byte identity. Currently PASSES. Invariant test in
+    tests/invariants/. Encrypt known plaintext with the signup-
+    derived AES key. Discard the key. Recover using only the
+    24-word phrase via whatever path app/signin/recover uses.
+    Decrypt. Assert plaintext matches, assert raw bytes of both
+    keys are identical. File written 21 Sept; fails until step 3
+    lands.
+
+[ ] accord.naming_honesty — Gov check (design): flag any field or
+    type whose name asserts a crypto primitive the code does not
+    use. E.g. encryptedX* where the value is plaintext, x25519*
+    where the value is AES. Cheap grep + type inspection. Fast
+    tier candidate.
+
+[ ] accord.stub_detection — Gov check (design): flag any function
+    whose body contains "stub", "placeholder", "TODO", or "not
+    implemented", AND whose name suggests production capability
+    (reconstruct*, derive*, generate*). Medium complexity. Fast
+    tier candidate with calibration.
+
+[ ] gov.plan_tracks_known_gaps — Gov check: scan all source
+    comments for phrases like "this is broken", "known bug",
+    "doesn't work", "stub", and cross-reference against PLAN.md
+    and memory. Any acknowledgment in code that isn't tracked
+    as an open plan item or a memory entry fails. Motivated by
+    VaultProvider.tsx:94 which acknowledged bug #3 in a comment
+    and was never tracked. Fast tier.
+
+[x] accord.encryption_honesty_review — DONE 21 Sept. Committed 94e5e45. All encryption claims now true; three copy fixes (signup 'one step', landing 'free to use', notifications optional). Read the key ceremony copy
+    in app/signup/keys/page.tsx and the landing copy in app/
+    page.tsx. List every claim about encryption ("zero-access",
+    "only you hold the keys", "encrypted"). Decide per claim:
+    keep (provable), soften (not yet true), or remove. Currently
+    can be resolved as "keep" IF the crypto_fix items land before
+    3 Oct — otherwise soften to "your data is encrypted on your
+    device before it reaches us". Do before the founding members
+    reel.
+
+[x] accord.beta_onboarding_simplification — DONE 21 Sept. The /onboarding/activate and /onboarding/success pages were dead code (nothing routed to them). Archived to legacy/onboarding/. The live upgrade path is BillingSettings.tsx -> /api/billing/checkout. For the 3 Oct
+    launch: (a) delete app/onboarding/activate/page.tsx from
+    the signup flow — the free tier is real, the £25 chatbot
+    paywall is contextual; (b) make the key ceremony survive a
+    tab close, or warn the user explicitly; (c) reframe the
+    ceremony as the value moment; (d) update landing page copy
+    to say free tier + £25 for chatbot and Social pill.
+
+[ ] ops.gov_copilot_teaching_loop — Bosly Gov's Copilot
+    (via the terminal or the localhost UI) improves the more it
+    is used. Every prompt sent to it, every response it
+    produces, is a teaching moment. The workflow is: founder
+    runs a terminal command containing the prompt, Gov's
+    Copilot reasons and responds, founder pastes the response
+    into the ongoing chat. This is deliberate, not incidental
+    — Gov is meant to be learned from, not just queried. Any
+    session that uses Gov's Copilot should note what was
+    learned and whether it changed a decision.
+
+[x] ops.working_agreement_workflow_doc — DONE 21 Sept. Added a Workflow section to WORKING_AGREEMENT.md: founder brings terminal output, chat reasons, Gov is source of truth read via filesystem commands. Gov's Copilot is localhost-only, reachable via SSH tunnel. Add a section to
+    WORKING_AGREEMENT.md describing the actual workflow: user
+    brings terminal output to the chat; the chat does the
+    reasoning; Gov is the source of truth for state, read via
+    filesystem commands. No separate "talk to Gov" step exists.
+    Motivated by 21 Sept session confusion.
+
+[x] ops.readme_accuracy — DONE 21 Sept. bosly-gov/README.md corrected: `bosly` prints orientation, does not launch a server or browser. The Gov UI runs on localhost:3102 and is reachable from another machine only via SSH tunnel. Fix bosly-gov/README.md. It claims
+    `bosly` launches the server and opens a browser UI. It
+    doesn't — `bosly` prints orientation only. Document that
+    the Gov UI is localhost-only and requires an SSH tunnel
+    from another machine.
+
+[ ] accord.usage_capture_wiring — call useUsageTracking from
+    each of the nine workspace pills so pill open/close events
+    land in the UsageEvent table. The hook and the
+    /api/usage/ping route both exist and work; they are simply
+    never called. Also reconcile the duplicate hook copies at
+    components/useUsageTracking.ts and lib/useUsageTracking.ts —
+    pick one location, delete the other. Prerequisite for
+    gov.evolve_loop. Discovered 21 Sept when checking whether
+    the evolve loop had a data source.
+
 [ ] gov.evolve_loop - usage-driven and feedback-driven evolution.
     Two halves, both reports rather than checks. Neither belongs
     in the fast-tier pipeline. Both belong in Gov as separate
@@ -242,8 +416,16 @@ that has actually happened.
       Read the AnalyticsEvent table and produce a periodic
       digest. Which pills get opened? Which flows start but do
       not finish? Which features are being ignored? Where is the
-      friction? Data source: AnalyticsEvent (already captured by
-      pill tracking and the /api/analytics/track route).
+      friction? Data sources: UsageEvent (product usage —
+      pill open/close/duration events from the workspace
+      pills) AND feedback.jsonl (user sentiment, written
+      to /mnt/bosly/bosly-data/logs/feedback.jsonl).
+      NOTE 21 Sept 2026: UsageEvent is currently EMPTY —
+      the pills do not call useUsageTracking. This item
+      is blocked on accord.usage_capture_wiring. Do not
+      confuse AnalyticsEvent (1678 rows) with product
+      usage — it captures the /invoice lead-magnet, not
+      the app. See fact-20260921-usage-event-empty.
       Output: a report. Suggested cadence: weekly.
       Motivated by: bosly-evolve, which did this from a bash
       script reading the same data.
@@ -303,20 +485,69 @@ that has actually happened.
 [x] ops.smoke_test_overlap — review bosly-smoke-test against the
     current pipeline. Keep what's not covered, retire the rest.
 
-[ ] accord.no_cwd_for_data — invariant check that no code writes
+[x] accord.no_cwd_for_data — invariant check that no code writes
     persistent data via process.cwd(). Motivated by the 54-file
-    fix on 19 Sept 2026 (Next.js standalone chdir). Should grep
-    for process.cwd() combined with .data/, data/, logs/, memory/,
-    .appdpa/ in app/ and lib/. Add to the pipeline.
+    fix on 19 Sept 2026 (Next.js standalone chdir).
+    Done 20 Sept. Written as tests/invariants/no-cwd-for-data.ts,
+    the 10th sub-check of accord.invariants. Flags a file only if
+    it has both process.cwd() and a write-ish call, and does not
+    import @/lib/dataDir. First run found one offender:
+    lib/pa/store.ts. Resolved by archiving PA to legacy/ (46
+    files). Also caught three live components fetching archived
+    PA routes (route-referential-integrity), which led to a
+    ChatDrawer cleanup. See fact-20260920-no-cwd-invariant-scope
+    and pattern-20260920-archive-reveals-coupling.
 
 
-[ ] ops.monitor_runtime_checks — fold the runtime checks from
+[x] ops.monitor_runtime_checks — fold the runtime checks from
     bosly-smoke-test (app responding, security headers, PM2
     online, database reachable, page loads) into bosly-monitor.
     Retire bosly-smoke-test once done.
+    Done 20 Sept. Also fixed a separate defect: the monitor
+    script's shebang was on line 3 (two leading blank lines),
+    so the kernel had been running it via dash since 15 Aug.
+    It exited at `set -o pipefail` and did nothing. Silent for
+    36 days. See incident-20260920-monitor-shebang-silent-failure.
+    The five folded checks all pass on current state.
 
-[ ] ops.journey_test_overlap — review bosly-journey-test against
+[ ] ops.repo_root_cleanup — the accord repo root has
+    accumulated debris that needs attention: zero-byte files
+    (=, bosly@0.1.0, bosly.db, next, node, .critical.tmp), a
+    dozen test-*.ts and .bak files from mid-August, patch_*.py
+    scripts from the invoice migration, pa-*.appdpa.json and
+    tasks-*.appdpa.json from August, tsconfig.tsbuildinfo
+    (1.6 MB), and multiple archive-shaped directories
+    (_snapshots/, snapshots/, _bak_accent_*). Also
+    tsconfig.json still excludes _DETACHED and _ATTIC, which
+    do not exist. No design decisions made yet. This entry is a
+    reminder to go and look, not a specification.
+
+[ ] ops.journey_test_outbox_check — fold the outbox-delay
+    assertion from the retired bosly-journey-test into
+    scripts/e2e-full-test.ts. Assert that POST /api/messages/send
+    returns { pending: true } and does not send synchronously.
+    This is the one check journey-test covered that nothing else
+    does. Deferred from 20 Sept so it lands as its own focused
+    change to a live 4am script, not as the tail of another
+    session.
+
+[ ] ops.cron_sanity — invariant check that every script in
+    /usr/local/bin/bosly-* and every cron-invoked script in the
+    repo has a shebang on byte 1, and that every external binary
+    it calls (node, pm2, psql, curl) is reachable under cron's
+    minimal PATH. Motivated by the 2026-09-20 bosly-monitor
+    incident. See incident-20260920-monitor-shebang-silent-failure.
+
+[x] ops.journey_test_overlap — review bosly-journey-test against
     scripts/e2e-full-test.ts. Same treatment.
+    Reviewed 20 Sept. Result: journey-test is 90% redundant —
+    landing page, signup, session, and onboarding are all covered
+    by e2e-full-test.ts. One check is unique: POST
+    /api/messages/send must return { pending: true } (outbox
+    delay). Nothing else asserts that. Archived to
+    bosly-legacy-archive/. The outbox check is scheduled as
+    ops.journey_test_outbox_check.
+    See decision-20260920-retire-journey-test-preserve-outbox-check.
 
 [x] ops.commands_cleanup — /usr/local/bin/ had 43 bosly-*
     commands from the August architecture. Most are pre-migration
@@ -1127,6 +1358,60 @@ Operational tooling COMPLETE:
   - WORKING_AGREEMENT.md - how we work
   - docs/OPS_COMMANDS_AUDIT.md - 43 scripts audited
   - memory cleaned: 216 to 103 items
+
+Session 21 Sept 2026 (evening):
+  - CRITICAL PATH FOR 3 OCT COMPLETE (code side)
+  - crypto_fix_1 through 5 done, committed, pushed
+  - user_deletion_cascade done
+  - delete_route_coverage invariant added to fast tier
+  - ceremony_interrupt_safety done
+  - encryption_honesty_review done
+  - beta_onboarding_simplification done (dead /onboarding
+    pricing pages archived to legacy/onboarding/)
+  - server_side_key_visibility fixed: client no longer sends
+    exportedKey; server never sees key material
+  - Remaining: crypto_fix_6 (browser test, manual)
+
+Session 21 Sept 2026 (afternoon):
+  - Both test accounts deleted (jr-arnott, jarmario85)
+  - Browser IndexedDB cleared on founder's Mac
+  - Fresh signup is the test case for the crypto fix
+  - Delete-route bug found: misses 8 tables, returns
+    { ok: true } even when the delete fails. See
+    incident-20260921-delete-route-silent-failure.
+  - New plan items: accord.user_deletion_cascade,
+    accord.delete_route_coverage
+  - NOTE: the fast tier currently FAILS on
+    tests/invariants/crypto-recovery-roundtrip.ts.
+    This is by design — the test proves the recovery
+    bug is real. It will pass once crypto_fix_3 lands.
+    Do not panic at the pipeline output.
+
+Session 21 Sept 2026 (morning + midday):
+  - bosly-monitor DB-check bug found and fixed (nested sudo)
+  - UsageEvent confirmed empty — usage_capture_wiring added to plan
+  - Crypto recovery flow found broken (3 defects, 14 ref sites)
+    See incident-20260921-crypto-recovery-broken in bosly-accord
+    memory. Fix plan: accord.crypto_fix_1 through 6. Invariant
+    test written: tests/invariants/crypto-recovery-roundtrip.ts.
+  - Gov's README identified as misleading (claims `bosly`
+    launches a browser UI; it does not)
+  - Workflow clarified: no terminal command talks to Gov;
+    terminal reads files, chat reasons, Gov is source of truth
+  - Two test users will be deleted before crypto fix lands
+
+Session 20 Sept 2026:
+  - accord.no_cwd_for_data added (10th sub-check of
+    accord.invariants)
+  - PA subsystem archived to legacy/ (46 files)
+  - ChatDrawer and providers.tsx stripped of PA-suggestion code
+  - bosly-monitor fixed: shebang, PATH, and folded runtime
+    checks from bosly-smoke-test
+  - bosly-monitor had been silently broken for 36 days —
+    see incident-20260920-monitor-shebang-silent-failure
+  - bosly-journey-test retired to bosly-legacy-archive/;
+    its unique outbox check scheduled as
+    ops.journey_test_outbox_check
 
 Session 18-19 Sept 2026:
   - Full invoice encryption migration

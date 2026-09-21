@@ -5,8 +5,27 @@ Bosly Gov v4 is a browser-based local copilot interface.
 When you run bosly, it starts a local Python server and opens the web UI.
 
 Launch
-1) In terminal, run: bosly
-2) Your browser opens: http://localhost:3102
+
+Two distinct things, easy to confuse:
+
+  A) The orientation command (the normal daily driver)
+     In the terminal, run:  bosly
+     This prints the project orientation summary (pipeline state, top
+     open plan items, recent commits, recent memory, locations). It
+     does NOT launch the server. It does NOT open a browser.
+
+  B) The browser UI (used less often)
+     The Gov web UI runs on http://localhost:3102 and is bound to
+     localhost only by design. To use it from another machine (e.g. a
+     laptop on the same network), tunnel the port:
+
+         ssh -L 3102:localhost:3102 bosly
+
+     then browse http://localhost:3102 on the other machine.
+
+     The Claude integration in routers/direct_llm.py is reachable via
+     this UI. The more the UI is used, the better it gets — this is
+     the teaching loop, not a side effect.
 
 Built-in commands
 The following commands are routed directly to local scripts for fast execution:
