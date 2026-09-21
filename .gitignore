@@ -28,3 +28,5 @@ logs/
 *.backup-*
 *.bosly.bak
 patch_*.py
+PLAN.md.bak-*
+memory.json.bak-*
