@@ -373,7 +373,7 @@ that has actually happened.
     ceremony as the value moment; (d) update landing page copy
     to say free tier + £25 for chatbot and Social pill.
 
-[ ] ops.gov_copilot_teaching_loop — Bosly Gov's Copilot
+[x] ops.gov_copilot_teaching_loop — DONE 21 Sept. Added a Teaching Loop section to WORKING_AGREEMENT.md: Gov's Copilot improves the more it is used. Its file-reading, interaction log, and accumulated context are the mechanism. Session context (plans, memory, checks) feeds back as source of truth. The long-term direction is reducing reliance on external LLMs by building internal context. Bosly Gov's Copilot
     (via the terminal or the localhost UI) improves the more it
     is used. Every prompt sent to it, every response it
     produces, is a teaching moment. The workflow is: founder

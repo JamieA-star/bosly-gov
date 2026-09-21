@@ -170,3 +170,57 @@ improves it over time — this is deliberate. It is the teaching loop.
 Type `bosly` to print a summary: pipeline state, top open plan items,
 recent commits, recent memory, locations. Paste that output at the
 start of a new chat.
+
+---
+
+## The Teaching Loop
+
+Bosly Gov's Copilot is not a static tool. It improves the more it is
+used, and this is deliberate, not incidental.
+
+**How the loop works**
+
+- Every prompt sent to Gov's Copilot, whether through the SSH-tunnelled
+  UI at `http://localhost:3102` or through the terminal, is a teaching
+  moment.
+- Gov reads files on demand (its `read_on_demand_context` extracts paths
+  from the message and loads them into the LLM prompt). The more files
+  it reads, the better it understands the codebase.
+- Every response is logged to
+  `/mnt/bosly/bosly-data/.data/governor/gov-interactions.jsonl` with the
+  mode (claude or civo), a preview of the question, and the length of
+  the answer. That log is itself a record of how the system is learning.
+- Session context that Gov helps produce — plans, memory entries, check
+  designs — feeds back into Gov's next session as source of truth.
+
+**When to use it**
+
+- When you want a second opinion on a design decision.
+- When you want to ask Gov a question that requires reading several
+  files at once (the UI's file-reading is stronger than the terminal's
+  for this).
+- When you want to log a decision: the interaction log preserves what
+  was asked and roughly what was answered, so a future session can see
+  the reasoning.
+
+**When not to bother**
+
+- When you're already in a session with another Claude (like the browser
+  session). The reasoning is equivalent; adding Gov to the loop is
+  overhead unless it has specific knowledge the other instance lacks.
+- When the question is a terminal command. Just run the command.
+
+**The point**
+
+Gov's job is to be the custodian of the integrity of Bosly. That job is
+learned, not assumed. Every session that uses Gov's Copilot moves it
+closer to being able to reason about the codebase without a human in the
+loop. That is the long-term direction: reduce reliance on external LLMs
+by building internal context. See the "Evolve" section of PLAN.md.
+
+**The pattern that matters**
+
+When a check is added, a memory entry written, or a plan item ticked,
+ask: does Gov now know something it didn't know before? If yes, the
+loop is working. If the same class of bug appears again and Gov's
+Copilot doesn't catch it, the loop is failing — not the Copilot.
