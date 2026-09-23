@@ -42,4 +42,7 @@ projects:
         - id: gov.secrets_audit
           severity: high
           command: python3 checks/secrets_audit.py
+        - id: gov.cron_sanity
+          severity: high
+          command: python3 checks/cron_sanity.py
       slow: []
