@@ -615,7 +615,7 @@ that has actually happened.
     When done, update /privacy and the FAQ to state it. Until
     then, both documents must not claim registration.
 
-[ ] accord.doc_consistency_audit — Read every document that
+[~] accord.doc_consistency_audit — FIRST PASS DONE 23 Sept. Five stale claims fixed across /safety, /privacy, llms.txt, llms-full.txt. Grep for AWS/EC2/Ireland/EU data/31-table/quantum returns clean. Remaining: (a) re-add ICO registration claim once ops.ico_registration completes; (b) re-add quantum-resistant claim once accord.kyber_status_decision completes; (c) full history of findings: Read every document that
     makes factual claims about Bosly (privacy, terms, safety,
     transparency, llms.txt, llms-full.txt, FAQ) and produce a
     table: claim, where it appears, is it true. Fix the ones
