@@ -585,7 +585,7 @@ that has actually happened.
     new routes not on the list. Motivated by the 23 Sept
     sitemap discovery.
 
-[ ] ops.crlf_line_endings — Some shell scripts in the repo
+[x] ops.crlf_line_endings — DONE 23 Sept. 57 files had CRLF line endings and/or UTF-8 BOMs. All normalised to LF, no BOMs. Most importantly: deploy.sh and restore-bosly.sh had CRLF, so their shebangs were '#!/bin/bash\r' — the kernel reads that as 'bash\r' and refuses to run them. Same class as the bosly-monitor shebang bug. Verified: zero CRLF, zero BOMs, typecheck clean. Some shell scripts in the repo
     have Windows line endings (CRLF). scripts/postbuild.sh has
     them: its trailing || true guards fail with "$'true\r':
     command not found". Cosmetic for the cp commands, but the
@@ -696,6 +696,13 @@ that has actually happened.
 
     Hygiene, not growth. Stops you getting bitten; doesn't
     make people buy.
+
+[ ] gov.cron_sanity_repo_wide — Extend checks/cron_sanity.py to
+    scan every *.sh file in the repo (not just cron-invoked
+    scripts and /usr/local/bin/bosly-*). deploy.sh and
+    restore-bosly.sh both had CRLF-broken shebangs and were
+    not covered by the current check. Motivated by the 23 Sept
+    CRLF fix.
 
 [ ] ops.repo_root_cleanup — the accord repo root has
     accumulated debris that needs attention: zero-byte files
