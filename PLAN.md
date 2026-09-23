@@ -529,6 +529,89 @@ that has actually happened.
     Deleted __pycache__/ and three 1-byte .bak files. Same
     pattern as the /usr/local/bin/bosly-* audit on 17 Sept.
 
+[ ] accord.seo_ai_discoverability — Make Bosly discoverable
+    to AI systems and search engines. Priority order, highest
+    value first:
+
+    1. Cloudflare crawler check. Verify GPTBot, ClaudeBot,
+       PerplexityBot, Google-Extended, Bytespider, and CCBot
+       are not blocked by Cloudflare's bot rules or robots.txt.
+       Nothing else matters if crawlers can't reach the site.
+
+    2. llms.txt + llms-full.txt. Static files in public/.
+       Emerging standard. Low cost, low risk, forward-looking.
+
+    3. JSON-LD schema markup:
+       - Organization on the homepage
+       - SoftwareApplication on the product page
+       - FAQPage if there's an FAQ section
+       - Product/Offer if pricing is shown
+
+    4. RSS/JSON feeds — deferred until there's a blog or
+       changelog. Check whether /changelog is a real page
+       before deciding.
+
+    llms.txt + schema are the highest value for the least
+    effort. The Cloudflare check is the gate.
+
+[ ] ops.legal_compliance_payment — Legal basics for when
+    Bosly takes payment. Not needed before 3 Oct, but on the
+    plan so it doesn't become a panic when the first payment
+    lands.
+
+    To review:
+      - Terms and conditions: do they cover SALES (not just
+        use)? Payment, delivery of service, refunds,
+        cancellation.
+      - Privacy policy: covers payment data? (Stripe handles
+        card details; the policy should say so.)
+      - Cookie notice: accessible before checkout?
+      - All three accessible BEFORE the user commits to pay,
+        not only in the footer.
+
+    To add to the site:
+      - Legal business name
+      - Trading address
+      - Contact information
+      - (UK online business requirement — Companies Act and
+        Consumer Contracts Regulations.)
+
+    To write into policy:
+      - Refund and cancellation policy.
+      - UK consumers have a 14-day right to cancel online
+        purchases (Consumer Contracts Regulations 2013).
+      - NEW: subscription contracts regime coming spring 2027
+        (Digital Markets, Competition and Consumers Act) —
+        more cooling-off periods, refund obligations, renewal
+        notices. The current "7-day free trial, cancel
+        anytime" language will likely need review.
+
+    Threshold awareness:
+      - VAT registration threshold: £85k/year. Nowhere near
+        it yet.
+      - ICO registration: already on the plan.
+
+[ ] ops.search_visibility_basics — Connect the site to
+    search engines. Free. About an hour. Flying blind
+    without it.
+
+    To do:
+      - Google Search Console: verify ownership, submit
+        sitemap.
+      - Bing Webmaster Tools: verify ownership, submit
+        sitemap.
+      - Bing matters specifically because ChatGPT and Copilot
+        draw from Bing's index.
+
+    Also:
+      - Check whether at least one external link points at
+        bosly.app. Google needs a link from another site to
+        start indexing properly. A single relevant link gets
+        you indexed within hours.
+
+    Hygiene, not growth. Stops you getting bitten; doesn't
+    make people buy.
+
 [ ] ops.repo_root_cleanup — the accord repo root has
     accumulated debris that needs attention: zero-byte files
     (=, bosly@0.1.0, bosly.db, next, node, .critical.tmp), a
