@@ -574,6 +574,23 @@ that has actually happened.
     llms.txt + schema are the highest value for the least
     effort. The Cloudflare check is the gate.
 
+[ ] accord.middleware_public_routes — The middleware's
+    isPublicRoute list is a manual enumeration of every public
+    URL. It drifts as the app grows: /sitemap.xml was added as
+    a route but never added to the list, so crawlers got
+    redirected to sign-in for an unknown period. Same class as
+    the delete route's manual table list. Options: (a) make
+    public routes declarative (everything in a marketing/ route
+    group is public, for example); (b) add a check that flags
+    new routes not on the list. Motivated by the 23 Sept
+    sitemap discovery.
+
+[ ] ops.crlf_line_endings — Some shell scripts in the repo
+    have Windows line endings (CRLF). scripts/postbuild.sh has
+    them: its trailing || true guards fail with "$'true\r':
+    command not found". Cosmetic for the cp commands, but the
+    guards are broken. Check all .sh files and normalise to LF.
+
 [ ] ops.legal_compliance_payment — Legal basics for when
     Bosly takes payment. Not needed before 3 Oct, but on the
     plan so it doesn't become a panic when the first payment
