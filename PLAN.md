@@ -591,6 +591,54 @@ that has actually happened.
     command not found". Cosmetic for the cp commands, but the
     guards are broken. Check all .sh files and normalise to LF.
 
+[ ] gov.claim_invariants — A new class of Gov check: verify
+    that the documentation matches the code. The docs (privacy,
+    terms, safety, transparency, llms.txt, llms-full.txt, FAQ)
+    make overlapping factual claims. The code changes underneath.
+    Nothing catches the drift. Report-only initially; fail the
+    pipeline once calibrated. Predecessor to accord.doc_
+    consistency_audit. Motivated by the Kyber discovery (below).
+
+[ ] accord.kyber_status_decision — The "quantum-resistant
+    encryption" claim appears in llms.txt, llms-full.txt, and
+    possibly elsewhere. Discovered 23 Sept: lib/crypto/kyber.ts
+    exists and exports a full API (generateKyberKeyPair,
+    encapsulate, decapsulate, isKyberAvailable) but is NOT
+    called from anywhere. The encryptedKyberPrivateKey field in
+    keystore/type is written as "" at signup. No user data is
+    protected by Kyber. Options: (a) finish wiring it up;
+    (b) remove the claim from all docs until it's wired;
+    (c) soften to "quantum-resistant encryption available".
+    My lean: (b) now, (a) as a future item.
+
+[ ] ops.ico_registration — Register with the ICO. Not done yet.
+    When done, update /privacy and the FAQ to state it. Until
+    then, both documents must not claim registration.
+
+[ ] accord.doc_consistency_audit — Read every document that
+    makes factual claims about Bosly (privacy, terms, safety,
+    transparency, llms.txt, llms-full.txt, FAQ) and produce a
+    table: claim, where it appears, is it true. Fix the ones
+    that aren't. Immediate predecessor to gov.claim_invariants.
+    Findings so far (23 Sept):
+      - /safety says "EU data residency (Ireland AWS)" — stale,
+        should say UK, self-hosted mini PC.
+      - /safety says "31-table cascade audit trail" — the
+        delete route now covers 47 tables in a transaction.
+      - /privacy says "Message content you process through
+        Bosly's AI features may be sent to Civo's API" — needs
+        to clarify that this is chat messages, not encrypted
+        user data.
+      - llms.txt / llms-full.txt claim quantum-resistant
+        encryption — see accord.kyber_status_decision.
+      - No document currently claims ICO registration — correct,
+        because it isn't done.
+
+[ ] accord.faq_page — Build /faq. Content drafted 23 Sept.
+    Must be built AFTER the doc consistency audit, so it
+    reflects true claims, not aspirational ones. Add FAQPage
+    JSON-LD. Add to sitemap. Link from llms.txt.
+
 [ ] ops.legal_compliance_payment — Legal basics for when
     Bosly takes payment. Not needed before 3 Oct, but on the
     plan so it doesn't become a panic when the first payment
