@@ -633,7 +633,7 @@ that has actually happened.
     change to a live 4am script, not as the tail of another
     session.
 
-[ ] ops.cron_sanity — invariant check that every script in
+[x] ops.cron_sanity — DONE 23 Sept. checks/cron_sanity.py. Verifies every cron-invoked script has a shebang on byte 1, and every binary it calls is either on cron's PATH or provided by the script's own PATH loading. Checks /usr/local/bin/bosly-* shebangs too. Currently 19/19 passing. Registered in manifests/checks.yml. Would have caught the bosly-monitor 36-day silent failure on day 1. invariant check that every script in
     /usr/local/bin/bosly-* and every cron-invoked script in the
     repo has a shebang on byte 1, and that every external binary
     it calls (node, pm2, psql, curl) is reachable under cron's
