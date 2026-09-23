@@ -774,6 +774,127 @@ that has actually happened.
     fetch live FX rates. Small refactor.
 
 ================================================================
+TOWARD A CLEAN, LEGIBLE SYSTEM
+================================================================
+
+Not a plan item. A direction. Everything else in this plan
+serves it.
+
+The goal: Bosly's code, documentation, and behaviour should say
+the same thing. Where they don't, that difference should be
+visible and tracked. Not because the code will be published —
+because a system that says what it does and does what it says
+is the foundation everything else sits on.
+
+This is the work that makes Bosly safe to grow.
+
+----------------------------------------------------------------
+1. THE WEEKLY HEALTH REPORT
+----------------------------------------------------------------
+
+[ ] gov.weekly_health_report — A single email, every Sunday
+    evening, telling the whole story of the system. It always
+    arrives. A quiet week is still reported as a quiet week.
+    Silence is ambiguous — a report that sometimes doesn't
+    show up is indistinguishable from one that failed, and
+    three systems this month have silently stopped (bosly-
+    monitor, the memory orphans, usage tracking). Arrival is
+    information.
+
+    The email is detailed, not a summary — the point is that
+    reading it means not having to go and find the report
+    elsewhere. Seven sections:
+
+      Pipeline state:  every check, pass/fail, duration
+      Runtime state:   is the app up, is the database
+                       reachable, did email sync run, did
+                       the monitor run last night
+      Data state:      user count, row counts per major
+                       table, anomalies (test data, orphaned
+                       rows, tables empty that should have
+                       data)
+      Doc state:       every factual claim in the docs,
+                       checked against the code
+      Plan state:      open items, done-but-untested, items
+                       older than 30 days
+      Memory state:    new entries this week, anything
+                       flagged
+      Change log:      commits, deploys, config changes
+                       this week
+
+    Cadence: Sunday evening. Email to the founder. Not on the
+    fast tier — it reads and reports, it doesn't verify.
+    Build it in one focused pass, not incrementally.
+
+----------------------------------------------------------------
+2. THE CLAIM CLASS OF CHECKS
+----------------------------------------------------------------
+
+The class that has produced eight findings in two days. Each
+of these closes one instance.
+
+[x] accord.delete_route_coverage — DONE. The template for
+    this class: parses the schema, parses the route, diffs
+    the sets.
+[x] gov.cron_sanity — DONE. Shebang and PATH verification
+    for cron-invoked scripts.
+[~] accord.doc_consistency_audit — FIRST PASS DONE.
+[ ] gov.claim_invariants — the big one. Read a document's
+    claims, verify against the code. Report-only initially.
+[ ] accord.naming_honesty — flags fields whose names lie
+    about what they hold (e.g. encryptedX containing
+    plaintext, x25519 named fields holding AES).
+[ ] accord.stub_detection — flags functions named as if
+    they work but whose body says "stub" or returns a
+    placeholder.
+[ ] gov.plan_tracks_known_gaps — scans code comments for
+    "broken/stub/known bug/TODO" and cross-references
+    against the plan and memory.
+[ ] accord.middleware_public_routes — the manual public-
+    route list must be verified against the actual routes,
+    or replaced with something derived.
+[ ] gov.cron_sanity_repo_wide — extend the shebang/PATH
+    check to every shell script in the repo, not just
+    cron-invoked ones.
+
+----------------------------------------------------------------
+3. CLEANLINESS FOR LEGIBILITY
+----------------------------------------------------------------
+
+Work that adds no features and fixes no bugs. It makes the
+system readable.
+
+[ ] ops.repo_root_cleanup — the Accord repo root has
+    accumulated debris. Zero-byte files, a dozen test-*.ts
+    from August, patch_*.py scripts, PA task manifests,
+    multiple archive directories. Also tsconfig.json still
+    excludes _DETACHED and _ATTIC, which don't exist.
+[ ] accord.legacy_js_audit — the .js files in the repo
+    alongside .ts/.tsx. Some live, some dead. Determine
+    which, remove or migrate.
+[ ] ops.scripts_dir_audit_keep — Keep's scripts/ not yet
+    audited. Same treatment as Accord's (done 21 Sept).
+[ ] ops.scripts_dir_audit_gov — Gov's scripts not yet
+    audited.
+[ ] ops.bak_file_sweep — every remaining .bak, .backup,
+    and stale file across the three repos. Git remembers
+    them; the working tree shouldn't carry them.
+[ ] ops.readme_accuracy_all — every README in the three
+    repos, checked against reality. bosly-gov/README.md
+    was corrected 21 Sept; the others not yet.
+
+----------------------------------------------------------------
+THE PRINCIPLE
+----------------------------------------------------------------
+
+A system that says what it does and does what it says is not
+a feature. It's the foundation. Every product decision, every
+new pill, every user, sits on top. If the foundation is soft,
+everything above it is at risk.
+
+This is the work that makes Bosly safe to grow.
+
+================================================================
 WHAT NOT TO DO
 ================================================================
 
