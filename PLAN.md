@@ -533,10 +533,30 @@ that has actually happened.
     to AI systems and search engines. Priority order, highest
     value first:
 
-    1. Cloudflare crawler check. Verify GPTBot, ClaudeBot,
-       PerplexityBot, Google-Extended, Bytespider, and CCBot
-       are not blocked by Cloudflare's bot rules or robots.txt.
-       Nothing else matters if crawlers can't reach the site.
+    1. [DONE 23 Sept] Cloudflare crawler check. Found GPTBot
+       and ClaudeBot returning 403 from Cloudflare's edge
+       (blocked before the request reached the site, despite
+       robots.txt explicitly allowing them). Unblocked all AI
+       crawlers, then selectively re-blocked Bytespider
+       (ByteDance) and CCBot (Common Crawl). Current state,
+       verified by curl 23 Sept:
+
+         ALLOWED: GPTBot, ClaudeBot, PerplexityBot,
+                  Google-Extended, OAI-SearchBot, ChatGPT-User,
+                  Claude-User, Applebot, Applebot-Extended,
+                  DuckAssistBot, MistralAI-User, Meta-ExternalAgent
+         BLOCKED: Bytespider, CCBot
+
+       Cloudflare's "always allowed" list (configured under
+       the block response settings) includes /robots.txt,
+       /llms.txt, /llms-full.txt, /sitemap.xml, and
+       /.well-known/*. Even blocked crawlers can read those.
+       Note: /mcp (Model Context Protocol) is also on the
+       default list.
+
+       Impact: the site was unreachable by GPTBot and ClaudeBot
+       for an unknown period. It's now visible to every major
+       AI crawler and assistant. This is step 1 of 4.
 
     2. llms.txt + llms-full.txt. Static files in public/.
        Emerging standard. Low cost, low risk, forward-looking.
