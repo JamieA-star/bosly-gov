@@ -634,7 +634,7 @@ that has actually happened.
       - No document currently claims ICO registration — correct,
         because it isn't done.
 
-[ ] accord.faq_page — Build /faq. Content drafted 23 Sept.
+[x] accord.faq_page — DONE 23 Sept. /faq built with 24 questions across five sections. FAQPage JSON-LD embedded. Added to sitemap, linked from llms.txt, added to middleware public routes (which was itself a bug — see accord.middleware_public_routes). Content is honest about the current state: no ICO claim, no quantum-resistant claim, honest Civo wording. Will be updated as accord.doc_consistency_audit fixes each of the underlying claims. Content drafted 23 Sept.
     Must be built AFTER the doc consistency audit, so it
     reflects true claims, not aspirational ones. Add FAQPage
     JSON-LD. Add to sitemap. Link from llms.txt.
