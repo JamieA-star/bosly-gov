@@ -599,6 +599,33 @@ that has actually happened.
     pipeline once calibrated. Predecessor to accord.doc_
     consistency_audit. Motivated by the Kyber discovery (below).
 
+[ ] accord.password_recovery_gap — Critical UX/security gap.
+    During the crypto_fix_6 browser test on 24 Sept, the founder
+    created a test account, completed the key ceremony, saved
+    the recovery phrase (browser DID offer to save it), signed
+    out, and could not sign back in — because macOS did not
+    offer to save the password, and the password wasn't written
+    down. A stranger from a reel would hit exactly this. The
+    account becomes unusable: the password is required for
+    normal sign-in AND for the recovery flow (which asks for
+    email + password + phrase). Even a saved recovery phrase
+    doesn't help.
+
+    Investigation needed:
+      (a) Why doesn't the browser offer to save the password?
+          The signup POST may not set a session cookie, so
+          the browser never sees a "successful login" event.
+      (b) Should the recovery flow also reset the password
+          after phrase verification?
+      (c) Should there be a separate password reset by email,
+          independent of the recovery phrase?
+      (d) Does the signup page warn strongly enough about
+          writing the password down?
+
+    Compare with accord.encryption_honesty_review: the copy
+    makes strong promises about what users hold and control.
+    A user who cannot sign in holds nothing.
+
 [ ] accord.kyber_status_decision — The "quantum-resistant
     encryption" claim appears in llms.txt, llms-full.txt, and
     possibly elsewhere. Discovered 23 Sept: lib/crypto/kyber.ts
