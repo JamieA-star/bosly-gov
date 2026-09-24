@@ -626,6 +626,19 @@ that has actually happened.
     makes strong promises about what users hold and control.
     A user who cannot sign in holds nothing.
 
+[ ] accord.face_id_recovery — Build Face ID + PIN recovery as
+    a real feature. Currently "Face ID recovery" in the
+    ceremony and vault reminders describes the browser's
+    password manager prompting for Face ID to autofill the
+    PIN. Bosly itself never does a Face ID check; the PIN is
+    what decrypts the backup. The copy has been corrected 24
+    Sept to say so. Building the real feature would mean a
+    WebAuthn credential registered alongside the PIN backup,
+    used to authorise the decrypt-with-PIN flow without the
+    PIN ever being stored in a password manager. Bigger than
+    it sounds: passkey registration, server-side verification,
+    re-flow of the recovery UI. Not on the 3 Oct path.
+
 [ ] accord.kyber_status_decision — The "quantum-resistant
     encryption" claim appears in llms.txt, llms-full.txt, and
     possibly elsewhere. Discovered 23 Sept: lib/crypto/kyber.ts
