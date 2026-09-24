@@ -1,4 +1,4 @@
-# BOSLY ACCORD v1.3.0
+# BOSLY ACCORD v1.4.0
 
 *Ratified: May 13, 2026 | Amended: May 30, 2026 | Revised: September 24, 2026*
 
@@ -24,13 +24,20 @@ this document can change.
 
 There are two ways to use Bosly:
 
-**Bosly** — Free. Calendar, email, contacts, invoices, finance tracking, health
-tracking, data health, and the workspace. Everything you need to run your life
-and work.
+**Bosly** — Free. Five pills: Active, Contacts, Calendar, Health,
+Invoicing. A real workspace a freelancer can run their business on,
+forever. Encrypted client-side. No tracking, no ads, no expiry.
 
-**Bosly Accord** — £25/month. Bosly thinks with you. The chatbot drafts replies
-and takes actions on your behalf. The Social pill drafts and schedules posts in
-your tone. The AI features are the paid tier; everything else is free.
+**Bosly Accord** — £25/month. The full workspace: all ten pills.
+Active, Contacts, Calendar, Health, Invoicing, plus Inbox, Finance,
+Social, Data health, and the chatbot. Replaces five or six separate
+apps. Encrypted end to end. Sovereign by design.
+
+Neither tier includes a cloud AI provider. The AI features described
+in Part IV will arrive when Bosly runs its own model on its own
+hardware. They are an addition to the £25 tier, not its reason. The
+£25 tier's value is the whole workspace and the data protection that
+holds it together.
 
 The governance accord (this document) applies to both.
 
@@ -222,15 +229,23 @@ Bosly is compliant by architecture:
 
 ### 4.1 AI Processing
 
-Bosly's AI features require the Accord tier. The user's encrypted data is
-never sent to any AI provider. The browser decrypts locally, and the AI
-receives only the outcomes it needs — counts, statuses, and metadata — never
-the underlying plaintext of invoices, contacts, calendar events, or health
-records.
+Bosly does not currently use any external AI provider. There is no cloud
+LLM behind the chatbot. The chatbot is a deterministic workflow engine: it
+answers questions about counts, statuses, dates, and categories using the
+metadata the server holds in plaintext. It cannot read content, and it
+cannot draft prose.
 
-When the user chats with the Bosly bot, the text of the chat messages is sent
-to the AI provider so the bot can respond. That is the only content the AI
-sees.
+When Bosly runs its own model — after the hardware upgrade — the AI
+features will be an addition to the £25 tier. The model will run on the
+same infrastructure as the rest of Bosly. No user content will be sent to
+any third party at any point. The workflow engine will call the model for
+language tasks only: phrasing, drafting, understanding ambiguous requests.
+The reasoning will remain deterministic and the content will remain in the
+user's browser.
+
+Until then, the chatbot tells the user plainly when it cannot help: "I
+can't do that yet. But I can open the relevant view." No pretence that
+something exists which does not.
 
 ### 4.2 Bosly's Learning
 
@@ -240,10 +255,11 @@ not harvest conversations for model improvement.
 
 ### 4.3 AI Provider Transparency
 
-Bosly uses Civo's Relax AI API as its AI processor. Civo is bound by a Data
-Processing Agreement and is contractually excluded from using Bosly data for
-training. Bosly's trajectory moves toward local, on-device models that
-eliminate this dependency.
+Bosly does not use any third-party AI provider. There is no Civo
+dependency, no OpenAI dependency, no cloud LLM of any kind. When the local
+model is ready, it will be described here and nowhere else. Until then,
+this article describes a fact: no user data leaves Bosly's own
+infrastructure.
 
 ---
 
@@ -392,54 +408,62 @@ The server holds only ciphertext.
 
 ### 3.2 Stored plaintext, migration planned
 
-These categories are stored plaintext in the database today. They are
-readable by the server and visible to the AI through the bot's tools. The
-migration to bring them behind client-side encryption is tracked as
-`accord.encrypt_all_pills`.
+These pills still store content in plaintext. The migration to bring them
+behind client-side encryption is tracked as `accord.encrypt_all_pills`.
 
-- **Contacts** — name, email, phone, address, notes, company, title, value,
-  hourlyRate
-- **Calendar events** — title, description, location, clientName,
-  clientPhone, clientEmail
-- **Cards and tasks** — title, description, context, AI-generated text,
-  estimatedValue
-- **Financial transactions** — date, description, amountPence, category
-- **Conversations** — messageText, senderEmail, subject
-- **Client patterns** — clientName, clientEmail, typicalDescription,
-  typicalPrice
+The migration preserves the **metadata schema** — Category A (operational)
+and Category B (analytical) fields — and encrypts everything else
+(Category C, content). The rule: metadata can be counted, filtered, sorted,
+and compared; content cannot.
 
-The migration is blocked on `accord.zero_access_bot_design`. Each pill
-must be migrated only after the bot's access pattern for that pill has
-been redesigned — otherwise the AI loses the context it uses to help, and
-the encryption breaks the product.
+- **Contacts** — plaintext: `status`, `kind`, `isBusiness`,
+  `lastContactAt`. Content: name, email, phone, address, notes, company,
+  title, value, hourlyRate.
+- **Calendar events** — plaintext: `startTime`, `endTime`, `isAllDay`,
+  `status`, `isDone`. Content: title, description, location, clientName,
+  clientPhone, clientEmail, extras.
+- **Cards and tasks** — plaintext: `status`, `priority`, `dueDate`,
+  `dueAt`, `completedAt`. Content: title, description, context,
+  AI-generated text, estimatedValue, metadataJson.
+- **Finance transactions** — plaintext: `date`, `type`, `category`,
+  `book`, `reviewed`. Content: description, amountPence, receipts, jobId.
+- **Inbox** — plaintext: `date`, `accountId`, `isRead`, `hasAttachment`,
+  `kind`. Content: subject, from, body, attachments. Most complex —
+  inbound email is on the IMAP server.
+- **Social** — plaintext: `platform`, `status`, `scheduledAt`. Content:
+  content, media, hashtags, tone.
 
-### 3.3 Bot capabilities and limits
+The migration is blocked on `accord.workflow_engine`. Each pill must be
+migrated only after the workflow engine's metadata requirements for that
+pill are finalised — otherwise the engine loses the context it uses to
+help, and the encryption breaks the product.
 
-The Bosly bot is not yet the zero-access composer that Part I describes.
-It has been hardened (see `accord.bot_security_hardening`, 24 September)
-but it still reads plaintext field values for the ten models it can
-query.
+### 3.3 The chatbot
 
-**The bot can:**
-- Query Contacts, CalendarEvents, Cards, Invoices, Tasks, Services,
-  ClientPatterns, FinanceTransactions, Conversations, and ActivityLogs
-  via `db_query` (scoped to the session user, no relation traversal,
-  no arbitrary `include`)
-- Call eight write-only endpoints via `api_call`
-- Search inbox cache metadata via `email_search` (subject, sender, date —
-  no body)
-- Signal the browser to open the invoice editor via `propose_invoice`
+The chatbot is not an LLM. It is an interface to the workflow engine — a
+deterministic layer that answers questions about counts, statuses, dates,
+and categories using metadata the server holds in plaintext. No cloud AI
+is involved.
 
-**The bot cannot:**
-- Query the User table (removed 24 September — it exposed password hashes,
-  OAuth tokens, and reset tokens)
-- Override the session user's ID in a query
-- Call arbitrary internal endpoints
-- Read plaintext conversation memory
+**The chatbot can:**
+- Answer "how many" questions (count from metadata)
+- Answer "when" questions (date arithmetic)
+- Answer "what's due" questions (status and dueDate filters)
+- Answer "what needs attention" (Active pill aggregation)
+- Open views for questions it cannot answer directly
 
-The remaining exposure is the plaintext content of the six categories in
-3.2. The redesign that closes it is tracked as
-`accord.zero_access_bot_design`.
+**The chatbot cannot:**
+- Draft prose (no LLM)
+- Understand ambiguous requests (no LLM)
+- Summarise content (no LLM)
+- Make judgement calls that require language (no LLM)
+
+When it cannot help, it says so plainly and offers to open the relevant
+view. There is no pretence.
+
+When Bosly runs its own model, the workflow engine gains a fifth action:
+`phrase(context, intent)`. The model is a voice, not a brain. The
+reasoning stays deterministic; the content stays in the user's browser.
 
 ### 3.4 Encryption at the transport layer
 
@@ -558,6 +582,7 @@ Amendments must not contradict Part II.
 ---
 
 *Ratified May 13, 2026. Amended May 30, 2026 (v1.1.0). Revised September 24,
-2026 (v1.2.0 and v1.3.0). This accord is the single source of truth for what
-Bosly is, what Bosly stands for, and what Bosly will never do. Part III
-tracks where Bosly is on the journey.*
+2026 (v1.2.0, v1.3.0, and v1.4.0). This accord is the single source of truth
+for what Bosly is, what Bosly stands for, and what Bosly will never do.
+Part III tracks where Bosly is on the journey. Part IV names what's planned.
+Neither tier promises a cloud AI; neither uses one.*

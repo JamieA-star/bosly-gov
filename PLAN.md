@@ -673,7 +673,7 @@ that has actually happened.
     Motivated by Copilot's 24 Sept audit, which found that
     three of four bot tools exposed plaintext.
 
-[ ] accord.zero_access_bot_design — Redesign the Bosly bot
+[ ] accord.workflow_engine — Build the server-side deterministic layer that answers most user questions without an LLM. This is the product, not the chatbot. It handles: intent classification (expand from the current 4-class version in lib/chat/helpers.ts), the workflow catalogue (every known task Bosly can do), metadata arithmetic (counts, sums, comparisons over plaintext metadata), the vault bridge (how the engine asks the browser for content), and the response format. The chatbot becomes one interface to this engine, not the thing itself. No cloud AI. No Civo. When the local model exists, it plugs in as a fifth action: phrase(context, intent). Predecessor for accord.encrypt_all_pills and accord.tier_enforcement. Estimate: 2-4 focused days.
     from "reads the database" to "composes queries, the
     browser executes them, the bot reasons about outcomes."
     The shape:
@@ -690,6 +690,34 @@ that has actually happened.
     Estimate: 2-4 focused days of design.
 
 [ ] accord.encrypt_all_pills — Extend client-side encryption
+    to the six remaining pills. Each pill's migration preserves
+    the METADATA schema (Category A operational + Category B
+    analytical) and encrypts everything else (Category C
+    content). The schema is defined in the Accord Part III and
+    in the design doc from 24 Sept. Six pills:
+      - Contacts   (plaintext: status, kind, isBusiness,
+                    lastContactAt)
+      - Calendar   (plaintext: startTime, endTime, isAllDay,
+                    status, isDone)
+      - Cards/tasks (plaintext: status, priority, dueDate,
+                    dueAt, completedAt)
+      - Finance    (plaintext: date, type, category, book,
+                    reviewed)
+      - Inbox      (plaintext: date, accountId, isRead,
+                    hasAttachment, kind) — most complex, email
+                    is on the IMAP server
+      - Social     (plaintext: platform, status, scheduledAt)
+    Each migration follows the invoice pattern: schema change
+    (add encryptedData Json?, delete content columns), route
+    hardening, client-side encryption in the pill, LLM/workflow
+    prompt update, contract file update.
+    BLOCKED ON: accord.workflow_engine. Do not migrate a pill
+    until the workflow engine's metadata requirements for that
+    pill are finalised.
+    Estimate: 6 sessions, one per pill.
+
+[ ] accord.zero_access_bot_design — SUPERSEDED. Renamed to
+    accord.workflow_engine above.
     to the six remaining categories: contacts, calendar,
     cards/tasks, finance, conversations, client patterns.
     Each follows the invoice pattern: schema, routes,
@@ -747,6 +775,76 @@ that has actually happened.
     Must be built AFTER the doc consistency audit, so it
     reflects true claims, not aspirational ones. Add FAQPage
     JSON-LD. Add to sitemap. Link from llms.txt.
+
+[ ] accord.tier_enforcement — Enforce the free/£25 split in
+    code. Free tier: Active, Contacts, Calendar, Health,
+    Invoicing. £25 tier: all of the above plus Inbox, Finance,
+    Social, Data health, Chatbot. What "enforcement" means:
+    the four free pills (plus Active) are always available;
+    the others show a "part of the full workspace" state when
+    the user isn't subscribed. No hard wall, no nag — a calm
+    explanation and a link. Matches the design principle
+    "discovery, not selling".
+    Depends on: the pricing decision (24 Sept) being final.
+    Estimate: half a day.
+
+[ ] accord.pricing_update — Update the pricing page
+    (/onboarding/activate) and any marketing pages that
+    describe the tiers. New model: Free = 5 pills (Active,
+    Contacts, Calendar, Health, Invoicing). £25 = full
+    workspace (10 pills) + chatbot + data health. No cloud
+    AI. No roadmap promises. The AI arrives when Bosly runs
+    its own model, as an upgrade to the £25 tier.
+    Depends on: accord.tier_enforcement design.
+    Estimate: 2-3 hours.
+
+[ ] gov.accord_compliance — A new check that verifies
+    Part III of the Accord against the code. Specifically:
+      - Every pill listed as "encrypted client-side" has its
+        content columns in encryptedData
+      - Every pill listed as "plaintext, migration planned"
+        matches its stated metadata schema
+      - No content column has been left plaintext that
+        shouldn't be
+    Runs nightly at 5am. Fails when the code drifts from
+    the Accord's Part III.
+    Depends on: accord.encrypt_all_pills progress for
+    meaningful verification.
+    Estimate: 2-3 hours for the initial version.
+
+[ ] accord.workflow_catalogue — The list of known workflows
+    the engine can run without an LLM. Examples:
+      - "What's on today?" (calendar metadata)
+      - "How many overdue invoices?" (invoice metadata)
+      - "Who's overdue for a follow-up?" (contact metadata)
+      - "Am I over budget this month?" (finance metadata)
+      - "Is my tax deadline coming up?" (date arithmetic)
+      - "What needs attention?" (Active pill aggregation)
+    Each workflow is a deterministic recipe. The catalogue
+    is what the chatbot uses to answer. Anything not in the
+    catalogue is either deferred to the future local model,
+    or handled by the browser opening a view.
+    Part of: accord.workflow_engine. Tracked separately
+    because the catalogue is the specific deliverable.
+    Estimate: half a day to define, ongoing additions.
+
+[ ] accord.tier_copy — Write the pricing copy for both
+    tiers. Free: "Five pills, forever free. Encrypted. No
+    tracking. Run your business on it." £25: "The full
+    workspace. Ten pills. Replaces five apps. Sovereign by
+    design." Neither tier promises AI. Copy must be honest
+    (see accord.encryption_honesty_review).
+    Depends on: accord.pricing_update.
+    Estimate: 2 hours.
+
+[ ] gov.weekly_health_report_scope — Define exactly what
+    the weekly health report covers before building it.
+    Candidates from the 23 Sept design: pipeline state,
+    runtime state, data state, doc state, plan state,
+    memory state, change log. Which are in scope for v1?
+    Which wait?
+    Part of: gov.weekly_health_report.
+    Estimate: 1 hour of design, separate from the build.
 
 [ ] ops.legal_compliance_payment — Legal basics for when
     Bosly takes payment. Not needed before 3 Oct, but on the
