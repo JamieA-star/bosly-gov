@@ -4,6 +4,11 @@ WORKFLOW ENGINE MAP
 Created 24 September 2026.
 Companion to the Accord. A working document, not a constitution.
 
+The five metadata-only patches landed the same day (see the
+app repo commits for detail). Five workflows reduced to
+metadata. Three browser moves remain. One design decision
+remains (scan-inbox Phase 1).
+
 ---
 
 WHAT THIS IS
