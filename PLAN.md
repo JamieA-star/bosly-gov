@@ -648,6 +648,9 @@ that has actually happened.
     three of four bot tools exposed plaintext.
 
 [ ] accord.workflow_engine — Build the server-side deterministic layer that answers most user questions without an LLM. This is the product, not the chatbot. It handles: intent classification (expand from the current 4-class version in lib/chat/helpers.ts), the workflow catalogue (every known task Bosly can do), metadata arithmetic (counts, sums, comparisons over plaintext metadata), the vault bridge (how the engine asks the browser for content), and the response format. The chatbot becomes one interface to this engine, not the thing itself. No cloud AI. No Civo. When the local model exists, it plugs in as a fifth action: phrase(context, intent). Predecessor for accord.encrypt_all_pills and accord.tier_enforcement. Estimate: 2-4 focused days.
+    INPUT: bosly-gov/docs/WORKFLOW_ENGINE.md — the map of
+    all ten workflows, their current state, and their
+    metadata requirements.
     from "reads the database" to "composes queries, the
     browser executes them, the bot reasons about outcomes."
     The shape:
@@ -679,7 +682,12 @@ that has actually happened.
                     reviewed)
       - Inbox      (plaintext: date, accountId, isRead,
                     hasAttachment, kind) — most complex, email
-                    is on the IMAP server
+                    is on the IMAP server. NOTE 24 Sept: the
+                    inbox cache currently uses a SERVER-side key
+                    (ENCRYPTION_KEY), not the user's vault key.
+                    Migrating this pill changes the encryption
+                    model, not just the metadata schema. See
+                    accord.inbox_pill_encryption below.
       - Social     (plaintext: platform, status, scheduledAt)
     Each migration follows the invoice pattern: schema change
     (add encryptedData Json?, delete content columns), route
@@ -698,6 +706,24 @@ that has actually happened.
     a progress marker, not a description of the current
     state.
     Estimate: half a day.
+
+[ ] accord.inbox_pill_encryption — Move the inbox cache to
+    encryption with the user's vault key. Currently the cache
+    at dataPath('.data', 'inbox', 'cache') is encrypted at
+    rest with ENCRYPTION_KEY — a server-side key. The server
+    can read every email subject whenever it wants. The
+    InboxPill fetches subjects in plaintext and holds them
+    in useState.
+    This is not just a schema migration. It changes the
+    encryption model of the pill. After this:
+      - The cache is encrypted with the user's vault key
+      - The browser decrypts on demand
+      - Phase 1 of scan-inbox moves to the browser
+      - The route-level reads become ciphertext-only
+    BLOCKS: scan-inbox Phase 1 (the only remaining browser
+    move).
+    Part of: accord.encrypt_all_pills (the Inbox entry).
+    Estimate: 2 sessions (schema + client + route).
 
 [ ] accord.kyber_status_decision — The "quantum-resistant
     encryption" claim appears in llms.txt, llms-full.txt, and
@@ -775,7 +801,7 @@ that has actually happened.
     meaningful verification.
     Estimate: 2-3 hours for the initial version.
 
-[ ] accord.workflow_catalogue — The list of known workflows
+[x] accord.workflow_catalogue — DONE 24 Sept. The workflow map at bosly-gov/docs/WORKFLOW_ENGINE.md documents all ten workflows: briefing, check-conflict, relationships, wellness-check, scan-inbox, preferences, enrich-contacts, and three fast-paths in lib/chat/helpers.ts. Each entry has what it computes, what it reads, and the verdict. As of 24 Sept: eight are metadata-only, one is removed (preferences — dead code), one is blocked (scan-inbox Phase 1 — blocked on inbox pill migration). The map also contains the user-facing transparency statement about what the server can and cannot see. The engine design starts against this map.
     the engine can run without an LLM. Examples:
       - "What's on today?" (calendar metadata)
       - "How many overdue invoices?" (invoice metadata)
@@ -1848,6 +1874,26 @@ Session 21 Sept 2026 (afternoon):
     This is by design — the test proves the recovery
     bug is real. It will pass once crypto_fix_3 lands.
     Do not panic at the pipeline output.
+
+Session 24 Sept 2026:
+  - Bot security hardening: four plaintext-exposure holes
+    closed (User model, session scope override, arbitrary
+    include, plaintext memory). Copilot audit.
+  - Product decision: no Civo, no cloud AI. Five free pills,
+    ten paid. Names are metadata, content is encrypted.
+  - Accord revised through v1.2.0, v1.3.0, and v1.4.0.
+    Five-part structure. Part III: where Bosly is today.
+  - Workflow map created (bosly-gov/docs/WORKFLOW_ENGINE.md):
+    ten workflows documented, eight now metadata-only.
+  - Five metadata-only patches landed (briefing,
+    check-conflict, relationships, wellness-check, today
+    fast-path).
+  - scan-inbox Phase 2 (cloud LLM call) removed.
+  - preferences route removed entirely (dead code).
+  - enrich-contacts dead signature parser removed.
+  - Discovery: the inbox cache uses a server-side key, not
+    the user's vault key. New item:
+    accord.inbox_pill_encryption.
 
 Session 21 Sept 2026 (morning + midday):
   - bosly-monitor DB-check bug found and fixed (nested sudo)
