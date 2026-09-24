@@ -1,5 +1,5 @@
 BOSLY GOV — PLAN
-Last updated: 15 September 2026
+Last updated: 24 September 2026 (evening — engine shipped)
 
 ================================================================
 WHAT BOSLY GOV IS
@@ -647,7 +647,9 @@ that has actually happened.
     Motivated by Copilot's 24 Sept audit, which found that
     three of four bot tools exposed plaintext.
 
-[ ] accord.workflow_engine — Build the server-side deterministic layer that answers most user questions without an LLM. This is the product, not the chatbot. It handles: intent classification (expand from the current 4-class version in lib/chat/helpers.ts), the workflow catalogue (every known task Bosly can do), metadata arithmetic (counts, sums, comparisons over plaintext metadata), the vault bridge (how the engine asks the browser for content), and the response format. The chatbot becomes one interface to this engine, not the thing itself. No cloud AI. No Civo. When the local model exists, it plugs in as a fifth action: phrase(context, intent). Predecessor for accord.encrypt_all_pills and accord.tier_enforcement. Estimate: 2-4 focused days.
+[x] accord.workflow_engine — DONE 24 Sept. Committed across six steps (a4f4beb, 915806f, 3c9ae6a, d31e879, 8328f48, 8a330a1). The engine replaces chatWithTools with a deterministic workflow dispatcher. Nine workflows live: today, hours-this-week, overdue-invoices, briefing, relationships, wellness-check, check-conflict, scan-inbox, enrich-contacts. All metadata-only where content isn't read. No LLM. No cloud AI. Three callers: /api/chat (all nine), the calendar editor (check-conflict), the inbox pill (scan-inbox), the contacts pill (enrich-contacts). Tests: scripts/test-all-workflows.ts, scripts/test-check-conflict-pill.ts, scripts/test-scan-inbox.ts, scripts/test-enrich-contacts.ts. Engine passes the fast tier (11/11 invariants).
+    Original task description:
+    Build the server-side deterministic layer that answers most user questions without an LLM. This is the product, not the chatbot. It handles: intent classification (expand from the current 4-class version in lib/chat/helpers.ts), the workflow catalogue (every known task Bosly can do), metadata arithmetic (counts, sums, comparisons over plaintext metadata), the vault bridge (how the engine asks the browser for content), and the response format. The chatbot becomes one interface to this engine, not the thing itself. No cloud AI. No Civo. When the local model exists, it plugs in as a fifth action: phrase(context, intent). Predecessor for accord.encrypt_all_pills and accord.tier_enforcement. Estimate: 2-4 focused days.
     INPUT: bosly-gov/docs/WORKFLOW_ENGINE.md — the map of
     all ten workflows, their current state, and their
     metadata requirements.
@@ -720,8 +722,12 @@ that has actually happened.
       - The browser decrypts on demand
       - Phase 1 of scan-inbox moves to the browser
       - The route-level reads become ciphertext-only
-    BLOCKS: scan-inbox Phase 1 (the only remaining browser
-    move).
+    BLOCKS: the browser-side scan-inbox (Phase 2 — a future
+    improvement, not the current shipping version). The
+    server-side scan-inbox workflow (Phase 1) shipped 24 Sept
+    as workflow #8, reading subject lines from the encrypted
+    cache. It does not need this migration. The migration is
+    still worth doing for the encryption-model reason above.
     Part of: accord.encrypt_all_pills (the Inbox entry).
     Estimate: 2 sessions (schema + client + route).
 
@@ -801,7 +807,7 @@ that has actually happened.
     meaningful verification.
     Estimate: 2-3 hours for the initial version.
 
-[x] accord.workflow_catalogue — DONE 24 Sept. The workflow map at bosly-gov/docs/WORKFLOW_ENGINE.md documents all ten workflows: briefing, check-conflict, relationships, wellness-check, scan-inbox, preferences, enrich-contacts, and three fast-paths in lib/chat/helpers.ts. Each entry has what it computes, what it reads, and the verdict. As of 24 Sept: eight are metadata-only, one is removed (preferences — dead code), one is blocked (scan-inbox Phase 1 — blocked on inbox pill migration). The map also contains the user-facing transparency statement about what the server can and cannot see. The engine design starts against this map.
+[x] accord.workflow_catalogue — DONE 24 Sept. The workflow map at bosly-gov/docs/WORKFLOW_ENGINE.md documents all ten workflows: briefing, check-conflict, relationships, wellness-check, scan-inbox, preferences, enrich-contacts, and three fast-paths in lib/chat/helpers.ts. Each entry has what it computes, what it reads, and the verdict. UPDATE 24 Sept (evening): the engine shipped. Nine workflows live as code. preferences was confirmed dead and removed. scan-inbox Phase 1 (the original blocker) shipped as a rule-based workflow reading subject lines only. enrich-contacts shipped as the same shape. The catalogue is now the design doc for a system that exists, not a plan for one. The map also contains the user-facing transparency statement about what the server can and cannot see.
     the engine can run without an LLM. Examples:
       - "What's on today?" (calendar metadata)
       - "How many overdue invoices?" (invoice metadata)
