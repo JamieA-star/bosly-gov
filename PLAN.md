@@ -291,7 +291,7 @@ that has actually happened.
     to end. No data migration is needed — there is no live
     user data to migrate. This is the test case for the fix.
 
-[ ] accord.crypto_fix_6_regression — MANUAL. Requires a browser.
+[x] accord.crypto_fix_6_regression — DONE 24 Sept. Browser test completed end to end. Four flows: fresh signup → workspace → create contact → reload; sign out → sign back in; delete account; export data. All worked. Found two real UX bugs in the process, both fixed same day: (a) browser didn't offer to save the account password (missing autoComplete="new-password"); (b) the ceremony and vault reminders said 'Face ID recovery' when Bosly does no Face ID check — the PIN is what decrypts the backup. Both tracked separately.
     Four flows: (a) signup -> reload -> decrypts; (b)
     signup -> signout -> signin -> decrypts; (c) signup ->
     clear IndexedDB -> recover with phrase -> decrypts;
@@ -639,6 +639,75 @@ that has actually happened.
     it sounds: passkey registration, server-side verification,
     re-flow of the recovery UI. Not on the 3 Oct path.
 
+[x] accord.bot_security_hardening — DONE 24 Sept. Four
+    plaintext-exposure holes in the bot closed:
+
+      db-query.ts:
+        - Removed 'User' from allowed models. Querying it
+          exposed password hashes, OAuth tokens, password-
+          reset and email-verification tokens, and the key
+          backup.
+        - Forced the session user's ID into the where clause.
+          Previously the code only set it if the LLM hadn't
+          supplied one, so the LLM could override.
+        - Removed 'include'. It bypassed the model allowlist
+          by permitting arbitrary relation traversal.
+
+      tools.ts:
+        - Added an endpoint allowlist to api_call. Previously
+          it could hit any internal route, including
+          /api/inbox/messages/get (full email body),
+          /api/settings/export, and /api/user. Now limited to
+          eight write-only actions.
+
+      memory.ts:
+        - Stopped writing plaintext to ChatMemory.summary and
+          .keyFacts. The function is now a no-op. The encrypted
+          ChatMemory.encryptedMessages path is untouched.
+        - Stopped writing and reading plaintext MemoryFact
+          entries.
+
+    This is interim hardening, not the redesign. The bot is
+    narrower but not yet correct. The real work is
+    accord.zero_access_bot_design (below).
+    Motivated by Copilot's 24 Sept audit, which found that
+    three of four bot tools exposed plaintext.
+
+[ ] accord.zero_access_bot_design — Redesign the Bosly bot
+    from "reads the database" to "composes queries, the
+    browser executes them, the bot reasons about outcomes."
+    The shape:
+
+      db_query      -> browser_query (aggregate only)
+      api_call      -> propose_action (fixed commands)
+      email_search  -> browser_search (opaque IDs)
+      propose_invoice -> keep, tighten
+
+    Also: move ChatMemory.summary and .keyFacts to the
+    browser. The server holds only opaque references.
+    Deliverable: a protocol spec, not code.
+    Predecessor for accord.encrypt_all_pills.
+    Estimate: 2-4 focused days of design.
+
+[ ] accord.encrypt_all_pills — Extend client-side encryption
+    to the six remaining categories: contacts, calendar,
+    cards/tasks, finance, conversations, client patterns.
+    Each follows the invoice pattern: schema, routes,
+    client, LLM prompt, contract. Six sessions, one per
+    category.
+    BLOCKED ON: accord.zero_access_bot_design. Do not
+    migrate a pill until the bot's access pattern for that
+    pill has been redesigned.
+    Estimate: 6 sessions.
+
+[ ] accord.accord_revision — Revise the Accord to reflect
+    the direction: keep the target (everything encrypted),
+    add a "where Bosly is today" section listing what's
+    migrated and what isn't. The Accord is a promise with
+    a progress marker, not a description of the current
+    state.
+    Estimate: half a day.
+
 [ ] accord.kyber_status_decision — The "quantum-resistant
     encryption" claim appears in llms.txt, llms-full.txt, and
     possibly elsewhere. Discovered 23 Sept: lib/crypto/kyber.ts
@@ -879,23 +948,12 @@ of these closes one instance.
 [x] gov.cron_sanity — DONE. Shebang and PATH verification
     for cron-invoked scripts.
 [~] accord.doc_consistency_audit — FIRST PASS DONE.
-[ ] gov.claim_invariants — the big one. Read a document's
-    claims, verify against the code. Report-only initially.
-[ ] accord.naming_honesty — flags fields whose names lie
-    about what they hold (e.g. encryptedX containing
-    plaintext, x25519 named fields holding AES).
-[ ] accord.stub_detection — flags functions named as if
-    they work but whose body says "stub" or returns a
-    placeholder.
-[ ] gov.plan_tracks_known_gaps — scans code comments for
-    "broken/stub/known bug/TODO" and cross-references
-    against the plan and memory.
-[ ] accord.middleware_public_routes — the manual public-
-    route list must be verified against the actual routes,
-    or replaced with something derived.
-[ ] gov.cron_sanity_repo_wide — extend the shebang/PATH
-    check to every shell script in the repo, not just
-    cron-invoked ones.
+• gov.claim_invariants — see the primary item above.
+• accord.naming_honesty — see the primary item above.
+• accord.stub_detection — see the primary item above.
+• gov.plan_tracks_known_gaps — see the primary item above.
+• accord.middleware_public_routes — see the primary item above.
+• gov.cron_sanity_repo_wide — see the primary item above.
 
 ----------------------------------------------------------------
 3. CLEANLINESS FOR LEGIBILITY
@@ -904,14 +962,8 @@ of these closes one instance.
 Work that adds no features and fixes no bugs. It makes the
 system readable.
 
-[ ] ops.repo_root_cleanup — the Accord repo root has
-    accumulated debris. Zero-byte files, a dozen test-*.ts
-    from August, patch_*.py scripts, PA task manifests,
-    multiple archive directories. Also tsconfig.json still
-    excludes _DETACHED and _ATTIC, which don't exist.
-[ ] accord.legacy_js_audit — the .js files in the repo
-    alongside .ts/.tsx. Some live, some dead. Determine
-    which, remove or migrate.
+• ops.repo_root_cleanup — see the primary item above.
+• accord.legacy_js_audit — see the primary item above.
 [ ] ops.scripts_dir_audit_keep — Keep's scripts/ not yet
     audited. Same treatment as Accord's (done 21 Sept).
 [ ] ops.scripts_dir_audit_gov — Gov's scripts not yet
