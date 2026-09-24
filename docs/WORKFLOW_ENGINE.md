@@ -182,22 +182,27 @@ reads, and the verdict.
 
    Currently reads: email subject, from, date.
 
-   Verdict: TWO PROBLEMS.
+   Verdict: PARTIALLY FIXED 24 Sept, BLOCKED on inbox migration.
 
-   Problem A: Phase 2 sends email metadata to OpenAI. This
-   contradicts the 24 Sept decision (no cloud AI). Phase 2 is
-   removed. The pattern-matching Phase 1 stays.
+   Problem A (SOLVED): Phase 2 sent email metadata to OpenAI.
+   Contradicted the 24 Sept decision (no cloud AI). Removed in
+   commit fix(scan-inbox): remove Phase 2 LLM call.
 
-   Problem B: Phase 1 pattern-matches against plaintext email
-   subjects. Subjects are content. Two options:
+   Problem B (BLOCKED): Phase 1 pattern-matches against
+   plaintext email subjects. Subjects are content.
 
-     (a) Accept subjects as metadata. Simple, but subjects can
-         contain sensitive content.
-     (b) Move Phase 1 to the browser. The browser decrypts
-         subjects, runs the patterns, returns only the findings
-         (type + date, no subject).
+   New understanding: the inbox cache is encrypted at rest with
+   a SERVER-SIDE key (ENCRYPTION_KEY), not the user's vault key.
+   The server can read every subject. So the scan is server-side
+   for now because that's where the data is readable.
 
-   Decision needed. Lean: (b).
+   Making Phase 1 browser-side requires the inbox to be
+   encrypted with the user's vault key first. That is the inbox
+   pill migration, tracked as accord.encrypt_all_pills (Inbox).
+
+   Until then: Phase 1 runs server-side on subjects the server
+   can read anyway. Removing the LLM call was the win. Moving
+   Phase 1 to the browser is part of the inbox migration.
 
 ---
 
@@ -328,9 +333,12 @@ Each patch is one commit. All five are 1-2 hours of work total.
 THE BROWSER MOVES (do after)
 
 Move 1 — scan-inbox
-  Remove the OpenAI call. Move Phase 1 pattern matching to the
-  browser. Server returns only the findings the browser
-  computed.
+  STATUS: Partial. LLM call removed 24 Sept.
+  REMAINING: Depends on the inbox pill migration. Once the
+  inbox cache is encrypted with the user's vault key, Phase 1
+  moves to the browser. Until then, Phase 1 stays server-side.
+  Not an independent move — part of accord.encrypt_all_pills
+  (Inbox).
 
 Move 2 — preferences
   Remove the server route. Browser stores preferences in
@@ -340,8 +348,10 @@ Move 3 — enrich-contacts
   Move signature parsing to the browser. Server receives only
   extracted results.
 
-Each move is a small feature, not a rewrite. The parsing logic
-is already in the file; it just runs in the wrong place.
+Moves 2 and 3 are independent and can proceed.
+
+Move 1 is blocked. It will happen as part of the inbox
+migration, not as a separate piece of work.
 
 ---
 
