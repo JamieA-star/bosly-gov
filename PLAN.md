@@ -700,7 +700,7 @@ that has actually happened.
     pill has been redesigned.
     Estimate: 6 sessions.
 
-[ ] accord.accord_revision — Revise the Accord to reflect
+[x] accord.accord_revision — DONE 24 Sept. ACCORD.md bumped to v1.3.0. Added Part III — Where Bosly Is Today, listing what's encrypted (invoices, health, chat memory), what's plaintext (contacts, calendar, cards, finance, conversations, client patterns), what the bot can and can't do post-hardening, and what's not yet built. Existing parts shifted: What's Planned is now Part IV, Amendment is Part V. Also updated the Preamble, Article 1.1, and Article 6.2. The document now reads as a target with an honest progress marker. Revise the Accord to reflect
     the direction: keep the target (everything encrypted),
     add a "where Bosly is today" section listing what's
     migrated and what isn't. The Accord is a promise with
