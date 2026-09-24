@@ -214,17 +214,16 @@ reads, and the verdict.
 
    Currently reads: MemoryFact.fact where category = "preference".
 
-   Verdict: FULLY CONTENT-DEPENDENT. The MemoryFact.fact column
-   is plaintext prose. Every read/write here is content.
+   Verdict: REMOVED 24 Sept. Not moved — deleted.
 
-   This workflow must move to the browser. The browser stores
-   preferences in the encrypted memory path. The workflow engine
-   asks the browser for preferences when it needs them.
+   The route was dead code. The MemoryFact table had zero
+   preferences. The only 'callers' were five references in
+   the chat prompt. The checks that referenced preferences
+   (overcommit, reschedule, unusual amounts) now compute
+   their own baselines from metadata.
 
-   Additional problem: this route bypasses yesterday's neutering
-   of saveFact/recallFacts/forgetFact in lib/chat/memory.ts.
-   Those functions are now no-ops, but this route accesses
-   MemoryFact directly. Inconsistent.
+   Removed along with five chat prompt references and the
+   aspirational memory paragraph.
 
 ---
 
@@ -236,17 +235,26 @@ reads, and the verdict.
 
    Currently reads: email body (full text).
 
-   Verdict: FULLY CONTENT-DEPENDENT. Email bodies are the most
-   sensitive content in the app. Signature parsing requires
-   reading the body.
+   Verdict: METADATA-ONLY IN PRACTICE. Dead parser removed
+   24 Sept.
 
-   This workflow must move to the browser. The browser fetches
-   emails, parses signatures locally, and sends only the
-   extracted result to the server ("found: Jane Smith, Acme
-   Ltd, +44…").
+   Investigation found:
+     - extractSignature and parseSignature (100 lines) existed
+       in the file but were NEVER called.
+     - The route never fetched email bodies. It reads only the
+       'from' header.
+     - A comment said so: 'For now, try to scan what's in the
+       cache' — and the cache holds subject, from, date only.
 
-   The signature-parsing code moves to the browser. It's already
-   pure — no server dependencies.
+   The route was already metadata-only. The parser was dead
+   code written for a future that never happened.
+
+   Removed the parser. Added a note. If body-scanning is built
+   later (browser-side, per the design), the parser is in git
+   history.
+
+   Chat prompt updated to say the route reads 'from' headers
+   only, no bodies.
 
 ---
 
@@ -296,13 +304,15 @@ SUMMARY
   3. relationships       REDUCE (3 fields)
   4. wellness-check      RE-GROUP by clientName
   5. scan-inbox          REMOVE LLM; move Phase 1 to browser
-  6. preferences         MOVE to browser
-  7. enrich-contacts     MOVE to browser
-  8. What's on today?    REDUCE (2 fields)
+  6. preferences         REMOVED (dead code)
+  7. enrich-contacts     CLEAN (dead parser removed)
+  8. What's on today?    CLEAN (reduced)
   9. How many hours?     CLEAN
  10. Any overdue?        CLEAN
 
-Four small patches. One design decision. Three browser moves.
+The ten workflows are now metadata-only or removed. One
+workflow (scan-inbox) has a remaining browser move blocked
+on the inbox pill migration.
 
 ---
 
@@ -341,17 +351,14 @@ Move 1 — scan-inbox
   (Inbox).
 
 Move 2 — preferences
-  Remove the server route. Browser stores preferences in
-  encrypted memory. Engine asks browser.
+  STATUS: REMOVED. The route was dead code. Nothing to move.
 
 Move 3 — enrich-contacts
-  Move signature parsing to the browser. Server receives only
-  extracted results.
+  STATUS: CLEAN. The route was already metadata-only. The
+  dead signature parser was removed. Nothing to move.
 
-Moves 2 and 3 are independent and can proceed.
-
-Move 1 is blocked. It will happen as part of the inbox
-migration, not as a separate piece of work.
+Remaining: only Move 1 (scan-inbox) needs a browser-side
+change, and it is blocked on the inbox pill migration.
 
 ---
 
