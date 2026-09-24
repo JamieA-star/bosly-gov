@@ -455,24 +455,14 @@ that has actually happened.
         see that it was received and whether it changed
         anything.
 
-[ ] accord.unlogged_invoice_prompt — chat-driven replacement for
-    the retired email scanner and invoice upload route. When the
-    user asks "have I sent any invoices I haven't logged?", a thin
-    server route reads the Sent folder and returns metadata only
-    (subject, date, recipients — never the body). The browser
-    asks which to log, opens the editor for each. No server-side
-    parsing of content.
+[ ] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
-[ ] accord.follow_up_prompt — chat-driven replacement for the
-    retired cards/schedule auto-follow-up. When the user asks
-    "which invoices need chasing?", the browser identifies overdue
-    invoices from decrypted data, prompts to send follow-ups, and
-    builds the emails client-side. Same pattern as the send route.
 
-[ ] accord.wellness_amount_check — client-side replacement for
-    the "unusual invoice amounts" section removed from
-    /api/bosly/wellness-check. The browser computes per-client
-    averages from decrypted data and surfaces anomalies locally.
+[ ] accord.follow_up_prompt — Chat-driven follow-up. ORIGINALLY: user asks "which invoices need chasing?", the browser identifies overdue invoices from decrypted data, prompts to send, builds emails client-side. NEEDS RE-FRAMING: same shape as above. This is a workflow engine recipe, not an LLM feature. The browser does the identification; the workflow engine handles the intent.
+
+
+[ ] accord.wellness_amount_check — Client-side anomaly check. ORIGINALLY: the browser computes per-client averages from decrypted data and surfaces anomalies locally. This is a workflow engine pattern. No LLM needed. Still valid as designed — the browser does the computation.
+
 
 [ ] accord.email_relay_encryption — Option D for the email relay.
     Encrypt the email body client-side with a per-request
@@ -599,32 +589,16 @@ that has actually happened.
     pipeline once calibrated. Predecessor to accord.doc_
     consistency_audit. Motivated by the Kyber discovery (below).
 
-[ ] accord.password_recovery_gap — Critical UX/security gap.
-    During the crypto_fix_6 browser test on 24 Sept, the founder
-    created a test account, completed the key ceremony, saved
-    the recovery phrase (browser DID offer to save it), signed
-    out, and could not sign back in — because macOS did not
-    offer to save the password, and the password wasn't written
-    down. A stranger from a reel would hit exactly this. The
-    account becomes unusable: the password is required for
-    normal sign-in AND for the recovery flow (which asks for
-    email + password + phrase). Even a saved recovery phrase
-    doesn't help.
-
-    Investigation needed:
-      (a) Why doesn't the browser offer to save the password?
-          The signup POST may not set a session cookie, so
-          the browser never sees a "successful login" event.
-      (b) Should the recovery flow also reset the password
-          after phrase verification?
-      (c) Should there be a separate password reset by email,
-          independent of the recovery phrase?
-      (d) Does the signup page warn strongly enough about
-          writing the password down?
-
-    Compare with accord.encryption_honesty_review: the copy
-    makes strong promises about what users hold and control.
-    A user who cannot sign in holds nothing.
+[~] accord.password_recovery_gap — PARTIAL FIX 24 Sept. The
+    autoComplete="new-password" attribute was added to the signup
+    form, and a warning about saving the password. Browser now
+    offers to save. Remaining: the recovery flow still requires
+    the account password, so a user who loses it cannot recover
+    even with the phrase. Options: (a) recovery flow also resets
+    the password after phrase verification; (b) password reset by
+    email, independent of the phrase. (b) is probably correct but
+    needs SMTP-from-server work. See accord.face_id_recovery for
+    the related design.
 
 [ ] accord.face_id_recovery — Build Face ID + PIN recovery as
     a real feature. Currently "Face ID recovery" in the
@@ -716,17 +690,6 @@ that has actually happened.
     pill are finalised.
     Estimate: 6 sessions, one per pill.
 
-[ ] accord.zero_access_bot_design — SUPERSEDED. Renamed to
-    accord.workflow_engine above.
-    to the six remaining categories: contacts, calendar,
-    cards/tasks, finance, conversations, client patterns.
-    Each follows the invoice pattern: schema, routes,
-    client, LLM prompt, contract. Six sessions, one per
-    category.
-    BLOCKED ON: accord.zero_access_bot_design. Do not
-    migrate a pill until the bot's access pattern for that
-    pill has been redesigned.
-    Estimate: 6 sessions.
 
 [x] accord.accord_revision — DONE 24 Sept. ACCORD.md bumped to v1.3.0. Added Part III — Where Bosly Is Today, listing what's encrypted (invoices, health, chat memory), what's plaintext (contacts, calendar, cards, finance, conversations, client patterns), what the bot can and can't do post-hardening, and what's not yet built. Existing parts shifted: What's Planned is now Part IV, Amendment is Part V. Also updated the Preamble, Article 1.1, and Article 6.2. The document now reads as a target with an honest progress marker. Revise the Accord to reflect
     the direction: keep the target (everything encrypted),
@@ -837,14 +800,6 @@ that has actually happened.
     Depends on: accord.pricing_update.
     Estimate: 2 hours.
 
-[ ] gov.weekly_health_report_scope — Define exactly what
-    the weekly health report covers before building it.
-    Candidates from the 23 Sept design: pipeline state,
-    runtime state, data state, doc state, plan state,
-    memory state, change log. Which are in scope for v1?
-    Which wait?
-    Part of: gov.weekly_health_report.
-    Estimate: 1 hour of design, separate from the build.
 
 [ ] ops.legal_compliance_payment — Legal basics for when
     Bosly takes payment. Not needed before 3 Oct, but on the
@@ -923,14 +878,16 @@ that has actually happened.
     do not exist. No design decisions made yet. This entry is a
     reminder to go and look, not a specification.
 
-[ ] ops.journey_test_outbox_check — fold the outbox-delay
-    assertion from the retired bosly-journey-test into
-    scripts/e2e-full-test.ts. Assert that POST /api/messages/send
-    returns { pending: true } and does not send synchronously.
-    This is the one check journey-test covered that nothing else
-    does. Deferred from 20 Sept so it lands as its own focused
-    change to a live 4am script, not as the tail of another
-    session.
+[ ] ops.journey_test_outbox_check — The retired bosly-journey-test
+    had one unique check: that POST /api/messages/send returns
+    { pending: true } (the outbox delay). The original plan was to
+    fold it into scripts/e2e-full-test.ts — but that script was
+    retired on 21 Sept. So there is no host for this check. Options:
+    (a) write it as a source-level check in tests/invariants/ that
+    reads app/api/messages/send/route.ts and asserts the POST path
+    returns pending: true; (b) close as won't-do, since the delay
+    is tested implicitly every time an email is sent.
+    Lean: (a). It's small and it closes the gap.
 
 [x] ops.cron_sanity — DONE 23 Sept. checks/cron_sanity.py. Verifies every cron-invoked script has a shebang on byte 1, and every binary it calls is either on cron's PATH or provided by the script's own PATH loading. Checks /usr/local/bin/bosly-* shebangs too. Currently 19/19 passing. Registered in manifests/checks.yml. Would have caught the bosly-monitor 36-day silent failure on day 1. invariant check that every script in
     /usr/local/bin/bosly-* and every cron-invoked script in the
