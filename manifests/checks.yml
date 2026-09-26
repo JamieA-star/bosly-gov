@@ -33,6 +33,9 @@ projects:
     root: /home/bosly_accord/bosly-gov
     tiers:
       fast:
+        - id: gov.stub_detection
+          severity: medium
+          command: python3 checks/stub_detection.py
         - id: gov.memory_schema
           severity: high
           command: python3 checks/memory_schema.py
