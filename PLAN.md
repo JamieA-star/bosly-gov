@@ -341,11 +341,50 @@ that has actually happened.
     where the value is AES. Cheap grep + type inspection. Fast
     tier candidate.
 
-[ ] accord.stub_detection — Gov check (design): flag any function
-    whose body contains "stub", "placeholder", "TODO", or "not
-    implemented", AND whose name suggests production capability
-    (reconstruct*, derive*, generate*). Medium complexity. Fast
-    tier candidate with calibration.
+[x] accord.stub_detection — DONE 26 Sept. Shipped as
+    gov.stub_detection, a fast-tier Gov check. Flags any
+    function whose name implies production capability
+    (reconstruct, derive, generate, render, extract, parse,
+    fetch, encrypt, decrypt, send, build, request) and whose
+    body or adjacent comments admit it is a stub (stub,
+    placeholder, TODO, FIXME, not implemented). Only fails
+    when the function is called from live code — dead stubs
+    are NOTEd, not failed. Three documented stubs allowlisted
+    (the two workflow bridges and the social renderer).
+    Calibration: 'for now' was in the admission list on the
+    first draft and produced three false positives on working
+    functions (sessionKeyStore, messageEncryption); removed.
+    Current result: 0 failures, 2 notes. Motivated by the
+    deletion of lib/inboxStore.js (24 Sept) and the dead
+    mailparser block in the old enrich-contacts route.
+    Original design note: flag any function whose body
+    contains 'stub', 'placeholder', 'TODO', or 'not
+    implemented', AND whose name suggests production
+    capability (reconstruct*, derive*, generate*). Medium
+    complexity. Fast tier candidate with calibration.
+
+[ ] accord.plaintext_message_fallback — Security posture
+    decision. lib/email/messageEncryption.ts:encryptMessageText
+    falls back to plaintext storage when the user has no
+    session key. The comment says: "Once all users complete
+    key ceremony, fallback is removed." Until then, message
+    bodies (Conversation.messageText) are stored unencrypted
+    server-side for users who haven't done key ceremony.
+    Found 26 Sept by gov.stub_detection (which correctly did
+    NOT flag the function as a stub — it does real work — but
+    surfaced the admission).
+    Two decisions to make:
+      (1) Is plaintext storage acceptable as a bridge, given
+          key ceremony is skippable? If yes, document it in
+          the Accord's Part III (what's encrypted today) and
+          in the user-facing transparency statement.
+      (2) If no, the fix is to force key ceremony before any
+          message can be stored, or to discard messages that
+          can't be encrypted. Both change the signup flow.
+    Related: accord.encrypt_all_pills (the Inbox pill entry),
+    accord.inbox_pill_encryption.
+    Estimate: 1 session (decision + plan/doc update if
+    option 1; larger if option 2).
 
 [ ] gov.plan_tracks_known_gaps — Gov check: scan all source
     comments for phrases like "this is broken", "known bug",
