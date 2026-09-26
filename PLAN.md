@@ -356,6 +356,26 @@ that has actually happened.
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
 
+[ ] accord.social_render_pipeline — The real social media
+    image renderer is broken/corrupted. lib/social/render.ts
+    currently exports a placeholder (renderSocialMediaImage
+    returns a 1x1 transparent PNG; renderVariants returns
+    placeholder variants) so that Next.js builds stay green.
+    The comment at render.ts:27 says so explicitly. Nothing
+    renders a real image; every social post that expects a
+    rendered image gets the placeholder.
+    Two decisions:
+      (1) Restore the real renderer. It was working before it
+          was corrupted; git history will have it.
+      (2) Or accept the placeholder as the current state,
+          document it in the Accord's Part III, and remove
+          any user-facing claim that social posts render
+          images.
+    Allowlisted in gov.plan_tracks_known_gaps until resolved
+    (see ALLOWLIST in checks/plan_tracks_known_gaps.py).
+    Estimate: 1-2 sessions depending on whether the render
+    pipeline is recovered from git or rebuilt.
+
 [x] accord.stub_detection — DONE 26 Sept. Shipped as
     gov.stub_detection, a fast-tier Gov check. Flags any
     function whose name implies production capability
