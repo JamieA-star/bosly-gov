@@ -1,5 +1,5 @@
 BOSLY GOV — PLAN
-Last updated: 26 September 2026 (stub_detection + naming_honesty shipped)
+Last updated: 26 September 2026 (evening — Friday prep)
 
 ================================================================
 WHAT BOSLY GOV IS
@@ -355,6 +355,28 @@ that has actually happened.
     does not use. E.g. encryptedX* where the value is
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
+
+[ ] ops.founding_member_offer — The 3 Oct founding member
+    ask goes out Friday. The offer is a Stripe promotion code
+    (40% off, duration forever, max 20 redemptions). The
+    checkout route now shows the promo code field
+    (allow_promotion_codes: true, committed 26 Sept). What's
+    left is dashboard work and testing, not code:
+
+      - Create the coupon in Stripe: 40% off, duration
+        forever.
+      - Create the promotion code: max redemptions 20.
+      - Test end to end: fresh signup, upgrade, apply code,
+        confirm £15 price and active subscription on a test
+        card.
+      - Rewrite the reel. The current draft is stale: it
+        offers "free AI features for life" which contradicts
+        the 24 Sept no-cloud-AI decision.
+      - Decide whether the code is published on the site or
+        sent only to the 20 people. If published, the max
+        redemptions cap is the only limit.
+
+    Not blocking code. Blocks the reel going out as written.
 
 [ ] accord.user_docs_prose_pass — Apply the new
     WORKING_AGREEMENT rule ("Writing for the reader") to the
@@ -855,23 +877,39 @@ that has actually happened.
     Part of: accord.encrypt_all_pills (the Inbox entry).
     Estimate: 2 sessions (schema + client + route).
 
-[ ] accord.kyber_status_decision — The "quantum-resistant
-    encryption" claim appears in llms.txt, llms-full.txt, and
-    possibly elsewhere. Discovered 23 Sept: lib/crypto/kyber.ts
-    exists and exports a full API (generateKyberKeyPair,
-    encapsulate, decapsulate, isKyberAvailable) but is NOT
-    called from anywhere. The encryptedKyberPrivateKey field in
-    keystore/type is written as "" at signup. No user data is
-    protected by Kyber. Options: (a) finish wiring it up;
-    (b) remove the claim from all docs until it's wired;
-    (c) soften to "quantum-resistant encryption available".
-    My lean: (b) now, (a) as a future item.
+[ ] accord.kyber_status_decision — The immediate doc
+    problem is fixed. The "quantum-resistant encryption"
+    claim was removed from llms.txt and llms-full.txt on
+    23 Sept, and from README.md on 26 Sept (was still in the
+    Accord summary list as if it were a current feature; now
+    says "Planned. Not yet wired into any user flow"). The
+    README also gained a short paragraph above the list
+    explaining that the Accord describes a direction, not a
+    current state.
+
+    The decision itself is still open. lib/crypto/kyber.ts
+    exports a full API (generateKyberKeyPair, encapsulate,
+    decapsulate, isKyberAvailable) and is not called from
+    anywhere. The encryptedKyberPrivateKey field is written
+    as "" at signup. No user data is protected by Kyber.
+    Options remain: (a) finish wiring it up; (b) leave the
+    claim out until it's wired; (c) soften to
+    "quantum-resistant encryption available". Lean was (b)
+    now, (a) as a future item. The (b) half is done; the
+    decision is whether to commit to (a) as a scheduled
+    feature or drop it from the Accord entirely.
+
+    Original finding (23 Sept): the claim appeared in
+    llms.txt, llms-full.txt, and possibly elsewhere. The
+    kyber code exists but no user data is protected by it.
 
 [ ] ops.ico_registration — Register with the ICO. Not done yet.
     When done, update /privacy and the FAQ to state it. Until
     then, both documents must not claim registration.
 
-[~] accord.doc_consistency_audit — FIRST PASS DONE 23 Sept. Five stale claims fixed across /safety, /privacy, llms.txt, llms-full.txt. Grep for AWS/EC2/Ireland/EU data/31-table/quantum returns clean. Remaining: (a) re-add ICO registration claim once ops.ico_registration completes; (b) re-add quantum-resistant claim once accord.kyber_status_decision completes; (c) full history of findings: Read every document that
+[~] accord.doc_consistency_audit — SECOND PASS 26 Sept. The privacy page still described a Civo integration that stopped existing on 24 Sept, and said communication data is "stored encrypted" when it is only encrypted while a session key is loaded. Six corrections to privacy/page.tsx. The FAQ pricing answer and the BillingSettings cancel copy also described an AI assistant that no longer exists; both corrected. The README summary list was corrected as well.
+
+    Remaining: (a) re-add ICO registration claim once ops.ico_registration completes; (b) the kyber decision (see accord.kyber_status_decision) affects whether the quantum claim ever returns; (c) full history of findings: Read every document that
     makes factual claims about Bosly (privacy, terms, safety,
     transparency, llms.txt, llms-full.txt, FAQ) and produce a
     table: claim, where it appears, is it true. Fix the ones
@@ -907,15 +945,28 @@ that has actually happened.
     Depends on: the pricing decision (24 Sept) being final.
     Estimate: half a day.
 
-[ ] accord.pricing_update — Update the pricing page
-    (/onboarding/activate) and any marketing pages that
-    describe the tiers. New model: Free = 5 pills (Active,
-    Contacts, Calendar, Health, Invoicing). £25 = full
-    workspace (10 pills) + chatbot + data health. No cloud
-    AI. No roadmap promises. The AI arrives when Bosly runs
-    its own model, as an upgrade to the £25 tier.
-    Depends on: accord.tier_enforcement design.
-    Estimate: 2-3 hours.
+[ ] accord.pricing_update — PARTIAL. The premise is stale:
+    /onboarding/activate and /onboarding/success were archived
+    on 21 Sept (accord.beta_onboarding_simplification) because
+    they were dead code. The live upgrade path is
+    BillingSettings.tsx -> /api/billing/checkout. There is no
+    dedicated pricing page.
+
+    Done 26 Sept: the FAQ answer for "What does £25/month get
+    me?" now describes the 24 Sept tier split honestly (free
+    is five pills, paid adds Inbox, Finance, Social, Data
+    health, and the chatbot) and no longer calls the chatbot
+    an AI. The BillingSettings cancel confirmation was
+    reworded from "AI features will stop" to describe the
+    paid pills and chatbot. The checkout route now passes
+    allow_promotion_codes: true so Stripe shows its promo
+    code field.
+
+    Still open: decide where the tier description lives
+    publicly. Either a dedicated pricing page, or a section
+    on the existing marketing pages. Copy for both tiers
+    (accord.tier_copy) is separate and still open.
+    Estimate: 2-3 hours after the placement decision.
 
 [ ] gov.accord_compliance — A new check that verifies
     Part III of the Accord against the code. Specifically:
