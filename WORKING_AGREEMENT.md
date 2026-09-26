@@ -60,6 +60,20 @@ If a convention stops fitting, remove it. This is alive.
 
 ---
 
+## Writing for the reader
+
+Two kinds of writing in this project, and they have different shapes.
+
+Internal documents — the plan, memory entries, commit messages, notes between sessions — are tools. You read them to find things. Structure helps them do that job. Keep the task markers in the plan, keep the section headings in this agreement, keep bullets when they genuinely help.
+
+User-facing documents — the privacy page, terms, safety page, the Accord, any copy a customer reads — are about trust. They read as prose. No hash headers. No bullet dots. No lists pretending to be sentences. No "it's important to note." No summary paragraph that says what the document just said. A section can be a list if it is genuinely a list — the categories of data we collect, for instance — but otherwise write paragraphs.
+
+The test is simple. Would a person writing to another person, with something at stake, structure it this way? If the answer is no, it is the wrong shape.
+
+This applies to everything we write together.
+
+---
+
 ## What I Expect From You
 
 - Read the source before proposing fixes
