@@ -421,13 +421,26 @@ that has actually happened.
     Estimate: 1 session (decision + plan/doc update if
     option 1; larger if option 2).
 
-[ ] gov.plan_tracks_known_gaps — Gov check: scan all source
-    comments for phrases like "this is broken", "known bug",
-    "doesn't work", "stub", and cross-reference against PLAN.md
-    and memory. Any acknowledgment in code that isn't tracked
-    as an open plan item or a memory entry fails. Motivated by
-    VaultProvider.tsx:94 which acknowledged bug #3 in a comment
-    and was never tracked. Fast tier.
+[x] gov.plan_tracks_known_gaps — DONE 26 Sept. Shipped as
+    gov.plan_tracks_known_gaps, a fast-tier Gov check. Scans
+    source comments (//, /*, and JSDoc * lines only — string
+    literals are skipped) for admission phrases ('this is
+    broken', 'known bug', 'known issue', 'known limitation',
+    "doesn't work", 'does not work', "won't work", 'will not
+    work', 'broken since'). For each admission, checks whether
+    the enclosing file is mentioned in PLAN.md or memory.json.
+    If not, FAILS. Current result: 1 admission found
+    (lib/social/render.ts:27), allowlisted. That admission is
+    now tracked as accord.social_render_pipeline (added same
+    day). Calibration: 'stub' is deliberately NOT in the
+    admission list — gov.stub_detection owns that class.
+    Motivated by VaultProvider.tsx:94 which acknowledged bug #3
+    in a comment and was never tracked.
+    Original design note: scan all source comments for phrases
+    like 'this is broken', 'known bug', "doesn't work", 'stub',
+    and cross-reference against PLAN.md and memory. Any
+    acknowledgment in code that isn't tracked as an open plan
+    item or a memory entry fails. Fast tier.
 
 [x] accord.encryption_honesty_review — DONE 21 Sept. Committed 94e5e45. All encryption claims now true; three copy fixes (signup 'one step', landing 'free to use', notifications optional). Read the key ceremony copy
     in app/signup/keys/page.tsx and the landing copy in app/
