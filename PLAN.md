@@ -356,6 +356,38 @@ that has actually happened.
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
 
+[ ] accord.user_docs_prose_pass — Apply the new
+    WORKING_AGREEMENT rule ("Writing for the reader") to the
+    existing user-facing documents. The rule: no hash headers,
+    no bullet dots, no lists pretending to be sentences.
+    Written as paragraphs instead.
+
+    Documents that need the pass:
+      - docs/ACCORD.md — the big one. Part III uses ### and
+        bullet lists throughout. Also Part I and Part II.
+        Most likely to be read by someone deciding whether
+        to trust Bosly.
+      - app/(marketing)/safety/page.tsx — sections with
+        bullet lists for what Bosly does and doesn't do.
+      - app/(marketing)/terms/page.tsx if it exists — same
+        check.
+      - public/llms.txt and public/llms-full.txt — machine
+        readable, but read by people too.
+      - Any other page under app/(marketing)/.
+
+    The privacy page is partly done (six edits on 26 Sept)
+    but should be re-read against the rule.
+
+    Internal documents (PLAN.md, WORKING_AGREEMENT.md,
+    NOTES.md, memory) keep their structure. The rule is
+    about the reader, not the writer.
+
+    Estimate: 1-2 sessions depending on how deep the Accord
+    edits go. The Accord is a constitution, not a brochure —
+    some of its structure is load-bearing and should be
+    preserved. Only the sections that read like a machine
+    wrote them get rewritten.
+
 [ ] accord.social_render_pipeline — The real social media
     image renderer is broken/corrupted. lib/social/render.ts
     currently exports a placeholder (renderSocialMediaImage
@@ -398,28 +430,33 @@ that has actually happened.
     capability (reconstruct*, derive*, generate*). Medium
     complexity. Fast tier candidate with calibration.
 
-[ ] accord.plaintext_message_fallback — Security posture
-    decision. lib/email/messageEncryption.ts:encryptMessageText
-    falls back to plaintext storage when the user has no
-    session key. The comment says: "Once all users complete
-    key ceremony, fallback is removed." Until then, message
-    bodies (Conversation.messageText) are stored unencrypted
-    server-side for users who haven't done key ceremony.
-    Found 26 Sept by gov.stub_detection (which correctly did
-    NOT flag the function as a stub — it does real work — but
-    surfaced the admission).
-    Two decisions to make:
-      (1) Is plaintext storage acceptable as a bridge, given
-          key ceremony is skippable? If yes, document it in
-          the Accord's Part III (what's encrypted today) and
-          in the user-facing transparency statement.
-      (2) If no, the fix is to force key ceremony before any
-          message can be stored, or to discard messages that
-          can't be encrypted. Both change the signup flow.
-    Related: accord.encrypt_all_pills (the Inbox pill entry),
-    accord.inbox_pill_encryption.
-    Estimate: 1 session (decision + plan/doc update if
-    option 1; larger if option 2).
+[x] accord.plaintext_message_fallback — DONE 26 Sept. The
+    decision: document it, don't fix it today. The real fix
+    is accord.inbox_pill_encryption, which moves message
+    encryption to the client. Work done:
+
+      - lib/email/messageEncryption.ts comment reworded. The
+        old "for now" was a lie: the session key store is
+        in-memory, so the fallback fires on every server
+        restart, not only for users who haven't done ceremony.
+      - docs/ACCORD.md Part III got a new section 3.3
+        "Conditional encryption" naming the exception
+        honestly. Part III used to be two categories
+        (encrypted / plaintext-with-migration-planned);
+        messageText was neither.
+      - app/(marketing)/privacy/page.tsx got six corrections.
+        The page described a Civo integration that no longer
+        exists, and said communication data is "stored
+        encrypted" when it's only encrypted while a session
+        key is loaded.
+      - WORKING_AGREEMENT.md got a "Writing for the reader"
+        section: user-facing docs read as prose, internal
+        docs keep their structure.
+
+    Found 26 Sept by gov.stub_detection, which correctly did
+    NOT flag the function as a stub but surfaced the comment.
+    Related: accord.encrypt_all_pills, accord.inbox_pill_
+    encryption, accord.user_docs_prose_pass.
 
 [x] gov.plan_tracks_known_gaps — DONE 26 Sept. Shipped as
     gov.plan_tracks_known_gaps, a fast-tier Gov check. Scans
