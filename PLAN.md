@@ -1,5 +1,5 @@
 BOSLY GOV — PLAN
-Last updated: 24 September 2026 (evening — engine shipped)
+Last updated: 26 September 2026 (stub_detection + naming_honesty shipped)
 
 ================================================================
 WHAT BOSLY GOV IS
@@ -335,11 +335,26 @@ that has actually happened.
     keys are identical. File written 21 Sept; fails until step 3
     lands.
 
-[ ] accord.naming_honesty — Gov check (design): flag any field or
-    type whose name asserts a crypto primitive the code does not
-    use. E.g. encryptedX* where the value is plaintext, x25519*
-    where the value is AES. Cheap grep + type inspection. Fast
-    tier candidate.
+[x] accord.naming_honesty — DONE 26 Sept. Shipped as
+    gov.naming_honesty, a fast-tier Gov check. Three rules:
+    (A) Prisma schema fields matching /^encrypted[A-Z]/ whose
+    name mentions a specific crypto primitive (X25519, RSA,
+    ECDH, ChaCha) fail if that primitive is not used in
+    lib/crypto/. (B) Source comments containing an admission
+    phrase ('was a lie', 'actually stores', 'misnamed', etc.)
+    fail unless allowlisted. (C) Interface fields ending in a
+    primitive name fail if the same file contains no other
+    reference to it. Allowlist has two entries, both the
+    historical comments in lib/crypto/types.ts left after the
+    21 Sept rename. Current result: 0 findings, 2 allowlist
+    hits. Motivated by the 21 Sept rename (a field named for
+    X25519 held the plaintext BIP39 recovery phrase) and by
+    pattern-20260924-accord-vs-code-drift. Companion to
+    gov.stub_detection. Original design note: flag any field
+    or type whose name asserts a crypto primitive the code
+    does not use. E.g. encryptedX* where the value is
+    plaintext, x25519* where the value is AES. Cheap grep +
+    type inspection. Fast tier candidate.
 
 [x] accord.stub_detection — DONE 26 Sept. Shipped as
     gov.stub_detection, a fast-tier Gov check. Flags any
