@@ -660,8 +660,9 @@ that has actually happened.
     marker, not the prose. If someone edits the prose and not the
     marker, the check will not catch it. That gap is human review.
 
-[ ] [LIVE] gov.claim_drift_audit — The specific drifts found on
-    27 Sept, recorded so they are fixed rather than lost. Each is
+[x] gov.claim_drift_audit — DONE 27 Sept. The six drifts found
+    that day are all fixed. Recording them here, then fixing them,
+    is what closed the loop the audit opened. Each is
     a surface claiming something the code does not do.
 
       1. app/page.tsx:267 — card says "AI is £25/month when you
