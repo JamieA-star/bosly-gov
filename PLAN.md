@@ -618,6 +618,24 @@ that has actually happened.
     the risk and document the decision here. Raised 27 Sept after
     the tail -20 fix showed the script is editable but untracked.
 
+[ ] gov.memory_persistence — /mnt/bosly/bosly-data/copilot-knowledge/*/memory.json
+    is not tracked by any git repo. Confirmed 27 Sept: bosly-1.0,
+    bosly-keep, and bosly-gov do not track any path under
+    copilot-knowledge. The memory files are the only place the
+    lessons live — the plan records what to do, memory records
+    what has been learned about how. If the mount fails or a file
+    is corrupted, there is no history to recover from; the only
+    copy is the one on disk, plus a single .bak that is
+    overwritten on the next write. Same shape as
+    gov.orientation_script_versioned (things that matter living
+    outside version control), higher stakes. Options: (a) nightly
+    cp to a different mount (e.g. /mnt/bosly/backups/memory/),
+    keeping the last 30 days, run from the existing 5am cron;
+    (b) symlink copilot-knowledge into a tracked repo; (c) accept
+    the risk and document the decision here. Raised 27 Sept after
+    a session wrote three entries and then discovered the file
+    they went into was untracked.
+
 [ ] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
