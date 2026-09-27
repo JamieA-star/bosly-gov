@@ -33,11 +33,12 @@ Active, Contacts, Calendar, Health, Invoicing, plus Inbox, Finance,
 Social, Data health, and the chatbot. Replaces five or six separate
 apps. Encrypted end to end. Sovereign by design.
 
-Neither tier includes a cloud AI provider. The AI features described
-in Part IV will arrive when Bosly runs its own model on its own
-hardware. They are an addition to the £25 tier, not its reason. The
-£25 tier's value is the whole workspace and the data protection that
-holds it together.
+The chatbot does not use a cloud AI provider. One feature does. Social
+media drafting sends the content brief the user writes to Anthropic's
+Claude API to generate ideas and captions. Nothing else is sent, and no
+other feature uses an external AI provider. The AI features described in
+Part IV will arrive when Bosly runs its own model on its own hardware.
+They are an addition to the £25 tier, not its reason.
 
 The governance accord (this document) applies to both.
 
@@ -229,11 +230,15 @@ Bosly is compliant by architecture:
 
 ### 4.1 AI Processing
 
-Bosly does not currently use any external AI provider. There is no cloud
-LLM behind the chatbot. The chatbot is a deterministic workflow engine: it
-answers questions about counts, statuses, dates, and categories using the
-metadata the server holds in plaintext. It cannot read content, and it
-cannot draft prose.
+The chatbot does not use an external AI provider. It is a deterministic
+workflow engine: it answers questions about counts, statuses, dates, and
+categories using the metadata the server holds in plaintext. It cannot
+read content, and it cannot draft prose.
+
+One feature does use an external AI provider. Social media drafting sends
+the content brief the user writes to Anthropic's Claude API to generate
+ideas and captions. Nothing else is sent. This is the only place in Bosly
+where user-typed text leaves the account.
 
 When Bosly runs its own model — after the hardware upgrade — the AI
 features will be an addition to the £25 tier. The model will run on the
@@ -255,11 +260,17 @@ not harvest conversations for model improvement.
 
 ### 4.3 AI Provider Transparency
 
-Bosly does not use any third-party AI provider. There is no Civo
-dependency, no OpenAI dependency, no cloud LLM of any kind. When the local
-model is ready, it will be described here and nowhere else. Until then,
-this article describes a fact: no user data leaves Bosly's own
-infrastructure.
+Anthropic's Claude API is used by one feature: social media drafting. When
+a user writes a content brief in the social pill, that text is sent to
+Claude to generate post ideas and captions. Nothing else is sent. No
+account data, no other pill, no encrypted content.
+
+No other third-party AI provider is used. There is no Civo dependency, no
+OpenAI dependency, no cloud LLM anywhere else in the product.
+
+When the local model is ready, it will replace the social connection and be
+described here. Until then, this section describes the one exception to the
+rule that no user data leaves Bosly's own infrastructure.
 
 ---
 
@@ -443,7 +454,8 @@ help, and the encryption breaks the product.
 The chatbot is not an LLM. It is an interface to the workflow engine — a
 deterministic layer that answers questions about counts, statuses, dates,
 and categories using metadata the server holds in plaintext. No cloud AI
-is involved.
+is involved. The only feature that uses an external AI provider is social
+media drafting, described in Article IV, section 4.3.
 
 **The chatbot can:**
 - Answer "how many" questions (count from metadata)
@@ -558,8 +570,8 @@ Registration with the UK Information Commissioner's Office. Tracked as
 
 ### 4.9 Local AI Models
 
-On-device or self-hosted models that eliminate the dependency on external AI
-providers.
+On-device or self-hosted models that will replace the Anthropic Claude
+connection used by social media drafting today.
 
 ### 4.10 Interface Dissolution
 
@@ -582,7 +594,10 @@ Amendments must not contradict Part II.
 ---
 
 *Ratified May 13, 2026. Amended May 30, 2026 (v1.1.0). Revised September 24,
-2026 (v1.2.0, v1.3.0, and v1.4.0). This accord is the single source of truth
-for what Bosly is, what Bosly stands for, and what Bosly will never do.
-Part III tracks where Bosly is on the journey. Part IV names what's planned.
-Neither tier promises a cloud AI; neither uses one.*
+2026 (v1.2.0, v1.3.0, and v1.4.0). Revised September 27, 2026 (v1.5.0 —
+Article IV section 4.3 corrected: social media drafting uses Anthropic's
+Claude API; the chatbot does not use any AI provider). This accord is the
+single source of truth for what Bosly is, what Bosly stands for, and what
+Bosly will never do. Part III tracks where Bosly is on the journey. Part IV
+names what's planned. Neither tier promises a cloud AI. The chatbot uses
+none. Social media drafting uses one.*
