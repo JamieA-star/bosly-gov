@@ -727,6 +727,36 @@ that has actually happened.
     command not found". Cosmetic for the cp commands, but the
     guards are broken. Check all .sh files and normalise to LF.
 
+[ ] accord.social_claude_disclosure — The social media
+    drafting tool sends the content brief the user writes to
+    Anthropic's Claude API (app/api/social/generate-ideas and
+    generate-captions, using CLAUDE_API_KEY). This was live
+    for months and no document mentioned it. The privacy
+    page, the FAQ, the README, and the Accord all claimed no
+    cloud AI of any kind. All four were corrected 27 Sept.
+    What still needs doing:
+
+      - Decide whether to sign a data processing agreement
+        with Anthropic. Until one is in place, the privacy
+        page says the text is processed under Anthropic's
+        standard API terms, which is true. With a DPA in
+        place, the page can state Anthropic does not train
+        on the data.
+
+      - Check whether any other feature has an undisclosed
+        external AI or third-party connection. The lesson
+        from this one is that we assumed, we did not audit.
+
+      - Decide whether the local model replaces the Claude
+        connection (per Article IV 4.9), or whether the
+        Claude connection stays and Article IV 4.9 is
+        revised.
+
+    Related: accord.doc_consistency_audit, gov.claim_invariants
+    (which would catch this class of drift if it existed).
+    Estimate: half a session for the DPA decision and the
+    audit of other connections.
+
 [ ] gov.claim_invariants — A new class of Gov check: verify
     that the documentation matches the code. The docs (privacy,
     terms, safety, transparency, llms.txt, llms-full.txt, FAQ)
