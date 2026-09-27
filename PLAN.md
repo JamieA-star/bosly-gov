@@ -227,7 +227,7 @@ that has actually happened.
 
 [x] accord.server_side_key_visibility — DONE 21 Sept. Committed 2219b73. The client was sending the exported AES key to /api/auth/update-key. Nothing read it server-side. Removed from signup and recovery. Route now accepts all fields as optional. The zero-access claim is true: the server never sees key material. The User.publicKey DB column still exists but new users get null.
 
-[ ] accord.spaces_encryption — Shared spaces (connected workspaces
+[ ] [GATED] accord.spaces_encryption — Shared spaces (connected workspaces
     for organisations and individuals) is a future feature. The
     route exists and works, but stores names in plaintext. Not
     currently enforced because the feature isn't shipped.
@@ -356,7 +356,7 @@ that has actually happened.
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
 
-[ ] ops.founding_member_offer — The 3 Oct founding member
+[ ] [LIVE] ops.founding_member_offer — The 3 Oct founding member
     ask goes out Friday. The offer is a Stripe promotion code
     (40% off, duration forever, max 21 redemptions — 20 for the
     post, 1 reserved for the founder's end-to-end test).
@@ -384,7 +384,7 @@ that has actually happened.
     Item stays open until the end-to-end test passes.
 
 
-[ ] accord.user_docs_prose_pass — Apply the new
+[ ] [LIVE] accord.user_docs_prose_pass — Apply the new
     WORKING_AGREEMENT rule ("Writing for the reader") to the
     existing user-facing documents. The rule: no hash headers,
     no bullet dots, no lists pretending to be sentences.
@@ -416,7 +416,7 @@ that has actually happened.
     preserved. Only the sections that read like a machine
     wrote them get rewritten.
 
-[ ] accord.social_render_pipeline — The real social media
+[ ] [LIVE] accord.social_render_pipeline — The real social media
     image renderer is broken/corrupted. lib/social/render.ts
     currently exports a placeholder (renderSocialMediaImage
     returns a 1x1 transparent PNG; renderVariants returns
@@ -559,7 +559,7 @@ that has actually happened.
     gov.evolve_loop. Discovered 21 Sept when checking whether
     the evolve loop had a data source.
 
-[ ] gov.evolve_loop - usage-driven and feedback-driven evolution.
+[ ] [GATED] gov.evolve_loop - usage-driven and feedback-driven evolution.
     UNBLOCKED 21 Sept: accord.usage_capture_wiring is done. The
     UsageEvent table will populate as the app is used. Do not
     build the loop until there are rows to read.
@@ -607,7 +607,7 @@ that has actually happened.
         see that it was received and whether it changed
         anything.
 
-[ ] gov.orientation_script_versioned — /usr/local/bin/bosly is
+[ ] [DECISION] gov.orientation_script_versioned — /usr/local/bin/bosly is
     outside version control. The script that generates every
     session's orientation has no git history; if it is corrupted
     or edited by accident, there is no recovery beyond a single
@@ -618,7 +618,7 @@ that has actually happened.
     the risk and document the decision here. Raised 27 Sept after
     the tail -20 fix showed the script is editable but untracked.
 
-[ ] gov.memory_persistence — /mnt/bosly/bosly-data/copilot-knowledge/*/memory.json
+[ ] [DECISION] gov.memory_persistence — /mnt/bosly/bosly-data/copilot-knowledge/*/memory.json
     is not tracked by any git repo. Confirmed 27 Sept: bosly-1.0,
     bosly-keep, and bosly-gov do not track any path under
     copilot-knowledge. The memory files are the only place the
@@ -636,16 +636,16 @@ that has actually happened.
     a session wrote three entries and then discovered the file
     they went into was untracked.
 
-[ ] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
+[ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
-[ ] accord.follow_up_prompt — Chat-driven follow-up. ORIGINALLY: user asks "which invoices need chasing?", the browser identifies overdue invoices from decrypted data, prompts to send, builds emails client-side. NEEDS RE-FRAMING: same shape as above. This is a workflow engine recipe, not an LLM feature. The browser does the identification; the workflow engine handles the intent.
+[ ] [DECISION] accord.follow_up_prompt — Chat-driven follow-up. ORIGINALLY: user asks "which invoices need chasing?", the browser identifies overdue invoices from decrypted data, prompts to send, builds emails client-side. NEEDS RE-FRAMING: same shape as above. This is a workflow engine recipe, not an LLM feature. The browser does the identification; the workflow engine handles the intent.
 
 
-[ ] accord.wellness_amount_check — Client-side anomaly check. ORIGINALLY: the browser computes per-client averages from decrypted data and surfaces anomalies locally. This is a workflow engine pattern. No LLM needed. Still valid as designed — the browser does the computation.
+[ ] [LIVE] accord.wellness_amount_check — Client-side anomaly check. ORIGINALLY: the browser computes per-client averages from decrypted data and surfaces anomalies locally. This is a workflow engine pattern. No LLM needed. Still valid as designed — the browser does the computation.
 
 
-[ ] accord.email_relay_encryption — Option D for the email relay.
+[ ] [LIVE] accord.email_relay_encryption — Option D for the email relay.
     Encrypt the email body client-side with a per-request
     throwaway key that the server decrypts in memory, uses for
     the SMTP call, and immediately discards. Server never holds a
@@ -700,7 +700,7 @@ that has actually happened.
     Deleted __pycache__/ and three 1-byte .bak files. Same
     pattern as the /usr/local/bin/bosly-* audit on 17 Sept.
 
-[ ] accord.seo_ai_discoverability — Make Bosly discoverable
+[ ] [LIVE] accord.seo_ai_discoverability — Make Bosly discoverable
     to AI systems and search engines. Priority order, highest
     value first:
 
@@ -745,7 +745,7 @@ that has actually happened.
     llms.txt + schema are the highest value for the least
     effort. The Cloudflare check is the gate.
 
-[ ] accord.middleware_public_routes — The middleware's
+[ ] [LIVE] accord.middleware_public_routes — The middleware's
     isPublicRoute list is a manual enumeration of every public
     URL. It drifts as the app grows: /sitemap.xml was added as
     a route but never added to the list, so crawlers got
@@ -762,7 +762,7 @@ that has actually happened.
     command not found". Cosmetic for the cp commands, but the
     guards are broken. Check all .sh files and normalise to LF.
 
-[ ] accord.social_claude_disclosure — The social media
+[ ] [GATED] accord.social_claude_disclosure — The social media
     drafting tool sends the content brief the user writes to
     Anthropic's Claude API (app/api/social/generate-ideas and
     generate-captions, using CLAUDE_API_KEY). This was live
@@ -792,7 +792,7 @@ that has actually happened.
     Estimate: half a session for the DPA decision and the
     audit of other connections.
 
-[ ] gov.claim_invariants — A new class of Gov check: verify
+[ ] [DECISION] gov.claim_invariants — A new class of Gov check: verify
     that the documentation matches the code. The docs (privacy,
     terms, safety, transparency, llms.txt, llms-full.txt, FAQ)
     make overlapping factual claims. The code changes underneath.
@@ -811,7 +811,7 @@ that has actually happened.
     needs SMTP-from-server work. See accord.face_id_recovery for
     the related design.
 
-[ ] accord.face_id_recovery — Build Face ID + PIN recovery as
+[ ] [GATED] accord.face_id_recovery — Build Face ID + PIN recovery as
     a real feature. Currently "Face ID recovery" in the
     ceremony and vault reminders describes the browser's
     password manager prompting for Face ID to autofill the
@@ -879,7 +879,7 @@ that has actually happened.
     Predecessor for accord.encrypt_all_pills.
     Estimate: 2-4 focused days of design.
 
-[ ] accord.encrypt_all_pills — Extend client-side encryption
+[ ] [GATED] accord.encrypt_all_pills — Extend client-side encryption
     to the six remaining pills. Each pill's migration preserves
     the METADATA schema (Category A operational + Category B
     analytical) and encrypts everything else (Category C
@@ -920,7 +920,7 @@ that has actually happened.
     state.
     Estimate: half a day.
 
-[ ] accord.inbox_pill_encryption — Move the inbox cache to
+[ ] [GATED] accord.inbox_pill_encryption — Move the inbox cache to
     encryption with the user's vault key. Currently the cache
     at dataPath('.data', 'inbox', 'cache') is encrypted at
     rest with ENCRYPTION_KEY — a server-side key. The server
@@ -942,7 +942,7 @@ that has actually happened.
     Part of: accord.encrypt_all_pills (the Inbox entry).
     Estimate: 2 sessions (schema + client + route).
 
-[ ] accord.kyber_status_decision — The immediate doc
+[ ] [DECISION] accord.kyber_status_decision — The immediate doc
     problem is fixed. The "quantum-resistant encryption"
     claim was removed from llms.txt and llms-full.txt on
     23 Sept, and from README.md on 26 Sept (was still in the
@@ -951,6 +951,9 @@ that has actually happened.
     README also gained a short paragraph above the list
     explaining that the Accord describes a direction, not a
     current state.
+
+    Doc fix half DONE 23-26 Sept. Remaining: the decision
+    itself — options (a)/(b)/(c) below.
 
     The decision itself is still open. lib/crypto/kyber.ts
     exports a full API (generateKyberKeyPair, encapsulate,
@@ -968,7 +971,7 @@ that has actually happened.
     llms.txt, llms-full.txt, and possibly elsewhere. The
     kyber code exists but no user data is protected by it.
 
-[ ] ops.ico_registration — Register with the ICO. Not done yet.
+[ ] [LIVE] ops.ico_registration — Register with the ICO. Not done yet.
     When done, update /privacy and the FAQ to state it. Until
     then, both documents must not claim registration.
 
@@ -998,7 +1001,7 @@ that has actually happened.
     reflects true claims, not aspirational ones. Add FAQPage
     JSON-LD. Add to sitemap. Link from llms.txt.
 
-[ ] accord.tier_enforcement — Enforce the free/£25 split in
+[ ] [GATED] accord.tier_enforcement — Enforce the free/£25 split in
     code. Free tier: Active, Contacts, Calendar, Health,
     Invoicing. £25 tier: all of the above plus Inbox, Finance,
     Social, Data health, Chatbot. What "enforcement" means:
@@ -1010,7 +1013,7 @@ that has actually happened.
     Depends on: the pricing decision (24 Sept) being final.
     Estimate: half a day.
 
-[ ] accord.pricing_update — PARTIAL. The premise is stale:
+[ ] [STALE] accord.pricing_update — PARTIAL. The premise is stale:
     /onboarding/activate and /onboarding/success were archived
     on 21 Sept (accord.beta_onboarding_simplification) because
     they were dead code. The live upgrade path is
@@ -1033,7 +1036,7 @@ that has actually happened.
     (accord.tier_copy) is separate and still open.
     Estimate: 2-3 hours after the placement decision.
 
-[ ] gov.accord_compliance — A new check that verifies
+[ ] [GATED] gov.accord_compliance — A new check that verifies
     Part III of the Accord against the code. Specifically:
       - Every pill listed as "encrypted client-side" has its
         content columns in encryptedData
@@ -1063,7 +1066,7 @@ that has actually happened.
     because the catalogue is the specific deliverable.
     Estimate: half a day to define, ongoing additions.
 
-[ ] accord.tier_copy — Write the pricing copy for both
+[ ] [GATED] accord.tier_copy — Write the pricing copy for both
     tiers. Free: "Five pills, forever free. Encrypted. No
     tracking. Run your business on it." £25: "The full
     workspace. Ten pills. Replaces five apps. Sovereign by
@@ -1073,7 +1076,7 @@ that has actually happened.
     Estimate: 2 hours.
 
 
-[ ] ops.legal_compliance_payment — Legal basics for when
+[ ] [LIVE] ops.legal_compliance_payment — Legal basics for when
     Bosly takes payment. Not needed before 3 Oct, but on the
     plan so it doesn't become a panic when the first payment
     lands.
@@ -1110,7 +1113,7 @@ that has actually happened.
         it yet.
       - ICO registration: already on the plan.
 
-[ ] ops.search_visibility_basics — Connect the site to
+[ ] [LIVE] ops.search_visibility_basics — Connect the site to
     search engines. Free. About an hour. Flying blind
     without it.
 
@@ -1131,14 +1134,14 @@ that has actually happened.
     Hygiene, not growth. Stops you getting bitten; doesn't
     make people buy.
 
-[ ] gov.cron_sanity_repo_wide — Extend checks/cron_sanity.py to
+[ ] [LIVE] gov.cron_sanity_repo_wide — Extend checks/cron_sanity.py to
     scan every *.sh file in the repo (not just cron-invoked
     scripts and /usr/local/bin/bosly-*). deploy.sh and
     restore-bosly.sh both had CRLF-broken shebangs and were
     not covered by the current check. Motivated by the 23 Sept
     CRLF fix.
 
-[ ] ops.repo_root_cleanup — the accord repo root has
+[ ] [LIVE] ops.repo_root_cleanup — the accord repo root has
     accumulated debris that needs attention: zero-byte files
     (=, bosly@0.1.0, bosly.db, next, node, .critical.tmp), a
     dozen test-*.ts and .bak files from mid-August, patch_*.py
@@ -1150,7 +1153,7 @@ that has actually happened.
     do not exist. No design decisions made yet. This entry is a
     reminder to go and look, not a specification.
 
-[ ] ops.journey_test_outbox_check — The retired bosly-journey-test
+[ ] [LIVE] ops.journey_test_outbox_check — The retired bosly-journey-test
     had one unique check: that POST /api/messages/send returns
     { pending: true } (the outbox delay). The original plan was to
     fold it into scripts/e2e-full-test.ts — but that script was
@@ -1187,7 +1190,7 @@ that has actually happened.
     bosly-analytics are kept. bosly-evolve is pending replacement
     (see gov.evolve_loop).
 
-[ ] accord.legacy_js_audit — there is a substantial body of
+[ ] [LIVE] accord.legacy_js_audit — there is a substantial body of
     .js code tracked in the repo alongside the .ts/.tsx source:
     app/config/*.js, app/sw-client.js, lib/imap.js, lib/user.js,
     lib/social.js, lib/social/*.js, lib/inboxStore.js,
@@ -1228,7 +1231,7 @@ This is the work that makes Bosly safe to grow.
 1. THE WEEKLY HEALTH REPORT
 ----------------------------------------------------------------
 
-[ ] gov.weekly_health_report — A single email, every Sunday
+[ ] [LIVE] gov.weekly_health_report — A single email, every Sunday
     evening, telling the whole story of the system. It always
     arrives. A quiet week is still reported as a quiet week.
     Silence is ambiguous — a report that sometimes doesn't
@@ -1291,14 +1294,14 @@ system readable.
 
 • ops.repo_root_cleanup — see the primary item above.
 • accord.legacy_js_audit — see the primary item above.
-[ ] ops.scripts_dir_audit_keep — Keep's scripts/ not yet
+[ ] [LIVE] ops.scripts_dir_audit_keep — Keep's scripts/ not yet
     audited. Same treatment as Accord's (done 21 Sept).
-[ ] ops.scripts_dir_audit_gov — Gov's scripts not yet
+[ ] [LIVE] ops.scripts_dir_audit_gov — Gov's scripts not yet
     audited.
-[ ] ops.bak_file_sweep — every remaining .bak, .backup,
+[ ] [LIVE] ops.bak_file_sweep — every remaining .bak, .backup,
     and stale file across the three repos. Git remembers
     them; the working tree shouldn't carry them.
-[ ] ops.readme_accuracy_all — every README in the three
+[ ] [LIVE] ops.readme_accuracy_all — every README in the three
     repos, checked against reality. bosly-gov/README.md
     was corrected 21 Sept; the others not yet.
 
