@@ -358,25 +358,31 @@ that has actually happened.
 
 [ ] ops.founding_member_offer — The 3 Oct founding member
     ask goes out Friday. The offer is a Stripe promotion code
-    (40% off, duration forever, max 20 redemptions). The
-    checkout route now shows the promo code field
-    (allow_promotion_codes: true, committed 26 Sept). What's
-    left is dashboard work and testing, not code:
+    (40% off, duration forever, max 21 redemptions — 20 for the
+    post, 1 reserved for the founder's end-to-end test).
 
-      - Create the coupon in Stripe: 40% off, duration
-        forever.
-      - Create the promotion code: max redemptions 20.
-      - Test end to end: fresh signup, upgrade, apply code,
-        confirm £15 price and active subscription on a test
-        card.
-      - Rewrite the reel. The current draft is stale: it
-        offers "free AI features for life" which contradicts
-        the 24 Sept no-cloud-AI decision.
-      - Decide whether the code is published on the site or
-        sent only to the 20 people. If published, the max
-        redemptions cap is the only limit.
+    Status as of 27 Sept:
+      - Coupon created in Stripe: 40% off, duration forever. DONE.
+      - Promotion code FOUNDER40 created: max redemptions 21. DONE.
+      - Reel rewritten. The stale "free AI features for life" and
+        "for life" language is gone; the reel now promises only
+        what is true (20 spots, £15/mo instead of £25, feedback
+        in exchange for a seat). DONE.
+      - Publish-vs-private decided: PRIVATE. The code is not
+        published on the site or in the post. It is sent only to
+        people who comment IN or DM. The pinned comment keeps the
+        fit framing ("I'd rather fill these with people who'll
+        tell me what's broken than with whoever gets here
+        first"). DONE.
+      - End-to-end test: NOT YET RUN. Plan is a live-mode test
+        with a real card — fresh signup, upgrade, apply FOUNDER40,
+        confirm £15 and active subscription, then cancel and
+        refund within Stripe's refund window. The test consumes
+        one of the 21 redemptions; that is why the cap is 21 and
+        the post says 20.
 
-    Not blocking code. Blocks the reel going out as written.
+    Item stays open until the end-to-end test passes.
+
 
 [ ] accord.user_docs_prose_pass — Apply the new
     WORKING_AGREEMENT rule ("Writing for the reader") to the
