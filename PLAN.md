@@ -636,6 +636,50 @@ that has actually happened.
     a session wrote three entries and then discovered the file
     they went into was untracked.
 
+[ ] [DECISION] gov.accord_as_source_of_truth — The Accord is
+    described as the constitution ("it bends features, not the
+    other way round") but it lives at
+    bosly-gov/docs/ACCORD.md — a different repo from the app it
+    governs. Nothing versions it with the code; nothing checks it
+    against the code; gov.accord_compliance (which would) was
+    gated and had not run. The result is drift. On 27 Sept a
+    single audit found the Accord, the plan, and the marketing
+    copy all disagreeing with the code about which pills are
+    encrypted. A source of truth has to be in the repo it
+    describes and checked against it, or it is just a document.
+    Two moves: (a) move the Accord to bosly-1.0/docs/ACCORD.md so
+    it commits with the app; (b) have gov.accord_compliance read
+    it from there. Without both, "the constitution" is an
+    aspiration. Raised 27 Sept after the drift audit.
+
+[ ] [LIVE] gov.claim_drift_audit — The specific drifts found on
+    27 Sept, recorded so they are fixed rather than lost. Each is
+    a surface claiming something the code does not do.
+
+      1. app/page.tsx:267 — card says "AI is £25/month when you
+         want it". The cloud AI was removed 24 Sept. False.
+      2. app/page.tsx:263 and app/signin/page.tsx:260 — card says
+         "Zero-access encryption" with no scope. True for five
+         pills, not for Active, Inbox, Social, or Data health.
+      3. app/(marketing)/safety/page.tsx — says "your data is
+         encrypted before it reaches our servers" and never names
+         the Social/Anthropic exception. The FAQ and the Accord
+         both disclose it; the safety page does not.
+      4. app/(marketing)/faq/page.tsx:35 — the £25 answer ends
+         "No cloud AI, no third-party processor", two questions
+         after the FAQ itself discloses the Anthropic connection.
+         Self-contradictory.
+      5. PLAN.md accord.encrypt_all_pills — lists six pills as
+         needing encryption. Three (Contacts, Calendar, Finance)
+         are already encrypted. Remaining: Active, Inbox, Social.
+      6. PLAN.md accord.user_docs_prose_pass — says the Accord is
+         "most likely to be read by someone deciding whether to
+         trust Bosly". The Accord is internal, for the founder.
+         It is not a customer-facing document.
+
+    Fixing these by hand is the short version. The durable fix is
+    gov.accord_compliance. This item records the instances.
+
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
@@ -1036,19 +1080,31 @@ that has actually happened.
     (accord.tier_copy) is separate and still open.
     Estimate: 2-3 hours after the placement decision.
 
-[ ] [GATED] gov.accord_compliance — A new check that verifies
-    Part III of the Accord against the code. Specifically:
-      - Every pill listed as "encrypted client-side" has its
-        content columns in encryptedData
-      - Every pill listed as "plaintext, migration planned"
-        matches its stated metadata schema
-      - No content column has been left plaintext that
-        shouldn't be
-    Runs nightly at 5am. Fails when the code drifts from
-    the Accord's Part III.
-    Depends on: accord.encrypt_all_pills progress for
-    meaningful verification.
-    Estimate: 2-3 hours for the initial version.
+[ ] [LIVE] gov.accord_compliance — A check that verifies the
+    Accord's Part III against the code, so the Accord can be the
+    source of truth rather than a document that drifts.
+
+    FIRST VERSION (buildable now, not gated): read the pill list in
+    Accord Part III, read every model with an encryptedData field
+    in prisma/schema.prisma, and fail if they disagree. Confirmed
+    27 Sept: the schema has encryptedData on Contact, CalendarEvent,
+    Invoice, FinanceTransaction, and six Health models — five pills.
+    The Accord and the plan both disagree with that list. This check
+    catches the disagreement.
+
+    SECOND VERSION (after accord.encrypt_all_pills): verify the
+    metadata schemas stated in Part III match the columns left
+    plaintext. Verify no content column is plaintext that Part III
+    says is encrypted.
+
+    THIRD VERSION (after gov.accord_as_source_of_truth): extend
+    beyond Part III to the marketing claims — every route that calls
+    an external API is named on the safety page; no user-facing
+    pricing copy claims an AI feature that no longer exists.
+
+    Runs in the fast tier. Fails when the code drifts from the
+    Accord.
+    Estimate: 2-3 hours for the first version.
 
 [x] accord.workflow_catalogue — DONE 24 Sept. The workflow map at bosly-gov/docs/WORKFLOW_ENGINE.md documents all ten workflows: briefing, check-conflict, relationships, wellness-check, scan-inbox, preferences, enrich-contacts, and three fast-paths in lib/chat/helpers.ts. Each entry has what it computes, what it reads, and the verdict. UPDATE 24 Sept (evening): the engine shipped. Nine workflows live as code. preferences was confirmed dead and removed. scan-inbox Phase 1 (the original blocker) shipped as a rule-based workflow reading subject lines only. enrich-contacts shipped as the same shape. The catalogue is now the design doc for a system that exists, not a plan for one. The map also contains the user-facing transparency statement about what the server can and cannot see.
     the engine can run without an LLM. Examples:
