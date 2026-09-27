@@ -55,21 +55,35 @@ against the code.*
 
 ### 1.1 Zero-Access Encryption
 
-Every piece of user data is encrypted on the user's device before it reaches
-Bosly's server. The server stores ciphertext only. Bosly's creator,
-administrators, and infrastructure providers cannot read user data. This is
+Five of Bosly's nine pills are encrypted on the user's device before they
+reach Bosly's server: Invoicing, Contacts, Calendar, Finance, and Health.
+The server stores ciphertext only. For those five, Bosly's creator,
+administrators, and infrastructure providers cannot read the data. It is
 not a promise — it is a mathematical constraint.
 
-**Encrypted on the client before storage:**
-- Contact details (names, email addresses, phone numbers, addresses)
-- Calendar events (titles, descriptions, locations, attendees)
-- Invoices and line items
-- Financial transactions and tax records
-- Health records, appointments, medications, blood tests
-- Chatbot conversations with Bosly
-- Tasks, cards, and project data
+Four pills are not yet behind client-side encryption: Active, Inbox,
+Social, and Data health. Part III lists exactly what each stores in
+plaintext, and why. The migration that closes the gap is tracked as
+`accord.encrypt_all_pills`. Until a pill appears in Part III, section 3.1,
+it is not encrypted, and no document should say it is.
 
-**Stored in plaintext (operationally necessary):**
+**Encrypted on the client (five pills):**
+- Invoicing — invoices and line items
+- Contacts — names, email addresses, phone numbers, addresses
+- Calendar — event titles, descriptions, locations, attendees
+- Finance — transactions and tax records
+- Health — records, appointments, medications, blood tests, passport
+
+Chat memory — the conversation history with the chatbot — is encrypted
+separately from the pills.
+
+**Not yet encrypted (four pills):**
+- Active — tasks and cards
+- Inbox — encrypted with a server-side key, not the vault key; see 3.2
+- Social — content and media
+- Data health — scans, findings, and snapshots
+
+**Stored in plaintext regardless of pill (operationally necessary):**
 - Email address (login and notifications)
 - Subscription tier (free or Accord)
 - Encrypted data blobs (unreadable without the user's key)
@@ -95,10 +109,11 @@ never leaves the browser. It is presented once, during the ceremony, and is not
 stored by Bosly.
 
 Not every category of user data is yet behind client-side encryption. Invoices
-and health records are. Contacts, calendar, cards, finance, conversations, and
-client patterns are stored plaintext today. The migration to bring them behind
-encryption is tracked as `accord.encrypt_all_pills`. See Part III for the
-current state and Part IV for the plan.
+and health records are, as are contacts, calendar, and finance. Four pills
+are not yet: Active, Inbox, Social, and Data health. The migration to bring
+them behind encryption is tracked as `accord.encrypt_all_pills`. Part III,
+section 3.1 lists what is encrypted today; section 3.2 lists what is not,
+with the reason. Part IV describes the plan.
 
 The PIN backup is optional. It encrypts the recovery phrase with a 6-digit PIN
 in the browser, then sends only the ciphertext to the server. If the user loses
@@ -408,18 +423,28 @@ check verifies this section against the code.*
 
 ### 3.1 Encrypted client-side
 
-These categories of user data are encrypted in the browser before storage.
-The server holds only ciphertext.
+Five pills are encrypted in the browser before storage. The server holds
+only ciphertext.
 
-- **Invoices and line items** — clientName, clientEmail, amount,
-  taskDescription, businessName, lineItems[]
-- **Health records** — appointments, medications, blood tests, symptoms,
+- **Invoicing** — clientName, clientEmail, amount, taskDescription,
+  businessName, lineItems[]
+- **Contacts** — name, email, phone, address, notes, company, title,
+  value, hourlyRate
+- **Calendar** — title, description, location, clientName, clientPhone,
+  clientEmail, extras
+- **Finance** — description, amountPence, receipts, jobId
+- **Health** — appointments, medications, blood tests, symptoms,
   health passport
-- **Chat memory** — the conversation history (ChatMemory.encryptedMessages)
+
+Chat memory — the conversation history (ChatMemory.encryptedMessages) —
+is encrypted separately from the pills.
+
+<!-- encrypted-models: Contact, CalendarEvent, Invoice, FinanceTransaction, HealthBloodTest, HealthAppointment, HealthMedication, HealthRecord, HealthPassport, HealthSymptom -->
+<!-- plaintext-models: Card, Task, SocialPost, DataHealthSnapshot, DataHealthFinding, DataHealthSectionState, DataHealthScanRun, DataHealthSettings -->
 
 ### 3.2 Stored plaintext, migration planned
 
-These pills still store content in plaintext. The migration to bring them
+Four pills still store content in plaintext. The migration to bring them
 behind client-side encryption is tracked as `accord.encrypt_all_pills`.
 
 The migration preserves the **metadata schema** — Category A (operational)
@@ -427,22 +452,19 @@ and Category B (analytical) fields — and encrypts everything else
 (Category C, content). The rule: metadata can be counted, filtered, sorted,
 and compared; content cannot.
 
-- **Contacts** — plaintext: `status`, `kind`, `isBusiness`,
-  `lastContactAt`. Content: name, email, phone, address, notes, company,
-  title, value, hourlyRate.
-- **Calendar events** — plaintext: `startTime`, `endTime`, `isAllDay`,
-  `status`, `isDone`. Content: title, description, location, clientName,
-  clientPhone, clientEmail, extras.
-- **Cards and tasks** — plaintext: `status`, `priority`, `dueDate`,
-  `dueAt`, `completedAt`. Content: title, description, context,
-  AI-generated text, estimatedValue, metadataJson.
-- **Finance transactions** — plaintext: `date`, `type`, `category`,
-  `book`, `reviewed`. Content: description, amountPence, receipts, jobId.
-- **Inbox** — plaintext: `date`, `accountId`, `isRead`, `hasAttachment`,
-  `kind`. Content: subject, from, body, attachments. Most complex —
-  inbound email is on the IMAP server.
+- **Active** — plaintext: `status`, `priority`, `dueDate`, `dueAt`,
+  `completedAt`. Content: title, description, context, AI-generated
+  text, estimatedValue, metadataJson.
+- **Inbox** — encrypted with a server-side key (`ENCRYPTION_KEY`), not
+  the user's vault key. The server can read the content. Plaintext:
+  `date`, `accountId`, `isRead`, `hasAttachment`, `kind`. This pill
+  changes the encryption model, not just the metadata schema. See
+  `accord.inbox_pill_encryption`.
 - **Social** — plaintext: `platform`, `status`, `scheduledAt`. Content:
-  content, media, hashtags, tone.
+  content, media, hashtags, tone. One further fact: when the user drafts
+  with the AI feature, the content brief is sent to Anthropic's Claude
+  API. That is described in Article IV, section 4.3.
+- **Data health** — scans, findings, and snapshots. Plaintext today.
 
 The migration is blocked on `accord.workflow_engine`. Each pill must be
 migrated only after the workflow engine's metadata requirements for that
@@ -500,7 +522,7 @@ For clarity, the following are live and functioning as described in Part I:
 - Account deletion in a single transaction
 - Warrant canary at /transparency
 - Nightly governance pipeline (see Article 6.2)
-- Two-tier pricing: free workspace, £25/month for the AI features
+- Two-tier pricing: free workspace of five pills, £25/month for the full workspace and the chatbot
 
 ### 3.6 What is not yet built
 
