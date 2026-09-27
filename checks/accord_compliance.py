@@ -25,7 +25,7 @@ import re
 import sys
 from pathlib import Path
 
-ACCORD = Path("/home/bosly_accord/bosly-gov/docs/ACCORD.md")
+ACCORD = Path("/home/bosly_accord/bosly-1.0/docs/ACCORD.md")
 SCHEMA = Path("/home/bosly_accord/bosly-1.0/prisma/schema.prisma")
 
 MARKER_RE = re.compile(r"<!--\s*encrypted-models:\s*(.*?)\s*-->")

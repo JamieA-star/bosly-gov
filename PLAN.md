@@ -391,10 +391,6 @@ that has actually happened.
     Written as paragraphs instead.
 
     Documents that need the pass:
-      - docs/ACCORD.md — the big one. Part III uses ### and
-        bullet lists throughout. Also Part I and Part II.
-        Most likely to be read by someone deciding whether
-        to trust Bosly.
       - app/(marketing)/safety/page.tsx — sections with
         bullet lists for what Bosly does and doesn't do.
       - app/(marketing)/terms/page.tsx if it exists — same
@@ -636,21 +632,33 @@ that has actually happened.
     a session wrote three entries and then discovered the file
     they went into was untracked.
 
-[ ] [DECISION] gov.accord_as_source_of_truth — The Accord is
+[x] gov.accord_as_source_of_truth — DONE 27 Sept. The Accord was
     described as the constitution ("it bends features, not the
-    other way round") but it lives at
-    bosly-gov/docs/ACCORD.md — a different repo from the app it
-    governs. Nothing versions it with the code; nothing checks it
-    against the code; gov.accord_compliance (which would) was
-    gated and had not run. The result is drift. On 27 Sept a
-    single audit found the Accord, the plan, and the marketing
-    copy all disagreeing with the code about which pills are
-    encrypted. A source of truth has to be in the repo it
-    describes and checked against it, or it is just a document.
-    Two moves: (a) move the Accord to bosly-1.0/docs/ACCORD.md so
-    it commits with the app; (b) have gov.accord_compliance read
-    it from there. Without both, "the constitution" is an
-    aspiration. Raised 27 Sept after the drift audit.
+    other way round") but it lived at bosly-gov/docs/ACCORD.md — a
+    different repo from the app it governs. Nothing versioned it
+    with the code; nothing checked it against the code. On 27 Sept
+    an audit found it contradicting itself and the schema about
+    which pills are encrypted.
+
+    Both moves are done:
+      (a) The Accord is at bosly-1.0/docs/ACCORD.md, committed with
+          the app. The app repo's .gitignore ignored docs/
+          wholesale; narrowed to docs/* with an explicit exception
+          for the Accord. Commit e3cce86.
+      (b) gov.accord_compliance is a fast-tier check that reads the
+          encrypted-models marker from the Accord and compares it
+          to prisma/schema.prisma. It passes: both lists name the
+          same ten models. Committed in bosly-gov.
+
+    The Accord's content was rewritten the same day to match the
+    code: five pills encrypted (Invoicing, Contacts, Calendar,
+    Finance, Health), four not (Active, Inbox, Social, Data
+    health). Article 1.1 and Article 1.2 had contradicted each
+    other; Part III was stale by three pills. All corrected.
+
+    Known limit: gov.accord_compliance verifies the machine-readable
+    marker, not the prose. If someone edits the prose and not the
+    marker, the check will not catch it. That gap is human review.
 
 [ ] [LIVE] gov.claim_drift_audit — The specific drifts found on
     27 Sept, recorded so they are fixed rather than lost. Each is
@@ -675,7 +683,8 @@ that has actually happened.
       6. PLAN.md accord.user_docs_prose_pass — says the Accord is
          "most likely to be read by someone deciding whether to
          trust Bosly". The Accord is internal, for the founder.
-         It is not a customer-facing document.
+         It is not a customer-facing document. FIXED 27 Sept:
+         removed from the prose-pass list.
 
     Fixing these by hand is the short version. The durable fix is
     gov.accord_compliance. This item records the instances.
