@@ -607,6 +607,17 @@ that has actually happened.
         see that it was received and whether it changed
         anything.
 
+[ ] gov.orientation_script_versioned — /usr/local/bin/bosly is
+    outside version control. The script that generates every
+    session's orientation has no git history; if it is corrupted
+    or edited by accident, there is no recovery beyond a single
+    .bak, which is itself deleted after each patch. Options:
+    (a) move the script into bosly-gov/ (e.g. bosly-gov/bin/bosly),
+    commit it, and symlink /usr/local/bin/bosly to it; (b) keep it
+    in bosly-gov/ and install via a small install.sh; (c) accept
+    the risk and document the decision here. Raised 27 Sept after
+    the tail -20 fix showed the script is editable but untracked.
+
 [ ] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
