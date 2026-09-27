@@ -689,6 +689,26 @@ that has actually happened.
     Fixing these by hand is the short version. The durable fix is
     gov.accord_compliance. This item records the instances.
 
+[ ] [DECISION] accord.export_decrypt_on_download — The export route
+    (app/api/settings/export/route.ts) dumps raw table rows. Five
+    pills export as ciphertext (Invoicing, Contacts, Calendar,
+    Finance, Health); four export as plaintext (Active, Inbox,
+    Social, Data health), plus the user record. The route's own
+    note promises "in future, Bosly will decrypt this data for you
+    before download so you can read it directly". The design note
+    in this plan (see /api/settings/export) says the opposite:
+    "Include encryptedData. User owns their export."
+
+    Both positions are defensible. Raw export proves the server
+    never held the key. Decrypted-on-download gives the user a file
+    they can actually read — the vault key is already in the
+    browser during the session, so it is a client-side operation.
+    The two notes disagree and the promise is not tracked as work.
+    Decide: (a) decrypt client-side on download, remove the beta
+    note; (b) keep raw, remove the promise from the note; (c) keep
+    raw, keep the promise, and build it later as its own item.
+    Raised 27 Sept while auditing the export for accuracy.
+
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
@@ -1808,6 +1828,10 @@ READ CONSUMERS TO UPDATE
 /api/settings/export
   - Include encryptedData. User owns their export.
   - Note in export header explains encryption.
+  - Confirmed 27 Sept: five pills export as ciphertext (Invoicing,
+    Contacts, Calendar, Finance, Health); four export as plaintext
+    (Active, Inbox, Social, Data health), plus the user record.
+    Any description of "your export" must account for both.
 
 /api/user/delete
   - Just delete invoice (line-item table gone).
