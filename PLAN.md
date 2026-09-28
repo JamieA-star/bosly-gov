@@ -813,6 +813,100 @@ that has actually happened.
 
     Found 28 Sept while checking the chatbot after the engine swap.
 
+[ ] [LIVE] accord.waiting_well_page — A public "Waiting Well" resource
+    page inside Bosly, linked from the Instagram bio. A lead magnet,
+    not a product: it gives people something useful while they wait
+    for an ADHD assessment, and points at Bosly as a tool for those
+    who want one. The second unauthenticated public surface, after
+    the standalone /invoice tool (see the lead-magnet note above).
+    Static: holds no user data, so the encryption question does not
+    arise.
+
+    Purpose. In England, over 960,000 people are waiting for an ADHD
+    assessment, some two years or more, with almost nothing offered
+    while they wait. Healthwatch found people feel abandoned by the
+    system during this period. The page fills that gap.
+
+    The angle. Most waiting-well resources are clinical-adjacent,
+    generic self-care, or US-focused. None is UK-specific, ADHD-tax-
+    aware, and community-anchored. The ADHD tax angle is the unique
+    contribution. It leads the page; Right to Choose comes second,
+    because RTC is the system's frame and the tax is ours.
+
+    Contents, in order:
+      1. The ADHD tax while you wait — the lead. Money, invoices,
+         deadlines, admin chaos, small systems to build now.
+      2. Right to Choose explained — ask the GP for it by name, name
+         the provider, do not accept a local referral. England only;
+         the other nations have different routes.
+      3. Your rights at work without a diagnosis — reasonable
+         adjustments can be requested without a formal diagnosis.
+      4. Helpful links — ADHD UK, AADD-UK, ADHD Foundation,
+         ADHDadultUK, Healthwatch waiting-well guidance.
+      5. Community — point at Instagram comments and posts.
+      6. FAQ — built from what people actually ask in the comments.
+
+    The bridge sentence (drafted and agreed 28 Sept, do not rewrite
+    badly): "Bosly is a tool to help empower you and your ADHD — the
+    admin side, the invoices, the keeping-track — and to help reduce
+    the ADHD tax burden. Bosly is here if you need it."
+    It appears once, near the end. Bosly is not mentioned anywhere
+    else on the page. If the reader wants the tool they click; if
+    not, they got real help and will remember it.
+
+    Constraints:
+      - Public, accessible without login. MUST be added to the
+        middleware's isPublicRoute list, or it redirects to sign-in.
+        See accord.middleware_public_routes.
+      - Simple URL, e.g. bosley.app/waiting. Lives in the
+        app/(marketing)/ route group with the other public pages.
+      - Start as a plain page: text, links, headings. No chatbot,
+        no quiz. Live and linked beats perfect.
+      - Stays on the community and resources side of the line. Not
+        clinical, not diagnostic, no implied medical judgment. The
+        ADHD taskforce has recommended regulation and quality
+        standards for ADHD service providers; the page must not look
+        like one.
+      - The page must not promise more than Bosly does today. It
+        helps with what exists and points at a direction; it does not
+        claim Bosly runs your admin yet. See
+        accord.admin_assistant_direction.
+
+    Success. Not thousands of users. A handful of the right people.
+    Track clicks from the Instagram bio. Adjust framing if it is not
+    used.
+
+    DRIFT: external claims and links go stale. A check should verify
+    the resource links resolve (HTTP 200) and that the waiting figure
+    carries a source and date in a machine-readable marker. Advice
+    quality and RTC correctness stay human review — same split as
+    gov.accord_compliance, mechanical drift checked, prose reviewed.
+
+    BEFORE BUILD: verify the external claims — the waiting figure
+    and its source; the Right to Choose mechanics against current
+    NHS England guidance; and that all five resource links resolve.
+
+    SEQUENCING: build after the 3 Oct Founding Members reel, not
+    before. The reel is the priority this week.
+
+    Raised 28 Sept.
+
+[ ] [DECISION] accord.admin_assistant_direction — Bosly should
+    eventually do the admin, not just hold the data. Today the pills
+    store and the chatbot answers counts, dates, and statuses. The
+    direction is an assistant that acts: chases invoices, watches
+    deadlines, drafts the boring replies, handles the follow-ups.
+    This is the concrete form of the Accord's "liberation engine"
+    line.
+
+    Not built now, and not promised on any user-facing page. But it
+    is the thing the Waiting Well page bridges toward, and it is the
+    reason that page is worth building.
+
+    Decide the shape before it appears in marketing: what "does your
+    admin" means, concretely, and which pills it spans. Raised
+    28 Sept.
+
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
