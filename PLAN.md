@@ -555,53 +555,63 @@ that has actually happened.
     gov.evolve_loop. Discovered 21 Sept when checking whether
     the evolve loop had a data source.
 
-[ ] [GATED] gov.evolve_loop - usage-driven and feedback-driven evolution.
-    UNBLOCKED 21 Sept: accord.usage_capture_wiring is done. The
-    UsageEvent table will populate as the app is used. Do not
-    build the loop until there are rows to read.
-    Two halves, both reports rather than checks. Neither belongs
-    in the fast-tier pipeline. Both belong in Gov as separate
-    commands with a slower cadence (weekly or monthly).
+[ ] [LIVE] gov.evolve_loop_feedback - feedback-driven evolution.
+    Split from gov.evolve_loop on 28 Sept. The original item was
+    gated on UsageEvent rows; that gate covers the usage half only.
+    This half has real data and is buildable now.
 
-    HALF 1 - USAGE:
-      Read the AnalyticsEvent table and produce a periodic
-      digest. Which pills get opened? Which flows start but do
-      not finish? Which features are being ignored? Where is the
-      friction? Data sources: UsageEvent (product usage —
-      pill open/close/duration events from the workspace
-      pills) AND feedback.jsonl (user sentiment, written
-      to /mnt/bosly/bosly-data/logs/feedback.jsonl).
-      NOTE 21 Sept 2026: UsageEvent is currently EMPTY —
-      the pills do not call useUsageTracking. This item
-      is blocked on accord.usage_capture_wiring. Do not
-      confuse AnalyticsEvent (1678 rows) with product
-      usage — it captures the /invoice lead-magnet, not
-      the app. See fact-20260921-usage-event-empty.
-      Output: a report. Suggested cadence: weekly.
-      Motivated by: bosly-evolve, which did this from a bash
-      script reading the same data.
+    TWO FEEDS:
+      feedback.jsonl — user sentiment on chatbot replies, written
+      by the ChatDrawer feedback flow. Path:
+      /mnt/bosly/bosly-data/logs/feedback.jsonl
 
-    HALF 2 - FEEDBACK:
-      Aggregate chatbot feedback (written to feedback.jsonl) and
-      surface it for review. Which items are open? Which have
-      been addressed? Close the loop by telling the user when
-      their feedback led to a change. Data source:
-      feedback.jsonl (already captured by the ChatDrawer
-      feedback flow, fixed 16 Sept).
+      unknown-intents.jsonl — questions the chatbot could not
+      answer, written by logUnknownIntent in
+      lib/workflow/index.ts. Path:
+      /mnt/bosly/bosly-data/.data/governor/unknown-intents.jsonl
+      Surfaced in the orientation since 28 Sept (UNANSWERED
+      QUESTIONS section), so the count is seen every session.
+
+    What it does:
+      Produce a periodic digest. Which questions recur? Which
+      feedback items are open, which addressed? Close the loop
+      by telling the user when their feedback led to a change.
       Output: a report plus a small tracking store (open /
       addressed). Suggested cadence: weekly.
 
     DESIGN NOTES:
-      - Do not put either half in the fast tier. They read
-        usage data, they do not verify invariants.
-      - The usage digest should not identify individual users.
-        Aggregate only. Consistent with the transparency
-        principle: the user should know what is being measured
-        and why.
+      - Not a fast-tier check. It reads signal, it does not
+        verify invariants.
+      - The unknown-intents summary already appears in the
+        orientation. The digest is the fuller version: grouping,
+        recurrence, and the open/addressed tracking.
       - The feedback loop is a two-way street. If a user takes
         the time to report something, they should be able to
         see that it was received and whether it changed
         anything.
+
+[ ] [GATED] gov.evolve_loop_usage - usage-driven evolution.
+    Split from gov.evolve_loop on 28 Sept.
+
+    Read UsageEvent (product usage — pill open/close/duration
+    events) and produce a periodic digest. Which pills get opened?
+    Which flows start but do not finish? Which features are being
+    ignored? Where is the friction?
+    Data source: UsageEvent table.
+
+    GATE: do not build until there are rows to read. accord.
+    usage_capture_wiring is done (21 Sept), so the pills should
+    write rows as the app is used — but the count has not been
+    confirmed. A psql check on 28 Sept failed on a role that does
+    not exist, so the gate is unverified rather than open. Confirm
+    UsageEvent has rows before building.
+    NOTE: do not confuse AnalyticsEvent (1678 rows) with product
+    usage — it captures the /invoice lead-magnet, not the app.
+    See fact-20260921-usage-event-empty.
+    Output: a report. Suggested cadence: weekly.
+    The usage digest should not identify individual users.
+    Aggregate only — the user should know what is being measured
+    and why.
 
 [ ] [DECISION] gov.orientation_script_versioned — /usr/local/bin/bosly is
     outside version control. The script that generates every
