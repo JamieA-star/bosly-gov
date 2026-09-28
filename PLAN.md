@@ -1284,7 +1284,7 @@ that has actually happened.
     Document the outcome. Note: bosly-audit, bosly-health,
     bosly-diagnose-v5 are superseded. bosly-monitor,
     bosly-analytics are kept. bosly-evolve is pending replacement
-    (see gov.evolve_loop).
+    (see gov.evolve_loop_usage).
 
 [ ] [LIVE] accord.legacy_js_audit — there is a substantial body of
     .js code tracked in the repo alongside the .ts/.tsx source:
@@ -1935,7 +1935,8 @@ Status assessment, 17 September 2026.
                       usage-driven evolution and feedback-driven
                       evolution. Neither is a check. Both belong
                       in Gov as reports, not in the fast-tier
-                      pipeline. See gov.evolve_loop below.
+                      pipeline. See gov.evolve_loop_feedback and
+                      gov.evolve_loop_usage below.
 
 Retirement is by neglect - the scripts stay on disk but stop
 being referenced or run. When the replacement lands, remove.
@@ -2279,7 +2280,8 @@ Session 18-19 Sept 2026:
   - gov.secrets_audit added
 
 Next: accord.spaces_encryption - same pattern as invoices,
-smaller surface. Then gov.evolve_loop. Manual invoice test
+smaller surface. Then gov.evolve_loop_feedback and
+gov.evolve_loop_usage. Manual invoice test
 pending (create, verify DB, reload, send, mark paid).
 
 When a step is done, tick the box and update this section.

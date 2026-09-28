@@ -31,14 +31,14 @@ but out of PATH.
 
 | Script | Reason |
 |---|---|
-| `bosly-evolve` | Function moves to `gov.evolve_loop` |
+| `bosly-evolve` | Function moves to `gov.evolve_loop_usage` |
 
 ## Keep — useful, worth wiring in
 
 | Script | Reason |
 |---|---|
 | `bosly-clean` | Disk analysis |
-| `bosly-feedback` | Feedback reader — feeds `gov.evolve_loop` |
+| `bosly-feedback` | Feedback reader — feeds `gov.evolve_loop_feedback` |
 | `bosly-housekeep` | Server housekeeping |
 | `bosly-lockdown` | Emergency freeze of write operations |
 | `bosly` | Orientation command |
