@@ -589,6 +589,13 @@ that has actually happened.
         the time to report something, they should be able to
         see that it was received and whether it changed
         anything.
+      - Path note (28 Sept): the two feeds use different path
+        mechanisms. unknown-intents.jsonl hardcodes the mount
+        path in lib/workflow/index.ts; feedback.jsonl uses
+        dataPath("logs") in app/api/feedback/route.ts. Both
+        resolve to the same mount today. If BOSLY_DATA_DIR is
+        ever overridden, the unknown-intents log would not
+        follow and the digest would read the wrong place.
 
 [ ] [GATED] gov.evolve_loop_usage - usage-driven evolution.
     Split from gov.evolve_loop on 28 Sept.
@@ -719,6 +726,19 @@ that has actually happened.
     note; (b) keep raw, remove the promise from the note; (c) keep
     raw, keep the promise, and build it later as its own item.
     Raised 27 Sept while auditing the export for accuracy.
+
+[ ] [LIVE] accord.feedback_message_link — ChatDrawer.sendFeedback(msgIdx, text)
+    takes the index of the bot message being flagged, but never
+    sends it. The feedback payload carries rating, text, ts, and
+    source, but not msgIdx. So a flagged reply cannot be traced
+    back to which message it was flagging — the index exists at
+    the call site and is dropped before the POST.
+    Fix: include msgIdx (or a stable message id) in the payload,
+    store it alongside the rating, and let the evolve feedback
+    digest show which reply was flagged.
+    Found by an external review on 28 Sept while designing the
+    digest. Same shape as the claims-drift class: state that
+    exists and is not carried to where it is needed.
 
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
