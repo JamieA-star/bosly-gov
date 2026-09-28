@@ -707,6 +707,47 @@ that has actually happened.
     Fixing these by hand is the short version. The durable fix is
     gov.accord_compliance. This item records the instances.
 
+[x] session-20260928-chat-loop — DONE 28 Sept. The chatbot's feedback
+    loop, checked after the workflow-engine swap, was found half-built
+    and disconnected: the engine logged unknown intents to a file and
+    returned a cannot-help response, but the user was never told the
+    question was noted, and nothing read the log. What was built and
+    fixed:
+
+    - buildCannotHelpResponse() rewritten. It said "I can't help with
+      that yet" and ended "If you want to do it yourself", which read
+      cold. Now: acknowledges the question, says it's been noted,
+      frames the gap as how Bosly grows, keeps the capabilities list,
+      ends by naming the floor. Commit 81731cc.
+
+    - UNANSWERED QUESTIONS section added to the bosly orientation
+      (/usr/local/bin/bosly). Reads unknown-intents.jsonl, shows total,
+      last-7-days, and the most recent question. Always renders, even
+      at zero, so absence is never ambiguous. The signal goes where the
+      founder looks every session. 11 test rows cleared first.
+
+    - evolve_feedback.py built (bosly-gov root). Read-only digest of
+      unknown-intents.jsonl and feedback.jsonl. Groups unknown intents
+      by normalised text; splits feedback by source. Drafted with
+      Copilot, reviewed against the code. Commit 5e5b701.
+
+    - gov.evolve_loop split into gov.evolve_loop_feedback [LIVE] and
+      gov.evolve_loop_usage [GATED]. The original was gated on
+      UsageEvent rows; that gate covers only the usage half.
+      Commit c90ac86. References updated in PLAN.md and
+      OPS_COMMANDS_AUDIT.md.
+
+    - Two gaps recorded: accord.feedback_message_link (msgIdx taken
+      but never sent) and the two-roots path note. Commit 54dd28e.
+
+    Two things the loop revealed about itself: unknown-intents.jsonl
+    held only 11 test rows and feedback.jsonl did not exist at all —
+    both mechanisms were wired and neither had carried real data. And
+    the two logs use different path mechanisms (one hardcodes the
+    mount, one uses dataPath()); they agree today but could diverge.
+    The first is the same shape as pattern-20260928-mechanism-without-
+    input.
+
 [ ] [DECISION] accord.export_decrypt_on_download — The export route
     (app/api/settings/export/route.ts) dumps raw table rows. Five
     pills export as ciphertext (Invoicing, Contacts, Calendar,
@@ -739,6 +780,38 @@ that has actually happened.
     Found by an external review on 28 Sept while designing the
     digest. Same shape as the claims-drift class: state that
     exists and is not carried to where it is needed.
+
+[ ] [LIVE] accord.problem_report_flow — The old chatbot let a user
+    say "the inbox isn't working", ask follow-up questions, and offer
+    to log it for the developer. That lived in the retired
+    chatWithTools path and was not ported to the workflow engine.
+    Now such a message hits the engine, matches nothing, and falls
+    into the generic "I don't have a way to answer that yet" response
+    — which tells the user it's noted but gathers no detail.
+
+    DESIGN (agreed with an external review, 28 Sept):
+      - Engine first. If runEngine returns unknownIntent, do a
+        second-pass check: does this sound like a problem report?
+      - If yes, start a bounded state machine in the chat route,
+        not in the engine. runEngine stays single-turn and stateless.
+      - Two scripted follow-up turns, then a confirm-and-log step.
+        No LLM, so every prompt is fixed, not generated.
+      - State lives in a new file keyed by userId:
+        /mnt/bosly/bosly-data/.data/governor/problem-report-state.json
+        Complete on explicit user confirmation; expire on timeout.
+        Never complete on silence.
+      - The finished report is written to feedback.jsonl with
+        source: "chat_report_flow", so the existing digest picks it
+        up as its own category. No third log file.
+      - Detection helper isLikelyProblemReport(message) lives in the
+        route: phrases like "isn't working", "broken", "won't",
+        "error", "failed", "stuck". Transparent rules, no scoring.
+
+    The user-facing copy per turn is the founder's voice; the shape
+    is: acknowledge, ask one focused question, summarise, offer to
+    log, confirm.
+
+    Found 28 Sept while checking the chatbot after the engine swap.
 
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
