@@ -997,6 +997,26 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[ ] [LIVE] accord.tier_enforcement_sweep — READY TO EXECUTE. The
+    helper (lib/requireAccord.ts) and the check
+    (gov.paid_routes_gated) exist. The check lists the ungated
+    routes: 34 of 37 (all of inbox, finance, social, and
+    data-health/identities; only data-health/check is gated).
+
+    Steps:
+      1. Add `const gate = await requireAccord(req); if (!gate.ok)
+         return NextResponse.json({ error: gate.error }, { status:
+         gate.status });` to each of the 34 routes. Exempt webhooks
+         and cron (the check already exempts them).
+      2. Add the check to manifests/checks.yml (fast tier).
+      3. Run the fast tier — green means every paid route is gated.
+      4. The UI: a paid pill, when the user is not Accord, shows a
+         "part of the full workspace" state with an upgrade link,
+         not a hard wall. "Discovery, not selling."
+
+    Not wired yet: the check fails until step 1 is done, and a
+    failing check breaks the green pipeline. Raised 30 Sept.
+
 [x] accord.webhook_middleware_public — DONE 30 Sept. The Stripe
     webhook at /api/billing/webhook was not in the middleware's
     public routes, so Stripe's POST was redirected (303) to
