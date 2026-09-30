@@ -1790,17 +1790,30 @@ that has actually happened.
     not covered by the current check. Motivated by the 23 Sept
     CRLF fix.
 
-[ ] [LIVE] ops.repo_root_cleanup — the accord repo root has
-    accumulated debris that needs attention: zero-byte files
-    (=, bosly@0.1.0, bosly.db, next, node, .critical.tmp), a
-    dozen test-*.ts and .bak files from mid-August, patch_*.py
-    scripts from the invoice migration, pa-*.appdpa.json and
-    tasks-*.appdpa.json from August, tsconfig.tsbuildinfo
-    (1.6 MB), and multiple archive-shaped directories
-    (_snapshots/, snapshots/, _bak_accent_*). Also
-    tsconfig.json still excludes _DETACHED and _ATTIC, which
-    do not exist. No design decisions made yet. This entry is a
-    reminder to go and look, not a specification.
+[x] ops.repo_root_cleanup — DONE 30 Sept. The root went from
+    60+ items to the live configs, docs, and the app.
+
+    Deleted (48 files, commit 8953452): zero-byte strays (=,
+    bosly@0.1.0, bosly.db, .critical.tmp, next, node), the August
+    fix-*.sh one-off scripts, 16 test-*.ts scratch files,
+    tasks-*.json planning artifacts, tsconfig.tsbuildinfo, and the
+    old backup dirs (_bak_accent_*, snapshots, .v2-restore-baks,
+    bosly-gov-v4, .tmp). Also 69 .bak files across both repos.
+
+    Archived, not deleted, to legacy/2026-09-30-root-cleanup/
+    (commits f4c05cc, be9853f): the old v2/v3 app (src/), the
+    retired PA tooling (tools/), bin/, the stray pp/ route,
+    server.js/server.cjs, build-prod.sh (the type-skipping build),
+    eval.ts, the August PA artifacts (PA-audit-report.md,
+    pa-*.appdpa.json, pa-polish-*.txt), and the duplicate
+    postcss.config.cjs.
+
+    Removed 4 dead components (commit b796079): AddToHomeScreen
+    (root version), DemoDataProvider, UsageStats, CapabilityToggles.
+
+    Left in place: tsconfig.json's _DETACHED and _ATTIC excludes
+    (both nonexistent — harmless; remove when next editing
+    tsconfig).
 
 [ ] [LIVE] ops.journey_test_outbox_check — The retired bosly-journey-test
     had one unique check: that POST /api/messages/send returns
