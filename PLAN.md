@@ -952,6 +952,44 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[ ] [LIVE] accord.email_password_plaintext — The connected email
+    account password is stored in plaintext in the database
+    (ConnectedEmail.password, prefixed "PLAINTEXT:"). Found 30 Sept:
+    a SELECT showed "PLAINTEXT:xxxxxxx" for the IONOS account
+    info@greengayte-co.co.uk. This contradicts Bosly's core promise
+    — the Accord says the server cannot read user data, but the
+    email password is fully readable, and a database leak exposes
+    every connected email account. sendMail.ts even has an explicit
+    `password?.startsWith("PLAINTEXT:")` fallback, so the plaintext
+    path is known. Fix: encrypt connected passwords with the user's
+    key (or at minimum ENCRYPTION_KEY), migrate existing rows,
+    remove the PLAINTEXT branch. Audit whether any other secret is
+    stored the same way. Raised 30 Sept.
+
+[ ] [LIVE] accord.invoice_send_from_user — Email sending always
+    uses the server-wide SMTP account (SMTP_HOST in .env.production),
+    because getTransporter in lib/email/sendMail.ts checks
+    `if (process.env.SMTP_HOST)` FIRST and returns there. The
+    per-user path — sending from the user's own connected account —
+    is only reached when SMTP_HOST is unset, so it never runs. Every
+    user's invoice sends from contact@bosly.app, not from their own
+    address, which looks like spam to a client. Fix: prefer the
+    user's connected account, fall back to the server SMTP. Note the
+    per-user path depends on decrypting ConnectedEmail.password,
+    which is currently plaintext (see
+    accord.email_password_plaintext). Raised 30 Sept.
+
+[ ] [LIVE] accord.invoice_send_preview — Sending an invoice is one
+    tap with an auto-built email. buildInvoiceEmail generates the
+    subject and body from the invoice data; the user never sees or
+    approves it. The plan's intent was that the message is shown for
+    review first. Add a preview/confirm step between pressing send
+    and the POST. Also: handleSend does not check res.ok and shows
+    no success or failure message, so a send that works looks like
+    nothing happened. Found 30 Sept: pressed send, it worked (status
+    went to "sent"), nothing confirmed it, so it looked like failure.
+    Raised 30 Sept.
+
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
