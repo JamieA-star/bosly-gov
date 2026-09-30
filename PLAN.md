@@ -997,6 +997,36 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[x] accord.webhook_middleware_public — DONE 30 Sept. The Stripe
+    webhook at /api/billing/webhook was not in the middleware's
+    public routes, so Stripe's POST was redirected (303) to
+    /signin before the route ran. Every webhook delivery failed
+    (all six in the Stripe dashboard). A real £25 payment
+    succeeded at Stripe and the tier never activated — the
+    subscription showed INCOMPLETE and subscriptionTier stayed
+    null. Added /api/billing/webhook to the public prefixes.
+    curl now returns 400 (invalid signature, route reached).
+    Commit 0521fd7. Same class as /uploads (logo, 30 Sept) —
+    middleware breaks public routes that are not listed.
+
+[ ] [LIVE] accord.billing_ui_incomplete — The billing area is
+    half-built. There is no cancel button (the /api/billing/cancel
+    route exists), and no activation feedback: after paying, the
+    chatbot still says "go to billing and activate". Stripe routes
+    exist (cancel, portal, resume, success) but the UI does not
+    connect them. A founding member who pays must see their tier
+    active and be able to cancel. Raised 30 Sept.
+
+[ ] [LIVE] gov.public_routes_are_public — A check that verifies
+    known-critical routes are in the middleware's public list, so
+    a new one is not forgotten. The middleware has broken three
+    things in one day: /uploads (logo), the branding upload body,
+    and /api/billing/webhook. Each was a route that needed to be
+    public (or carry a body) and was not accounted for. The check
+    asserts a declared set — /api/billing/webhook, /api/cron,
+    /api/auth, /uploads — is present in the public prefixes.
+    A regression guard, not a full derivation. Raised 30 Sept.
+
 [ ] [LIVE] accord.cross_pill_propagation — A write in one pill does
     not update readers elsewhere (or even in the same pill) until a
     full page reload. Seen 30 Sept: a calendar-created invoice did
@@ -1550,7 +1580,7 @@ that has actually happened.
     reflects true claims, not aspirational ones. Add FAQPage
     JSON-LD. Add to sitemap. Link from llms.txt.
 
-[ ] [GATED] accord.tier_enforcement — Enforce the free/£25 split in
+[ ] [LIVE] accord.tier_enforcement — Enforce the free/£25 split in
     code. Free tier: Active, Contacts, Calendar, Health,
     Invoicing. £25 tier: all of the above plus Inbox, Finance,
     Social, Data health, Chatbot. What "enforcement" means:
