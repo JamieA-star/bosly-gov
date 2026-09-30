@@ -48,6 +48,9 @@ projects:
         - id: gov.accord_compliance
           severity: high
           command: python3 checks/accord_compliance.py
+        - id: gov.public_routes_are_public
+          severity: high
+          command: python3 checks/public_routes_are_public.py
         - id: gov.consent_gating
           severity: critical
           command: python3 checks/consent_gating.py
