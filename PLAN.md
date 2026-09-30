@@ -997,6 +997,53 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[ ] [LIVE] accord.cross_pill_propagation — Writes in one pill do
+    not update readers in another, or even elsewhere in the same
+    pill, until a full page reload. Seen 30 Sept: a calendar-created
+    invoice did not appear in Finance until reload (fixed with a
+    bosly:invoice-created event); a new contact did not appear in
+    the calendar picker; a new calendar event did not appear in the
+    day view. The pattern is a window CustomEvent
+    (bosly:invoice-created, bosly:open-invoice-editor), but it is
+    applied ad hoc — most writes do not emit and most readers do
+    not listen.
+
+    Two halves:
+      (a) PROPAGATION — every create/update/delete emits an event;
+          every list that shows the data listens and reloads. One
+          shared module of event names and helpers, not ad-hoc
+          strings (see pattern-20260930-duplicated-validators-drift
+          — the same "copied, then drifted" risk).
+      (b) REFRESH — a home-screen PWA has no browser chrome and so
+          no reload. Add an in-app refresh (a button, or a gesture)
+          so a stale view can be recovered even if (a) misses a
+          case.
+
+    Affects multiple pills — needs a sweep of the whole app, not a
+    single fix. Raised 30 Sept.
+
+[ ] [LIVE] accord.invoice_aggregates_client_appointments — The
+    calendar-to-invoice button creates one invoice from one event.
+    The founder's actual workflow is multiple appointments for one
+    client across a month, invoiced once. The button should
+    aggregate a client's unbilled appointments, not one event.
+
+    Design (agreed 30 Sept): aggregate by contactId over a
+    calendar month, with an editable date range. So the default is
+    the current month; the user can widen or narrow it.
+
+    The crux: a billed state. CalendarEvent needs invoicedAt or
+    invoiceId, set when an event is included in an invoice, so a
+    second press does not double-bill the same hours. Without it,
+    invoicing a client twice bills the same appointments twice.
+
+    Also needed: a UI to show which appointments are included
+    (and their total) before creating the invoice, rather than
+    silently summing.
+
+    Current state: one event -> one invoice. The feature works but
+    does not match how invoicing is done. Raised 30 Sept.
+
 [ ] [LIVE] accord.email_password_plaintext — The connected email
     account password is stored in plaintext in the database
     (ConnectedEmail.password, prefixed "PLAINTEXT:"). Found 30 Sept:
