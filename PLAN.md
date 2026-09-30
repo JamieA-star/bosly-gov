@@ -907,6 +907,39 @@ that has actually happened.
     admin" means, concretely, and which pills it spans. Raised
     28 Sept.
 
+[ ] [LIVE] ops.monitor_route_roster — bosly-monitor's route roster
+    (the check labelled "Phase 3-8") drifted. On 30 Sept it emailed
+    a failure: 6/7 route files present. The missing file was
+    /api/bosly/preferences, deleted on purpose in 0b3f9d7
+    ("fix(chat): remove dead preferences endpoint references"). And
+    the roster did not know about /api/bosly/enrich-contacts, which
+    exists. So the roster was wrong in two directions at once.
+
+    The check fired correctly — something had changed — but the
+    change was intentional and nothing updated the list. Same class
+    as the Accord drift: a hardcoded list that nothing reconciles
+    with reality. Fixed 30 Sept by correcting the list to the seven
+    real routes and dropping the stale "Phase 3-8" label.
+
+    DURABLE FIX (decide later): the roster names files. A roster
+    that derives from the directory cannot go stale. If this
+    happens again, derive the expected set instead of hardcoding it.
+    Raised 30 Sept, from a bosly-monitor email at 03:15.
+
+[ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
+    channel is the nodemailer email, sent via node. The script loads
+    nvm and sets PATH so node is found under cron, and that works
+    today — the 29 Sept alert arrived. But if node were ever
+    genuinely missing, the alert would be lost with only a stderr
+    WARN that cron discards; the header comment acknowledges this
+    ("Without node, the checks can still run but alerting is
+    unavailable"). A monitor whose only alert channel can silently
+    fail is fragile. Durable fix: also append failures to a log
+    file, so a failure leaves a trace regardless of the email path.
+    Not broken today — recorded 30 Sept while fixing the roster and
+    the alert email's newline bug.
+    Raised 30 Sept.
+
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
 
