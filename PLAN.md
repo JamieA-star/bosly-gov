@@ -979,16 +979,62 @@ that has actually happened.
     which is currently plaintext (see
     accord.email_password_plaintext). Raised 30 Sept.
 
-[ ] [LIVE] accord.invoice_send_preview — Sending an invoice is one
-    tap with an auto-built email. buildInvoiceEmail generates the
-    subject and body from the invoice data; the user never sees or
-    approves it. The plan's intent was that the message is shown for
-    review first. Add a preview/confirm step between pressing send
-    and the POST. Also: handleSend does not check res.ok and shows
-    no success or failure message, so a send that works looks like
-    nothing happened. Found 30 Sept: pressed send, it worked (status
-    went to "sent"), nothing confirmed it, so it looked like failure.
-    Raised 30 Sept.
+[x] accord.invoice_send_preview — DONE 30 Sept. Sending an invoice
+    opened the POST directly with an auto-built email; the user never
+    saw or approved it, and handleSend swallowed errors. Now a
+    dialog opens: it shows the client, an optional note box, the
+    sender picker (when more than one account is connected), and
+    "Invoice-INV-001.pdf will be attached". Pressing Send builds the
+    full invoice PDF client-side and posts note, fromAccountId and
+    pdfBase64. Success and errors are shown. Commits ce8fcc7,
+    38b42aa, a264774, 4d88c8d.
+
+[ ] [LIVE] accord.invoice_sender_picker — The send dialog has a
+    sender picker, shown when more than one connected account
+    exists. Built 30 Sept but only exercised with one account;
+    the dropdown path is unverified. When a second account is
+    connected (e.g. a personal one), test that choosing it sends
+    from that address. The backend (getTransporter fromAccountId)
+    is done and rejects an unknown account rather than falling
+    back. Raised 30 Sept.
+
+[x] session-20260930-app-testing — DONE 30 Sept. The day began as a
+    check of the chat feedback loop and became the first real
+    user-path test of the whole app. Every bug found was found by
+    USING the app — signing up, unlocking the vault, uploading a
+    logo, sending an invoice — not by reading code. The pipeline
+    stayed green (10/10) throughout.
+
+    Found and fixed:
+      - Vault PIN unlock blocked on iOS by a WebAuthn probe. Every
+        iPhone user with a PIN backup was locked out. Removed the
+        probe. Commit 27feca6.
+      - Add-to-home-screen prompt showed the wrong icon and assumed
+        Safari's old layout. Made generic. Commit 86e9c46.
+      - Logo upload failed: middleware ran crypto on a request with
+        a body, breaking formData; then the file input was hidden in
+        a way iOS ignores. Fixed both. Commits 3faf854, 8b5d7fa.
+      - Landing page recorded no analytics — arrivals invisible.
+        Added page_view. Commit 1fc26d9.
+      - Sign-in page carried stale cards, duplicated from the
+        landing page. Fixed. Commit 21c1a01.
+      - Metadata carried the removed "AI digital butler chatbot"
+        claim. Fixed. Commit 8b9f8c5.
+      - Microsoft OAuth button pointed at a route that never existed
+        and OAuth was unconfigured. Hidden. Commit 3d072c8.
+      - Email sent from contact@bosly.app, not the user's account.
+        Now prefers the user's account; server fallback removed
+        entirely. Commits a918a00, 440f575.
+      - Invoice email carried bank details and attached nothing. Now
+        a short covering note with the full invoice PDF attached,
+        built client-side. Commits a264774, 4d88c8d.
+
+    Security finding: connected email passwords stored plaintext
+    (accord.email_password_plaintext).
+
+    Lesson: a green pipeline verifies invariants, not that a flow
+    works. Every real bug this day was invisible to the checks.
+    See pattern-20260930-user-path-testing.
 
 [ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
 
