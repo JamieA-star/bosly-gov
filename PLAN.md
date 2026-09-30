@@ -926,6 +926,18 @@ that has actually happened.
     happens again, derive the expected set instead of hardcoding it.
     Raised 30 Sept, from a bosly-monitor email at 03:15.
 
+[ ] [LIVE] accord.microsoft_oauth_hidden — The Microsoft/Outlook
+    OAuth button in the email connection form is hidden as of
+    30 Sept. It pointed at /api/auth/outlook (no such route), and
+    Microsoft OAuth is not configured: MICROSOFT_CLIENT_ID,
+    MICROSOFT_CLIENT_SECRET, and MICROSOFT_TENANT_ID are absent
+    from .env.production. To restore: create an Azure app, register
+    the redirect URI (https://bosly.app/api/auth/microsoft/callback),
+    add the three env vars, and remove the {false && ( } guard in
+    EmailConnectionForm.tsx. Gmail, Yahoo, and custom IMAP (IONOS)
+    all work via app password; only Microsoft OAuth is absent.
+    Raised 30 Sept.
+
 [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
     channel is the nodemailer email, sent via node. The script loads
     nvm and sets PATH so node is found under cron, and that works
