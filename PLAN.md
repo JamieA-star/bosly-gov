@@ -997,6 +997,44 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[x] accord.inbox_stubs_removed — DONE 30 Sept. The inbox had two
+    stubs beside real code:
+
+      - app/api/inbox/list seeded demo messages on first run and
+        when the file was empty, writing fake emails to the user's
+        real inbox file. A new user's inbox contained fake emails,
+        persisted. Now returns empty; the UI says connect your
+        email.
+      - AddAccountModal tested an account (real IMAP/SMTP test),
+        then POSTed to /api/inbox/accounts — a mock that ignored
+        the credentials and wrote to an in-memory array. Nothing
+        persisted, so "add account" never connected anything. Now
+        posts to /api/email-connection, the real ConnectedEmail
+        path.
+
+    Removed app/api/inbox/accounts/route.ts and lib/inbox/mock.ts.
+    Kept accounts/test (the IMAP test). Commit 6b7f24c.
+
+[ ] [LIVE] accord.tier_boundary_copy — The one-email-free model is
+    already built: /api/email-connection POST enforces "free = 1
+    connected email, Accord = up to 5". But the marketing and
+    billing copy says "Inbox is part of the £25 tier" (FAQ, pricing
+    copy, billing page), which is now wrong — a free user gets one
+    inbox. The docs must say: free = 1 email account plus the five
+    free pills; Accord = up to 5 email accounts plus the paid
+    pills and chatbot. Update FAQ, accord.tier_copy, the billing
+    page, and any pricing line that implies Inbox is paid
+    outright. Raised 30 Sept.
+
+    SCOPE CHANGE for accord.tier_enforcement_sweep: the inbox is
+    NOT gated wholesale. The tier limit is on the number of
+    connected accounts, enforced in /api/email-connection. So the
+    sweep gates Finance, Social, and Data health routes, not inbox
+    routes — and the inbox is free with one account. The
+    paid_routes_gated check must be updated: inbox routes are
+    either gated or exempt-by-design (the inbox is free for one
+    account). Revised 30 Sept.
+
 [ ] [LIVE] accord.tier_enforcement_sweep — READY TO EXECUTE. The
     helper (lib/requireAccord.ts) and the check
     (gov.paid_routes_gated) exist. The check lists the ungated
