@@ -926,6 +926,51 @@ that has actually happened.
     happens again, derive the expected set instead of hardcoding it.
     Raised 30 Sept, from a bosly-monitor email at 03:15.
 
+[x] accord.calendar_to_invoice — DONE 30 Sept. A past calendar event
+    linked to a business contact has a Create invoice button. It
+    builds a draft invoice from the event's hours (end - start,
+    rounded to 0.25; all-day = 1) and the contact's hourly rate,
+    carries the client's name/company, email and address, encrypts
+    it client-side, and posts it to Finance as a draft. Found in
+    Finance, editable, sendable. The first concrete piece of
+    accord.admin_assistant_direction — the app acting, not just
+    storing.
+
+    Built alongside:
+      - CalendarEvent.contactId (schema) and a contact picker in
+        the event editor.
+      - Contacts now save company and address (the payloads
+        dropped them).
+      - Contacts are decrypted in the calendar — the plaintext
+        name column is "[encrypted]", a decoy.
+      - Invoice editing: PATCH /api/invoices/[id], the editor
+        PATCHes when it has an id.
+      - The attached PDF draws the client email and address.
+
+    Note: calendar invoices carry no VAT — the payload omits it.
+    Set VAT by editing the invoice in Finance.
+
+[x] session-20260930-calendar-invoice — DONE 30 Sept. Second half of
+    the day. Built the calendar-to-invoice chain end to end, and
+    fixed everything it exposed:
+
+      - Contacts "merged" — actually all contacts looked identical
+        because their plaintext name is "[encrypted]". Resolved by
+        decrypting contacts in the calendar.
+      - The contact PATCH rejected the client's payload
+        (invalid_encrypted_payload) while the POST accepted it. The
+        two routes had duplicate, drifted validators.
+      - Contact company and address never saved — the payloads
+        omitted them.
+      - Calendar-invoice amounts were 0 — hourlyRate arrives as a
+        Prisma Decimal, and `typeof === "number"` rejected it.
+      - The attached PDF showed only the client name — no email, no
+        address. Fixed.
+
+    Lesson: the plaintext columns are decoys; decrypt first. And
+    duplicated validators drift. See the two memory entries.
+    Raised 30 Sept.
+
 [ ] [LIVE] accord.microsoft_oauth_hidden — The Microsoft/Outlook
     OAuth button in the email connection form is hidden as of
     30 Sept. It pointed at /api/auth/outlook (no such route), and
