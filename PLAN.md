@@ -997,6 +997,57 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[x] session-20260930-full-day — DONE 30 Sept. One session that began
+    as "check the chat feedback loop" and became a full user-path
+    audit of the app, then a payment fix, then a repo cleanup. Kept
+    as a capsule so a future session sees the arc, not just the
+    outcomes.
+
+    THE ARC:
+      1. Chat loop (morning). The chatbot said "I can't help" coldly
+         and the unknown-intent log was empty. Rewrote the message;
+         surfaced the count in the orientation; built
+         evolve_feedback.py.
+      2. App testing (afternoon). Walked the app as a user. Found the
+         vault PIN blocked on iOS by a WebAuthn probe (a launch
+         blocker), the logo upload failing (middleware + formData),
+         the landing page untracked, the sign-in cards stale, the
+         metadata carrying the removed-AI claim, Microsoft OAuth
+         pointing at a missing route. Fixed all.
+      3. Calendar to invoice (evening). Built the whole chain: event
+         -> draft invoice -> edit -> send, with the client's details,
+         from the user's own account. Found decoy plaintext columns,
+         drifted validators, dropped company/address, Decimal
+         hourlyRate.
+      4. Payment + tier (night). A real £25 payment did not activate.
+         Root: the middleware redirected the Stripe webhook to
+         /signin (303) — every delivery failed. Fixed; added
+         gov.public_routes_are_public. Swept the stale AI claims from
+         terms, privacy, changelog, billing. Built requireAccord +
+         paid_routes_gated (34 ungated routes, defined for the
+         sweep).
+      5. Inbox + cleanup (late). The inbox seeded demo emails and its
+         "add account" wrote to a mock. Removed both; real connect
+         now works, with the free=1/Accord=5 limit that was already
+         built. Then archived the dead root, removed 48 debris files,
+         4 dead components, 69 .bak.
+
+    THE SHAPE, for a future session: every real bug today was found
+    by USING the app, not reading it. The pipeline was green
+    throughout. Checks verify invariants, not that a flow works.
+    When you change a flow, walk it.
+
+    LESSONS (memory): pattern-20260930-user-path-testing,
+    plaintext-columns-are-decoys, duplicated-validators-drift,
+    middleware-public-routes, mock-beside-real.
+
+    DEFERRED: accord.tier_enforcement_sweep (34 routes, defined by
+    paid_routes_gated), accord.tier_boundary_copy (docs say Inbox is
+    paid; the model is 1 email free), the £25 re-test,
+    accord.email_password_plaintext.
+
+    Raised 30 Sept.
+
 [x] accord.inbox_stubs_removed — DONE 30 Sept. The inbox had two
     stubs beside real code:
 

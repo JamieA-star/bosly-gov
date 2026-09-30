@@ -112,6 +112,10 @@ This applies to everything we write together.
 - The plan is honest — ticked items are actually done, open items are actually open
 - Nothing is in flight
 - Any lesson worth keeping has been written to Gov's memory
+- If the session was large — several threads, many findings — write a
+  session capsule to the plan: the arc, the shape, the lessons, what
+  is deferred. Not a transcript; enough that a fresh chat knows where
+  things stand and how they got there.
 
 ---
 
