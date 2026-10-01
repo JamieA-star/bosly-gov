@@ -1104,11 +1104,52 @@ that has actually happened.
     either gated or exempt-by-design (the inbox is free for one
     account). Revised 30 Sept.
 
+[x] accord.free_paid_boundary — AGREED 1 Oct. The single source
+    of truth for what is free and what belongs to Accord.
+    The boundary is drawn around FEATURES, not pills. Finance
+    is the clear case: manual invoicing is free, transactions
+    and the tax pack are paid.
+
+    FREE — Active, Contacts, Calendar, Health, and manual
+    invoicing (the Finance Invoices tab). The inbox, for one
+    connected email account.
+
+    ACCORD — everything free, plus: the Calendar "create
+    invoice" button, Finance transactions and the tax pack,
+    Social, Data health, the chatbot, and additional connected
+    email accounts (up to 5).
+
+    In code: lib/tiers.ts holds FREE_FEATURES / PAID_FEATURES
+    and isAccordTier(). requireAccord.ts is its server-side
+    mirror. The UI gates ship: Social, the Finance transactions
+    tab, the Calendar create-invoice button, and Data health.
+    Still open: the routes (see accord.tier_enforcement_sweep)
+    and lib/tiers.ts's PAID_PILLS constant, which is wrong —
+    it lists Finance whole, but Finance is a mix.
+
+    Raised 1 Oct, after the Stripe test showed the app did not
+    know which pills were free.
+
 [ ] [LIVE] accord.tier_enforcement_sweep — READY TO EXECUTE. The
     helper (lib/requireAccord.ts) and the check
-    (gov.paid_routes_gated) exist. The check lists the ungated
-    routes: 34 of 37 (all of inbox, finance, social, and
-    data-health/identities; only data-health/check is gated).
+    (checks/paid_routes_gated.py) exist, but the check is NOT
+    registered in manifests/checks.yml — which is why the
+    pipeline is green. Running it standalone on 1 Oct: 36
+    routes, 33 ungated.
+
+    SCOPE — corrected 1 Oct against accord.free_paid_boundary.
+    The sweep gates the transaction and tax-pack routes in
+    Finance, the social routes, and the data-health routes.
+    It does NOT gate the invoice routes (manual invoicing is
+    free, the lead magnet) and it does NOT gate the inbox
+    (count-gated in /api/email-connection, free for one
+    account). The earlier scope — "all of inbox, finance,
+    social, and data-health; 34 of 37" — was wrong twice.
+
+    BLOCKER: checks/paid_routes_gated.py lists `inbox` in
+    PAID_PREFIXES and treats each prefix as atomic. Both are
+    wrong for the corrected scope. Fix the check before
+    registering it.
 
     Steps:
       1. Add `const gate = await requireAccord(req); if (!gate.ok)
@@ -1193,50 +1234,6 @@ that has actually happened.
     asserts a declared set — /api/billing/webhook, /api/cron,
     /api/auth, /uploads — is present in the public prefixes.
     A regression guard, not a full derivation. Raised 30 Sept.
-
-[ ] [LIVE] accord.cross_pill_propagation — A write in one pill does
-    not update readers elsewhere (or even in the same pill) until a
-    full page reload. Seen 30 Sept: a calendar-created invoice did
-    not appear in Finance; a new contact did not appear in the
-    calendar picker; a new calendar event did not appear in the day
-    view. The app has a pattern for this — window CustomEvents
-    (bosly:invoice-created, bosly:open-invoice-editor) — but it is
-    applied ad hoc, so most writes do not emit and most readers do
-    not listen.
-
-    TWO HALVES:
-      (a) PROPAGATION: every create/update/delete emits an event;
-          every list that shows the data listens and reloads.
-          Consider one shared module of event names and helpers
-          rather than ad-hoc strings (see
-          pattern-20260930-duplicated-validators-drift — copied
-          code drifts).
-      (b) REFRESH: a home-screen PWA has no browser chrome and so
-          no reload. Add an in-app refresh (a button or a gesture)
-          so a stale view can be recovered even when (a) misses a
-          case.
-
-    Affects multiple pills — needs a sweep of the whole app, not a
-    single fix. Raised 30 Sept.
-
-[ ] [LIVE] accord.invoice_aggregates_client_appointments — The
-    calendar-to-invoice button creates one invoice from one event.
-    The founder's actual workflow is several appointments for one
-    client across a month, invoiced once. The button should
-    aggregate a client's appointments, not a single event.
-
-    Needs:
-      - Aggregate by contactId over a period. Period model to
-        decide: all unbilled since the last invoice (recommended —
-        cannot double-bill), a calendar month, or a picked range.
-      - A billed state: CalendarEvent.invoicedAt or invoiceId, set
-        when an event is included in an invoice, so pressing again
-        does not bill the same hours twice. This is the crux.
-      - UI to choose which appointments are included, rather than
-        silently taking all.
-
-    Current state works, but does not match how invoicing is
-    actually done. Raised 30 Sept.
 
 [ ] [LIVE] accord.inbox_dismiss_not_persistent — Dismissed emails in
     the inbox reappear after a page refresh. There is a Dismiss
