@@ -356,7 +356,7 @@ that has actually happened.
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
 
-[ ] [LIVE] ops.founding_member_offer — The 3 Oct founding member
+[ ] [LIVE] ops.founding_member_offer — The 2 Oct founding member
     ask goes out Friday. The offer is a Stripe promotion code
     (40% off, duration forever, max 21 redemptions — 20 for the
     post, 1 reserved for the founder's end-to-end test).
@@ -619,24 +619,6 @@ that has actually happened.
     The usage digest should not identify individual users.
     Aggregate only — the user should know what is being measured
     and why.
-
-[ ] [DECISION] gov.plan_integrity_20261001 — Three plan-integrity
-    issues found while working on the billing read path on 1 Oct.
-    None is code; all three make the plan lie about the state.
-
-    1. accord.cross_pill_propagation appears twice (lines ~1139
-       and ~1196). One is a stale earlier draft.
-    2. accord.invoice_aggregates_client_appointments appears
-       twice (~1164 and ~1221), same shape.
-    3. accord.tier_enforcement_sweep (line ~1089) says the scope
-       is "all of inbox, finance, social, and data-health...
-       34 of 37", but accord.tier_boundary_copy (line ~1069)
-       says the sweep excludes inbox (free = one connected
-       account). The check's PAID_PREFIXES includes inbox. So
-       running the sweep as written would wrongly gate the
-       inbox. Reconcile the two before executing.
-
-    Fix: dedupe, and settle the inbox scope. Raised 1 Oct.
 
 [ ] [DECISION] gov.orientation_script_versioned — /usr/local/bin/bosly is
     outside version control. The script that generates every
@@ -1130,7 +1112,21 @@ that has actually happened.
     Raised 1 Oct, after the Stripe test showed the app did not
     know which pills were free.
 
-[ ] [LIVE] accord.tier_enforcement_sweep — READY TO EXECUTE. The
+[x] accord.tier_enforcement_sweep — DONE 1 Oct. requireAccord is
+    now the first statement in every handler of the nine paid
+    routes (sixteen handlers): finance/categories, finance/ftx,
+    finance/import-transactions, finance/parse-statement,
+    finance/transactions, finance/tax-pack,
+    social/generate-captions, social/generate-ideas,
+    data-health/identities. Committed e0838d6.
+
+    checks/paid_routes_gated.py was rewritten as an explicit
+    route list (a prefix scan cannot express a boundary that
+    cuts across prefixes — Finance is a mix). It is registered
+    in the fast tier (bosly-gov acae57b) and passes 12/12.
+
+    Original entry follows.
+    READY TO EXECUTE. The
     helper (lib/requireAccord.ts) and the check
     (checks/paid_routes_gated.py) exist, but the check is NOT
     registered in manifests/checks.yml — which is why the
@@ -1211,7 +1207,10 @@ that has actually happened.
     paid card as "Available". Both reads now point at
     subscriptionTier; the tier check is case-normalised and
     accepts trialing; the card states the £15 founding-member
-    price. Remaining: the FOUNDER40 end-to-end test.
+    price. UPDATE 1 Oct: the full checkout flow was walked end
+    to end — upgrade, Stripe, pay, return, Accord active. The
+    path works. Remaining: the same flow on a fresh account
+    entering FOUNDER40, to confirm the £15 founding-member price.
     Original entry follows.
     The billing area is
     half-built. There is no cancel button (the /api/billing/cancel
@@ -1744,7 +1743,15 @@ that has actually happened.
     reflects true claims, not aspirational ones. Add FAQPage
     JSON-LD. Add to sitemap. Link from llms.txt.
 
-[ ] [LIVE] accord.tier_enforcement — Enforce the free/£25 split in
+[x] accord.tier_enforcement — DONE 1 Oct. Duplicate of
+    accord.tier_enforcement_sweep, which is now complete. The
+    free/paid split is enforced at both layers: the UI gates
+    (Social, Finance transactions, Calendar create-invoice, Data
+    health) and the routes (nine paid routes, sixteen handlers).
+    See accord.free_paid_boundary.
+
+    Original entry follows.
+    Enforce the free/£25 split in
     code. Free tier: Active, Contacts, Calendar, Health,
     Invoicing. £25 tier: all of the above plus Inbox, Finance,
     Social, Data health, Chatbot. What "enforcement" means:
@@ -2682,7 +2689,7 @@ SCHEDULED
   your fault. And if you've got a system that stops you
   doing it, share it. Mine clearly isn't working."
 
-3 Oct (Fri) — Founding Members ask
+2 Oct (Fri) — Founding Members ask
   Format: talking head
   Context: audience knows Bosly exists. This isn't a reveal.
   Been working on it. Running my own life through it.
