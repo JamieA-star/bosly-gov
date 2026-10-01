@@ -51,6 +51,9 @@ projects:
         - id: gov.public_routes_are_public
           severity: high
           command: python3 checks/public_routes_are_public.py
+        - id: gov.paid_routes_gated
+          severity: high
+          command: python3 checks/paid_routes_gated.py
         - id: gov.consent_gating
           severity: critical
           command: python3 checks/consent_gating.py
