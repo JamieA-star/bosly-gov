@@ -620,6 +620,24 @@ that has actually happened.
     Aggregate only — the user should know what is being measured
     and why.
 
+[ ] [DECISION] gov.plan_integrity_20261001 — Three plan-integrity
+    issues found while working on the billing read path on 1 Oct.
+    None is code; all three make the plan lie about the state.
+
+    1. accord.cross_pill_propagation appears twice (lines ~1139
+       and ~1196). One is a stale earlier draft.
+    2. accord.invoice_aggregates_client_appointments appears
+       twice (~1164 and ~1221), same shape.
+    3. accord.tier_enforcement_sweep (line ~1089) says the scope
+       is "all of inbox, finance, social, and data-health...
+       34 of 37", but accord.tier_boundary_copy (line ~1069)
+       says the sweep excludes inbox (free = one connected
+       account). The check's PAID_PREFIXES includes inbox. So
+       running the sweep as written would wrongly gate the
+       inbox. Reconcile the two before executing.
+
+    Fix: dedupe, and settle the inbox scope. Raised 1 Oct.
+
 [ ] [DECISION] gov.orientation_script_versioned — /usr/local/bin/bosly is
     outside version control. The script that generates every
     session's orientation has no git history; if it is corrupted
@@ -1106,6 +1124,31 @@ that has actually happened.
     Not wired yet: the check fails until step 1 is done, and a
     failing check breaks the green pipeline. Raised 30 Sept.
 
+[ ] [LIVE] accord.plan_column_layer2 — The 1 Oct billing fix
+    pointed the billing screen at `subscriptionTier`, but the
+    same wrong column is still read in three other places.
+    `plan` only ever held an onboarding answer (default
+    "starter"); nothing writes it as a tier.
+
+    Remaining reads:
+      - app/api/auth/me/route.ts — selects `plan`; returns the
+        onboarding answer, not the tier.
+      - app/api/user/route.ts — selects `plan` twice, same issue.
+      - app/api/data-health/check/route.ts — hasAccordAccess
+        reads both `subscriptionTier` and `plan`; the `plan` arm
+        never fires. Simplify to subscriptionTier only.
+      - app/api/user/usage/route.ts — hardcodes plan: "trial".
+
+    Also: app/api/onboarding/save/route.ts is dead (nothing
+    references it). It was the only writer of `plan`. Archive to
+    legacy/ per the /onboarding/activate precedent (21 Sept).
+    Then drop the `plan` column in a migration, backed up first.
+
+    Durable fix: a gov check that fails if any tier decision
+    reads `plan`. Same class as gov.naming_honesty — a name that
+    asserts a meaning the column does not have.
+    Raised 1 Oct.
+
 [x] accord.webhook_middleware_public — DONE 30 Sept. The Stripe
     webhook at /api/billing/webhook was not in the middleware's
     public routes, so Stripe's POST was redirected (303) to
@@ -1118,7 +1161,18 @@ that has actually happened.
     Commit 0521fd7. Same class as /uploads (logo, 30 Sept) —
     middleware breaks public routes that are not listed.
 
-[ ] [LIVE] accord.billing_ui_incomplete — The billing area is
+[x] accord.billing_ui_incomplete — DONE 1 Oct. The billing UI was
+    already complete (cancel, resume, portal, period dates). The
+    real bug was the read path: BillingSettings.tsx and
+    /api/billing/subscription read the `plan` column — an
+    onboarding answer, default "starter" — while the Stripe
+    webhook writes `subscriptionTier`. So a paying user saw the
+    paid card as "Available". Both reads now point at
+    subscriptionTier; the tier check is case-normalised and
+    accepts trialing; the card states the £15 founding-member
+    price. Remaining: the FOUNDER40 end-to-end test.
+    Original entry follows.
+    The billing area is
     half-built. There is no cancel button (the /api/billing/cancel
     route exists), and no activation feedback: after paying, the
     chatbot still says "go to billing and activate". Stripe routes
@@ -1126,7 +1180,11 @@ that has actually happened.
     connect them. A founding member who pays must see their tier
     active and be able to cancel. Raised 30 Sept.
 
-[ ] [LIVE] gov.public_routes_are_public — A check that verifies
+[x] gov.public_routes_are_public — DONE. Running in the fast tier
+    and passing (11/11 on 1 Oct). The plan entry was stale — the
+    check shipped but was never ticked.
+    Original entry follows.
+    A check that verifies
     known-critical routes are in the middleware's public list, so
     a new one is not forgotten. The middleware has broken three
     things in one day: /uploads (logo), the branding upload body,
