@@ -1172,20 +1172,22 @@ that has actually happened.
     Not wired yet: the check fails until step 1 is done, and a
     failing check breaks the green pipeline. Raised 30 Sept.
 
-[ ] [LIVE] accord.plan_column_layer2 — The 1 Oct billing fix
-    pointed the billing screen at `subscriptionTier`, but the
-    same wrong column is still read in three other places.
-    `plan` only ever held an onboarding answer (default
-    "starter"); nothing writes it as a tier.
+[ ] [LIVE] accord.plan_column_layer2 — UPDATED 1 Oct. The reads
+    are gone. `plan` is no longer read as a tier anywhere
+    (commit b7acb0f): auth/me and user no longer select it;
+    data-health/check reads subscriptionTier only. What remains
+    is the column itself and the migration to drop it.
 
-    Remaining reads:
-      - app/api/auth/me/route.ts — selects `plan`; returns the
-        onboarding answer, not the tier.
-      - app/api/user/route.ts — selects `plan` twice, same issue.
-      - app/api/data-health/check/route.ts — hasAccordAccess
-        reads both `subscriptionTier` and `plan`; the `plan` arm
-        never fires. Simplify to subscriptionTier only.
-      - app/api/user/usage/route.ts — hardcodes plan: "trial".
+    Remaining:
+      - app/api/onboarding/save/route.ts is dead (nothing
+        references it). It was the only writer of `plan`.
+        Archive to legacy/ per the /onboarding/activate
+        precedent (21 Sept).
+      - Drop the `plan` column in a migration, backed up first.
+      - app/api/user/usage/route.ts has no callers and
+        hardcodes plan: "trial". Whether it is dead or a future
+        feature is undecided (1 Oct). Nothing reads it, so it
+        does no harm; decide when the feature is next touched.
 
     Also: app/api/onboarding/save/route.ts is dead (nothing
     references it). It was the only writer of `plan`. Archive to
@@ -1552,6 +1554,16 @@ that has actually happened.
     Nothing catches the drift. Report-only initially; fail the
     pipeline once calibrated. Predecessor to accord.doc_
     consistency_audit. Motivated by the Kyber discovery (below).
+
+    ARGUMENT, 1 Oct. Four findings in one day, all this class:
+      - the FAQ and billing card said the inbox was paid
+      - llms.txt / llms-full.txt described a bot retired 24 Sept
+      - parse-statement and tax-pack comments said "free"
+      - the tier-sweep plan entry said the check was not
+        registered when it was
+    None was a crash. Each was two parts of the system
+    disagreeing, invisible to the checks. This is the check
+    that would catch them. Build it.
 
 [~] accord.password_recovery_gap — PARTIAL FIX 24 Sept. The
     autoComplete="new-password" attribute was added to the signup
