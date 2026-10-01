@@ -997,6 +997,68 @@ that has actually happened.
     the alert email's newline bug.
     Raised 30 Sept.
 
+[x] session-20261001-full-day — DONE 1 Oct. A day that began as "help
+    me before the reel" and became the free/paid boundary, the
+    payment path, and a documentation audit. Kept as a capsule so a
+    future session sees the arc, not just the outcomes.
+
+    THE ARC:
+      1. The boundary (morning). The app did not know what was free.
+         A paying user had been told to pay again. Root: BillingSettings
+         read the `plan` column (an onboarding answer) while the webhook
+         wrote `subscriptionTier`. Fixed the read path. Then built the
+         model: lib/tiers.ts, feature-based, not pill-based — Finance is
+         a mix (manual invoicing free, transactions and tax pack paid).
+         Wrote it into the plan as accord.free_paid_boundary.
+      2. The gates (afternoon). Gated four UI surfaces — Social, the
+         Finance transactions tab, the Calendar create-invoice button,
+         Data health — and swept sixteen route handlers across nine paid
+         routes onto requireAccord. Rewrote checks/paid_routes_gated.py
+         from a prefix scan to an explicit route list (a prefix cannot
+         express a boundary that cuts across prefixes). Registered it;
+         the pipeline went from 11 checks to 12.
+      3. The payment path (evening). A real payment was tested end to
+         end. It worked — upgrade, Stripe, pay, return, Accord active.
+         What looked like a bug was Stripe semantics: cancelling at
+         period end keeps a subscription active, and a refund does not
+         cancel a subscription. The app was right.
+      4. The docs (evening). Found the machine-facing docs described a
+         bot retired on 24 Sept: llms.txt and llms-full.txt claimed it
+         books appointments, sends invoices, drafts emails. Rewrote
+         against the workflow engine map, which records what each of the
+         ten workflows actually computes. Same drift in miniature in the
+         FAQ and the billing card (the inbox described as paid).
+
+    THE SHAPE, for a future session: every bug today was a disagreement
+    between two parts of the system. A reader watching a column a writer
+    did not touch. A pill fetching a flag it never consulted. A check
+    scanning prefixes when the boundary was features. Docs describing a
+    product that was retired. A comment asserting a policy that had
+    changed. None of it crashed. All of it was incoherence, and the
+    pipeline was green throughout. Four findings on 1 Oct were this one
+    class. That is the argument for gov.claim_invariants, recorded there.
+
+    LESSONS (memory): pattern-20261001-read-write-column-drift,
+    pattern-20261001-overloaded-column,
+    pattern-20261001-checked-but-not-enforced,
+    pattern-20261001-prefix-scan-cannot-see-a-mix,
+    pattern-20261001-stale-comment-contradicts-code,
+    pattern-20261001-build-error-above-the-fold,
+    fact-20261001-stripe-cancellation-semantics,
+    pattern-20261001-webhook-is-best-effort,
+    fact-20261001-plan-column-fully-drained,
+    pattern-20261001-docs-describe-a-retired-product.
+
+    DEFERRED: accord.plan_column_layer2 (the column drop; the reads are
+    gone), user/usage disposition (no callers, undecided),
+    accord.tier_boundary_copy (ticked), the webhook reconciliation gap,
+    the updated-does-not-clear-tier edge case, and gov.claim_invariants
+    itself.
+
+    TOMORROW: a fresh-account checkout entering FOUNDER40, to confirm
+    the £15 founding-member price. Then the reel decision, with
+    everything it claims now verified.
+
 [x] session-20260930-full-day — DONE 30 Sept. One session that began
     as "check the chat feedback loop" and became a full user-path
     audit of the app, then a payment fix, then a repo cleanup. Kept
@@ -1188,10 +1250,6 @@ that has actually happened.
         hardcodes plan: "trial". Whether it is dead or a future
         feature is undecided (1 Oct). Nothing reads it, so it
         does no harm; decide when the feature is next touched.
-
-    Also: app/api/onboarding/save/route.ts is dead (nothing
-    references it). It was the only writer of `plan`. Archive to
-    legacy/ per the /onboarding/activate precedent (21 Sept).
     Then drop the `plan` column in a migration, backed up first.
 
     Durable fix: a gov check that fails if any tier decision
