@@ -1066,7 +1066,14 @@ that has actually happened.
     Removed app/api/inbox/accounts/route.ts and lib/inbox/mock.ts.
     Kept accounts/test (the IMAP test). Commit 6b7f24c.
 
-[ ] [LIVE] accord.tier_boundary_copy — The one-email-free model is
+[x] accord.tier_boundary_copy — DONE 1 Oct. The FAQ and the
+    billing card said the inbox was part of the £25 tier; both
+    corrected (be1f91d). Free includes one connected email
+    account, Accord raises it to five. Matches
+    accord.free_paid_boundary.
+
+    Original entry follows.
+    The one-email-free model is
     already built: /api/email-connection POST enforces "free = 1
     connected email, Accord = up to 5". But the marketing and
     billing copy says "Inbox is part of the £25 tier" (FAQ, pricing
@@ -1103,11 +1110,15 @@ that has actually happened.
 
     In code: lib/tiers.ts holds FREE_FEATURES / PAID_FEATURES
     and isAccordTier(). requireAccord.ts is its server-side
-    mirror. The UI gates ship: Social, the Finance transactions
-    tab, the Calendar create-invoice button, and Data health.
-    Still open: the routes (see accord.tier_enforcement_sweep)
-    and lib/tiers.ts's PAID_PILLS constant, which is wrong —
-    it lists Finance whole, but Finance is a mix.
+    mirror.
+
+    Both layers enforce it. UI: Social, the Finance transactions
+    tab, the Calendar create-invoice button, Data health. Routes:
+    nine paid routes, sixteen handlers (e0838d6), enforced by
+    gov.paid_routes_gated in the fast tier.
+
+    The docs copy was corrected 1 Oct (be1f91d): the FAQ and the
+    billing card no longer say the inbox is paid.
 
     Raised 1 Oct, after the Stripe test showed the app did not
     know which pills were free.
