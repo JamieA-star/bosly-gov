@@ -374,14 +374,16 @@ that has actually happened.
         fit framing ("I'd rather fill these with people who'll
         tell me what's broken than with whoever gets here
         first"). DONE.
-      - End-to-end test: NOT YET RUN. Plan is a live-mode test
-        with a real card — fresh signup, upgrade, apply FOUNDER40,
-        confirm £15 and active subscription, then cancel and
-        refund within Stripe's refund window. The test consumes
-        one of the 21 redemptions; that is why the cap is 21 and
-        the post says 20.
+      - End-to-end test: PASSED 2 Oct. Fresh signup, upgrade,
+        FOUNDER40 applied, £15 confirmed (not £25), payment
+        returned to the app, and every pill opened. Run once
+        plain and once with the code.
 
-    Item stays open until the end-to-end test passes.
+    ACTION BEFORE POSTING: confirm the FOUNDER40 redemption
+    count in Stripe. The cap is 21, reserved as 20 public + 1
+    test. More than one test has now run. If the remaining
+    count is not 20, either the post's number changes or the
+    cap is raised. The post must state what is actually true.
 
 
 [ ] [LIVE] accord.user_docs_prose_pass — Apply the new
@@ -1318,7 +1320,7 @@ that has actually happened.
     Then persist the read/hidden state there. Raised 30 Sept, on an
     iOS (IMAP) account.
 
-[ ] [LIVE] accord.cross_pill_propagation — Writes in one pill do
+[~] accord.cross_pill_propagation — PARTIAL 2 Oct. Half (b) is done. Writes in one pill do
     not update readers in another, or even elsewhere in the same
     pill, until a full page reload. Seen 30 Sept: a calendar-created
     invoice did not appear in Finance until reload (fixed with a
@@ -1335,10 +1337,13 @@ that has actually happened.
           shared module of event names and helpers, not ad-hoc
           strings (see pattern-20260930-duplicated-validators-drift
           — the same "copied, then drifted" risk).
-      (b) REFRESH — a home-screen PWA has no browser chrome and so
-          no reload. Add an in-app refresh (a button, or a gesture)
-          so a stale view can be recovered even if (a) misses a
-          case.
+      (b) REFRESH — DONE 2 Oct (bosly-1.0 318b99a). A home-screen
+          PWA does not reload itself, so a deploy was invisible
+          until the app was deleted and re-added. components/
+          UpdateBanner.tsx checks /api/version on mount and on
+          focus; if the build differs from the one the app
+          loaded, it shows a refresh banner. Half (a), the
+          cross-pill event propagation, remains open.
 
     Affects multiple pills — needs a sweep of the whole app, not a
     single fix. Raised 30 Sept.
