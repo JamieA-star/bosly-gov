@@ -60,6 +60,9 @@ projects:
         - id: gov.tsconfig_excludes
           severity: high
           command: python3 checks/tsconfig_excludes.py
+        - id: gov.claim_invariants
+          severity: medium
+          command: python3 checks/claim_invariants.py
         - id: gov.consent_gating
           severity: critical
           command: python3 checks/consent_gating.py
