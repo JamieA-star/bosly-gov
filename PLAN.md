@@ -200,17 +200,33 @@ that has actually happened.
 
 [x] accord.dead_ui_wiring — named state and handlers are rendered.
 
-[x] accord.typecheck_clean — npx tsc --noEmit should report 0
-    errors. Currently reports 9 pre-existing errors across:
-    components/VaultProvider.tsx (userId missing in context value),
-    components/workspace/ActivePill.tsx (decrypt arg count),
-    components/workspace/FinancePill.tsx (takenDate, setMsg),
-    lib/chat/helpers.ts (reasoning_content not on ChatCompletionMessage
-    — DeepSeek extension), lib/crypto/dataBridge.ts (phraseToEntropy
-    not exported, deriveAESFromPhrase missing, BufferSource type).
-    Build passes; these are type-safety gaps, not runtime bugs.
-    Also: tsconfig.json now excludes backups/, which removed 13
-    noise errors — keep that in place.
+[~] accord.typecheck_clean — UPDATED 3 Oct. tsc reports 0 errors,
+    but over a partial codebase. tsconfig.json has sixteen
+    `exclude` entries, several whole directories. Two of them —
+    lib/calendar/providers/** and app/api/calendar/icloud/** —
+    contained live code that had never compiled and never
+    worked (sixteen errors, including session.user on a session
+    that has no such field, and three schema fields that do not
+    exist). Both excludes are now removed and those files are
+    fixed. The other excludes have not been audited.
+
+    The gap: tsc cannot tell "excluded because legacy" from
+    "excluded because it had errors". A check should report
+    which excluded directories contain live imports, so an
+    exclusion of live code is visible rather than silent.
+    See gov.tsconfig_excludes.
+
+[ ] [DECISION] gov.tsconfig_excludes — A check that reads
+    tsconfig.json's `exclude` list and, for each excluded
+    directory, reports whether any live file imports from it.
+    An exclusion of live code should be visible, not silent.
+
+    Argument, 3 Oct. Two excluded directories (the iCloud
+    calendar routes and provider) contained code that had
+    never compiled and never worked. tsc said "0 errors"
+    throughout, because it was not looking. Same shape as the
+    Stripe webhook being redirected by middleware: a check that
+    passes while the thing it describes is broken.
 
 [x] accord.invoices_encryption — Invoice and InvoiceLineItem
     currently store financial data in plaintext. Requires schema
