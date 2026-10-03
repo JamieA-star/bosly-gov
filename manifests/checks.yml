@@ -57,6 +57,9 @@ projects:
         - id: gov.email_password_plaintext
           severity: high
           command: python3 checks/email_password_plaintext.py
+        - id: gov.tsconfig_excludes
+          severity: high
+          command: python3 checks/tsconfig_excludes.py
         - id: gov.consent_gating
           severity: critical
           command: python3 checks/consent_gating.py
