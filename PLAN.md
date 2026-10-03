@@ -2138,6 +2138,35 @@ that has actually happened.
     bosly-analytics are kept. bosly-evolve is pending replacement
     (see gov.evolve_loop_usage).
 
+[ ] [LIVE] accord.password_reset_ui — A signed-out user who has
+    forgotten their password cannot recover. The API exists and
+    works: POST /api/auth/password-reset generates a token and
+    emails it; PUT verifies and sets a new password. The token is
+    now SHA-256 hashed (3 Oct). But nothing in the app reaches any
+    of it.
+
+    Specifically:
+      - No 'Forgot password?' link on /signin.
+      - No page consumes the token. The email links to
+        /signin?reset=TOKEN, and /signin reads only `reason`,
+        not `reset`.
+      - grep for passwordResetToken / resetToken in app/ and
+        components/ returns nothing.
+      - app/signup/page.tsx:137 says it plainly: 'Bosly can't
+        reset it if you lose it.'
+
+    What exists: change-password while signed in (via settings).
+    What does not: reset while signed out.
+
+    To build: a reset page (e.g. app/signin/reset/page.tsx) that
+    reads ?token=, posts to PUT /api/auth/password-reset, and
+    redirects to /signin; a 'Forgot password?' link on /signin;
+    the email link corrected to the new page; the page added to
+    the middleware's public list.
+
+    Raised 3 Oct. A founding member who forgets their password is
+    locked out, so this matters before the offer grows.
+
 [ ] [LIVE] accord.legacy_js_audit — there is a substantial body of
     .js code tracked in the repo alongside the .ts/.tsx source:
     app/config/*.js, app/sw-client.js, lib/imap.js, lib/user.js,
