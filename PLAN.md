@@ -599,6 +599,33 @@ that has actually happened.
         ever overridden, the unknown-intents log would not
         follow and the digest would read the wrong place.
 
+[x] ops.archive_ai_era — DONE 3 Oct. The AI chat was replaced by the
+    workflow engine on 24 Sept, but its routes and components were
+    never removed. Archived to legacy/api-ai-20261003/: five routes
+    (check-leads, next-action, orchestrator, reply, realtime), the
+    lib/bosly-brain.ts, and three dead components (ChatAssistant,
+    ChatWidget, BoslyChatWidget). All unreachable — the greps found
+    no callers. 'realtime' was not AI at all: a local keyword search
+    over chat-memory.txt, and a duplicate of bosly-brain.ts.
+    Commits 5347025, f3ed729. The live chat is ChatDrawer.
+
+[ ] [DECISION] gov.orphaned_routes — A check that lists every API
+    route and fails if one has no caller and is not marked
+    server-only (cron, webhook, or an explicit comment). Nothing
+    catches an orphaned route today; the code says nothing about
+    whether its parts are still reachable.
+
+    Argument, 3 Oct. Eight unreachable things were found by hand in
+    one afternoon: five routes in app/api/ai/, lib/bosly-brain.ts,
+    and two still open — app/api/user/usage/route.ts (no callers,
+    hardcodes plan: "trial") and app/api/inbox/replies/suggest
+    (no callers). A check would have caught each at the moment it
+    became dead, not two weeks later.
+
+    Shape: same as gov.paid_routes_gated — an explicit list,
+    verified mechanically. Report-only first; fail the pipeline
+    once calibrated.
+
 [ ] [GATED] gov.evolve_loop_usage - usage-driven evolution.
     Split from gov.evolve_loop on 28 Sept.
 
