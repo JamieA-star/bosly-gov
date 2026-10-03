@@ -1412,7 +1412,19 @@ that has actually happened.
 
     Raised 3 Oct, split from accord.email_password_plaintext.
 
-[ ] [LIVE] accord.invoice_send_from_user — Email sending always
+[x] accord.invoice_send_from_user — DONE 3 Oct, as a side effect of
+    accord.email_password_plaintext. Verified: an invoice sent from
+    the user's own connected account (info@greengayte-co.co.uk), not
+    from contact@bosly.app. No code change was needed for this item.
+
+    The entry's stated cause was wrong: there is no SMTP_HOST-first
+    branch in sendMail.ts (grep returns nothing). The real cause was
+    that the stored password could not be decrypted — it was plaintext,
+    and the reader tried to decrypt it — so the per-user send failed
+    and fell back. Encrypting the password fixed it.
+
+    Original entry follows.
+    Email sending always
     uses the server-wide SMTP account (SMTP_HOST in .env.production),
     because getTransporter in lib/email/sendMail.ts checks
     `if (process.env.SMTP_HOST)` FIRST and returns there. The
