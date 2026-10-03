@@ -225,7 +225,7 @@ that has actually happened.
     Un-excluding revealed 28 errors. Excludes restored; the
     three directories are unfixed.
 
-    NOT YET: registered in manifests/checks.yml.
+    REGISTERED 3 Oct in manifests/checks.yml. Severity high.
 
     Original entry follows.
     A check that reads
@@ -647,6 +647,11 @@ that has actually happened.
     Commits 5347025, f3ed729. The live chat is ChatDrawer.
 
 [~] gov.orphaned_routes — BUILT 3 Oct, report-only. checks/
+    orphaned_routes.py. UPDATE 3 Oct: down from 90 to 77 after
+    two clusters archived — tasks (8 routes) and today /
+    today-state / timeline / time-saved (4 routes).
+    Original entry follows.
+    checks/
     orphaned_routes.py lists every route whose path has no caller
     outside its own file. Server-only routes are allowlisted.
 
@@ -1769,7 +1774,23 @@ that has actually happened.
     Estimate: half a session for the DPA decision and the
     audit of other connections.
 
-[ ] [DECISION] gov.claim_invariants — A new class of Gov check: verify
+[~] gov.claim_invariants — BUILT 3 Oct, registered in the fast
+    tier. checks/claim_invariants.py checks the free-pill list:
+    it extracts the list from five docs (ACCORD.md, the FAQ,
+    llms-full.txt, llms.txt, layout.tsx) and compares each to
+    lib/tiers.ts FREE_FEATURES. It checks structured claims —
+    lists, names — not prose. First run: 0 disagreements.
+
+    It would have caught the Accord's inbox line, which said the
+    inbox was paid; fixed an hour before this check existed.
+    That was the fifth instance of this class in two days.
+
+    Next claim families to add: the encryption scope (five of
+    nine pills), the paid-pill list, and any route names stated
+    in docs. All structured; all mechanical.
+
+    Original entry follows.
+    A new class of Gov check: verify
     that the documentation matches the code. The docs (privacy,
     terms, safety, transparency, llms.txt, llms-full.txt, FAQ)
     make overlapping factual claims. The code changes underneath.
