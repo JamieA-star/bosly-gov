@@ -216,7 +216,19 @@ that has actually happened.
     exclusion of live code is visible rather than silent.
     See gov.tsconfig_excludes.
 
-[ ] [DECISION] gov.tsconfig_excludes — A check that reads
+[~] gov.tsconfig_excludes — BUILT 3 Oct, report-only. checks/
+    tsconfig_excludes.py lists every excluded tsconfig directory
+    containing source, except a deliberate-list.
+
+    First run: 3 flagged of 21 — app/api/spaces/**,
+    app/api/connect/google/**, app/api/inbox/webhooks/sms/**.
+    Un-excluding revealed 28 errors. Excludes restored; the
+    three directories are unfixed.
+
+    NOT YET: registered in manifests/checks.yml.
+
+    Original entry follows.
+    A check that reads
     tsconfig.json's `exclude` list and, for each excluded
     directory, reports whether any live file imports from it.
     An exclusion of live code should be visible, not silent.
@@ -1041,7 +1053,13 @@ that has actually happened.
     duplicated validators drift. See the two memory entries.
     Raised 30 Sept.
 
-[ ] [LIVE] accord.microsoft_oauth_hidden — The Microsoft/Outlook
+[x] accord.microsoft_oauth_hidden — SUPERSEDED 3 Oct. Microsoft
+    was removed entirely: the routes, all three UI buttons (the
+    email form, the calendar, and the connections page), and the
+    social connections page. There is nothing to restore.
+
+    Original entry follows.
+    The Microsoft/Outlook
     OAuth button in the email connection form is hidden as of
     30 Sept. It pointed at /api/auth/outlook (no such route), and
     Microsoft OAuth is not configured: MICROSOFT_CLIENT_ID,
@@ -1375,7 +1393,19 @@ that has actually happened.
     /api/auth, /uploads — is present in the public prefixes.
     A regression guard, not a full derivation. Raised 30 Sept.
 
-[ ] [LIVE] accord.inbox_dismiss_not_persistent — Dismissed emails in
+[x] accord.inbox_dismiss_not_persistent — DONE 3 Oct. Three
+    causes, found in sequence:
+    1. app/api/inbox/delete passed ciphertext to IMAP, so
+       marking SEEN failed auth (fixed, d3b63a2).
+    2. Not a store mismatch — the pill reads the cache, and
+       dismiss writes it.
+    3. addMessageToCache re-added dismissed messages: dismiss
+       pushed the uid to cache.dismissedUids, and the IMAP
+       worker re-imported it on the next sync. Guard added in
+       the one function that writes the cache (cd88dc0).
+
+    Original entry follows.
+    Dismissed emails in
     the inbox reappear after a page refresh. There is a Dismiss
     button; what it persists is not yet known. The dismissal is
     evidently not written to the source the list reads from (the
@@ -1467,7 +1497,15 @@ that has actually happened.
     remove the PLAINTEXT branch. Audit whether any other secret is
     stored the same way. Raised 30 Sept.
 
-[ ] [LIVE] ops.secrets_plaintext_audit — accord.email_password_plaintext
+[x] ops.secrets_plaintext_audit — DONE 3 Oct. Audited every
+    credential-shaped column. Four findings, all fixed:
+    ConnectedEmail.password (encrypted, verified with a fresh
+    connection); CalendarSyncState.syncToken (encrypted);
+    User.passwordResetToken and User.verificationToken (SHA-256
+    hashed). The OAuth token columns have no writer — dead.
+
+    Original entry follows.
+    accord.email_password_plaintext
     found one secret stored in plaintext (the connected email
     password). Its own fix called for auditing whether any other
     secret is stored the same way. That audit has not been done.
@@ -1961,7 +1999,13 @@ that has actually happened.
     Depends on: the pricing decision (24 Sept) being final.
     Estimate: half a day.
 
-[ ] [STALE] accord.pricing_update — PARTIAL. The premise is stale:
+[x] accord.pricing_update — CLOSED 3 Oct. The premise was stale
+    (no dedicated pricing page). The live tier copy is the FAQ,
+    corrected 26 Sept and again 3 Oct for the inbox boundary.
+    See accord.tier_copy.
+
+    Original entry follows.
+    PARTIAL. The premise is stale:
     /onboarding/activate and /onboarding/success were archived
     on 21 Sept (accord.beta_onboarding_simplification) because
     they were dead code. The live upgrade path is
