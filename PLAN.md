@@ -1161,6 +1161,69 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261003-full-day — DONE 3 Oct. A day that began as "help me
+    before the reel" and became the free/paid boundary's second day, a
+    documentation audit, three new checks, and a hygiene sweep. Kept as
+    a capsule so a future session sees the arc, not just the outcomes.
+
+    THE ARC:
+      1. The boundary, continued (morning). Yesterday's billing fix held.
+         This day found the rest: the Accord still said the inbox was
+         paid; the README described an app that no longer exists; the
+         welcome email claimed post-quantum encryption.
+      2. The email password (early). encryptPassword derived a key and
+         returned plaintext anyway. Fixed, migrated, verified — then
+         five readers were found one at a time, because the sweep
+         wasn't done first.
+      3. The AI era (midday). The workflow engine replaced the AI chat
+         on 24 Sept, but the routes and components stayed. Archived.
+         Then Microsoft, then three dead directories, then a
+         superseded connections page.
+      4. The checks (afternoon). Three built: orphaned_routes (90
+         found), tsconfig_excludes (3 hidden directories, all broken),
+         claim_invariants (the free-pill list). Two registered.
+      5. The hygiene batch (evening). Ten .bak files, a committed .tmp,
+         a cron script pointing at a Mac, five one-off scripts, a
+         README reduced 193 lines to 152.
+
+    THE SHAPE, for a future session: every bug today was two parts of
+    the system disagreeing, and every one passed every check. A reader
+    watching a column the writer didn't touch. A migration that updated
+    one reader of five. A feature excluded from type-checking. Docs
+    describing a retired product. A button pointing at a deleted route.
+    None of it crashed. All of it was incoherence, and the pipeline was
+    green throughout.
+
+    The answer was not more care. It was three checks that make the
+    hidden visible. Two are registered and green. The third is
+    report-only with 77 findings left to work.
+
+    LESSONS (memory):
+      pattern-20261003-ask-what-else-after-every-fix — the method
+      pattern-20261003-excluded-means-unchecked — the tsc blind spot
+      pattern-20261003-doc-drift-recurs — five documents, one claim
+      fact-20261003-reader-sweep-discipline — grep the readers first
+      pattern-20261003-pointer-to-something-that-isnt-there
+
+    Plus, from 1 Oct: pattern-20261001-read-write-column-drift,
+    pattern-20261001-hidden-not-removed (3 Oct), and ten others across
+    the two days.
+
+    CHECKS BUILT:
+      gov.orphaned_routes — 90 routes with no caller; 77 remain
+      gov.tsconfig_excludes — registered, 0 flagged
+      gov.claim_invariants — registered, checks the free-pill list
+    The pipeline went from 11 checks to 15.
+
+    DEFERRED: accord.cross_pill_propagation (a) — the real code work
+    left; accord.password_reset_ui; the iCloud calendar UI;
+    accord.connection_providers; keep.scripts_typecheck_excluded; the
+    dead OAuth columns; and 77 orphaned routes to work down in clusters.
+
+    TOMORROW: cross_pill_propagation (a) wants a fresh head — every
+    pill's write emits an event, every list listens, one shared module
+    for the names.
+
 [x] session-20260930-full-day — DONE 30 Sept. One session that began
     as "check the chat feedback loop" and became a full user-path
     audit of the app, then a payment fix, then a repo cleanup. Kept
