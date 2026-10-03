@@ -255,7 +255,16 @@ that has actually happened.
 
 [x] accord.server_side_key_visibility — DONE 21 Sept. Committed 2219b73. The client was sending the exported AES key to /api/auth/update-key. Nothing read it server-side. Removed from signup and recovery. Route now accepts all fields as optional. The zero-access claim is true: the server never sees key material. The User.publicKey DB column still exists but new users get null.
 
-[ ] [GATED] accord.spaces_encryption — Shared spaces (connected workspaces
+[ ] [GATED] accord.spaces_encryption — UPDATE 3 Oct: the routes
+    (app/api/spaces/**) are archived to legacy/api-dead-20261003/
+    spaces/. They used three Prisma models (sharedSpace,
+    spaceMember, sharedSpaceMember) that are not in
+    schema.prisma, so they never compiled or ran — the directory
+    was excluded from tsconfig, which hid it. When the feature
+    ships, restore the routes with the schema.
+
+    Original entry follows.
+    Shared spaces (connected workspaces
     for organisations and individuals) is a future feature. The
     route exists and works, but stores names in plaintext. Not
     currently enforced because the feature isn't shipped.
@@ -2207,7 +2216,16 @@ that has actually happened.
     bosly-analytics are kept. bosly-evolve is pending replacement
     (see gov.evolve_loop_usage).
 
-[ ] [LIVE] accord.connection_providers — The old social connections
+[ ] [LIVE] accord.connection_providers — UPDATE 3 Oct:
+    app/api/connect/google/** is archived to
+    legacy/api-dead-20261003/connect-google/. It was unreachable
+    after the calendar's Google button was removed, and broken
+    besides. Rebuild it with the rest of the providers if Google
+    is worth configuring — and decide where OAuth tokens live
+    first.
+
+    Original entry follows.
+    The old social connections
     page (app/(settings)/connections/page.tsx) was removed 3 Oct,
     with its app-settings card and two overpromising copy lines.
     It offered Facebook, Google, Microsoft, and WhatsApp; all four
