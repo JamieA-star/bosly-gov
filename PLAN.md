@@ -2163,6 +2163,25 @@ that has actually happened.
     bosly-analytics are kept. bosly-evolve is pending replacement
     (see gov.evolve_loop_usage).
 
+[ ] [LIVE] accord.connection_providers — The old social connections
+    page (app/(settings)/connections/page.tsx) was removed 3 Oct,
+    with its app-settings card and two overpromising copy lines.
+    It offered Facebook, Google, Microsoft, and WhatsApp; all four
+    were dead:
+
+      - Google calendar: the callback writes ChannelAccount fields
+        that do not exist (provider, accessToken, refreshToken,
+        tokenExpiresAt) and a composite key the schema does not
+        define. Needs a decision first: where do OAuth tokens live?
+      - Microsoft: routes deleted with the Azure integration 3 Oct.
+      - Facebook / WhatsApp (Meta): abandoned — as painful to set
+        up as Azure. The WhatsApp guide linked to
+        developers.workspace.com, which is not a real domain.
+
+    The live connections page is the Connections pill in /settings,
+    which renders the email form. Rebuild each provider against the
+    current schema if it is ever worth configuring. Raised 3 Oct.
+
 [ ] [LIVE] accord.password_reset_ui — A signed-out user who has
     forgotten their password cannot recover. The API exists and
     works: POST /api/auth/password-reset generates a token and
