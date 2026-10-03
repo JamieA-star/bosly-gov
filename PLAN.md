@@ -625,7 +625,32 @@ that has actually happened.
     over chat-memory.txt, and a duplicate of bosly-brain.ts.
     Commits 5347025, f3ed729. The live chat is ChatDrawer.
 
-[ ] [DECISION] gov.orphaned_routes — A check that lists every API
+[~] gov.orphaned_routes — BUILT 3 Oct, report-only. checks/
+    orphaned_routes.py lists every route whose path has no caller
+    outside its own file. Server-only routes are allowlisted.
+
+    FIRST RUN: 90 of 202 routes orphaned. Spot-checked three
+    clusters and all are real — no reference anywhere in app/ or
+    components/:
+      - today, today-state, timeline, time-saved (4)
+      - settings/connections/* (6)
+      - tasks/* (8) — the briefing counts tasks by a direct
+        Prisma query, not through these routes
+
+    Other clusters in the 90: inbox (~12), finance future
+    features (6 — gifts, pension, overview, status, tax-position,
+    mtd), onboarding (3), messages (2), spaces (1), and the rest.
+
+    NOT YET: registered in manifests/checks.yml — 90 findings
+    would break the pipeline. And the allowlist is incomplete;
+    some findings will be false positives.
+
+    TO DO: work down one cluster per session. Classify each as
+    dead (delete), deliberate (mark), or false positive (fix the
+    check). Then register it.
+
+    Original entry follows.
+    A check that lists every API
     route and fails if one has no caller and is not marked
     server-only (cron, webhook, or an explicit comment). Nothing
     catches an orphaned route today; the code says nothing about
