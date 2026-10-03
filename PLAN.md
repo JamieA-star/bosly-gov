@@ -1370,7 +1370,22 @@ that has actually happened.
     Current state: one event -> one invoice. The feature works but
     does not match how invoicing is done. Raised 30 Sept.
 
-[ ] [LIVE] accord.email_password_plaintext — The connected email
+[x] accord.email_password_plaintext — DONE 3 Oct. The password
+    is now encrypted at rest with ENCRYPTION_KEY (bosly-1.0
+    b9489df). The PLAINTEXT: bypass is removed from both the
+    writer (encryptPassword now throws if the key is missing
+    rather than falling back to plaintext) and the reader
+    (sendMail's fallback branch). The one existing row was
+    migrated, and sending from it was verified end to end.
+    gov.email_password_plaintext now guards it in the fast
+    tier (bosly-gov 00fde1e).
+
+    This is encryption at rest, not zero-access — the server
+    decrypts to send on the user's behalf. The inbox is
+    documented as not-yet-zero-access, so the copy is true.
+
+    Original entry follows.
+    The connected email
     account password is stored in plaintext in the database
     (ConnectedEmail.password, prefixed "PLAINTEXT:"). Found 30 Sept:
     a SELECT showed "PLAINTEXT:xxxxxxx" for the IONOS account
@@ -1384,6 +1399,19 @@ that has actually happened.
     remove the PLAINTEXT branch. Audit whether any other secret is
     stored the same way. Raised 30 Sept.
 
+[ ] [LIVE] ops.secrets_plaintext_audit — accord.email_password_plaintext
+    found one secret stored in plaintext (the connected email
+    password). Its own fix called for auditing whether any other
+    secret is stored the same way. That audit has not been done.
+
+    Look at: every column in prisma/schema.prisma whose name
+    suggests a secret (password, token, key, secret); every
+    route that writes one; every config value in .env.production
+    that is a credential; and the `PLAINTEXT:` pattern itself,
+    which may appear elsewhere.
+
+    Raised 3 Oct, split from accord.email_password_plaintext.
+
 [ ] [LIVE] accord.invoice_send_from_user — Email sending always
     uses the server-wide SMTP account (SMTP_HOST in .env.production),
     because getTransporter in lib/email/sendMail.ts checks
@@ -1392,10 +1420,14 @@ that has actually happened.
     is only reached when SMTP_HOST is unset, so it never runs. Every
     user's invoice sends from contact@bosly.app, not from their own
     address, which looks like spam to a client. Fix: prefer the
-    user's connected account, fall back to the server SMTP. Note the
-    per-user path depends on decrypting ConnectedEmail.password,
-    which is currently plaintext (see
-    accord.email_password_plaintext). Raised 30 Sept.
+    user's connected account, fall back to the server SMTP.
+    NOTE 3 Oct: the per-user path depends on decrypting
+    ConnectedEmail.password, which was plaintext until 3 Oct
+    and is now encrypted (accord.email_password_plaintext, done).
+    So the blocker may be gone — decrypting a properly encrypted
+    password now works, as the verified send test showed. Re-check
+    whether the SMTP_HOST-first branch is still the reason invoices
+    send from contact@bosly.app. Raised 30 Sept.
 
 [x] accord.invoice_send_preview — DONE 30 Sept. Sending an invoice
     opened the POST directly with an auto-built email; the user never
