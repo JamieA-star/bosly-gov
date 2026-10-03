@@ -2398,16 +2398,41 @@ system readable.
 
 • ops.repo_root_cleanup — see the primary item above.
 • accord.legacy_js_audit — see the primary item above.
-[ ] [LIVE] ops.scripts_dir_audit_keep — Keep's scripts/ not yet
-    audited. Same treatment as Accord's (done 21 Sept).
-[ ] [LIVE] ops.scripts_dir_audit_gov — Gov's scripts not yet
-    audited.
-[ ] [LIVE] ops.bak_file_sweep — every remaining .bak, .backup,
-    and stale file across the three repos. Git remembers
-    them; the working tree shouldn't carry them.
-[ ] [LIVE] ops.readme_accuracy_all — every README in the three
-    repos, checked against reality. bosly-gov/README.md
-    was corrected 21 Sept; the others not yet.
+[x] ops.scripts_dir_audit_keep — DONE 3 Oct. Of the 16 files in
+    Keep's scripts/, five were archived (clean-universe, fix-snapshots,
+    reset-asset-flags, reset-fresh, expand-universe — referenced by
+    nothing). Kept, after reading each: update-prices (in package.json
+    dev), run-tests.sh (in package.json test), seed-full-universe
+    (fresh-DB seeding), seed-activities and tag-activities (seeding and
+    the correction tool), policy-report (read-only ethical report), and
+    test-prices (a price-feed diagnostic, not a test). Also removed
+    cron-daily.sh (pointed at a Mac that no longer exists) and
+    update-prices.ts.tmp (54 bytes, committed in August). Keep's
+    tsconfig now excludes legacy/ so archived code is not typechecked.
+    Commits d92e8204, 3ea316ad, b1371dc0.
+
+[x] ops.scripts_dir_audit_gov — NON-ITEM 3 Oct. bosly-gov/scripts/ is
+    empty. Nothing to audit.
+
+[x] ops.bak_file_sweep — DONE 3 Oct. Ten .bak/.backup files removed
+    across the three repos. None was tracked by git, and .bak is
+    gitignored in bosly-1.0 and bosly-gov, so they will not return.
+
+[x] ops.readme_accuracy_all — DONE 3 Oct. bosly-1.0/README.md reduced
+    from 193 to 152 lines: the tech stack, paths, pill order, LLM chat,
+    and tier model had all drifted (AWS, Facebook, an AI chat that was
+    retired, £15 instead of £25). Reduced to the mission, the Accord's
+    principles, the design system, and the lessons. bosly-keep/README.md
+    was already accurate and is unchanged. bosly-gov/README.md was fixed
+    21 Sept. Commit 611cab3.
+
+[ ] [LIVE] keep.scripts_typecheck_excluded — Keep's tsconfig.json
+    excludes `scripts`, so the verify suite
+    (scripts/diagnostics/verify-*.ts) is never typechecked by tsc. The
+    tests pass and assert, so nothing is broken — but a type error in a
+    verify script would not surface until runtime. Same shape as the
+    app's excluded directories (gov.tsconfig_excludes). Decide:
+    un-exclude and fix what surfaces, or record why it stays.
 
 ----------------------------------------------------------------
 THE PRINCIPLE
