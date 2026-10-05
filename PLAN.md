@@ -1161,6 +1161,68 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261005-using-the-app — DONE 5 Oct. A day that began as
+    "invoice last month's clients" and became six bug fixes, because
+    every step of a real task was blocked. Kept as a capsule: NONE of
+    the six was found by a check — they were found by using the app.
+
+    THE SIX FIXES:
+
+    1. accord.calendar_timezone_roundtrip — DONE. localToISO (write)
+       built a local Date and converted to ISO, correct. The editor
+       read it back with toISOString(), which converts to UTC again,
+       so a 09:00 event showed as 08:00 and walked an hour backwards
+       on every save-and-reopen. Added isoToLocalHHMM, the inverse.
+       Commit abd6b86.
+
+    2. accord.inbox_dismiss_not_persistent — REOPENED and properly
+       fixed. The 3 Oct guard lived in addMessageToCache, but the
+       cache is also written directly by inbox/messages/sync and
+       inbox/actions, which bypassed it. Moved the guard to
+       writeInboxCache, the single write path. Commit 8aa030c.
+
+    3. accord.vault_prompt_missing — DONE. showRecovery required a
+       backup flag (server hasBackup or local localHasBackup). When
+       the key was missing and neither was set, the reminder rendered
+       NOTHING — the user saw [encrypted] everywhere, saves failed
+       silently, and the only way back was signing out. Now shows
+       whenever the key is missing. Commit 844ead1.
+
+    4. accord.invoice_number_collision — DONE. The number was
+       count+1. A deleted invoice makes the count lower than the
+       highest used, so the next create collided on the unique
+       [userId, invoiceNumber] constraint and failed permanently.
+       Numbers from the highest existing invoice now. Commit d184d1b.
+
+    5. accord.silent_action_feedback — PARTIAL. The send dialog and
+       the invoice editor now show a clear success/failure message
+       next to the button. Remaining: every other action in the app.
+
+    6. accord.mark_invoice_sent — DONE. Invoices are often sent
+       outside Bosly. Added a Mark sent button; the PATCH route now
+       accepts metadata-only updates. Commit 4c986da.
+
+    THE SHAPE: every one of the six was "the app knew and did not
+    say", or "the logic was right and the condition was too narrow".
+    None was a deep bug. The feeling — "I am fighting it" — was
+    accurate, and it was six small things, not a broken app.
+
+    THE GAP: no check caught any of them. The 15 checks verify that
+    the parts of the system agree with each other. None verifies that
+    a person can complete a task. Same lesson as 30 Sept and 1 Oct:
+    walk the flow.
+
+[ ] [LIVE] accord.action_feedback_audit — Every action in the app
+    should report its outcome: success or failure, short, next to the
+    button. Today found that the app mostly does neither: the send
+    dialog showed a small error above the buttons and closed silently
+    on success; the invoice editor showed its message 400 lines above
+    the Create button; mark-paid and delete swallow errors entirely;
+    and the vault, when locked, failed every save silently. None is a
+    logic bug — all of it is the app not saying what happened, which
+    is what "clunky" means. Work: walk every button, note whether it
+    reports, fix the ones that do not. Raised 5 Oct.
+
 [x] session-20261003-full-day — DONE 3 Oct. A day that began as "help me
     before the reel" and became the free/paid boundary's second day, a
     documentation audit, three new checks, and a hygiene sweep. Kept as
