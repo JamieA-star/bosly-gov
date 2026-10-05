@@ -1251,6 +1251,37 @@ that has actually happened.
       grep -rn "confirm(" app components --include='*.tsx'
     Raised 5 Oct.
 
+[~] accord.data_events_sweep — IN PROGRESS. bosly:data-changed
+    (lib/events.ts) carries the kinds that changed; writes emit, readers
+    listen. Six components wired on 5-6 Oct:
+
+      FinancePill      writes emit "finance"; reads listen
+      ContactsPill     writes emit "contacts"
+      CalendarPill     writes emit "calendar"/"finance"; reads
+                       listen for "contacts"
+      InboxPill        writes emit "inbox"
+      ActivePill       writes emit "active"/"calendar"; reads listen
+                       for both
+      workspace        reads listen per-section (load split)
+
+    REMAINING (five), quietest last:
+      - SendInvoiceDialog — writes an invoice; emit "finance"
+      - DataHealthPill — reads "data-health"; writes emit it
+      - IdentityManager — reads "data-health"; writes emit it
+      - HealthPill — reads "health"; writes emit it
+      - SocialPillOrchestrator — reads/writes "social"
+
+    THE DISCIPLINE (learned the hard way, 5 Oct): before writing a
+    patch, run `grep -n` for the exact line and `sed` the exact block.
+    Anchor on that, never on a reconstruction. After patching, run
+    `grep -c` on the emit string and check the diff — a replace can
+    land once where it should land twice, silently. Aborts and partial
+    applications both cost a round-trip; reading first is faster.
+
+    Kinds are in lib/events.ts. Pattern:
+      emitDataChanged("kind")                       // after a write
+      useEffect(() => onDataChanged("kind", load), [load])   // a reader
+
 [ ] [LIVE] accord.action_feedback_audit — PRIORITY, from 5 Oct.
     Every action in the app should report its outcome: success or
     failure, short, next to the button. Today found the app mostly
