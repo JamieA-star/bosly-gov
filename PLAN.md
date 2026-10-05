@@ -595,6 +595,15 @@ that has actually happened.
     the evolve loop had a data source.
 
 [ ] [LIVE] gov.evolve_loop_feedback - feedback-driven evolution.
+    UPDATE 5 Oct: five unknown-intent questions were logged on 2-5 Oct.
+    Three were real bugs since fixed (the calendar timezone, the
+    invoice PDF, the send failure); one is the recurring-appointments
+    feature; one is a greeting the chatbot cannot answer. The digest
+    this item describes would have grouped those and named the
+    recurring one as the open signal. Build it — the raw jsonl is
+    being read by hand instead.
+    Original entry follows.
+    feedback-driven evolution.
     Split from gov.evolve_loop on 28 Sept. The original item was
     gated on UsageEvent rows; that gate covers the usage half only.
     This half has real data and is buildable now.
@@ -1212,7 +1221,17 @@ that has actually happened.
     a person can complete a task. Same lesson as 30 Sept and 1 Oct:
     walk the flow.
 
-[ ] [LIVE] accord.action_feedback_audit — Every action in the app
+[ ] [LIVE] accord.action_feedback_audit — PRIORITY, from 5 Oct.
+    Every action in the app should report its outcome: success or
+    failure, short, next to the button. Today found the app mostly
+    does neither: the send dialog showed a small error above the
+    buttons and closed silently on success; the invoice editor showed
+    its message 400 lines above the Create button; mark-paid and
+    delete swallow errors entirely; and the vault, when locked, failed
+    every save silently. None is a logic bug — all of it is the app
+    not saying what happened, which is what "clunky" means. This is
+    the single highest-value item from three days of use.
+    Every action in the app
     should report its outcome: success or failure, short, next to the
     button. Today found that the app mostly does neither: the send
     dialog showed a small error above the buttons and closed silently
@@ -1584,6 +1603,26 @@ that has actually happened.
 
     Affects multiple pills — needs a sweep of the whole app, not a
     single fix. Raised 30 Sept.
+
+[ ] [LIVE] accord.recurring_appointments — Add a client to one day and
+    repeat them weekly, biweekly, or on chosen weekdays, rather than
+    re-adding them for every occurrence in the month.
+
+    Raised by a real user on 5 Oct (logged as an unknown intent): "When
+    I'm adding a client I have to repeatedly add the client for multiple
+    days throughout the month. It would be good if there was a way to be
+    able to add a client on a day and then select every week or
+    biweekly."
+
+    Same shape as accord.invoice_aggregates_client_appointments: both
+    are the calendar failing to match how the work actually happens —
+    several appointments for one client, invoiced once or booked in a
+    run. Consider them together.
+
+    Design: on the event editor, a "Repeat" control — none, weekly,
+    every 2 weeks, or chosen weekdays — that creates the series. Needs
+    a way to edit or delete the whole series, and a decision on whether
+    occurrences are separate rows or generated on read.
 
 [ ] [LIVE] accord.invoice_aggregates_client_appointments — The
     calendar-to-invoice button creates one invoice from one event.
