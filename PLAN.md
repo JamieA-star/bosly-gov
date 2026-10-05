@@ -1257,7 +1257,7 @@ that has actually happened.
     a person can complete a task. Same lesson as 30 Sept and 1 Oct:
     walk the flow.
 
-[x] accord.confirm_sweep — DONE 6 Oct. Every browser confirm() was
+[x] accord.confirm_sweep — DONE 5 Oct. Every browser confirm() was
     replaced with components/ConfirmButton.tsx — a two-step button:
     first press arms, second runs, Cancel disarms. Eight call sites
     across four files:
@@ -1284,7 +1284,7 @@ that has actually happened.
       grep -rn "confirm(" app components --include='*.tsx'
     Raised 5 Oct.
 
-[x] accord.data_events_sweep — DONE 6 Oct. bosly:data-changed
+[x] accord.data_events_sweep — DONE 5 Oct. bosly:data-changed
     (lib/events.ts) carries the kinds that changed; writes emit,
     readers listen per kind. Wired: FinancePill, ContactsPill,
     CalendarPill, InboxPill, ActivePill, the workspace, and
@@ -1303,7 +1303,7 @@ that has actually happened.
     Original entry follows.
     IN PROGRESS. bosly:data-changed
     (lib/events.ts) carries the kinds that changed; writes emit, readers
-    listen. Six components wired on 5-6 Oct:
+    listen. Six components wired 5 Oct:
 
       FinancePill      writes emit "finance"; reads listen
       ContactsPill     writes emit "contacts"
@@ -1333,7 +1333,7 @@ that has actually happened.
       useEffect(() => onDataChanged("kind", load), [load])   // a reader
 
 [~] accord.action_feedback_audit — IN PROGRESS, five pills done
-    done by 6 Oct: FinancePill (the reference), InboxPill,
+    done 5 Oct: FinancePill (the reference), InboxPill,
     ContactsPill, and the invoice send dialog and editor from 5 Oct.
 
     THE PATTERN, for each component:
