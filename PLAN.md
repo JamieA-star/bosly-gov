@@ -1332,7 +1332,7 @@ that has actually happened.
       emitDataChanged("kind")                       // after a write
       useEffect(() => onDataChanged("kind", load), [load])   // a reader
 
-[~] accord.action_feedback_audit — IN PROGRESS, four components
+[~] accord.action_feedback_audit — IN PROGRESS, five pills done
     done by 6 Oct: FinancePill (the reference), InboxPill,
     ContactsPill, and the invoice send dialog and editor from 5 Oct.
 
@@ -1349,18 +1349,22 @@ that has actually happened.
     line at the top of the component, or inside its open content if it
     collapses. One useFeedback per component, not per row.
 
-    REMAINING (from the survey — 21 components have actions, 11 have no
-    way of reporting):
-      - ActivePill — delete card, done, edit; all silent
-      - HealthPill — five deletes, now unconfirmed by ConfirmButton
-      - DataHealthPill — a scan that says nothing about the result
-      - The eight settings pages: BrandingSettings,
-        AppearanceSettings, BillingSettings, PasswordSettings,
-        GeneralSettings, LegacySettings, OnboardingPreferences
+    DONE (5): FinancePill (the reference), InboxPill, ContactsPill,
+    ActivePill, HealthPill.
 
-    Also worth converting: the components that use setMsg in the wrong
-    place (CalendarPill, InvoiceEditor) or alert() (FinancePill's
-    remaining ones).
+    SELF-CONTAINED, no change needed (2): DataHealthPill reports scan
+    failures through its own result state; SocialPillOrchestrator sets
+    its own error.
+
+    REMAINING — the eight settings pages: BrandingSettings,
+    AppearanceSettings, BillingSettings, PasswordSettings,
+    GeneralSettings, LegacySettings, OnboardingPreferences. Each has a
+    save button, a fetch, and either silence or setMsg in the wrong
+    place.
+
+    Also worth converting: CalendarPill and InvoiceEditor use setMsg in
+    the wrong place (done for InvoiceEditor on 5 Oct; CalendarPill
+    still).
 
     PRIORITY, from 5 Oct. Every action in the app should report its
     outcome. This is the single highest-value item from three days of
