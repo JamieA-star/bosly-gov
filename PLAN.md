@@ -1332,7 +1332,42 @@ that has actually happened.
       emitDataChanged("kind")                       // after a write
       useEffect(() => onDataChanged("kind", load), [load])   // a reader
 
-[ ] [LIVE] accord.action_feedback_audit — PRIORITY, from 5 Oct.
+[~] accord.action_feedback_audit — IN PROGRESS, four components
+    done by 6 Oct: FinancePill (the reference), InboxPill,
+    ContactsPill, and the invoice send dialog and editor from 5 Oct.
+
+    THE PATTERN, for each component:
+      import { useFeedback } from "@/lib/useFeedback";
+      import FeedbackLine from "@/components/FeedbackLine";
+      const fb = useFeedback();
+      // on success:  fb.ok("Contact saved");
+      // on failure:  fb.fail(e, "Could not save the contact");
+      // in the render, near the actions:  <FeedbackLine fb={fb} />
+
+    fb.fail shows the reason when there is one — a thrown Error, a
+    string, or an {error} object — and the fallback otherwise. Put the
+    line at the top of the component, or inside its open content if it
+    collapses. One useFeedback per component, not per row.
+
+    REMAINING (from the survey — 21 components have actions, 11 have no
+    way of reporting):
+      - ActivePill — delete card, done, edit; all silent
+      - HealthPill — five deletes, now unconfirmed by ConfirmButton
+      - DataHealthPill — a scan that says nothing about the result
+      - The eight settings pages: BrandingSettings,
+        AppearanceSettings, BillingSettings, PasswordSettings,
+        GeneralSettings, LegacySettings, OnboardingPreferences
+
+    Also worth converting: the components that use setMsg in the wrong
+    place (CalendarPill, InvoiceEditor) or alert() (FinancePill's
+    remaining ones).
+
+    PRIORITY, from 5 Oct. Every action in the app should report its
+    outcome. This is the single highest-value item from three days of
+    use — "the app knew and did not say" was the shape of every bug.
+
+    Original entry follows.
+    Every action in the app
     Every action in the app should report its outcome: success or
     failure, short, next to the button. Today found the app mostly
     does neither: the send dialog showed a small error above the
