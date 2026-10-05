@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 """
-Check: every paid-pill API route enforces the Accord tier.
+Check: every paid (Accord) route enforces the tier.
 
-The paid pills are Inbox, Finance, Social, and Data health. Every
-route under them must call a tier gate (requireAccord, or the
-existing hasAccord/hasAccordAccess). On 30 Sept the checks were
-scattered: the chat route checked, most pills did not, so the whole
-app was usable for free.
+The free/paid boundary is drawn around features, not pills, and it
+cuts across prefixes. Finance is the clear case: manual invoicing
+(free, the lead magnet) shares the prefix with transactions (paid).
+So this check names routes explicitly — a prefix scan cannot tell
+them apart.
 
-This check fails, listing the ungated routes, until each is gated.
-It is the guide for the enforcement sweep.
+The inbox is NOT here. It is count-gated, not feature-gated: free
+for one connected account, up to five on Accord, enforced in
+/api/email-connection. See accord.free_paid_boundary in PLAN.md.
 
-Exit 0 if every paid route is gated, 1 otherwise.
+A route is gated if it calls requireAccord (or the older
+hasAccord / hasAccordAccess / subscriptionTier read).
+
+Exit 0 if every listed route is gated, 1 otherwise.
 
 Run:
     python3 checks/paid_routes_gated.py
@@ -22,43 +26,41 @@ from pathlib import Path
 
 APP = Path("/home/bosly_accord/bosly-1.0/app/api")
 
-PAID_PREFIXES = [
-    APP / "inbox",
-    APP / "finance",
-    APP / "social",
-    APP / "data-health",
+# Routes that must enforce the Accord tier. Explicit, because the
+# boundary cuts across prefixes. Add a route here when it becomes
+# paid; remove it when it stops being paid.
+PAID_ROUTES = [
+    "finance/categories",
+    "finance/ftx",
+    "finance/import-transactions",
+    "finance/parse-statement",
+    "finance/transactions",
+    "finance/tax-pack",
+    "social/generate-captions",
+    "social/generate-ideas",
+    "data-health/check",
+    "data-health/identities",
+    "chat",
 ]
 
 # A route is gated if it mentions any of these.
 GATE_MARKERS = ["requireAccord", "hasAccord", "hasAccordAccess", "subscriptionTier"]
 
-# Routes that are exempt — webhooks, cron, and other non-user calls
-# that cannot carry a session.
-EXEMPT_SUBSTRINGS = ["/webhooks/", "/cron/", "/callback"]
-
-
-def is_exempt(path: Path) -> bool:
-    s = str(path).replace("\\", "/")
-    return any(x in s for x in EXEMPT_SUBSTRINGS)
-
 
 def main() -> int:
-    routes = []
-    for prefix in PAID_PREFIXES:
-        if prefix.exists():
-            routes.extend(sorted(prefix.rglob("route.ts")))
-
     print("")
-    print("Invariant: every paid-pill route enforces the Accord tier")
+    print("Invariant: every paid route enforces the Accord tier")
     print("----------------------------------------------------")
 
     ungated = []
-    for route in routes:
-        if is_exempt(route):
+    for rel in PAID_ROUTES:
+        route = APP / rel / "route.ts"
+        if not route.exists():
+            print(f"  MISSING  {rel}/route.ts")
+            ungated.append(rel + " (missing)")
             continue
         text = route.read_text(encoding="utf-8")
         gated = any(m in text for m in GATE_MARKERS)
-        rel = str(route).replace(str(APP) + "/", "")
         print(f"  {'OK' if gated else 'UNGATED'}  {rel}")
         if not gated:
             ungated.append(rel)
@@ -71,7 +73,7 @@ def main() -> int:
         print("")
     print(
         f"SUMMARY: {'PASS' if not ungated else 'FAIL'} "
-        f"({len(routes)} routes, {len(ungated)} ungated)"
+        f"({len(PAID_ROUTES)} routes, {len(ungated)} ungated)"
     )
     print("")
     return 0 if not ungated else 1
