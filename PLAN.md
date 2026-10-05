@@ -1266,7 +1266,24 @@ that has actually happened.
       grep -rn "confirm(" app components --include='*.tsx'
     Raised 5 Oct.
 
-[~] accord.data_events_sweep — IN PROGRESS. bosly:data-changed
+[x] accord.data_events_sweep — DONE 6 Oct. bosly:data-changed
+    (lib/events.ts) carries the kinds that changed; writes emit,
+    readers listen per kind. Wired: FinancePill, ContactsPill,
+    CalendarPill, InboxPill, ActivePill, the workspace, and
+    SendInvoiceDialog.
+
+    Four components were surveyed and need nothing, because they are
+    self-contained — they hold their own data, update it after each
+    write, and nothing else reads it: DataHealthPill, IdentityManager,
+    HealthPill, SocialPillOrchestrator. SocialPillOrchestrator has no
+    shared list at all — its two fetches generate content.
+
+    Also removed two wrong listeners the workspace had: it listened
+    for "data-health" and "health" but reloaded loadMemory, which it
+    does not display. Both were guesses, and both were wrong.
+
+    Original entry follows.
+    IN PROGRESS. bosly:data-changed
     (lib/events.ts) carries the kinds that changed; writes emit, readers
     listen. Six components wired on 5-6 Oct:
 
