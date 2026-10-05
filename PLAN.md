@@ -1171,7 +1171,7 @@ that has actually happened.
     everything it claims now verified.
 
 [x] session-20261005-using-the-app — DONE 5 Oct. A day that began as
-    "invoice last month's clients" and became six bug fixes, because
+    "invoice last month's clients" and became nine bug fixes, because
     every step of a real task was blocked. Kept as a capsule: NONE of
     the six was found by a check — they were found by using the app.
 
@@ -1211,6 +1211,27 @@ that has actually happened.
        outside Bosly. Added a Mark sent button; the PATCH route now
        accepts metadata-only updates. Commit 4c986da.
 
+    7. accord.paid_invoice_zero_transaction — DONE. Mark-paid created
+       a FinanceTransaction with amountPence 0, because the server
+       cannot read the encrypted invoice amount; the comment said the
+       user would amend it, and nothing prompted them to. A £0.00
+       income row appeared. The client now sends the decrypted amount;
+       if it cannot (vault locked), the route skips the transaction
+       rather than writing a zero. Commit e2f23d1.
+
+    8. accord.delete_confirm_pwa — DONE. Every delete began with a
+       browser confirm(). In a PWA or iOS Safari that dialog can be
+       suppressed, confirm returns false, and the delete silently does
+       nothing. Replaced with an inline Yes, delete / Cancel. Every
+       other confirm() in the app has the same bug — see
+       accord.confirm_sweep.
+
+    9. accord.cross_pill_propagation (a) — STARTED, not finished.
+       lib/events.ts adds bosly:data-changed; FinancePill's writes
+       emit it, the workspace and the pill listen. It did NOT fully
+       fix the refresh: some readers still hold their own copy of
+       shared data. The survey is the next work. Commit 83dc53b.
+
     THE SHAPE: every one of the six was "the app knew and did not
     say", or "the logic was right and the condition was too narrow".
     None was a deep bug. The feeling — "I am fighting it" — was
@@ -1220,6 +1241,15 @@ that has actually happened.
     the parts of the system agree with each other. None verifies that
     a person can complete a task. Same lesson as 30 Sept and 1 Oct:
     walk the flow.
+
+[ ] [LIVE] accord.confirm_sweep — Every browser confirm() in the app.
+    A confirm() dialog can be suppressed in a PWA or iOS Safari,
+    confirm returns false, and the guarded action silently does
+    nothing — which is what happened to invoice delete on 5 Oct. The
+    invoice delete now uses an inline Yes / Cancel. Every other
+    confirm() has the same bug. Find them all and replace them:
+      grep -rn "confirm(" app components --include='*.tsx'
+    Raised 5 Oct.
 
 [ ] [LIVE] accord.action_feedback_audit — PRIORITY, from 5 Oct.
     Every action in the app should report its outcome: success or
