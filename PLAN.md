@@ -1257,7 +1257,25 @@ that has actually happened.
     a person can complete a task. Same lesson as 30 Sept and 1 Oct:
     walk the flow.
 
-[ ] [LIVE] accord.confirm_sweep — Every browser confirm() in the app.
+[x] accord.confirm_sweep — DONE 6 Oct. Every browser confirm() was
+    replaced with components/ConfirmButton.tsx — a two-step button:
+    first press arms, second runs, Cancel disarms. Eight call sites
+    across four files:
+
+      HealthPill        5 handlers, 6 buttons (deleteBlood renders
+                        twice)
+      BillingSettings   cancel Accord
+      DuressSettings    remove the phrase
+      FinancePill       delete a transaction
+
+    A browser confirm() can be suppressed in a PWA or iOS Safari,
+    confirm returns false, and the guarded action silently does
+    nothing — which is how the invoice delete broke on 5 Oct. No
+    confirm() remains in the app; the only match is the comment in
+    ConfirmButton explaining why.
+
+    Original entry follows.
+    Every browser confirm() in the app.
     A confirm() dialog can be suppressed in a PWA or iOS Safari,
     confirm returns false, and the guarded action silently does
     nothing — which is what happened to invoice delete on 5 Oct. The
