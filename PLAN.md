@@ -1171,7 +1171,7 @@ that has actually happened.
     everything it claims now verified.
 
 [x] session-20261005-using-the-app — DONE 5 Oct. A day that began as
-    "invoice last month's clients" and became nine bug fixes, because
+    "invoice last month's clients" and became nine bug fixes plus three sweeps, because
     every step of a real task was blocked. Kept as a capsule: NONE of
     the six was found by a check — they were found by using the app.
 
@@ -1226,26 +1226,40 @@ that has actually happened.
        other confirm() in the app has the same bug — see
        accord.confirm_sweep.
 
-    9. accord.data_events_sweep — IN PROGRESS, six of eleven done.
-       lib/events.ts: bosly:data-changed carries the kinds that
-       changed; writes emit, readers listen per kind. A survey found
-       eleven components holding shared data, most loaded once and
-       never reloaded. The workspace's single load() (seven fetches on
-       any change) split into seven loaders, each listening for its own
-       kind. Wired both ways: FinancePill, CalendarPill, ActivePill.
-       Writes only: ContactsPill, InboxPill. Reads only: the
-       workspace. Five remain — see accord.data_events_sweep.
-       Commits 83dc53b..d418b6a.
+    9. accord.data_events_sweep — DONE. lib/events.ts:
+       bosly:data-changed carries the kinds that changed; writes emit,
+       readers listen per kind. Seven components wired: FinancePill,
+       ContactsPill, CalendarPill, InboxPill, ActivePill, the
+       workspace, and SendInvoiceDialog. Four surveyed and
+       self-contained: DataHealthPill, IdentityManager, HealthPill,
+       SocialPillOrchestrator. Two wrong listeners removed from the
+       workspace (both guesses). Commits 83dc53b..6d1af27.
 
-    10. THE DISCIPLINE, learned tonight the hard way: before writing a
-        patch, grep -n the exact line and sed the exact block, and
-        anchor on that — never on a reconstruction. Then grep -c the
-        result and read the diff, because a replace can land once
-        where it should land twice, silently. Tonight had two aborts
-        from guessed anchors (caught), one partial application (caught
-        only by a count), and one replace that landed once instead of
-        twice. Reading first is faster than patching twice. This is
-        recorded in accord.data_events_sweep and in memory.
+    10. accord.confirm_sweep — DONE. Every browser confirm() replaced
+        with components/ConfirmButton.tsx: eight call sites, four files
+        (HealthPill 5 handlers / 6 buttons, BillingSettings,
+        DuressSettings, FinancePill). A confirm() can be suppressed in
+        a PWA, returns false, and the guarded action does nothing
+        silently — which is how the invoice delete broke. No confirm()
+        remains except the comment explaining why. Commit 6d1af27.
+
+    11. accord.action_feedback_audit — ADVANCED. Five pills now report
+        their outcome through lib/useFeedback and FeedbackLine:
+        FinancePill (the reference), InboxPill, ContactsPill,
+        ActivePill, HealthPill. DataHealthPill and
+        SocialPillOrchestrator already reported through their own
+        state. The eight settings pages remain.
+
+    12. THE DISCIPLINE, learned the hard way over two sessions:
+        before writing a patch, grep -n the exact line and sed the
+        exact block, and anchor on that — never on a reconstruction.
+        Then grep -c the result and read the diff, because a replace
+        can land once where it should land twice, silently. And run
+        tsc before the build: a replacement can match its anchor and
+        still be malformed (a doubled style={{...}}, an argument with
+        a stray colon). The order is anchors, then tsc, then build,
+        then the count — each catches a different class. Recorded in
+        memory.
 
     THE SHAPE: every one of the six was "the app knew and did not
     say", or "the logic was right and the condition was too narrow".
