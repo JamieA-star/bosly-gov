@@ -1226,11 +1226,26 @@ that has actually happened.
        other confirm() in the app has the same bug — see
        accord.confirm_sweep.
 
-    9. accord.cross_pill_propagation (a) — STARTED, not finished.
-       lib/events.ts adds bosly:data-changed; FinancePill's writes
-       emit it, the workspace and the pill listen. It did NOT fully
-       fix the refresh: some readers still hold their own copy of
-       shared data. The survey is the next work. Commit 83dc53b.
+    9. accord.data_events_sweep — IN PROGRESS, six of eleven done.
+       lib/events.ts: bosly:data-changed carries the kinds that
+       changed; writes emit, readers listen per kind. A survey found
+       eleven components holding shared data, most loaded once and
+       never reloaded. The workspace's single load() (seven fetches on
+       any change) split into seven loaders, each listening for its own
+       kind. Wired both ways: FinancePill, CalendarPill, ActivePill.
+       Writes only: ContactsPill, InboxPill. Reads only: the
+       workspace. Five remain — see accord.data_events_sweep.
+       Commits 83dc53b..d418b6a.
+
+    10. THE DISCIPLINE, learned tonight the hard way: before writing a
+        patch, grep -n the exact line and sed the exact block, and
+        anchor on that — never on a reconstruction. Then grep -c the
+        result and read the diff, because a replace can land once
+        where it should land twice, silently. Tonight had two aborts
+        from guessed anchors (caught), one partial application (caught
+        only by a count), and one replace that landed once instead of
+        twice. Reading first is faster than patching twice. This is
+        recorded in accord.data_events_sweep and in memory.
 
     THE SHAPE: every one of the six was "the app knew and did not
     say", or "the logic was right and the condition was too narrow".
