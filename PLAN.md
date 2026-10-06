@@ -1339,8 +1339,6 @@ that has actually happened.
       useEffect(() => onDataChanged("kind", load), [load])   // a reader
 
 [~] accord.action_feedback_audit — IN PROGRESS, five pills done
-    done 5 Oct: FinancePill (the reference), InboxPill,
-    ContactsPill, and the invoice send dialog and editor from 5 Oct.
 
     THE PATTERN, for each component:
       import { useFeedback } from "@/lib/useFeedback";
@@ -1362,11 +1360,16 @@ that has actually happened.
     failures through its own result state; SocialPillOrchestrator sets
     its own error.
 
-    REMAINING — the eight settings pages: BrandingSettings,
-    AppearanceSettings, BillingSettings, PasswordSettings,
-    GeneralSettings, LegacySettings, OnboardingPreferences. Each has a
-    save button, a fetch, and either silence or setMsg in the wrong
-    place.
+    REMAINING — the settings pages. Eight fetch data
+    (grep -l "await fetch" components/settings/*.tsx):
+      AppearanceSettings, BillingSettings, BrandingSettings,
+      DuressSettings, GeneralSettings, LegacySettings,
+      OnboardingPreferences, PasswordSettings.
+    DuressSettings is DONE (ConfirmButton + fb.fail, 5 Oct);
+    BillingSettings is partly done (cancel button only). So seven
+    remain, each a save button, a fetch, and either silence or
+    setMsg in the wrong place. AppSettings and ThemeSettings do not
+    fetch — nothing to report, correctly omitted.
 
     Also worth converting: CalendarPill and InvoiceEditor use setMsg in
     the wrong place (done for InvoiceEditor on 5 Oct; CalendarPill
