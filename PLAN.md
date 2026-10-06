@@ -393,6 +393,35 @@ that has actually happened.
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
 
+[ ] [DECISION] gov.plan_hygiene — The plan accumulates drifts. Five
+    found and fixed on 5 Oct, all small, none caught by a check:
+
+      1. Four entries written with the wrong date (6 Oct for 5 Oct).
+      2. A done entry (accord.usage_capture_wiring) kept its pre-work
+         description below the DONE summary — a fragment about
+         /api/usage/ping and duplicate hooks, all resolved 21 Sept.
+         It made the entry read as half-open, and an outside reader
+         flagged it as an error in a neighbouring item.
+      3. The same entry's tail stranded, attributed to the wrong
+         entry in a truncated read.
+      4. accord.action_feedback_audit had a duplicated DONE line, and
+         two summaries that disagreed.
+      5. The same entry said "eight settings pages" and named seven,
+         missing DuressSettings. Eight files fetch; one is done.
+
+    The shape: the plan is appended to constantly and cleaned rarely.
+    Ticking an item leaves its old text behind. Counts drift from
+    reality. This is the "hidden, not removed" pattern applied to the
+    plan itself. gov.plan_tracks_known_gaps checks that admissions are
+    tracked — nothing checks that a done item's stale text is removed,
+    or that an entry's count matches the names it lists.
+
+    A check could verify: a [x] entry contains no "TODO", "not yet",
+    or pre-work imperative; a stated count matches the list below it;
+    no two entries contain the same block of text. Report-only first.
+
+    Raised 5 Oct.
+
 [ ] [LIVE] ops.founding_member_offer — The 2 Oct founding member
     ask goes out Friday. The offer is a Stripe promotion code
     (40% off, duration forever, max 21 redemptions — 20 for the
