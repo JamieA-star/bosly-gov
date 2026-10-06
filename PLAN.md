@@ -422,7 +422,18 @@ that has actually happened.
 
     Raised 5 Oct.
 
-[ ] [LIVE] ops.founding_member_offer — The 2 Oct founding member
+[x] ops.founding_member_offer — DONE 6 Oct. The post went out; the
+    reel is live; the offer is running. FOUNDER40 has 20 of 21
+    redemptions remaining — the one used was the end-to-end test on
+    2 Oct. The detail below is the record of how the offer was built
+    and stays as history.
+
+    If the 20 fills and the offer should close, that is a new item, not
+    this one. If a second test ever runs, the post's "20 spots" claim
+    becomes false — gov.claim_invariants territory.
+
+    Original entry follows.
+    [ ] [LIVE] ops.founding_member_offer — The 2 Oct founding member
     ask goes out Friday. The offer is a Stripe promotion code
     (40% off, duration forever, max 21 redemptions — 20 for the
     post, 1 reserved for the founder's end-to-end test).
