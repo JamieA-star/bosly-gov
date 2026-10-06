@@ -1367,7 +1367,29 @@ that has actually happened.
       emitDataChanged("kind")                       // after a write
       useEffect(() => onDataChanged("kind", load), [load])   // a reader
 
-[~] accord.action_feedback_audit — IN PROGRESS, five pills done
+[x] accord.action_feedback_audit — DONE 6 Oct. Every live target now
+    reports through useFeedback + FeedbackLine: the five pills
+    (FinancePill the reference, InboxPill, ContactsPill, ActivePill,
+    HealthPill), the six settings components and the inline password
+    block in app/settings/page.tsx, and EmailConnectionForm. Its
+    `status` state was left alone — it is the content of the testing
+    and done steps, not a next-to-the-button message.
+
+    The "seven settings pages remain" below was wrong, three ways: the
+    eight-file grep list included three unreferenced files
+    (AppearanceSettings, OnboardingPreferences, PasswordSettings),
+    which are archived to legacy/settings-dead-20261006/ (3476b4e);
+    and the inline password block in app/settings/page.tsx was never
+    on the list at all. The live target count was six components plus
+    the inline block.
+
+    Bugs found and fixed on the way, each its own commit: password
+    failure rendered in emerald; General/Legacy/Branding shared one
+    message state with success; duress errors were set but never
+    rendered; billing swallowed a failed subscription fetch and could
+    show an active subscriber the free-tier checkout button; branding
+    uploaded a logo and did not check whether it saved; email
+    connection remove fired and forgot, and had no confirm.
 
     THE PATTERN, for each component:
       import { useFeedback } from "@/lib/useFeedback";
