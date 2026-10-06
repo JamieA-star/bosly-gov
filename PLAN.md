@@ -584,15 +584,7 @@ that has actually happened.
     the Gov UI is localhost-only and requires an SSH tunnel
     from another machine.
 
-[x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. call useUsageTracking from
-    each of the nine workspace pills so pill open/close events
-    land in the UsageEvent table. The hook and the
-    /api/usage/ping route both exist and work; they are simply
-    never called. Also reconcile the duplicate hook copies at
-    components/useUsageTracking.ts and lib/useUsageTracking.ts —
-    pick one location, delete the other. Prerequisite for
-    gov.evolve_loop. Discovered 21 Sept when checking whether
-    the evolve loop had a data source.
+[x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
 [ ] [LIVE] gov.evolve_loop_feedback - feedback-driven evolution.
     UPDATE 5 Oct: five unknown-intent questions were logged on 2-5 Oct.
