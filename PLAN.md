@@ -1202,6 +1202,81 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261006-feedback-sweep — DONE 6 Oct. A day that began as
+    "help me with my project plan items" and finished
+    accord.action_feedback_audit, but on the way it found that every
+    file the sweep touched had a real bug in it. Kept as a capsule:
+    the sweep was not a sweep.
+
+    THE ARC:
+
+    1. The list was wrong before it was worked. The plan said "seven
+       settings pages remain," counted from a grep of
+       components/settings/*.tsx. Eight files matched. Grepping for
+       importers found five were referenced by nothing —
+       AppearanceSettings, AppSettings, OnboardingPreferences,
+       PasswordSettings, ThemeSettings. The live settings page mounts
+       six components, three of them from that directory. PasswordSettings
+       in particular implied the password UI lived in that file; it is
+       inline in app/settings/page.tsx. Two turns were spent chasing
+       the dead trail before the grep. The dead files are archived to
+       legacy/settings-dead-20261006/ (3476b4e). Memory:
+       pattern-20261006-a-file-that-looks-live-may-be-dead.
+
+    2. app/settings/page.tsx (inline password) — the first real
+       defect: a failed password change rendered in emerald with the
+       word "Failed." One message state held both success and failure,
+       and the JSX always used the success colour. Commit 5274243.
+
+    3. GeneralSettings and LegacySettings — the same shape: one
+       message state shared by load and save, rendered emerald
+       regardless. Commits a9e5af4, e9c56e0. The load-failure path
+       was also silent on General until it was routed through the
+       same channel.
+
+    4. DuressSettings — different: a state machine with four
+       failure paths that set error and landed on a step that did not
+       render it. checkStatus and startSetup land on idle; a failed
+       storeDuressKeys returned to the phrase display with no reason.
+       Bugs first: error visibility (871f59f), then a saved boolean
+       that never reset after a successful delete (3663b9f), then the
+       sweep (900ca3b).
+
+    5. BillingSettings — fetchBillingData caught and discarded, so
+       a failed fetch left subscription null, indistinguishable from
+       "no subscription" — an active subscriber could see the
+       free-tier view with a Begin Bosly Accord button. Then res.ok
+       checks on the Stripe redirects. Then the sweep. Commits
+       9adb967, 457baea, 3e94b95.
+
+    6. BrandingSettings — after a successful upload, the nested PUT
+       to /api/user/settings was fired and forgotten. If it failed,
+       the logo appeared on screen but was never persisted. Commit
+       5dba27c, then the sweep 20a0499.
+
+    7. EmailConnectionForm — three bugs: no res.ok on the
+       connection test, a swallowed fetchConnections, and a
+       fire-and-forget remove with no confirm on a destructive action
+       (40b4ff6, 85d7eb4, 5ff33a3). Then a partial sweep — error
+       only; status is the content of the testing and done steps, not
+       a next-to-the-button message, and useFeedback does not fit
+       (f821181).
+
+    THE SHAPE, for a future session: the sweep was not a sweep. Every
+    file it touched had a real bug in it, and every bug was the same
+    class — the app knew and did not say. That is the same shape as
+    3 Oct (every bug was two parts of the system disagreeing) and 5 Oct
+    (every bug was found by using the app, not by a check). Three
+    sessions, one underlying pattern. The checks are green throughout;
+    the pattern is invisible to them.
+
+    The working method that held: bugs first, each its own commit,
+    then the sweep as a refactor. Eight bug fixes, seven sweeps, one
+    archive, two ticks, one memory entry. Nothing was pushed without
+    a clean tsc and a clean build.
+
+    LESSONS (memory): pattern-20261006-a-file-that-looks-live-may-be-dead.
+
 [x] session-20261005-using-the-app — DONE 5 Oct. A day that began as
     "invoice last month's clients" and became nine bug fixes plus three sweeps, because
     every step of a real task was blocked. Kept as a capsule: NONE of
