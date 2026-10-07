@@ -1277,6 +1277,59 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261007-two-arcs — DONE 7 Oct. A day that began as "lets
+    keep going" on three plan items and became two arcs plus a schema
+    detour. Kept as a capsule: the detour is the connective tissue.
+
+    THE ARC:
+
+    1. The digest and the orientation (morning). Three items: build
+       the unknown-intents digest, fix the orientation script's
+       versioning, clean the plan. The digest needed a classifier —
+       lib/intent_classify.py labels each question bug / feature /
+       question / other, rules as data. evolve_feedback.py groups by
+       label and reads a status store. /usr/local/bin/bosly moved
+       into bosly-gov/bin/bosly and is now symlinked. The orientation
+       shows the digest summary every session.
+
+    2. The migration detour (midday). A schema change for invoicing
+       needed a migration; migrate dev failed because the migration
+       history could not replay on a Postgres shadow database. Two
+       causes: the pre-baseline migrations are SQLite-era (PRAGMA,
+       DATETIME), and the history was disconnected from the live
+       database (_prisma_migrations had two rows, neither matching
+       the schema). Rebuilt on a single live baseline. This is the
+       day's real lesson — a history that cannot rebuild from
+       scratch is not a history, and nothing said so.
+
+    3. The calendar and invoicing (afternoon). accord.recurring_
+       appointments shipped: the add route creates a series, the
+       form has a repeat control. Then accord.invoice_aggregates_
+       client_appointments: schema (invoicedAt + invoiceId), a shared
+       nextInvoiceNumber, a read route grouping unbilled events by
+       contact, a write route that creates one invoice and marks its
+       events in a single transaction, an Unbilled tab, and a
+       confirmation modal. Built, not yet tested.
+
+    4. gov.plan_hygiene resolved by removing a check. Three tuning
+       passes on a plan-drift check, each pass removing false
+       positives and revealing more. The patterns that indicate drift
+       are the same patterns in legitimate text. No check built.
+
+    THE SHAPE, for a future session: two of today's three big
+    problems were invisible until something was run. The digest did
+    nothing for nine days because it was built against empty data.
+    The migration history could not rebuild from scratch, and only
+    migrate dev exposed it. Both are the same shape — a mechanism
+    that looked right and wasn't, caught by running it against
+    reality. The checks are green throughout; both were invisible
+    to them.
+
+    LESSONS (memory): pattern-20261007-a-digest-built-against-empty-
+    data, pattern-20261007-drift-is-not-checkable-by-surface-
+    patterns, pattern-20261007-sqlite-era-migrations-on-postgres,
+    pattern-20261007-aggregation-is-a-read-plus-a-transaction.
+
 [x] session-20261006-feedback-sweep — DONE 6 Oct. A day that began as
     "help me with my project plan items" and finished
     accord.action_feedback_audit, but on the way it found that every
