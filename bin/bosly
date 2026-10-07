@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+set -u
+
+GOV_DIR="/home/bosly_accord/bosly-gov"
+ACCORD_DIR="/home/bosly_accord/bosly-1.0"
+KEEP_DIR="/home/bosly_accord/bosly-keep"
+KNOWLEDGE_DIR="/mnt/bosly/bosly-data/copilot-knowledge"
+PLAN="$GOV_DIR/PLAN.md"
+AGREEMENT="$GOV_DIR/WORKING_AGREEMENT.md"
+
+echo ""
+echo "================================================================"
+echo "  BOSLY — PROJECT ORIENTATION"
+echo "================================================================"
+echo ""
+echo "Generated: $(date -u +'%Y-%m-%d %H:%M UTC')"
+echo ""
+
+# Pipeline state
+echo "----------------------------------------------------------------"
+echo "PIPELINE STATE"
+echo "----------------------------------------------------------------"
+echo ""
+if [ -f "$GOV_DIR/runners/run_checks.py" ]; then
+  (cd "$GOV_DIR" && python3 runners/run_checks.py --tier fast 2>&1)
+else
+  echo "(run_checks.py not found)"
+fi
+echo ""
+
+# Unanswered questions — the feedback loop's input
+echo "----------------------------------------------------------------"
+echo "UNANSWERED QUESTIONS"
+echo "----------------------------------------------------------------"
+echo ""
+UNKNOWN_INTENTS="/mnt/bosly/bosly-data/.data/governor/unknown-intents.jsonl"
+if [ -f "$UNKNOWN_INTENTS" ]; then
+  if ! python3 "$GOV_DIR/evolve_feedback.py" --summary 2>/dev/null; then
+    echo "  (digest failed — run: cd $GOV_DIR && python3 evolve_feedback.py --summary)"
+  fi
+  echo "  Full log: $UNKNOWN_INTENTS"
+else
+  echo "  (no unknown-intents log yet)"
+fi
+echo ""
+
+# Social media — scheduled posts
+echo "----------------------------------------------------------------"
+echo "SOCIAL MEDIA — SCHEDULED"
+echo "----------------------------------------------------------------"
+echo ""
+sed -n '/^SCHEDULED$/,/^BACKLOG$/p' "$PLAN" 2>/dev/null | grep -E "^[0-9]+ (Sept|Oct|Nov|Dec)" | head -5
+echo ""
+
+# Top open plan items
+echo "----------------------------------------------------------------"
+echo "TOP OPEN PLAN ITEMS"
+echo "----------------------------------------------------------------"
+echo ""
+if [ -f "$PLAN" ]; then
+  grep -n "^\[ \]" "$PLAN" | head -5
+else
+  echo "(PLAN.md not found)"
+fi
+echo ""
+echo "Full plan: $PLAN"
+echo ""
+
+# Recent commits
+echo "----------------------------------------------------------------"
+echo "RECENT COMMITS"
+echo "----------------------------------------------------------------"
+echo ""
+for repo in "bosly-1.0:$ACCORD_DIR" "bosly-keep:$KEEP_DIR" "bosly-gov:$GOV_DIR"; do
+  name="${repo%%:*}"
+  path="${repo##*:}"
+  echo "$name:"
+  if [ -d "$path/.git" ]; then
+    (cd "$path" && git log --oneline -3 2>/dev/null | sed 's/^/  /')
+  else
+    echo "  (not a git repo)"
+  fi
+  echo ""
+done
+
+# Recent memory — sorted by date embedded in ID
+echo "----------------------------------------------------------------"
+echo "RECENT MEMORY (last 5 by date)"
+echo "----------------------------------------------------------------"
+echo ""
+if [ -d "$KNOWLEDGE_DIR" ]; then
+  python3 - <<'PYEOF'
+import json, re
+from pathlib import Path
+
+root = Path("/mnt/bosly/bosly-data/copilot-knowledge")
+entries = []
+for slug_dir in sorted(root.iterdir()):
+    if not slug_dir.is_dir():
+        continue
+    mfile = slug_dir / "memory.json"
+    if not mfile.exists():
+        continue
+    try:
+        data = json.load(mfile.open(encoding="utf-8"))
+    except Exception:
+        continue
+    items = data if isinstance(data, list) else data.get("items", [])
+    for item in items:
+        if isinstance(item, dict) and "id" in item:
+            eid = item["id"]
+            m = re.search(r'(\d{8})', eid)
+            date_key = m.group(1) if m else "00000000"
+            entries.append((date_key, slug_dir.name, eid))
+
+entries.sort(key=lambda x: (x[0], x[2]))
+for date_key, slug, eid in entries[-5:]:
+    print(f"  [{slug}] {eid}")
+PYEOF
+else
+  echo "  (knowledge dir not found)"
+fi
+echo ""
+
+# Locations
+echo "----------------------------------------------------------------"
+echo "LOCATIONS"
+echo "----------------------------------------------------------------"
+echo ""
+echo "  Accord:     $ACCORD_DIR"
+echo "  Keep:       $KEEP_DIR"
+echo "  Gov:        $GOV_DIR"
+echo "  Plan:       $PLAN"
+echo "  Agreement:  $AGREEMENT"
+echo "  Knowledge:  $KNOWLEDGE_DIR"
+echo ""
+echo "  Run checks: cd $GOV_DIR && python3 runners/run_checks.py --tier fast"
+echo ""
+
+echo "================================================================"
+echo "  Paste this output into a new chat."
+echo "  Then paste WORKING_AGREEMENT.md."
+echo "  Then a short paragraph: what you're working on."
+echo "================================================================"
+echo ""
