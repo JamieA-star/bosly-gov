@@ -814,6 +814,35 @@ that has actually happened.
     the risk and document the decision here. Raised 27 Sept after
     the tail -20 fix showed the script is editable but untracked.
 
+[x] gov.prisma_migration_history — RESOLVED 7 Oct. The migration
+    history could not replay on a Postgres shadow database. Two
+    causes: the pre-baseline migrations were SQLite-era
+    (20260307131646_prisma_cleanup_safe uses PRAGMA and DATETIME,
+    which Postgres does not have), and the history was disconnected
+    from the live database — _prisma_migrations held two rows, one
+    with a null finished_at, neither matching the actual schema. The
+    live database's shape had been created outside the migration
+    system.
+
+    Rebuilt on a single baseline generated from the live database:
+    migrate diff --from-empty --to-schema-datasource. All fourteen
+    old migration folders deleted; the baseline added; the two
+    orphan _prisma_migrations rows removed; the baseline's checksum
+    updated to match the file on disk. Commit 46d4b8d.
+
+    Migrate dev works again. The first migration generated on the
+    rebuilt history is da6ccab (invoicedAt and invoiceId on
+    CalendarEvent). The live database was not modified by the
+    rebuild; the shape it had at the start is the shape it has now,
+    plus the two new columns.
+
+    Lesson: a migration history that cannot rebuild from scratch is
+    not a history. The shadow database exposes this the moment
+    migrate dev runs, but only if migrate dev is ever run. This one
+    had been accumulating since the SQLite-to-Postgres switch and
+    was found only because a schema change needed a migration.
+    Memory: pattern-20261007-sqlite-era-migrations-on-postgres.
+
 [ ] [DECISION] gov.memory_persistence — /mnt/bosly/bosly-data/copilot-knowledge/*/memory.json
     is not tracked by any git repo. Confirmed 27 Sept: bosly-1.0,
     bosly-keep, and bosly-gov do not track any path under
