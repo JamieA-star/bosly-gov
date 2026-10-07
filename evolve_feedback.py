@@ -39,7 +39,20 @@ from lib.intent_classify import classify
 UNKNOWN_INTENTS_PATH = Path(
     "/mnt/bosly/bosly-data/.data/governor/unknown-intents.jsonl"
 )
+STATUS_PATH = Path(
+    "/mnt/bosly/bosly-data/.data/governor/unknown-intents-status.json"
+)
 FEEDBACK_PATH = Path("/mnt/bosly/bosly-data/logs/feedback.jsonl")
+
+
+def read_status() -> dict[str, dict[str, Any]]:
+    if not STATUS_PATH.exists():
+        return {}
+    try:
+        data = json.loads(STATUS_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
 
 
 def parse_ts(value: Any) -> datetime | None:
@@ -102,6 +115,24 @@ def _label_counts(buckets: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
     return {label: len(items) for label, items in buckets.items()}
 
 
+def _label_status(
+    buckets: dict[str, list[dict[str, Any]]], status: dict[str, dict[str, Any]]
+) -> dict[str, tuple[int, int]]:
+    """Return {label: (open, fixed)}."""
+    out: dict[str, tuple[int, int]] = {}
+    for label, items in buckets.items():
+        open_n = 0
+        fixed_n = 0
+        for row in items:
+            s = status.get(str(row.get("ts", "")), {}).get("status", "new")
+            if s == "fixed":
+                fixed_n += 1
+            else:
+                open_n += 1
+        out[label] = (open_n, fixed_n)
+    return out
+
+
 def format_summary(rows: list[dict[str, Any]]) -> str:
     now = datetime.now(timezone.utc)
     week_ago = now - timedelta(days=7)
@@ -112,26 +143,31 @@ def format_summary(rows: list[dict[str, Any]]) -> str:
     )
     buckets = group_unknown_intents(rows)
     counts = _label_counts(buckets)
+    status = read_status()
+    by_status = _label_status(buckets, status)
 
     out: list[str] = []
     out.append(f"  Noted: {total} total, {recent} in the last 7 days")
     if total == 0:
         return "\n".join(out)
 
-    out.append(
-        "  Bugs: {bug}    Features: {feature}    "
-        "Questions: {question}    Other: {other}".format(
-            bug=counts.get("bug", 0),
-            feature=counts.get("feature", 0),
-            question=counts.get("question", 0),
-            other=counts.get("other", 0),
-        )
-    )
+    parts = []
+    for label in LABEL_ORDER:
+        n = counts.get(label, 0)
+        if n == 0:
+            continue
+        open_n, fixed_n = by_status.get(label, (n, 0))
+        tag = f" ({open_n} open, {fixed_n} fixed)"
+        parts.append(f"{label.capitalize()}s: {n}{tag}")
+    out.append("  " + "    ".join(parts))
 
     open_labels = ["feature", "question", "bug", "other"]
     signals: list[str] = []
     for label in open_labels:
-        items = buckets.get(label, [])
+        items = [
+            r for r in buckets.get(label, [])
+            if status.get(str(r.get("ts", "")), {}).get("status", "new") != "fixed"
+        ]
         if not items:
             continue
         latest = items[0]
@@ -154,20 +190,13 @@ def format_unknown_intents(rows: list[dict[str, Any]]) -> str:
     )
     buckets = group_unknown_intents(rows)
     counts = _label_counts(buckets)
+    status = read_status()
+    by_status = _label_status(buckets, status)
 
     out: list[str] = []
     out.append("UNKNOWN INTENTS")
     out.append(f"Total: {total}")
     out.append(f"Last 7 days: {recent}")
-    out.append(
-        "Bugs: {bug}    Features: {feature}    "
-        "Questions: {question}    Other: {other}".format(
-            bug=counts.get("bug", 0),
-            feature=counts.get("feature", 0),
-            question=counts.get("question", 0),
-            other=counts.get("other", 0),
-        )
-    )
     out.append("")
 
     if total == 0:
@@ -178,11 +207,13 @@ def format_unknown_intents(rows: list[dict[str, Any]]) -> str:
         items = buckets.get(label, [])
         if not items:
             continue
-        out.append(f"{label.upper()} ({len(items)})")
+        open_n, fixed_n = by_status.get(label, (len(items), 0))
+        out.append(f"{label.upper()} ({len(items)}, {open_n} open, {fixed_n} fixed)")
         for item in items:
             ts = item.get("ts", "unknown-ts")
+            s = status.get(str(item.get("ts", "")), {}).get("status", "new")
             message = str(item.get("message", "")).strip()
-            out.append(f"  - {ts} | {message}")
+            out.append(f"  [{s}] {ts} | {message}")
         out.append("")
 
     return "\n".join(out).rstrip()
