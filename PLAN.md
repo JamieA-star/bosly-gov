@@ -393,7 +393,23 @@ that has actually happened.
     plaintext, x25519* where the value is AES. Cheap grep +
     type inspection. Fast tier candidate.
 
-[ ] [DECISION] gov.plan_hygiene — The plan accumulates drifts. Five
+[x] gov.plan_hygiene — RESOLVED 7 Oct, no check built. A check was
+    built and tuned three times (checks/plan_hygiene.py, since
+    removed). Each rule tried to distinguish drift from legitimate
+    text using surface patterns, and each pass removed some false
+    positives only to reveal more: "TODO" in a check that detects
+    TODOs; "two routes had duplicate validators" as past-tense
+    description; "ACCEPTANCE" as a shared section header. After
+    three passes, 6 findings remained, none of them drift. The check
+    also missed the case that motivated this entry —
+    accord.usage_capture_wiring kept pre-work text below "Original
+    entry follows", which any quoted-history filter exempts. The
+    five drifts on 5 Oct were found by a person reading the plan.
+    That is the practice: read the entry before acting on it. The
+    drift problem is real but not checkable by pattern.
+
+    Original entry follows.
+    [ ] [DECISION] gov.plan_hygiene — The plan accumulates drifts. Five
     found and fixed on 5 Oct, all small, none caught by a check:
 
       1. Four entries written with the wrong date (6 Oct for 5 Oct).
