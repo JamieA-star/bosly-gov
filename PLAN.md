@@ -650,11 +650,16 @@ that has actually happened.
     1 question, and names the recurring-appointments feature as the
     open signal — which is what this entry predicted it would do.
 
+    The tracking store is built (e0383e1): a small JSON file beside the
+    log records each question's status, and the digest marks each
+    question open or fixed and lists only open questions in Open
+    signals. Seeded with the five current questions — three fixed,
+    two open.
+
     Remaining, in the order the entry below describes them:
       - Recurrence. The digest groups by label; it does not yet spot
         when two questions are about the same thing. Needs real data
         (today's five are all distinct) before it can be tested.
-      - The tracking store (open / addressed). Not built.
       - Close the loop — tell the user when their feedback led to a
         change. Not designed. The entry says the feedback loop is a
         two-way street; today it is one-way.
