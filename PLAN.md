@@ -1991,10 +1991,10 @@ that has actually happened.
     already on disk.
 
     Same shape as accord.invoice_aggregates_client_appointments, which
-    remains open: a series creates many rows, and the invoicing path
-    aggregates one client's appointments into one invoice. The two now
-    interact — a series makes the aggregate item more valuable, and it
-    is the natural next item.
+    is now built (untested): a series creates many rows, and the
+    invoicing path aggregates one client's appointments into one
+    invoice. The two interact — the recurring feature makes the
+    aggregate feature more valuable, and both are in place.
 
     Original entry follows.
     [ ] [LIVE] accord.recurring_appointments — Add a client to one day and
@@ -2007,17 +2007,40 @@ that has actually happened.
     able to add a client on a day and then select every week or
     biweekly."
 
-    Same shape as accord.invoice_aggregates_client_appointments: both
-    are the calendar failing to match how the work actually happens —
-    several appointments for one client, invoiced once or booked in a
-    run. Consider them together.
+    Same shape as accord.invoice_aggregates_client_appointments (now
+    built, untested): both are the calendar failing to match how the
+    work actually happens — several appointments for one client,
+    invoiced once or booked in a run.
 
     Design: on the event editor, a "Repeat" control — none, weekly,
     every 2 weeks, or chosen weekdays — that creates the series. Needs
     a way to edit or delete the whole series, and a decision on whether
     occurrences are separate rows or generated on read.
 
-[ ] [LIVE] accord.invoice_aggregates_client_appointments — The
+[~] accord.invoice_aggregates_client_appointments — BUILT 7 Oct,
+    untested. The schema (invoicedAt + invoiceId on CalendarEvent and
+    two composite indexes), a shared nextInvoiceNumber in
+    lib/invoices/numbering.ts, the read route (GET
+    /api/invoices/unbilled?from=&to= groups unbilled events by contact
+    with hours and totals), the write route (POST
+    /api/invoices/aggregate creates one invoice and marks its events in
+    a single transaction), the Unbilled tab in Finance, and the
+    confirmation modal are all in.
+
+    The two safety nets against double-billing are the pre-check
+    (every event unbilled, owned, for the stated contact) and the
+    conditional update with invoicedAt: null in the WHERE clause. If
+    the count of updated rows does not match, the transaction throws
+    and the invoice rolls back. The crux the original entry names —
+    a billed state so a second press does not double-bill — is the
+    invoicedAt column, set inside that transaction.
+
+    Not yet exercised against real data. The aggregate route has
+    never run. Test by opening the Unbilled tab, clicking Invoice on
+    a client, and creating one. If it succeeds, tick this to [x].
+
+    Original entry follows.
+    [ ] [LIVE] accord.invoice_aggregates_client_appointments — The
     calendar-to-invoice button creates one invoice from one event.
     The founder's actual workflow is multiple appointments for one
     client across a month, invoiced once. The button should
