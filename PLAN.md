@@ -757,7 +757,18 @@ that has actually happened.
     Aggregate only — the user should know what is being measured
     and why.
 
-[ ] [DECISION] gov.orientation_script_versioned — /usr/local/bin/bosly is
+[x] gov.orientation_script_versioned — RESOLVED 7 Oct, option (a). The
+    script moved to bosly-gov/bin/bosly (336b1be) and
+    /usr/local/bin/bosly is now a symlink to it. The move was
+    demonstrated necessary first: on 7 Oct the orientation was edited
+    twice (once to call the digest, once to fix an escaped em-dash)
+    with only a timestamped .bak for recovery. Both edits went fine;
+    neither had a safety net. Future edits go through the repo.
+    GOV_DIR stays hardcoded; deriving it from $0 is a separate change
+    if ever wanted.
+
+    Original entry follows.
+    [ ] [DECISION] gov.orientation_script_versioned — /usr/local/bin/bosly is
     outside version control. The script that generates every
     session's orientation has no git history; if it is corrupted
     or edited by accident, there is no recovery beyond a single
