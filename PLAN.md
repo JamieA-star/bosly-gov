@@ -626,14 +626,28 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
-[ ] [LIVE] gov.evolve_loop_feedback - feedback-driven evolution.
+[~] gov.evolve_loop_feedback — IN PROGRESS, digest built. The
+    unknown-intents digest is live: lib/intent_classify.py labels each
+    question bug / feature / question / other, evolve_feedback.py
+    groups by label and gains --summary, and the orientation calls
+    --summary. On today's five questions it shows 3 bugs, 1 feature,
+    1 question, and names the recurring-appointments feature as the
+    open signal — which is what this entry predicted it would do.
+
+    Remaining, in the order the entry below describes them:
+      - Recurrence. The digest groups by label; it does not yet spot
+        when two questions are about the same thing. Needs real data
+        (today's five are all distinct) before it can be tested.
+      - The tracking store (open / addressed). Not built.
+      - Close the loop — tell the user when their feedback led to a
+        change. Not designed. The entry says the feedback loop is a
+        two-way street; today it is one-way.
+
     UPDATE 5 Oct: five unknown-intent questions were logged on 2-5 Oct.
     Three were real bugs since fixed (the calendar timezone, the
     invoice PDF, the send failure); one is the recurring-appointments
-    feature; one is a greeting the chatbot cannot answer. The digest
-    this item describes would have grouped those and named the
-    recurring one as the open signal. Build it — the raw jsonl is
-    being read by hand instead.
+    feature; one is a greeting the chatbot cannot answer.
+
     Original entry follows.
     feedback-driven evolution.
     Split from gov.evolve_loop on 28 Sept. The original item was
