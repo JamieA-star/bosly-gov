@@ -1946,7 +1946,29 @@ that has actually happened.
     Affects multiple pills — needs a sweep of the whole app, not a
     single fix. Raised 30 Sept.
 
-[ ] [LIVE] accord.recurring_appointments — Add a client to one day and
+[x] accord.recurring_appointments — DONE 7 Oct. The add route reads
+    repeats and repeatUntil and creates the series in one transaction
+    (77f72a7); the calendar add form has a repeat select and an until
+    date (9ce158a). recurringGroupId on the model and the scope:
+    "future" logic in calendar/update and calendar/delete already
+    existed — the series works with them for free.
+
+    Shipped: weekly, every 2 weeks, every month, with a default
+    3-month horizon if no until date is given. Not shipped:
+    chosen-weekdays from the original design note. The user asked for
+    weekly or biweekly; both are live. Occurrences are separate rows
+    (the recurringGroupId groups them), not generated on read — the
+    design question in the original note is answered by what was
+    already on disk.
+
+    Same shape as accord.invoice_aggregates_client_appointments, which
+    remains open: a series creates many rows, and the invoicing path
+    aggregates one client's appointments into one invoice. The two now
+    interact — a series makes the aggregate item more valuable, and it
+    is the natural next item.
+
+    Original entry follows.
+    [ ] [LIVE] accord.recurring_appointments — Add a client to one day and
     repeat them weekly, biweekly, or on chosen weekdays, rather than
     re-adding them for every occurrence in the month.
 
