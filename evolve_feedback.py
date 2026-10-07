@@ -25,13 +25,15 @@ The two logs live under different roots:
 
 from __future__ import annotations
 
+import argparse
 import json
-import re
-from collections import defaultdict, Counter
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+
+from lib.intent_classify import classify
 
 
 UNKNOWN_INTENTS_PATH = Path(
@@ -67,37 +69,6 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-_DATEISH_RE = re.compile(
-    r"""
-    \b(
-        \d{4}-\d{2}-\d{2} |
-        \d{4}/\d{2}/\d{2} |
-        \d{1,2}/\d{1,2}/\d{2,4} |
-        \d{1,2}:\d{2}(?:\s?[ap]m)? |
-        january|february|march|april|may|june|july|august|september|october|november|december |
-        mon|tue|wed|thu|fri|sat|sun |
-        today|tomorrow|yesterday |
-        last\s+week|last\s+month|this\s+month|this\s+week |
-        next\s+week|next\s+month
-    )\b
-    """,
-    re.IGNORECASE | re.VERBOSE,
-)
-
-_NUM_RE = re.compile(r"\b\d+\b")
-_SPACE_RE = re.compile(r"\s+")
-_PUNCT_RE = re.compile(r"[^a-z0-9\s]")
-
-
-def normalise_message(message: str) -> str:
-    msg = message.lower().strip()
-    msg = _DATEISH_RE.sub(" ", msg)
-    msg = _NUM_RE.sub(" ", msg)
-    msg = _PUNCT_RE.sub(" ", msg)
-    msg = _SPACE_RE.sub(" ", msg).strip()
-    return msg
-
-
 @dataclass
 class UnknownIntentGroup:
     key: str
@@ -105,32 +76,72 @@ class UnknownIntentGroup:
     recent: list[dict[str, Any]]
 
 
-def group_unknown_intents(rows: list[dict[str, Any]]) -> list[UnknownIntentGroup]:
-    buckets: dict[str, list[dict[str, Any]]] = defaultdict(list)
+LABEL_ORDER = ["bug", "feature", "question", "other"]
+
+
+def group_unknown_intents(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    buckets: dict[str, list[dict[str, Any]]] = {label: [] for label in LABEL_ORDER}
     for row in rows:
         message = str(row.get("message", "")).strip()
         if not message:
             continue
-        key = normalise_message(message)
-        if not key:
-            key = "(empty after normalisation)"
-        buckets[key].append(row)
-
-    groups: list[UnknownIntentGroup] = []
-    for key, items in buckets.items():
-        items_sorted = sorted(
-            items,
+        label = classify(message).label
+        if label not in buckets:
+            buckets[label] = []
+        buckets[label].append(row)
+    for label in buckets:
+        buckets[label].sort(
             key=lambda r: parse_ts(r.get("ts"))
             or datetime.min.replace(tzinfo=timezone.utc),
             reverse=True,
         )
-        groups.append(
-            UnknownIntentGroup(
-                key=key, count=len(items_sorted), recent=items_sorted[:3]
-            )
+    return buckets
+
+
+def _label_counts(buckets: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
+    return {label: len(items) for label, items in buckets.items()}
+
+
+def format_summary(rows: list[dict[str, Any]]) -> str:
+    now = datetime.now(timezone.utc)
+    week_ago = now - timedelta(days=7)
+
+    total = len(rows)
+    recent = sum(
+        1 for r in rows if (ts := parse_ts(r.get("ts"))) and ts >= week_ago
+    )
+    buckets = group_unknown_intents(rows)
+    counts = _label_counts(buckets)
+
+    out: list[str] = []
+    out.append(f"  Noted: {total} total, {recent} in the last 7 days")
+    if total == 0:
+        return "\n".join(out)
+
+    out.append(
+        "  Bugs: {bug}    Features: {feature}    "
+        "Questions: {question}    Other: {other}".format(
+            bug=counts.get("bug", 0),
+            feature=counts.get("feature", 0),
+            question=counts.get("question", 0),
+            other=counts.get("other", 0),
         )
-    groups.sort(key=lambda g: (-g.count, g.key))
-    return groups
+    )
+
+    open_labels = ["feature", "question", "bug", "other"]
+    signals: list[str] = []
+    for label in open_labels:
+        items = buckets.get(label, [])
+        if not items:
+            continue
+        latest = items[0]
+        msg = str(latest.get("message", "")).strip()
+        signals.append(f"    - {label}: \"{msg[:80]}\"")
+    if signals:
+        out.append("  Open signals:")
+        out.extend(signals)
+
+    return "\n".join(out)
 
 
 def format_unknown_intents(rows: list[dict[str, Any]]) -> str:
@@ -141,26 +152,37 @@ def format_unknown_intents(rows: list[dict[str, Any]]) -> str:
     recent = sum(
         1 for r in rows if (ts := parse_ts(r.get("ts"))) and ts >= week_ago
     )
-    groups = group_unknown_intents(rows)
+    buckets = group_unknown_intents(rows)
+    counts = _label_counts(buckets)
 
     out: list[str] = []
     out.append("UNKNOWN INTENTS")
     out.append(f"Total: {total}")
     out.append(f"Last 7 days: {recent}")
-    out.append(f"Themes: {len(groups)}")
+    out.append(
+        "Bugs: {bug}    Features: {feature}    "
+        "Questions: {question}    Other: {other}".format(
+            bug=counts.get("bug", 0),
+            feature=counts.get("feature", 0),
+            question=counts.get("question", 0),
+            other=counts.get("other", 0),
+        )
+    )
     out.append("")
 
-    if not groups:
+    if total == 0:
         out.append("No unknown intents found.")
         return "\n".join(out)
 
-    for idx, group in enumerate(groups[:20], start=1):
-        out.append(f"{idx}. {group.key}  ({group.count})")
-        for item in group.recent:
+    for label in LABEL_ORDER:
+        items = buckets.get(label, [])
+        if not items:
+            continue
+        out.append(f"{label.upper()} ({len(items)})")
+        for item in items:
             ts = item.get("ts", "unknown-ts")
-            user_id = item.get("userId", "unknown-user")
             message = str(item.get("message", "")).strip()
-            out.append(f"   - {ts} | {user_id} | {message}")
+            out.append(f"  - {ts} | {message}")
         out.append("")
 
     return "\n".join(out).rstrip()
@@ -217,9 +239,21 @@ def format_feedback(rows: list[dict[str, Any]]) -> str:
 
 
 def main() -> int:
-    unknown_rows = read_jsonl(UNKNOWN_INTENTS_PATH)
-    feedback_rows = read_jsonl(FEEDBACK_PATH)
+    parser = argparse.ArgumentParser(description="Bosly weekly digest")
+    parser.add_argument(
+        "--summary",
+        action="store_true",
+        help="print only the unknown-intents summary (used by the orientation)",
+    )
+    args = parser.parse_args()
 
+    unknown_rows = read_jsonl(UNKNOWN_INTENTS_PATH)
+
+    if args.summary:
+        print(format_summary(unknown_rows))
+        return 0
+
+    feedback_rows = read_jsonl(FEEDBACK_PATH)
     print("BOSLY WEEKLY DIGEST")
     print("")
     print(format_unknown_intents(unknown_rows))
