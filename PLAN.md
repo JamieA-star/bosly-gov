@@ -1313,7 +1313,49 @@ that has actually happened.
     discipline: invoice the moment a milestone is hit, Pay Now link,
     no Net 30. These gate everything — no paid work without them.
 
-    [ ] Phase 3 — The first audit. The Day Zero method: pick one
+    [ ] Phase 3 — The lead-gen tool.
+    The filter. Reduces hundreds of thousands of businesses to a
+    shortlist worth researching by hand. Not a research engine, not
+    a CRM — it finds strong candidates and hands them over.
+    Everything past that (LinkedIn, Facebook, a manual read of the
+    site) is done by hand on a handful of businesses.
+
+    Source order — free first, Google last:
+      1. OpenStreetMap — discovery, and the no-website signal.
+      2. Companies House — active status, incorporation date,
+         directors, SIC code.
+      3. Companies House daily accounts files — employee count.
+      4. ICO register — optional size confirmation.
+      5. Google Places — review count and rating, shortlist only.
+
+    Output: a CSV, one row per business — name, location,
+    incorporated date, employees, directors, VAT, website (if any),
+    phone, and the specific Day Zero findings. The findings are what
+    write the email.
+
+    Two rules that make it sellable later: config not code
+    (verticals, weights, location, threshold in one file); shortlist
+    not rank (top N, not a leaderboard).
+
+    Build steps: API setup, OSM discovery, Companies House
+    enrichment, employee lookup, website check, scoring, CSV.
+
+    Not a SaaS. Not a web app. Not a front end. A script that runs
+    and outputs a list.
+
+    Legal: official APIs and open data only. No scraping the
+    directories. Google used on the shortlist only — Places data is
+    not stored permanently.
+
+    The loop: each lead gets an ID; note the outcome; after enough
+    rows the weights get evidence instead of guesses.
+
+    Later: the product version (adapted per consultancy), the trades
+    directories (Checkatrade, Yell) as a second source, a UI.
+    Design-age heuristic dropped from v1 — too noisy, the other
+    markers are reliable enough.
+
+    [ ] Phase 4 — The first audit. The Day Zero method: pick one
     business, audit its public footprint, write up three ranked
     bottlenecks, send with no ask. One a week. Not ten. The email
     goes at 6-7am or 8-9pm — trades read before the day starts and
@@ -1321,12 +1363,12 @@ that has actually happened.
     bookkeeper, that is the route in: they feel the pain and forward
     it upward.
 
-    [ ] Phase 4 — The first paid work. Three stages. Audit: GBP
+    [ ] Phase 5 — The first paid work. Three stages. Audit: GBP
     500-1,500, 1-2 weeks. Build: GBP 2,000-5,000 for a single
     workflow. Retainer: GBP 300/month. Revenue model: 3 clients =
     GBP 3,000 audit + GBP 9,000 build + GBP 900/month recurring.
 
-    [ ] Phase 5 — The background hum. LinkedIn, one post a week, for
+    [ ] Phase 6 — The background hum. LinkedIn, one post a week, for
     credibility when a business Googles me. Instagram continues as
     planned. The Waiting Well page is the community bridge, not the
     business one — the consultancy audience and the ADHD community
