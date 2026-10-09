@@ -1025,83 +1025,141 @@ that has actually happened.
 
     Found 28 Sept while checking the chatbot after the engine swap.
 
-[ ] [LIVE] accord.waiting_well_page — A public "Waiting Well" resource
-    page inside Bosly, linked from the Instagram bio. A lead magnet,
-    not a product: it gives people something useful while they wait
-    for an ADHD assessment, and points at Bosly as a tool for those
-    who want one. The second unauthenticated public surface, after
-    the standalone /invoice tool (see the lead-magnet note above).
-    Static: holds no user data, so the encryption question does not
-    arise.
+[ ] [LIVE] accord.waiting_well_page — A public resource for the UK
+    neurodiverse community, at /waiting-well. Not a lead magnet: a
+    filter. It gets people to the right information and the right
+    next step, in a system that is overwhelming by design. The second
+    unauthenticated public surface, after the standalone /invoice
+    tool. Static: holds no user data, so the encryption question does
+    not arise.
 
     Purpose. In England, over 960,000 people are waiting for an ADHD
     assessment, some two years or more, with almost nothing offered
     while they wait. Healthwatch found people feel abandoned by the
-    system during this period. The page fills that gap.
+    system during this period. The page fills that gap. It is a
+    filter, not a memoir — no first-person voice anywhere on it. The
+    lived experience lives on social media and links here.
 
     The angle. Most waiting-well resources are clinical-adjacent,
-    generic self-care, or US-focused. None is UK-specific, ADHD-tax-
-    aware, and community-anchored. The ADHD tax angle is the unique
-    contribution. It leads the page; Right to Choose comes second,
-    because RTC is the system's frame and the tax is ours.
+    generic self-care, or US-focused. None is UK-specific, calm, and
+    built for the whole journey — from "is this me?" through
+    assessment and medication. The whole page is about the ADHD tax
+    without ever naming it as a problem Bosly solves.
 
-    Contents, in order:
-      1. The ADHD tax while you wait — the lead. Money, invoices,
-         deadlines, admin chaos, small systems to build now.
-      2. Right to Choose explained — ask the GP for it by name, name
-         the provider, do not accept a local referral. England only;
-         the other nations have different routes.
-      3. Your rights at work without a diagnosis — reasonable
-         adjustments can be requested without a formal diagnosis.
-      4. Helpful links — ADHD UK, AADD-UK, ADHD Foundation,
-         ADHDadultUK, Healthwatch waiting-well guidance.
-      5. Community — point at Instagram comments and posts.
-      6. FAQ — built from what people actually ask in the comments.
+    Structure: ONE landing page with FOUR pills, and FOUR sub-pages
+    under it. Five routes total, each indexable (own title, own
+    description — not fragments; Google ignores fragments). All in
+    app/(marketing)/.
 
-    The bridge sentence (drafted and agreed 28 Sept, do not rewrite
-    badly): "Bosly is a tool to help empower you and your ADHD — the
-    admin side, the invoices, the keeping-track — and to help reduce
-    the ADHD tax burden. Bosly is here if you need it."
-    It appears once, near the end. Bosly is not mentioned anywhere
-    else on the page. If the reader wants the tool they click; if
-    not, they got real help and will remember it.
+      /waiting-well              the landing. Four pills, short
+                                 description each, calm, visual.
+      /waiting-well/is-this-me   pill 1
+      /waiting-well/assessment   pill 2
+      /waiting-well/medication   pill 3
+      /waiting-well/faqs         pill 4
+
+    The four pills:
+
+      1. Is this me? — What ADHD and autism can look like, cited.
+         The overlap explained (50-70% of autistic people also have
+         ADHD; ADHD is under-recognised in women). ADHD traits and
+         autism traits differentiated, honestly, with the conflict
+         between them named (routine vs novelty, connection vs
+         exhaustion). Mirror first, then signpost to the screening
+         tools — ASRS, AQ-10, RAADS-R — with a plain warning: a
+         starting point, not a test, and not everyone is captured.
+         Every claim sourced.
+
+      2. Getting an assessment — The routes. NHS waiting. Right to
+         Choose explained properly (ask for it by name, name the
+         provider, do not accept a local referral; England only).
+         Private. What to ask the GP. What happens at each stage.
+
+      3. Medication — Getting started; staying on it; and the
+         shared-care collapse happening now. Why GPs are withdrawing
+         (BMA guidance, unfunded, outside core contract). The
+         difference between a referral and titration — the referral
+         is to join the queue, and the titration queue is the long
+         one. Realistic wait times, sourced AND dated. Bridging
+         prescriptions. What to do while you wait.
+
+      4. FAQs — Real questions people are actually asking, answered
+         plainly, sourced where checkable. Grows over time. Includes
+         an "Ask a question" form — see below.
+
+    The footer — ONLY on the landing page (/waiting-well), at the
+    very bottom. Not on the four pill pages. Not in the pills.
+    Contains, in this order:
+      - the Bosly logo
+      - "Sponsored by Bosly"
+      - "Your digital butler"
+      - one concise sentence of what Bosly helps with
+      - a link to Bosly
+    This is the only place Bosly appears on the entire site.
+
+    The "Ask a question" feature (FAQs page):
+      - A simple public form: one textarea, one submit. No account,
+        no email required.
+      - POSTs to /api/waiting-well/question.
+      - Writes to waiting-well-questions.jsonl beside
+        unknown-intents.jsonl on the mount.
+      - The orientation reads it and shows "Waiting Well: N new
+        questions."
+      - Questions are answered by hand (sourced, cited), added to the
+        FAQ by hand (editing the .tsx), and marked answered.
+      - Spam defence at first: honeypot field plus a length limit. If
+        abused, add rate limiting.
+      - No auto-answering. Medical-adjacent content is written by a
+        person.
 
     Constraints:
       - Public, accessible without login. MUST be added to the
         middleware's isPublicRoute list, or it redirects to sign-in.
         See accord.middleware_public_routes.
-      - Simple URL, e.g. bosley.app/waiting. Lives in the
-        app/(marketing)/ route group with the other public pages.
-      - Start as a plain page: text, links, headings. No chatbot,
-        no quiz. Live and linked beats perfect.
+      - Lives in the app/(marketing)/ route group with the other
+        public pages. Route group /waiting-well, five routes.
+      - Start as plain pages: text, links, headings. No chatbot, no
+        quiz. Live and linked beats perfect.
       - Stays on the community and resources side of the line. Not
         clinical, not diagnostic, no implied medical judgment. The
         ADHD taskforce has recommended regulation and quality
         standards for ADHD service providers; the page must not look
         like one.
-      - The page must not promise more than Bosly does today. It
-        helps with what exists and points at a direction; it does not
-        claim Bosly runs your admin yet. See
+      - No first-person voice anywhere on the page. The lived
+        experience lives on social media.
+      - The page must not promise more than Bosly does today. The
+        footer says what Bosly helps with, not what it will do. See
         accord.admin_assistant_direction.
 
     Success. Not thousands of users. A handful of the right people.
     Track clicks from the Instagram bio. Adjust framing if it is not
     used.
 
-    DRIFT: external claims and links go stale. A check should verify
-    the resource links resolve (HTTP 200) and that the waiting figure
-    carries a source and date in a machine-readable marker. Advice
-    quality and RTC correctness stay human review — same split as
-    gov.accord_compliance, mechanical drift checked, prose reviewed.
+    THE CHECK — gov.waiting_well, in bosly-gov. The whole point: the
+    page evolves, and the check stops it rotting when attention
+    moves elsewhere. Slow tier, not fast: it makes HTTP requests to
+    external sites, which must not slow or fail the fast tier.
+      - HEAD-requests every external link; reports non-200.
+      - Reads machine-readable markers in the page source: each
+        figure/claim carries its source and the date last verified.
+      - Flags any figure not re-verified within a set horizon
+        (e.g. 30 days).
+      - Reports in the orientation: "Waiting Well: 1 broken link,
+        2 figures need re-verifying" or "all clear."
+      - Same split as gov.accord_compliance: mechanical drift
+        checked, prose reviewed by hand.
 
-    BEFORE BUILD: verify the external claims — the waiting figure
-    and its source; the Right to Choose mechanics against current
-    NHS England guidance; and that all five resource links resolve.
+    BEFORE BUILD: verify the external claims — the assessment
+    waiting figure and its source; the Right to Choose mechanics
+    against current NHS England guidance; the medication wait times
+    (Psychiatry UK titration, referral processing) with dates; and
+    that every resource link resolves.
 
-    SEQUENCING: build after the 3 Oct Founding Members reel, not
-    before. The reel is the priority this week.
-
-    Raised 28 Sept.
+    Raised 28 Sept. Revised 9 Oct: reframed from lead magnet to
+    public resource; four pills instead of six sections; five routes
+    instead of one; the self-checking system; the Ask a question
+    feature; no first-person voice; the Bosly footer on the landing
+    page only.
 
 [ ] [DECISION] accord.admin_assistant_direction — Bosly should
     eventually do the admin, not just hold the data. Today the pills
