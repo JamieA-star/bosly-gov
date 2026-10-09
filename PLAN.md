@@ -255,6 +255,38 @@ that has actually happened.
 
 [x] accord.server_side_key_visibility — DONE 21 Sept. Committed 2219b73. The client was sending the exported AES key to /api/auth/update-key. Nothing read it server-side. Removed from signup and recovery. Route now accepts all fields as optional. The zero-access claim is true: the server never sees key material. The User.publicKey DB column still exists but new users get null.
 
+[ ] [GATED] accord.business_setups — Bosly stays as it is: free
+    tier, Accord paid tier, no architectural change. On top of that,
+    consultancy engagements produce reusable setups — a bundle of
+    modules and configuration that fits one kind of business, ready
+    to switch on for the next client of that kind. The first
+    hairdresser is an engagement. The second is a product.
+
+    The pattern: a client needs something (an AI receptionist, a
+    small-business accounting module, whatever their particular
+    chaos is). It is built as a Bosly setup, generalised, and priced
+    per month on top of Accord (e.g. receptionist GBP 200-250/month,
+    accounting GBP 250-300/month). The first client funds the build;
+    every subsequent client of that type is margin.
+
+    Build the setup, not the bespoke. A one-off build pays once. A
+    generalised setup, configured for the client, pays forever. This
+    is the discipline that makes the consultancy scale.
+
+    GATED on the first consultancy engagement that needs one. Do not
+    build setups ahead of demand. When a real client of a given type
+    pays, that is the signal to build their setup — and from then
+    on, that vertical is switchable.
+
+    Related: accord.spaces_encryption (shared workspaces for
+    businesses and their employees). A business setup and a space
+    are different things — a setup configures Bosly for a kind of
+    business; a space lets a business's people share and work
+    together. A client may want both. They are gated on the same
+    demand.
+
+    Raised 9 Oct.
+
 [ ] [GATED] accord.spaces_encryption — UPDATE 3 Oct: the routes
     (app/api/spaces/**) are archived to legacy/api-dead-20261003/
     spaces/. They used three Prisma models (sharedSpace,
@@ -1258,6 +1290,71 @@ that has actually happened.
     EmailConnectionForm.tsx. Gmail, Yahoo, and custom IMAP (IONOS)
     all work via app password; only Microsoft OAuth is absent.
     Raised 30 Sept.
+
+[ ] [LIVE] ops.consultancy — Bosley Limited's consultancy arm.
+    Workflow audits and small AI/automation builds for UK small
+    businesses drowning in admin. Replaces gardening income while
+    the app grows. Front door at bosley.app/consulting.
+
+    The runway: winter is naturally slower, and January is when
+    small business owners have had a break and rethink their admin.
+    Everything before January is setup. Do not expect a client
+    before then. The build plan assumes a January push.
+
+    PHASE 1 — THE FRONT DOOR. A one-page site at
+    bosley.app/consulting. Headline, what I do (workflow audits,
+    automation builds), contact form, link to the app. It does not
+    need to convert. It needs to stop an emailed business dismissing
+    me as not real. Built when built — no deadline pressure.
+
+    PHASE 2 — THE LEGAL FLOOR (before any paid work). Professional
+    Indemnity Insurance, GBP 1m minimum. A consultancy agreement
+    template (scope, payment terms, deposit, IP). Invoicing
+    discipline: invoice the moment a milestone is hit, Pay Now link,
+    no Net 30. These gate everything — no paid work without them.
+
+    PHASE 3 — THE FIRST AUDIT. The Day Zero method: pick one
+    business, audit its public footprint, write up three ranked
+    bottlenecks, send with no ask. One a week. Not ten. The email
+    goes at 6-7am or 8-9pm — trades read before the day starts and
+    after dinner. Where a business has an office manager or
+    bookkeeper, that is the route in: they feel the pain and forward
+    it upward.
+
+    PHASE 4 — THE FIRST PAID WORK. Three stages. Audit: GBP
+    500-1,500, 1-2 weeks. Build: GBP 2,000-5,000 for a single
+    workflow. Retainer: GBP 300/month. Revenue model: 3 clients =
+    GBP 3,000 audit + GBP 9,000 build + GBP 900/month recurring.
+
+    PHASE 5 — THE BACKGROUND HUM. LinkedIn, one post a week, for
+    credibility when a business Googles me. Instagram continues as
+    planned. The Waiting Well page is the community bridge, not the
+    business one — the consultancy audience and the ADHD community
+    overlap but are not the same.
+
+    THE ONE RULE: send 15 audits before drawing any conclusion.
+    First five are usually silence. First reply around six to ten.
+    First paid audit around eleven to fifteen. Track the count, not
+    the reply rate — the count is the thing that is controlled.
+
+    WHERE THE APP FITS. Nowhere, yet. Deliver audits however is
+    fastest — email, a document, by hand. No Bosly in the
+    deliverable, no signup, no friction. The app is shown only when
+    there is a live conversation and it is natural. From spring,
+    once a few audits have been done by hand and the pain points are
+    known, build the consultancy workflows into Bosly the way the
+    gardening ones were built. The consultancy is a second business
+    run by the same ADHD brain; running it by hand is how the app
+    learns what a consultancy needs. When it works for two
+    businesses, it is general enough to sell. See
+    accord.business_setups.
+
+    SUCCESS, SHORT TERM. Not a client by next week. By end of
+    January: fifteen audits sent and three businesses spoken to.
+    That is the controllable target. The rest follows or it does
+    not.
+
+    Raised 9 Oct.
 
 [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
     channel is the nodemailer email, sent via node. The script loads
