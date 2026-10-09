@@ -1,5 +1,5 @@
 BOSLY GOV — PLAN
-Last updated: 26 September 2026 (evening — Friday prep)
+Last updated: 9 October 2026
 
 ================================================================
 WHAT BOSLY GOV IS
@@ -117,6 +117,59 @@ Existing tooling on the server:
 - /usr/local/bin/bosly-monitor — daily monitoring script.
 - /usr/local/bin/bosly-diagnose-v5.py, bosly-health, bosly-evolve,
   and others — manual-only.
+
+================================================================
+THE ECOSYSTEM
+================================================================
+
+Five pieces. One shape. Written 9 Oct, because the shape is now
+visible and a future session — or January-me, deep in consultancy
+work — will not see it from the entries alone.
+
+BOSLY — the app. Free tier for individuals, Accord paid tier for
+  the full workspace. The product for ADHD brains running small
+  businesses. Being refined, not rebuilt.
+
+BOSLY KEEP — a sovereign ethical investment platform. Wealth that
+  grows without costing the earth. £19.6k personal ISA today (Phase
+  1), a corporate fund for Bosly Ltd next (Phase 2), open to others
+  with FCA authorisation after that (Phase 3). Its own constitution
+  — the Bosly Keep Trust. Its own mission: end financial exclusion,
+  make capital access a right. The pension market is the stated
+  destination. It funds Bosly; it is also its own thing.
+
+THE WAITING WELL PAGE — a public resource for the UK neurodiverse
+  community. Four pills, sourced and dated, self-checking. Free, no
+  login. The community bridge.
+
+THE CONSULTANCY — the income. Workflow audits and small automation
+  builds for UK small businesses. Seven phases, January runway. The
+  engine that funds the wait.
+
+BUSINESS SETUPS — gated. The consultancy's output, generalised. The
+  first hairdresser is an engagement; the second is a product. Built
+  when a real client pays for one.
+
+HOW THEY CONNECT:
+
+  Social → Waiting Well (free help) → Bosly (the tool for the ADHD
+  tax). The community route.
+
+  Consultancy → real client needs → Business setups (the product
+  generalises). The commercial route.
+
+  Consultancy → income → funds the app while it grows.
+
+  Bosly → runs the consultancy → proves it works in a second domain
+  → makes it sellable to other businesses.
+
+  Keep → personal and company wealth → funds more projects, and
+  builds toward the pension market on its own terms.
+
+THE SHAPE OF IT: five pieces, each feeding another. The consultancy
+is the engine — it funds the wait and proves the product. The app is
+the destination. The Waiting Well page is the conscience. Keep is
+the fuel, and a destination of its own.
 
 ================================================================
 PHASE 1 — BUILD THE PIPELINE
