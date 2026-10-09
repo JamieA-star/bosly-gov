@@ -1291,7 +1291,7 @@ that has actually happened.
     all work via app password; only Microsoft OAuth is absent.
     Raised 30 Sept.
 
-[ ] [LIVE] ops.consultancy — Bosley Limited's consultancy arm.
+[ ] [LIVE] ops.consultancy — Bosly Limited's consultancy arm.
     Workflow audits and small AI/automation builds for UK small
     businesses drowning in admin. Replaces gardening income while
     the app grows. Front door at bosley.app/consulting.
@@ -1301,19 +1301,19 @@ that has actually happened.
     Everything before January is setup. Do not expect a client
     before then. The build plan assumes a January push.
 
-    PHASE 1 — THE FRONT DOOR. A one-page site at
+    [ ] Phase 1 — The front door. A one-page site at
     bosley.app/consulting. Headline, what I do (workflow audits,
     automation builds), contact form, link to the app. It does not
     need to convert. It needs to stop an emailed business dismissing
     me as not real. Built when built — no deadline pressure.
 
-    PHASE 2 — THE LEGAL FLOOR (before any paid work). Professional
+    [ ] Phase 2 — The legal floor (before any paid work). Professional
     Indemnity Insurance, GBP 1m minimum. A consultancy agreement
     template (scope, payment terms, deposit, IP). Invoicing
     discipline: invoice the moment a milestone is hit, Pay Now link,
     no Net 30. These gate everything — no paid work without them.
 
-    PHASE 3 — THE FIRST AUDIT. The Day Zero method: pick one
+    [ ] Phase 3 — The first audit. The Day Zero method: pick one
     business, audit its public footprint, write up three ranked
     bottlenecks, send with no ask. One a week. Not ten. The email
     goes at 6-7am or 8-9pm — trades read before the day starts and
@@ -1321,18 +1321,18 @@ that has actually happened.
     bookkeeper, that is the route in: they feel the pain and forward
     it upward.
 
-    PHASE 4 — THE FIRST PAID WORK. Three stages. Audit: GBP
+    [ ] Phase 4 — The first paid work. Three stages. Audit: GBP
     500-1,500, 1-2 weeks. Build: GBP 2,000-5,000 for a single
     workflow. Retainer: GBP 300/month. Revenue model: 3 clients =
     GBP 3,000 audit + GBP 9,000 build + GBP 900/month recurring.
 
-    PHASE 5 — THE BACKGROUND HUM. LinkedIn, one post a week, for
+    [ ] Phase 5 — The background hum. LinkedIn, one post a week, for
     credibility when a business Googles me. Instagram continues as
     planned. The Waiting Well page is the community bridge, not the
     business one — the consultancy audience and the ADHD community
     overlap but are not the same.
 
-    THE ONE RULE: send 15 audits before drawing any conclusion.
+    [ ] The one rule: send 15 audits before drawing any conclusion.
     First five are usually silence. First reply around six to ten.
     First paid audit around eleven to fifteen. Track the count, not
     the reply rate — the count is the thing that is controlled.
