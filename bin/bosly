@@ -58,7 +58,11 @@ echo "TOP OPEN PLAN ITEMS"
 echo "----------------------------------------------------------------"
 echo ""
 if [ -f "$PLAN" ]; then
-  grep -n "^\[ \]" "$PLAN" | head -5
+  echo "LIVE:"
+  grep -n "^\[ \] \[LIVE\]" "$PLAN" | head -5 | sed 's/^/  /'
+  echo ""
+  echo "GATED:"
+  grep -n "^\[ \] \[GATED\]" "$PLAN" | head -5 | sed 's/^/  /'
 else
   echo "(PLAN.md not found)"
 fi
