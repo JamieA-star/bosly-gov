@@ -1252,7 +1252,14 @@ that has actually happened.
     tool. Static: holds no user data, so the encryption question does
     not arise.
 
-    BUILT 10 Oct: all four pills are written, sourced, and live.
+    COMPLETE 10 Oct, watching before [x]. All four pills are written,
+    sourced, and live. 22 claims carry @claim markers and visible
+    citations; every URL now points at the exact page that carries its
+    claim, and gov.waiting_well verifies all 22 resolve. The check
+    runs nightly at 6am, the orientation shows claim staleness and new
+    questions, and the Ask a question form works end to end. Remaining
+    before [x]: let it run a week, answer a few more real questions,
+    and watch for a claim going stale on its own.
 
       Is this me?         ADHD traits, autism traits, the overlap,
                           and the screening tools (ASRS, AQ-10,
