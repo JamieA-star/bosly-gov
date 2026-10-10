@@ -1252,6 +1252,12 @@ that has actually happened.
     tool. Static: holds no user data, so the encryption question does
     not arise.
 
+    BUILT 10 Oct (4e1ca6e): the shell is live at /waiting-well — the
+    landing with four pill cards, four sub-pages as stubs, and the
+    footer on the landing only. The URL works for a signed-out
+    visitor. Content fills in next. Building the shell found a real
+    bug — every public page was gated. See gov.public_surface_gated.
+
     Purpose. In England, over 960,000 people are waiting for an ADHD
     assessment, some two years or more, with almost nothing offered
     while they wait. Healthwatch found people feel abandoned by the
@@ -2344,6 +2350,42 @@ that has actually happened.
     exist (cancel, portal, resume, success) but the UI does not
     connect them. A founding member who pays must see their tier
     active and be able to cancel. Raised 30 Sept.
+
+[x] gov.public_surface_gated — FIXED 10 Oct (4e1ca6e). Every page
+    in app/(marketing) redirected a signed-out visitor to signin.
+    /safety, /privacy, /terms, /faq, /invoice, /waiting-well — all of
+    them. The middleware allowed them (isPublicRoute returned true),
+    and the app served them (curl got 200), but VaultProvider fetched
+    /api/auth/me on mount and, on any failure, redirected to signin
+    unless the path started with /signin. So the public surface was
+    gated by the client, not the server — and the server-side check
+    could not see it.
+
+    The fix: the public path list moved to lib/public-routes.ts,
+    imported by both middleware.ts and VaultProvider.tsx — one source
+    of truth, so the two cannot drift. VaultProvider skips the
+    redirect for public paths, and still bounces a signed-out visitor
+    away from private ones.
+
+    Found while building /waiting-well and testing as a signed-out
+    visitor. The redirect had never been noticed because the pages
+    are only ever viewed by someone already signed in.
+
+    The shape, same as two earlier findings: a mechanism that looked
+    right and was not, caught by running it against reality. The
+    digest grouped nothing (pattern-20261007-a-digest-built-against-
+    empty-data); the drift check could not tell drift from prose
+    (pattern-20261007-drift-is-not-checkable). Here, the check
+    verified the route was allowed, not that the page served.
+
+    Note on gov.public_routes_are_public: it did not catch this, and
+    it should not have — its own entry says "a regression guard, not
+    a full derivation." It asserts four known paths are present in
+    the middleware prefixes. It does not test behaviour. A
+    behavioural check (fetch a public page signed out, assert no
+    redirect) would catch this class, but it makes HTTP requests and
+    belongs in the slow tier, not the fast one. Not built yet — the
+    manual test found it in five minutes. Raised 10 Oct.
 
 [x] gov.public_routes_are_public — DONE. Running in the fast tier
     and passing (11/11 on 1 Oct). The plan entry was stale — the
