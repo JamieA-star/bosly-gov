@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 """
-Check: known-critical public routes are in the middleware.
+Check: known-critical public routes are in the public list.
 
-The middleware gates everything. Routes that must work without a
-session (webhooks, uploads, callbacks, cron) have to be listed, or
-they are redirected to /signin. On 30 Sept this broke the logo
-upload, the branding upload, and the Stripe webhook — the last
-silently, so a real payment succeeded and the tier never set.
+The list lives in lib/public-routes.ts, imported by both the
+middleware (server gate) and VaultProvider (client redirect). It
+used to live inline in middleware.ts. On 10 Oct it moved, and this
+check was updated to follow — a check that reads a file the list
+has left is reading nothing.
+
+Routes that must work without a session (webhooks, uploads,
+callbacks, cron) have to be listed, or they are redirected to
+/signin. On 30 Sept this broke the logo upload, the branding
+upload, and the Stripe webhook — the last silently, so a real
+payment succeeded and the tier never set.
 
 This check asserts a declared set of critical routes is present in
-the middleware's public list. A regression guard: it catches a
-route being removed or the list being rewritten, not a brand-new
-route being forgotten.
+the public list. A regression guard: it catches a route being
+removed or the list being rewritten, not a brand-new route being
+forgotten.
 
 Exit 0 if all present, 1 otherwise.
 
@@ -23,7 +29,7 @@ import re
 import sys
 from pathlib import Path
 
-MIDDLEWARE = Path("/home/bosly_accord/bosly-1.0/middleware.ts")
+PUBLIC_ROUTES = Path("/home/bosly_accord/bosly-1.0/lib/public-routes.ts")
 
 REQUIRED = [
     "/api/billing/webhook",
@@ -43,15 +49,15 @@ def quoted_strings(text: str) -> set[str]:
 
 
 def main() -> int:
-    if not MIDDLEWARE.exists():
-        print(f"FAIL: {MIDDLEWARE} not found")
+    if not PUBLIC_ROUTES.exists():
+        print(f"FAIL: {PUBLIC_ROUTES} not found")
         return 1
 
-    text = MIDDLEWARE.read_text(encoding="utf-8")
+    text = PUBLIC_ROUTES.read_text(encoding="utf-8")
     quoted = quoted_strings(text)
 
     print("")
-    print("Invariant: known public routes are in the middleware")
+    print("Invariant: known public routes are in the public list")
     print("----------------------------------------------------")
 
     missing = []
