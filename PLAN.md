@@ -1540,11 +1540,15 @@ that has actually happened.
     Everything before January is setup. Do not expect a client
     before then. The build plan assumes a January push.
 
-    [ ] Phase 1 — The front door. A one-page site at
-    bosley.app/consulting. Headline, what I do (workflow audits,
-    automation builds), contact form, link to the app. It does not
-    need to convert. It needs to stop an emailed business dismissing
-    me as not real. Built when built — no deadline pressure.
+    [x] Phase 1 — The front door.
+    BUILT 10 Oct. A one-page site at bosley.app/consulting: the
+    headline, an about paragraph with a photo, three capability
+    cards (workflow audits, automation builds, ongoing care), an
+    enquiry form, and a footer with contact@bosly.app. Live, public,
+    taking enquiries. The form appends to
+    consultancy-enquiries.jsonl, which the orientation reads as
+    "N new consultancy enquiry(ies)".
+    Design pass deferred — see ops.consultancy_design.
 
     [ ] Phase 2 — The legal floor (before any paid work). Professional
     Indemnity Insurance, GBP 1m minimum. A consultancy agreement
@@ -1636,6 +1640,28 @@ that has actually happened.
     not.
 
     Raised 9 Oct.
+
+[ ] [LIVE] ops.consultancy_design — The front door looks correct,
+    not striking. The structure and copy are settled; the gap is
+    visual — proportion, rhythm, weight, motion. A page worth hiring
+    from, not just a working page.
+
+    THE LOOP: Claude Pro can see images, which nothing else in the
+    stack can. Screenshot the page, ask what's off, change one thing,
+    screenshot again. The visual feedback loop closes in a chat
+    interface, not in code.
+
+    SETUP: a Claude Pro account (~£18/month, separate from the API
+    key Gov already uses). Pro is the tier with Claude Design.
+    Business expense, not personal.
+
+    THE JOB: not a rebuild. The page is a headline, an about
+    paragraph with a photo, three capability cards, a form, and a
+    footer. The work is making those feel decided rather than safe.
+    Reference-led — find a page that feels right and build to that
+    structure, not to "make it better".
+
+    Raised 10 Oct.
 
 [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
     channel is the nodemailer email, sent via node. The script loads
