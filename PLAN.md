@@ -1739,6 +1739,50 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261010-consultancy-front-door — DONE 10 Oct. The second
+    half of the day: the consultancy front door, built and live. Kept
+    as a capsule because it is a different build from the Waiting Well
+    pages, with its own lesson.
+
+    THE ARC:
+
+    1. The URL pass (afternoon). The Waiting Well citations were
+       precise for the strong sources and pointed at organisation
+       homepages for four of them. Fixed: the exact Cambridge chapter,
+       the NHS Choice Framework on gov.uk, the ADHD Centre cost page,
+       and the Norfolk & Suffolk ICB private-assessment guidance. The
+       check now verifies all 22 claims resolve.
+
+    2. The front door (afternoon). ops.consultancy Phase 1. A page at
+       bosley.app/consulting: headline, about paragraph, three
+       capability cards (workflow audits, automation builds, ongoing
+       care), an enquiry form, and a footer with contact@bosly.app.
+       A public POST route appends enquiries to
+       consultancy-enquiries.jsonl, which the orientation reads. The
+       first enquiry landed in the orientation the same hour it was
+       built. Added to lib/public-routes.ts so it loads signed-out.
+
+    3. The photo (afternoon). The LinkedIn photo was a .heic — not a
+       browser format — then an 8.2 MB, 2316x3088 PNG. `convert`
+       cropped it square, resized to 400x400, and produced a 41 KB
+       JPEG. 200 times lighter, identical at display size. The lesson:
+       a phone photo is not a web image until it has been converted
+       and sized.
+
+    4. The design gap (evening). The page is correct and live, and it
+       does not look like something you would hire from. Named and
+       deferred: ops.consultancy_design. The loop is Claude Pro, which
+       can see images, which nothing else in the stack can.
+
+    THE SHAPE, for a future session: the same lesson as the week's
+    four bugs, now five. The front door passed every check —
+    compiles, sourced, public, taking enquiries — and is still not
+    good. Correctness is not quality. The checks verify facts; they
+    cannot verify taste, voice, or design. When something is correct
+    but not striking, the answer is not a check. The answer is eyes.
+
+    LESSONS (memory): pattern-20261010-checks-verify-facts-not-quality.
+
 [x] session-20261010-waiting-well-built — DONE 10 Oct. A day that
     began as "lets move on to finishing the waiting well page" and
     ended with a four-page, self-maintaining public resource. Kept as
