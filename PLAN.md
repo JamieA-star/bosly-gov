@@ -1244,7 +1244,7 @@ that has actually happened.
 
     Found 28 Sept while checking the chatbot after the engine swap.
 
-[ ] [LIVE] accord.waiting_well_page — A public resource for the UK
+[~] accord.waiting_well_page — A public resource for the UK
     neurodiverse community, at /waiting-well. Not a lead magnet: a
     filter. It gets people to the right information and the right
     next step, in a system that is overwhelming by design. The second
@@ -1252,11 +1252,50 @@ that has actually happened.
     tool. Static: holds no user data, so the encryption question does
     not arise.
 
-    BUILT 10 Oct (4e1ca6e): the shell is live at /waiting-well — the
-    landing with four pill cards, four sub-pages as stubs, and the
-    footer on the landing only. The URL works for a signed-out
-    visitor. Content fills in next. Building the shell found a real
-    bug — every public page was gated. See gov.public_surface_gated.
+    BUILT 10 Oct: all four pills are written, sourced, and live.
+
+      Is this me?         ADHD traits, autism traits, the overlap,
+                          and the screening tools (ASRS, AQ-10,
+                          RAADS-R) as links.
+      Getting an          Three routes — local NHS, Right to Choose,
+      assessment          private. RTC explained properly: legal
+                          right, ask by name, the GP must agree, no
+                          guarantee of speed.
+      Medication          Your situation: why GPs are stopping, the
+                          referral-vs-titration distinction, the
+                          realistic waits, bridging prescriptions.
+      FAQs                Twelve questions, answered, sourced. Plus
+                          the Ask a question form.
+
+    Self-maintaining. Every claim carries an @claim marker (source,
+    URL, verified date, review window, population) and a visible
+    [source] citation. The gov.waiting_well check reads the markers
+    nightly at 6am, flags stale claims and broken URLs, and writes a
+    status file the orientation reads. The Ask a question form writes
+    to a questions file the orientation also reads — new questions
+    surface where the founder looks.
+
+    Marker syntax, so a future session can add claims:
+      {/* @claim type="figure" source="..." url="..." verified="YYYY-MM-DD"
+          review="30" population="..." */}
+    'verified' is the date a human last confirmed the claim, not the
+    date the source was published. type is fact | policy | figure |
+    advice. review is days.
+
+    The Ask a question loop: a public form -> POST
+    /api/waiting-well/question (honeypot + length limit, no user data)
+    -> appended to waiting-well-questions.jsonl -> the orientation
+    shows "N new question(s) to answer" -> answered by hand, added to
+    the FAQ by hand, marked answered -> the count drops.
+
+    Built in two sessions: the shell and the public-surface fix on
+    10 Oct morning; the four pills, the check, and the form through
+    the day. Found a real bug while building the shell — every public
+    page was gated. See gov.public_surface_gated.
+
+    Watching before calling it done: the check has run twice clean,
+    one real question answered. Let it run a week and answer a few
+    more, then tick to [x]. Raised 28 Sept, revised 9-10 Oct.
 
     Purpose. In England, over 960,000 people are waiting for an ADHD
     assessment, some two years or more, with almost nothing offered
