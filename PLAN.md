@@ -2362,8 +2362,8 @@ that has actually happened.
     a way to edit or delete the whole series, and a decision on whether
     occurrences are separate rows or generated on read.
 
-[~] accord.invoice_aggregates_client_appointments — BUILT 7 Oct,
-    untested. The schema (invoicedAt + invoiceId on CalendarEvent and
+[~] accord.invoice_aggregates_client_appointments — READ SIDE TESTED 10 Oct,
+    The write side is unproven. The schema (invoicedAt + invoiceId on CalendarEvent and
     two composite indexes), a shared nextInvoiceNumber in
     lib/invoices/numbering.ts, the read route (GET
     /api/invoices/unbilled?from=&to= groups unbilled events by contact
@@ -2380,9 +2380,19 @@ that has actually happened.
     a billed state so a second press does not double-bill — is the
     invoicedAt column, set inside that transaction.
 
-    Not yet exercised against real data. The aggregate route has
-    never run. Test by opening the Unbilled tab, clicking Invoice on
-    a client, and creating one. If it succeeds, tick this to [x].
+    TESTED 10 Oct. The Unbilled tab loads against real data, shows
+    the clients, their hours, and their totals. Testing found two
+    bugs that only appeared at runtime, both fixed in dda104d:
+    contact names showed as "[encrypted]" because the read route
+    returned the plaintext placeholder instead of the encrypted
+    field, and the component fetched in a loop because its load
+    callback depended on the whole useFeedback object, which is a
+    new reference every render. The fix: the route returns the
+    encrypted contact data, the component decrypts it, and the
+    effect depends on fb.fail (stable) not fb.
+
+    The aggregate route itself has not yet been run — no invoice has
+    been created from the modal. That is the last untested step.
 
     Original entry follows.
     [ ] [LIVE] accord.invoice_aggregates_client_appointments — The
