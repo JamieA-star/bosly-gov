@@ -28,6 +28,66 @@ else
 fi
 echo ""
 
+# Waiting Well — claim staleness and broken sources
+echo "----------------------------------------------------------------"
+echo "WAITING WELL"
+echo "----------------------------------------------------------------"
+echo ""
+STATUS_FILE="/mnt/bosly/bosly-data/.data/governor/waiting-well-status.json"
+if [ -f "$STATUS_FILE" ]; then
+  python3 - "$STATUS_FILE" <<'PYWW'
+import json, sys
+from datetime import datetime, timezone
+try:
+    d = json.load(open(sys.argv[1]))
+except Exception:
+    print("  (status file unreadable)")
+    sys.exit(0)
+
+checked = d.get("checkedAt", "")
+age_days = None
+if checked:
+    try:
+        t = datetime.fromisoformat(checked.replace("Z", "+00:00"))
+        age_days = (datetime.now(timezone.utc) - t).days
+    except Exception:
+        pass
+
+if age_days is not None and age_days > 2:
+    print(f"  (check has not run since {checked[:10]} — is the cron running?)")
+    sys.exit(0)
+
+stale = d.get("stale", [])
+broken = d.get("broken", [])
+placeholder = d.get("placeholder", [])
+uncheck = d.get("uncheck", [])
+
+if d.get("ok") and not uncheck:
+    print("  OK: every claim is current and its source resolves")
+else:
+    if stale:
+        print(f"  {len(stale)} claim(s) need re-verifying:")
+        for s in stale:
+            print(f"    - {s['source']} (verified {s['verified']}, review {s['review']}d)")
+    if broken:
+        print(f"  {len(broken)} broken source(s):")
+        for b in broken:
+            print(f"    - {b['source']} -> {b['url']} ({b['detail']})")
+    if placeholder:
+        print(f"  {len(placeholder)} placeholder URL(s):")
+        for p in placeholder:
+            print(f"    - {p['source']} -> {p['url']}")
+    if uncheck:
+        print(f"  {len(uncheck)} source(s) could not be checked (not a failure)")
+    if not (stale or broken or placeholder):
+        print("  OK: every claim is current and its source resolves")
+PYWW
+  echo "  Full detail: python3 checks/waiting_well.py"
+else
+  echo "  (no status yet — the slow-tier check has not run)"
+fi
+echo ""
+
 # Unanswered questions — the feedback loop's input
 echo "----------------------------------------------------------------"
 echo "UNANSWERED QUESTIONS"
