@@ -107,6 +107,27 @@ PYWQ
     echo "  $new_count new question(s) to answer"
   fi
 fi
+ENQUIRIES_FILE="/mnt/bosly/bosly-data/.data/governor/consultancy-enquiries.jsonl"
+if [ -f "$ENQUIRIES_FILE" ]; then
+  new_enq=$(python3 - "$ENQUIRIES_FILE" <<'PYWE'
+import json, sys
+n = 0
+for line in open(sys.argv[1]):
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        if json.loads(line).get("status") == "new":
+            n += 1
+    except Exception:
+        pass
+print(n)
+PYWE
+)
+  if [ "$new_enq" -gt 0 ]; then
+    echo "  $new_enq new consultancy enquiry(ies)"
+  fi
+fi
 echo ""
 
 # Unanswered questions — the feedback loop's input
