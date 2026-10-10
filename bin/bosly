@@ -86,6 +86,27 @@ PYWW
 else
   echo "  (no status yet — the slow-tier check has not run)"
 fi
+QUESTIONS_FILE="/mnt/bosly/bosly-data/.data/governor/waiting-well-questions.jsonl"
+if [ -f "$QUESTIONS_FILE" ]; then
+  new_count=$(python3 - "$QUESTIONS_FILE" <<'PYWQ'
+import json, sys
+n = 0
+for line in open(sys.argv[1]):
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        if json.loads(line).get("status") == "new":
+            n += 1
+    except Exception:
+        pass
+print(n)
+PYWQ
+)
+  if [ "$new_count" -gt 0 ]; then
+    echo "  $new_count new question(s) to answer"
+  fi
+fi
 echo ""
 
 # Unanswered questions — the feedback loop's input
