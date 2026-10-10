@@ -1107,6 +1107,98 @@ that has actually happened.
     raw, keep the promise, and build it later as its own item.
     Raised 27 Sept while auditing the export for accuracy.
 
+[ ] [GATED] accord.chat_llm_fallback — Reconnect the LLM to the
+    chatbot as a fallback, under a principle: the LLM is scaffolding,
+    the workflows are the destination. Do not build this until the
+    unknown-intents log shows questions worth answering that the
+    workflows cannot. The chatbot works for what is needed now;
+    using it more is what fills the log.
+
+    THE PRINCIPLE. Every capability the LLM provides is a placeholder
+    for a deterministic workflow that does not exist yet. The goal is
+    not to rely on external LLMs — it is to use them to build the
+    thing that replaces them. The mechanism is the unknown-intents
+    log:
+
+      - A question the workflows cannot answer -> the LLM answers it
+        -> the question is still logged.
+      - Over time the log shows which questions recur.
+      - A recurring question becomes a workflow — deterministic, no
+        LLM, faster, free.
+      - Once the workflow exists, the LLM never sees that question
+        again.
+
+    The loop: LLM answers now -> log the question -> build the
+    workflow -> the LLM is needed less. Without the log, the LLM
+    becomes permanent and nothing notices which parts are ready to
+    fold in. Same shape as gov.evolve_loop_feedback, at the chatbot
+    layer instead of the product layer.
+
+    THE BUILD (when the log justifies it):
+      - Workflows first. The deterministic engine runs; on a match,
+        no LLM call, no cost, instant.
+      - LLM fallback. No match -> the LLM answers; the user gets a
+        real reply.
+      - Always log. Whether the LLM answered or not, the question
+        goes to unknown-intents.jsonl. That is the signal.
+      - Reuse Gov's Claude client pattern (routers/direct_llm.py —
+        _call_claude / _stream_claude, CLAUDE_API_KEY and
+        CLAUDE_MODEL from env). Keep the two code paths separate —
+        separate prompts, separate logs — even though they share the
+        key.
+      - The digest tells you what to fold in: a recurring question
+        becomes a plan item to build as a workflow.
+
+    NOTES FROM THE INVESTIGATION (10 Oct):
+      - Gov's Claude client is clean and streaming-ready. Reusing the
+        pattern is small.
+      - The archived AI-era chat (legacy/api-ai-20261003/) does not
+        contain the cache-then-LLM system that was remembered. What
+        was there: an LLM chat with several routes, a 26-line stub
+        "brain" expecting an embedding store, and a 60-second
+        in-memory cache of memory items (not of answers). The
+        learned-answers system was intended — ChatMemory and
+        MemoryFact tables exist — but the implementation never
+        landed.
+      - ChatMemory holds 2 rows. The memory system has barely been
+        used. The current deterministic engine plus the unknown-
+        intents log is the first real version of it, and it is doing
+        the same job more honestly: it answers what it can, logs
+        what it cannot, and the log drives what gets built next.
+
+    GATED ON: the unknown-intents log showing a recurring question
+    the workflows cannot answer. Use the chatbot more; the log fills;
+    the signal appears. Raised 10 Oct.
+
+[ ] [GATED] accord.chat_llm_legal — Before the LLM fallback ships,
+    the legal and user-facing documents must say what it does. This
+    is required-before-ship, not after. The failure mode is updating
+    three of the five and leaving one claim false.
+
+    THE CHECKLIST:
+      - Terms of Service. The LLM is used to answer questions the
+        workflows cannot. Responses may be inaccurate. Add the
+        clause.
+      - Privacy Policy. User messages leave the device and go to
+        Anthropic. Today they go to the server and are processed
+        deterministically; with an LLM, the question text is sent to
+        a third party. Say so, plainly.
+      - The Accord (the constitution). A clause on what the app
+        promises about AI and what it does not: "The LLM answers
+        questions; it does not read your encrypted content." The
+        zero-access promise must hold — the LLM sees the question,
+        not the vault.
+      - Stripe / billing. If the LLM is Accord-tier only, the tier
+        copy must say so. If it is metered or costs more, the
+        billing terms change. Decide which before shipping.
+      - In-app copy. The app currently says "No cloud AI" in places
+        (e.g. the Billing settings copy). Connecting the LLM makes
+        that false. gov.claim_invariants should catch it, but fix it
+        deliberately, not by accident.
+
+    GATED ON: accord.chat_llm_fallback being built. Same trigger —
+    the log showing it is time. Raised 10 Oct.
+
 [ ] [LIVE] accord.feedback_message_link — ChatDrawer.sendFeedback(msgIdx, text)
     takes the index of the bot message being flagged, but never
     sends it. The feedback payload carries rating, text, ts, and
