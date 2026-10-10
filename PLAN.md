@@ -1706,6 +1706,77 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261010-waiting-well-built — DONE 10 Oct. A day that
+    began as "lets move on to finishing the waiting well page" and
+    ended with a four-page, self-maintaining public resource. Kept as
+    a capsule: the build is one story, and a future session needs to
+    understand the mechanism, not just the pages.
+
+    THE ARC:
+
+    1. The shell (morning). Five routes under /waiting-well — the
+       landing with four pill cards, four stubs, the footer on the
+       landing only. Added to the public routes. It worked on
+       localhost and redirected in the browser. The redirect was not
+       the middleware, not Cloudflare, not the cache. It was
+       VaultProvider: a client component fetching /api/auth/me on
+       mount and bouncing any non-/signin path on failure. Every page
+       in (marketing) was gated. /safety, /privacy, /terms, /faq —
+       all of them. Fixed by moving the public path list to
+       lib/public-routes.ts, imported by both middleware.ts and
+       VaultProvider.tsx. One source of truth. The check that watched
+       the middleware list failed correctly when the list moved, and
+       was pointed at the new file.
+
+    2. The Medication page. The page that mattered most — the
+       founder's own situation. Plain prose, no first-person, short
+       paragraphs. Every claim carries an @claim marker: source, URL,
+       verified date, review window, population. Visible [source]
+       citations in the prose. The claims: the BMA collective
+       action, the LMC recommendations, the referral-vs-titration
+       distinction, the Psychiatry UK 44-52 week titration figure,
+       the 10-week referral processing, bridging prescriptions, the
+       resolved supply position, and the ICB-dependent caveat.
+
+    3. The check. gov.waiting_well, slow tier. Reads every @claim
+       marker, flags stale claims and broken URLs, writes a status
+       file. A nightly cron at 6am. A section in the orientation
+       showing the result. On its first run it flagged three claims
+       stale — because 'verified' held the source's publication date,
+       not the date a human had checked. Fixed: verified means
+       checked-by-a-human.
+
+    4. Is this me? and Getting an assessment. The mirror (ADHD
+       traits, autism traits, the overlap) and the signpost (ASRS,
+       AQ-10, RAADS-R). Then the three routes — local NHS, Right to
+       Choose explained properly, private. Citations on every claim.
+
+    5. The FAQs and the Ask a question form. Twelve questions,
+       answered, sourced. A public form posting to
+       /api/waiting-well/question — honeypot, length limit, no user
+       data — appending to waiting-well-questions.jsonl. The
+       orientation shows "N new question(s) to answer". The first
+       real question arrived and was answered the same day.
+
+    THE SHAPE, for a future session: the page cannot rot silently.
+    Every claim carries its own expiry; a check reads them nightly; a
+    public form lands in the orientation. The pattern is the same as
+    the unknown-intents digest — the signal lives where the founder
+    already looks, and it shrinks as the work gets done.
+
+    THE RECURRING LESSON, now four times: a mechanism that looked
+    right and was not, caught by running it against reality rather
+    than by a check. (1) The digest grouped nothing — built against
+    empty data. (2) The drift check could not tell drift from prose.
+    (3) The public surface was gated by a client redirect. (4) The
+    'verified' field meant the source's date, not the check date.
+    None was visible to the pipeline. All four were found by using
+    the thing. The checks are good at invariants, blind to behaviour.
+
+    LESSONS (memory): pattern-20261010-claims-carry-their-own-review-
+    window, pattern-20261010-verified-means-checked-not-published,
+    pattern-20261010-a-public-form-that-lands-where-you-look.
+
 [x] session-20261007-two-arcs — DONE 7 Oct. A day that began as "lets
     keep going" on three plan items and became two arcs plus a schema
     detour. Kept as a capsule: the detour is the connective tissue.
