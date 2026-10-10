@@ -269,9 +269,13 @@ that has actually happened.
     exclusion of live code is visible rather than silent.
     See gov.tsconfig_excludes.
 
-[~] gov.tsconfig_excludes — BUILT 3 Oct, report-only. checks/
-    tsconfig_excludes.py lists every excluded tsconfig directory
-    containing source, except a deliberate-list.
+[x] gov.tsconfig_excludes — DONE. Registered in the fast tier and
+    passing. checks/tsconfig_excludes.py lists every excluded
+    tsconfig directory containing source, except a deliberate-list.
+    The three flagged directories (app/api/spaces/**,
+    app/api/connect/google/**, app/api/inbox/webhooks/sms/**) are
+    unfixed — that is work the check found, tracked separately, not
+    work on the check.
 
     First run: 3 flagged of 21 — app/api/spaces/**,
     app/api/connect/google/**, app/api/inbox/webhooks/sms/**.
@@ -3030,8 +3034,8 @@ that has actually happened.
     Estimate: half a session for the DPA decision and the
     audit of other connections.
 
-[~] gov.claim_invariants — BUILT 3 Oct, registered in the fast
-    tier. checks/claim_invariants.py checks the free-pill list:
+[x] gov.claim_invariants — DONE. Registered in the fast tier and
+    passing. checks/claim_invariants.py checks the free-pill list:
     it extracts the list from five docs (ACCORD.md, the FAQ,
     llms-full.txt, llms.txt, layout.tsx) and compares each to
     lib/tiers.ts FREE_FEATURES. It checks structured claims —
@@ -3637,13 +3641,13 @@ of these closes one instance.
     the sets.
 [x] gov.cron_sanity — DONE. Shebang and PATH verification
     for cron-invoked scripts.
-[~] accord.doc_consistency_audit — FIRST PASS DONE.
-• gov.claim_invariants — see the primary item above.
-• accord.naming_honesty — see the primary item above.
-• accord.stub_detection — see the primary item above.
-• gov.plan_tracks_known_gaps — see the primary item above.
-• accord.middleware_public_routes — see the primary item above.
-• gov.cron_sanity_repo_wide — see the primary item above.
+These were the cross-references for the claim class of checks.
+They are now their own entries, above and elsewhere in the plan:
+
+  accord.doc_consistency_audit, gov.claim_invariants,
+  accord.naming_honesty, accord.stub_detection,
+  gov.plan_tracks_known_gaps, accord.middleware_public_routes,
+  gov.cron_sanity_repo_wide.
 
 ----------------------------------------------------------------
 3. CLEANLINESS FOR LEGIBILITY
