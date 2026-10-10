@@ -308,6 +308,48 @@ that has actually happened.
 
 [x] accord.server_side_key_visibility — DONE 21 Sept. Committed 2219b73. The client was sending the exported AES key to /api/auth/update-key. Nothing read it server-side. Removed from signup and recovery. Route now accepts all fields as optional. The zero-access claim is true: the server never sees key material. The User.publicKey DB column still exists but new users get null.
 
+[ ] [GATED] ops.voice_infrastructure — Voice, as both a personal tool
+    and a product. Two things sharing one foundation.
+
+    JARVIS (personal). A local voice assistant on the home server,
+    connected to Bosly, Keep, Gov, and the consultancy. Wake word,
+    speech-to-text, an LLM with tools, text-to-speech. Runs on local
+    hardware. Say "what's going on today, Bosly" and it dips between
+    Keep, Gov, Accord, and the consultancy. Purpose: reduce the
+    build bottleneck — an assistant that can help build, and that
+    queries your systems by voice. Open-source starting points:
+    fusion-runtime (self-hosted, sub-second latency on consumer
+    hardware), jarvise (voice pipeline with RAG memory and tool
+    calling).
+
+    RECEPTIONIST (product). An AI phone receptionist for trades and
+    small businesses. Answers, qualifies the caller, books the job.
+    v1 uses a platform — Vapi (developer-first, bring-your-own LLM,
+    $0.05/min platform fee), Retell (managed, $0.07-0.18/min
+    all-in), or ElevenLabs Agents (best voice cloning, if the client
+    wants their own voice). v2 self-hosted, once the demand is
+    proven. The differentiator is the Bosly integration: the call
+    outcome lands in the workspace as a card or contact. No generic
+    platform has that.
+
+    THE SHARED FOUNDATION. Same pipeline, different wrappers. Jarvis
+    serves you and connects to your systems. The receptionist serves
+    a client and connects to theirs. Build Jarvis first to learn the
+    pipeline; sell the receptionist to learn the client-facing
+    layer; self-host when the demand is proven.
+
+    THE PRODUCT TO SELL. Not the raw runtime — the Bosly receptionist
+    setup: the configured agent, the calendar rules, the booking
+    flow, the Bosly integration. Same shape as
+    accord.business_setups. The first client funds it; the next is
+    margin.
+
+    GATED on the first consultancy engagement that needs a voice
+    receptionist, OR the home server upgrade. Do not build ahead of
+    demand.
+
+    Raised 10 Oct.
+
 [ ] [GATED] accord.business_setups — Bosly stays as it is: free
     tier, Accord paid tier, no architectural change. On top of that,
     consultancy engagements produce reusable setups — a bundle of
