@@ -965,8 +965,39 @@ that has actually happened.
     over chat-memory.txt, and a duplicate of bosly-brain.ts.
     Commits 5347025, f3ed729. The live chat is ChatDrawer.
 
-[~] gov.orphaned_routes — BUILT 3 Oct, report-only. checks/
-    orphaned_routes.py. UPDATE 3 Oct: down from 90 to 77 after
+[x] gov.orphaned_routes — DONE 11 Oct. 75 orphaned routes found;
+    zero remain. Registered in the fast tier (16 checks now), and
+    REPORT_ONLY is false: a new route with no caller fails the
+    pipeline.
+
+    Worked down cluster by cluster — grep for callers, archive if
+    none. Nine clusters archived: settings/connections, inbox,
+    onboarding, cards, contacts, calendar providers, bosly
+    workflows, billing, and the scattered remainder.
+
+    Four causes, all a rebuild leaving the old API behind:
+      - verb-in-path to REST (contacts/create to POST /api/contacts)
+      - feature rebuilt (inbox actions, onboarding, briefings)
+      - absorbed by the workflow engine (bosly/relationships,
+        bosly/wellness-check)
+      - dead as a consequence of cleanup (api/config, orphaned when
+        its four callers were archived)
+
+    One check bug fixed: lib/public-routes.ts counted as a caller,
+    because the scan read lib/ for route paths and a policy entry
+    looked like a call. It hid api/usage/migrate and two others.
+    Excluded from the scan.
+
+    One new list: DELIBERATE_NO_CALLER. Six finance routes — gifts,
+    mtd, overview, pension, status, tax-position — have no caller
+    but are future features, built and waiting, not dead.
+
+    The method, for the next time: one cluster at a time, grep for
+    callers, archive if clean, tsc, check the count, commit. 75
+    routes removed, nothing broken, tsc clean throughout.
+
+    Original entry follows.
+    checks/orphaned_routes.py. UPDATE 3 Oct: down from 90 to 77 after
     two clusters archived — tasks (8 routes) and today /
     today-state / timeline / time-saved (4 routes).
     Original entry follows.
