@@ -49,7 +49,7 @@ DELIBERATE_NO_CALLER = [
     "api/finance/tax-position",  # future feature
 ]
 
-REPORT_ONLY = True
+REPORT_ONLY = False
 
 
 def route_path(route_file: Path) -> str:
