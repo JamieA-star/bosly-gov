@@ -996,7 +996,6 @@ that has actually happened.
     callers, archive if clean, tsc, check the count, commit. 75
     routes removed, nothing broken, tsc clean throughout.
 
-    Original entry follows.
     checks/orphaned_routes.py. UPDATE 3 Oct: down from 90 to 77 after
     two clusters archived — tasks (8 routes) and today /
     today-state / timeline / time-saved (4 routes).
