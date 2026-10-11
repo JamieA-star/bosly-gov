@@ -53,12 +53,24 @@ def is_server_only(path: str) -> bool:
     return any(p.startswith(s) for s in SERVER_ONLY)
 
 
+# Files that name routes but do not call them. A path here is a
+# policy statement, not a caller — public-routes.ts says a route is
+# public; it does not fetch it. Counting it as a caller masks real
+# orphans (it hid /api/usage/migrate).
+NOT_CALLERS = {
+    Path("/home/bosly_accord/bosly-1.0/lib/public-routes.ts"),
+}
+
+
 def all_source_files() -> list[Path]:
     out = []
     for root in SCAN:
         if root.exists():
-            out.extend(root.rglob("*.ts"))
-            out.extend(root.rglob("*.tsx"))
+            for ext in ("*.ts", "*.tsx"):
+                for f in root.rglob(ext):
+                    if f in NOT_CALLERS:
+                        continue
+                    out.append(f)
     return out
 
 
