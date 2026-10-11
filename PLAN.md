@@ -610,6 +610,118 @@ that has actually happened.
     cap is raised. The post must state what is actually true.
 
 
+[ ] [LIVE] ops.consultancy — Bosly Limited's consultancy arm.
+    Workflow audits and small AI/automation builds for UK small
+    businesses drowning in admin. Replaces gardening income while
+    the app grows. Front door at bosley.app/consulting.
+
+    The runway: winter is naturally slower, and January is when
+    small business owners have had a break and rethink their admin.
+    Everything before January is setup. Do not expect a client
+    before then. The build plan assumes a January push.
+
+    [x] Phase 1 — The front door.
+    BUILT 10 Oct. A one-page site at bosley.app/consulting: the
+    headline, an about paragraph with a photo, three capability
+    cards (workflow audits, automation builds, ongoing care), an
+    enquiry form, and a footer with contact@bosly.app. Live, public,
+    taking enquiries. The form appends to
+    consultancy-enquiries.jsonl, which the orientation reads as
+    "N new consultancy enquiry(ies)".
+    Design pass deferred — see ops.consultancy_design.
+
+    [ ] Phase 2 — The legal floor (before any paid work). Professional
+    Indemnity Insurance, GBP 1m minimum. A consultancy agreement
+    template (scope, payment terms, deposit, IP). Invoicing
+    discipline: invoice the moment a milestone is hit, Pay Now link,
+    no Net 30. These gate everything — no paid work without them.
+
+    [ ] Phase 3 — The lead-gen tool.
+    The filter. Reduces hundreds of thousands of businesses to a
+    shortlist worth researching by hand. Not a research engine, not
+    a CRM — it finds strong candidates and hands them over.
+    Everything past that (LinkedIn, Facebook, a manual read of the
+    site) is done by hand on a handful of businesses.
+
+    Source order — free first, Google last:
+      1. OpenStreetMap — discovery, and the no-website signal.
+      2. Companies House — active status, incorporation date,
+         directors, SIC code.
+      3. Companies House daily accounts files — employee count.
+      4. ICO register — optional size confirmation.
+      5. Google Places — review count and rating, shortlist only.
+
+    Output: a CSV, one row per business — name, location,
+    incorporated date, employees, directors, VAT, website (if any),
+    phone, and the specific Day Zero findings. The findings are what
+    write the email.
+
+    Two rules that make it sellable later: config not code
+    (verticals, weights, location, threshold in one file); shortlist
+    not rank (top N, not a leaderboard).
+
+    Build steps: API setup, OSM discovery, Companies House
+    enrichment, employee lookup, website check, scoring, CSV.
+
+    Not a SaaS. Not a web app. Not a front end. A script that runs
+    and outputs a list.
+
+    Legal: official APIs and open data only. No scraping the
+    directories. Google used on the shortlist only — Places data is
+    not stored permanently.
+
+    The loop: each lead gets an ID; note the outcome; after enough
+    rows the weights get evidence instead of guesses.
+
+    Later: the product version (adapted per consultancy), the trades
+    directories (Checkatrade, Yell) as a second source, a UI.
+    Design-age heuristic dropped from v1 — too noisy, the other
+    markers are reliable enough.
+
+    [ ] Phase 4 — The first audit. The Day Zero method: pick one
+    business, audit its public footprint, write up three ranked
+    bottlenecks, send with no ask. One a week. Not ten. The email
+    goes at 6-7am or 8-9pm — trades read before the day starts and
+    after dinner. Where a business has an office manager or
+    bookkeeper, that is the route in: they feel the pain and forward
+    it upward.
+
+    [ ] Phase 5 — The first paid work. Three stages. Audit: GBP
+    500-1,500, 1-2 weeks. Build: GBP 2,000-5,000 for a single
+    workflow. Retainer: GBP 300/month. Revenue model: 3 clients =
+    GBP 3,000 audit + GBP 9,000 build + GBP 900/month recurring.
+
+    [ ] Phase 6 — The background hum. LinkedIn, one post a week, for
+    credibility when a business Googles me. Instagram continues as
+    planned. The Waiting Well page is the community bridge, not the
+    business one — the consultancy audience and the ADHD community
+    overlap but are not the same.
+
+    [ ] The one rule: send 15 audits before drawing any conclusion.
+    First five are usually silence. First reply around six to ten.
+    First paid audit around eleven to fifteen. Track the count, not
+    the reply rate — the count is the thing that is controlled.
+
+    WHERE THE APP FITS. Nowhere, yet. Deliver audits however is
+    fastest — email, a document, by hand. No Bosly in the
+    deliverable, no signup, no friction. The app is shown only when
+    there is a live conversation and it is natural. From spring,
+    once a few audits have been done by hand and the pain points are
+    known, build the consultancy workflows into Bosly the way the
+    gardening ones were built. The consultancy is a second business
+    run by the same ADHD brain; running it by hand is how the app
+    learns what a consultancy needs. When it works for two
+    businesses, it is general enough to sell. See
+    accord.business_setups.
+
+    SUCCESS, SHORT TERM. Not a client by next week. By end of
+    January: fifteen audits sent and three businesses spoken to.
+    That is the controllable target. The rest follows or it does
+    not.
+
+    Raised 9 Oct.
+
+
 [ ] [LIVE] accord.user_docs_prose_pass — Apply the new
     WORKING_AGREEMENT rule ("Writing for the reader") to the
     existing user-facing documents. The rule: no hash headers,
@@ -1533,117 +1645,6 @@ that has actually happened.
     EmailConnectionForm.tsx. Gmail, Yahoo, and custom IMAP (IONOS)
     all work via app password; only Microsoft OAuth is absent.
     Raised 30 Sept.
-
-[ ] [LIVE] ops.consultancy — Bosly Limited's consultancy arm.
-    Workflow audits and small AI/automation builds for UK small
-    businesses drowning in admin. Replaces gardening income while
-    the app grows. Front door at bosley.app/consulting.
-
-    The runway: winter is naturally slower, and January is when
-    small business owners have had a break and rethink their admin.
-    Everything before January is setup. Do not expect a client
-    before then. The build plan assumes a January push.
-
-    [x] Phase 1 — The front door.
-    BUILT 10 Oct. A one-page site at bosley.app/consulting: the
-    headline, an about paragraph with a photo, three capability
-    cards (workflow audits, automation builds, ongoing care), an
-    enquiry form, and a footer with contact@bosly.app. Live, public,
-    taking enquiries. The form appends to
-    consultancy-enquiries.jsonl, which the orientation reads as
-    "N new consultancy enquiry(ies)".
-    Design pass deferred — see ops.consultancy_design.
-
-    [ ] Phase 2 — The legal floor (before any paid work). Professional
-    Indemnity Insurance, GBP 1m minimum. A consultancy agreement
-    template (scope, payment terms, deposit, IP). Invoicing
-    discipline: invoice the moment a milestone is hit, Pay Now link,
-    no Net 30. These gate everything — no paid work without them.
-
-    [ ] Phase 3 — The lead-gen tool.
-    The filter. Reduces hundreds of thousands of businesses to a
-    shortlist worth researching by hand. Not a research engine, not
-    a CRM — it finds strong candidates and hands them over.
-    Everything past that (LinkedIn, Facebook, a manual read of the
-    site) is done by hand on a handful of businesses.
-
-    Source order — free first, Google last:
-      1. OpenStreetMap — discovery, and the no-website signal.
-      2. Companies House — active status, incorporation date,
-         directors, SIC code.
-      3. Companies House daily accounts files — employee count.
-      4. ICO register — optional size confirmation.
-      5. Google Places — review count and rating, shortlist only.
-
-    Output: a CSV, one row per business — name, location,
-    incorporated date, employees, directors, VAT, website (if any),
-    phone, and the specific Day Zero findings. The findings are what
-    write the email.
-
-    Two rules that make it sellable later: config not code
-    (verticals, weights, location, threshold in one file); shortlist
-    not rank (top N, not a leaderboard).
-
-    Build steps: API setup, OSM discovery, Companies House
-    enrichment, employee lookup, website check, scoring, CSV.
-
-    Not a SaaS. Not a web app. Not a front end. A script that runs
-    and outputs a list.
-
-    Legal: official APIs and open data only. No scraping the
-    directories. Google used on the shortlist only — Places data is
-    not stored permanently.
-
-    The loop: each lead gets an ID; note the outcome; after enough
-    rows the weights get evidence instead of guesses.
-
-    Later: the product version (adapted per consultancy), the trades
-    directories (Checkatrade, Yell) as a second source, a UI.
-    Design-age heuristic dropped from v1 — too noisy, the other
-    markers are reliable enough.
-
-    [ ] Phase 4 — The first audit. The Day Zero method: pick one
-    business, audit its public footprint, write up three ranked
-    bottlenecks, send with no ask. One a week. Not ten. The email
-    goes at 6-7am or 8-9pm — trades read before the day starts and
-    after dinner. Where a business has an office manager or
-    bookkeeper, that is the route in: they feel the pain and forward
-    it upward.
-
-    [ ] Phase 5 — The first paid work. Three stages. Audit: GBP
-    500-1,500, 1-2 weeks. Build: GBP 2,000-5,000 for a single
-    workflow. Retainer: GBP 300/month. Revenue model: 3 clients =
-    GBP 3,000 audit + GBP 9,000 build + GBP 900/month recurring.
-
-    [ ] Phase 6 — The background hum. LinkedIn, one post a week, for
-    credibility when a business Googles me. Instagram continues as
-    planned. The Waiting Well page is the community bridge, not the
-    business one — the consultancy audience and the ADHD community
-    overlap but are not the same.
-
-    [ ] The one rule: send 15 audits before drawing any conclusion.
-    First five are usually silence. First reply around six to ten.
-    First paid audit around eleven to fifteen. Track the count, not
-    the reply rate — the count is the thing that is controlled.
-
-    WHERE THE APP FITS. Nowhere, yet. Deliver audits however is
-    fastest — email, a document, by hand. No Bosly in the
-    deliverable, no signup, no friction. The app is shown only when
-    there is a live conversation and it is natural. From spring,
-    once a few audits have been done by hand and the pain points are
-    known, build the consultancy workflows into Bosly the way the
-    gardening ones were built. The consultancy is a second business
-    run by the same ADHD brain; running it by hand is how the app
-    learns what a consultancy needs. When it works for two
-    businesses, it is general enough to sell. See
-    accord.business_setups.
-
-    SUCCESS, SHORT TERM. Not a client by next week. By end of
-    January: fifteen audits sent and three businesses spoken to.
-    That is the controllable target. The rest follows or it does
-    not.
-
-    Raised 9 Oct.
 
 [ ] [LIVE] ops.consultancy_design — The front door looks correct,
     not striking. The structure and copy are settled; the gap is
