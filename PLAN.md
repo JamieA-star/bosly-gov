@@ -1774,6 +1774,118 @@ that has actually happened.
     the £15 founding-member price. Then the reel decision, with
     everything it claims now verified.
 
+[x] session-20261011-orphan-cleanup — DONE 11 Oct. A day that began
+    with SEO for the new pages and became 75 routes removed from the
+    codebase. Kept as a capsule: the method is reusable.
+
+    THE ARC:
+
+    1. The SEO (morning). The sitemap and llms.txt did not mention
+       /consulting or the five waiting-well routes. Both landing
+       pages had no title or description. Fixed — the sitemap now
+       lists them, llms.txt describes the consultancy and Waiting
+       Well for AI crawlers, and both pages carry a title, a
+       description, and Open Graph tags.
+
+    2. The orientation (midday). ops.consultancy sat below the top
+       five and was invisible; moved the whole entry to the top of
+       the live list. Then added an IN PROGRESS section — the [~]
+       items were not shown at all, so the work in flight was
+       invisible. The orientation now shows in-progress first, then
+       live, then gated.
+
+    3. The orphan cleanup (afternoon). gov.orphaned_routes found 75
+       routes with no caller. Worked down cluster by cluster: grep
+       for callers, archive if none. Nine clusters, 75 routes, ten
+       commits. Zero remain. The check is registered in the fast
+       tier (16 checks now) and fails on a new orphan.
+
+    THE FINDINGS:
+
+      Four causes of an orphan, all a rebuild leaving the old API
+      behind. Verb-in-path became REST (contacts/create to POST
+      /api/contacts). Features were rebuilt (inbox actions,
+      onboarding, briefings). The workflow engine absorbed routes
+      into inline functions (bosly/relationships, wellness-check).
+      And one route — api/config — became an orphan as a consequence
+      of archiving its own callers, which the check caught at once.
+
+      One check bug: lib/public-routes.ts counted as a caller,
+      because the scan read lib/ for route paths and a policy entry
+      looked like a call. It hid three orphans.
+
+      One new list: DELIBERATE_NO_CALLER. Six finance routes — gifts,
+      mtd, overview, pension, status, tax-position — have no caller
+      but are future features, built and waiting. Not dead.
+
+    THE METHOD, for the next time: one cluster at a time. grep for
+    callers. Archive if clean. tsc. Check the count. Commit. 75
+    routes removed, nothing broken, tsc clean throughout.
+
+    FOR THE NEXT SESSION: accord.typecheck_clean and
+    accord.doc_consistency_audit are both likely superseded — one by
+    gov.tsconfig_excludes, the other by gov.claim_invariants. Read
+    them first; if superseded, tick with a cross-reference.
+
+    LESSONS (memory): pattern-20261011-an-orphan-route-is-dead-
+    whatever-it-does.
+
+[x] session-20261011-orphan-cleanup — DONE 11 Oct. A day that began
+    with SEO for the new pages and became 75 routes removed from the
+    codebase. Kept as a capsule: the method is reusable.
+
+    THE ARC:
+
+    1. The SEO (morning). The sitemap and llms.txt did not mention
+       /consulting or the five waiting-well routes. Both landing
+       pages had no title or description. Fixed — the sitemap now
+       lists them, llms.txt describes the consultancy and Waiting
+       Well for AI crawlers, and both pages carry a title, a
+       description, and Open Graph tags.
+
+    2. The orientation (midday). ops.consultancy sat below the top
+       five and was invisible; moved the whole entry to the top of
+       the live list. Then added an IN PROGRESS section — the [~]
+       items were not shown at all, so the work in flight was
+       invisible. The orientation now shows in-progress first, then
+       live, then gated.
+
+    3. The orphan cleanup (afternoon). gov.orphaned_routes found 75
+       routes with no caller. Worked down cluster by cluster: grep
+       for callers, archive if none. Nine clusters, 75 routes, ten
+       commits. Zero remain. The check is registered in the fast
+       tier (16 checks now) and fails on a new orphan.
+
+    THE FINDINGS:
+
+      Four causes of an orphan, all a rebuild leaving the old API
+      behind. Verb-in-path became REST (contacts/create to POST
+      /api/contacts). Features were rebuilt (inbox actions,
+      onboarding, briefings). The workflow engine absorbed routes
+      into inline functions (bosly/relationships, wellness-check).
+      And one route — api/config — became an orphan as a consequence
+      of archiving its own callers, which the check caught at once.
+
+      One check bug: lib/public-routes.ts counted as a caller,
+      because the scan read lib/ for route paths and a policy entry
+      looked like a call. It hid three orphans.
+
+      One new list: DELIBERATE_NO_CALLER. Six finance routes — gifts,
+      mtd, overview, pension, status, tax-position — have no caller
+      but are future features, built and waiting. Not dead.
+
+    THE METHOD, for the next time: one cluster at a time. grep for
+    callers. Archive if clean. tsc. Check the count. Commit. 75
+    routes removed, nothing broken, tsc clean throughout.
+
+    FOR THE NEXT SESSION: accord.typecheck_clean and
+    accord.doc_consistency_audit are both likely superseded — one by
+    gov.tsconfig_excludes, the other by gov.claim_invariants. Read
+    them first; if superseded, tick with a cross-reference.
+
+    LESSONS (memory): pattern-20261011-an-orphan-route-is-dead-
+    whatever-it-does.
+
 [x] session-20261010-consultancy-front-door — DONE 10 Oct. The second
     half of the day: the consultancy front door, built and live. Kept
     as a capsule because it is a different build from the Waiting Well
