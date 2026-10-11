@@ -1698,6 +1698,174 @@ that has actually happened.
 
     Raised 10 Oct.
 
+[ ] [LIVE] ops.consultancy_sales_sequence — How a lead becomes a
+    client. Five stages, and the order matters. The instinct is to
+    send the demo first; the right move is to earn it.
+
+    STAGE 1 — THE DAY ZERO EMAIL. The observation, from the lead-gen
+    tool. No link, no demo, no ask beyond a reply. One or two a day,
+    not ten. The purpose is not to sell — it is to get a reply.
+    Deliverability note: a first cold email with multiple links drops
+    inbox placement from 89% to 58%. So: no link in the first email.
+
+    STAGE 2 — THE REPLY. They respond. You say what you noticed, and
+    ask for a call. "What I found from the outside is probably not
+    the whole picture — can I ask you a few questions?"
+
+    STAGE 3 — THE DISCOVERY CALL. 20/80 — you talk 20%, they talk
+    80%. This is a consultation, the skill from 20 years of
+    hairdressing. Five questions, same for every vertical, different
+    words:
+
+      1. Where does the admin eat the most time?
+      2. What falls through the cracks most often?
+      3. How do you handle that now? (The workaround. If the answer
+         is "I remember it" or "it's in my head", that is the gap.)
+      4. If you could only fix one, which would make the biggest
+         difference? (Everyone has a list. You need the one.)
+      5. If that were fixed, what would change? (Not a price —
+         the outcome. You repeat their words in the demo.)
+
+    Vertical variants: hairdresser — missed calls; plumber — quotes;
+    dentist — no-shows; agency — hours tracking. Same five, different
+    words.
+
+    Write down their exact phrases, not your summary. "I lose the
+    Saturdays" goes in the demo email, not "reduced admin burden".
+
+    Do not solve on the call. The urge is strong and it is the
+    craftsman's urge — you see the problem, you know the fix, you
+    want to show your work. It is mistimed. The fix belongs in the
+    demo, where it is evidence, not in the call, where it is talk.
+
+    STAGE 4 — THE CLOSE. A summary and a next step. Nothing else.
+
+      "That's really useful — thank you. Let me make sure I've got
+      it right. The thing costing you most is [their words]. It's
+      happening because [what they said], and right now you handle
+      it by [their workaround]. Have I got that right?
+
+      Leave it with me. I'll put together something that shows what
+      this could look like — nothing you have to commit to. I'll
+      send it over in the next few days."
+
+    The summary is the close. Saying their problem back accurately
+    is what makes someone want to work with you — not the solution.
+    "Nothing you have to commit to" removes the pressure. "In the
+    next few days" buys the time to build, and is a reason to email
+    again.
+
+    If they push — "what would you actually do?" — the answer is:
+    "A few things, probably. But I'd rather show you than tell you.
+    Give me a couple of days."
+
+    STAGE 5 — THE DEMO. Built after the call, not before. This is
+    the whole point of the order: a demo built before answers what
+    you think they need; a demo built after answers what they told
+    you. One per vertical, reused — the hairdresser demo goes to
+    every hairdresser who takes a call. But it is sent only to
+    someone who has already talked to you.
+
+    The demo shows the OUTCOME, not the website. A hairdresser does
+    not want a prettier website; they want the phone answered at
+    9pm and the booking in the calendar. Lead with that.
+
+    Delivery: a YouTube thumbnail embedded in the email as an image,
+    hyperlinked to a two-minute video. One link, to a reputable
+    domain. A Loom — your face, your voice, their problem — beats a
+    static site every time. Keep it under three minutes.
+
+    THE COST PER INTERESTED COMPANY: about an hour. 5 min email,
+    2 min reply, 30 min call, 15-30 min demo, 5 min send. And the
+    first three stages filter hard — most will not reply, and the
+    ones who take the call have qualified themselves.
+
+    Raised 11 Oct.
+
+[ ] [LIVE] ops.consultancy_sales_sequence — How a lead becomes a
+    client. Five stages, and the order matters. The instinct is to
+    send the demo first; the right move is to earn it.
+
+    STAGE 1 — THE DAY ZERO EMAIL. The observation, from the lead-gen
+    tool. No link, no demo, no ask beyond a reply. One or two a day,
+    not ten. The purpose is not to sell — it is to get a reply.
+    Deliverability note: a first cold email with multiple links drops
+    inbox placement from 89% to 58%. So: no link in the first email.
+
+    STAGE 2 — THE REPLY. They respond. You say what you noticed, and
+    ask for a call. "What I found from the outside is probably not
+    the whole picture — can I ask you a few questions?"
+
+    STAGE 3 — THE DISCOVERY CALL. 20/80 — you talk 20%, they talk
+    80%. This is a consultation, the skill from 20 years of
+    hairdressing. Five questions, same for every vertical, different
+    words:
+
+      1. Where does the admin eat the most time?
+      2. What falls through the cracks most often?
+      3. How do you handle that now? (The workaround. If the answer
+         is "I remember it" or "it's in my head", that is the gap.)
+      4. If you could only fix one, which would make the biggest
+         difference? (Everyone has a list. You need the one.)
+      5. If that were fixed, what would change? (Not a price —
+         the outcome. You repeat their words in the demo.)
+
+    Vertical variants: hairdresser — missed calls; plumber — quotes;
+    dentist — no-shows; agency — hours tracking. Same five, different
+    words.
+
+    Write down their exact phrases, not your summary. "I lose the
+    Saturdays" goes in the demo email, not "reduced admin burden".
+
+    Do not solve on the call. The urge is strong and it is the
+    craftsman's urge — you see the problem, you know the fix, you
+    want to show your work. It is mistimed. The fix belongs in the
+    demo, where it is evidence, not in the call, where it is talk.
+
+    STAGE 4 — THE CLOSE. A summary and a next step. Nothing else.
+
+      "That's really useful — thank you. Let me make sure I've got
+      it right. The thing costing you most is [their words]. It's
+      happening because [what they said], and right now you handle
+      it by [their workaround]. Have I got that right?
+
+      Leave it with me. I'll put together something that shows what
+      this could look like — nothing you have to commit to. I'll
+      send it over in the next few days."
+
+    The summary is the close. Saying their problem back accurately
+    is what makes someone want to work with you — not the solution.
+    "Nothing you have to commit to" removes the pressure. "In the
+    next few days" buys the time to build, and is a reason to email
+    again.
+
+    If they push — "what would you actually do?" — the answer is:
+    "A few things, probably. But I'd rather show you than tell you.
+    Give me a couple of days."
+
+    STAGE 5 — THE DEMO. Built after the call, not before. This is
+    the whole point of the order: a demo built before answers what
+    you think they need; a demo built after answers what they told
+    you. One per vertical, reused — the hairdresser demo goes to
+    every hairdresser who takes a call. But it is sent only to
+    someone who has already talked to you.
+
+    The demo shows the OUTCOME, not the website. A hairdresser does
+    not want a prettier website; they want the phone answered at
+    9pm and the booking in the calendar. Lead with that.
+
+    Delivery: a YouTube thumbnail embedded in the email as an image,
+    hyperlinked to a two-minute video. One link, to a reputable
+    domain. A Loom — your face, your voice, their problem — beats a
+    static site every time. Keep it under three minutes.
+
+    THE COST PER INTERESTED COMPANY: about an hour. 5 min email,
+    2 min reply, 30 min call, 15-30 min demo, 5 min send. And the
+    first three stages filter hard — most will not reply, and the
+    ones who take the call have qualified themselves.
+
+    Raised 11 Oct.
+
 [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
     channel is the nodemailer email, sent via node. The script loads
     nvm and sets PATH so node is found under cron, and that works
