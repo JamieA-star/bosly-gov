@@ -38,6 +38,17 @@ SERVER_ONLY = [
     "api/version",          # called by the update banner
 ]
 
+# Routes with no caller that are deliberate, not dead. Each needs a
+# reason. If the reason stops being true, remove the line.
+DELIBERATE_NO_CALLER = [
+    "api/finance/gifts",         # future feature — built, not yet wired up
+    "api/finance/mtd",           # future feature
+    "api/finance/overview",      # future feature
+    "api/finance/pension",       # future feature
+    "api/finance/status",        # future feature
+    "api/finance/tax-position",  # future feature
+]
+
 REPORT_ONLY = True
 
 
@@ -51,6 +62,11 @@ def route_path(route_file: Path) -> str:
 def is_server_only(path: str) -> bool:
     p = path.lstrip("/")
     return any(p.startswith(s) for s in SERVER_ONLY)
+
+
+def is_deliberate(path: str) -> bool:
+    p = path.lstrip("/")
+    return any(p.startswith(s) for s in DELIBERATE_NO_CALLER)
 
 
 # Files that name routes but do not call them. A path here is a
@@ -95,6 +111,8 @@ def main() -> int:
     for route in routes:
         path = route_path(route)
         if is_server_only(path):
+            continue
+        if is_deliberate(path):
             continue
 
         # A path with [id] is a dynamic segment; callers use a real id.
