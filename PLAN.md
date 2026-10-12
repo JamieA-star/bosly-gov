@@ -312,47 +312,115 @@ that has actually happened.
 
 [x] accord.server_side_key_visibility — DONE 21 Sept. Committed 2219b73. The client was sending the exported AES key to /api/auth/update-key. Nothing read it server-side. Removed from signup and recovery. Route now accepts all fields as optional. The zero-access claim is true: the server never sees key material. The User.publicKey DB column still exists but new users get null.
 
-[ ] [GATED] ops.voice_infrastructure — Voice, as both a personal tool
-    and a product. Two things sharing one foundation.
+[ ] [LIVE] ops.jarvis — THE VISION. One voice across everything.
+    Not a feature: the destination. The thing Bosly has been building
+    towards for months, and the reason the ecosystem coheres.
 
-    JARVIS (personal). A local voice assistant on the home server,
-    connected to Bosly, Keep, Gov, and the consultancy. Wake word,
-    speech-to-text, an LLM with tools, text-to-speech. Runs on local
-    hardware. Say "what's going on today, Bosly" and it dips between
-    Keep, Gov, Accord, and the consultancy. Purpose: reduce the
-    build bottleneck — an assistant that can help build, and that
-    queries your systems by voice. Open-source starting points:
-    fusion-runtime (self-hosted, sub-second latency on consumer
-    hardware), jarvise (voice pipeline with RAG memory and tool
-    calling).
+    WHAT IT IS. A voice interface that reaches Bosly Accord, Bosly
+    Keep, Bosly Gov, and the consultancy as one. You talk to it, and
+    it answers from all of them.
 
-    RECEPTIONIST (product). An AI phone receptionist for trades and
-    small businesses. Answers, qualifies the caller, books the job.
-    v1 uses a platform — Vapi (developer-first, bring-your-own LLM,
-    $0.05/min platform fee), Retell (managed, $0.07-0.18/min
-    all-in), or ElevenLabs Agents (best voice cloning, if the client
-    wants their own voice). v2 self-hosted, once the demand is
-    proven. The differentiator is the Bosly integration: the call
-    outcome lands in the workspace as a card or contact. No generic
-    platform has that.
+      "What's going on today?" — it dips between Keep, Accord, Gov,
+      and the consultancy, and tells you.
 
-    THE SHARED FOUNDATION. Same pipeline, different wrappers. Jarvis
-    serves you and connects to your systems. The receptionist serves
-    a client and connects to theirs. Build Jarvis first to learn the
-    pipeline; sell the receptionist to learn the client-facing
-    layer; self-host when the demand is proven.
+      "Help me build this." — it writes code alongside you.
 
-    THE PRODUCT TO SELL. Not the raw runtime — the Bosly receptionist
-    setup: the configured agent, the calendar rules, the booking
-    flow, the Bosly integration. Same shape as
-    accord.business_setups. The first client funds it; the next is
-    margin.
+      "Build a website for this client." — it does the demo.
+
+      "Set up an AI receptionist for this hairdresser." — it
+      configures the setup.
+
+    THE INTERFACE, NOT A FEATURE. Today the five systems are separate
+    surfaces. Jarvis is the thing that makes them one — a single way
+    in, with everything behind it. That is the whole point.
+
+    WHERE IT RUNS. A local voice assistant on the home server. Wake
+    word, speech-to-text, an LLM with tools, text-to-speech. Local
+    hardware, because the point is not to rely on external services
+    for the core. Open-source starting points: fusion-runtime
+    (self-hosted, sub-second latency on consumer hardware), jarvise
+    (voice pipeline with RAG memory and tool calling).
+
+    SHARED PIPELINE WITH THE PRODUCT. Jarvis and the AI receptionist
+    are the same pipeline with different wrappers. Jarvis serves the
+    founder and connects to the founder's systems. The receptionist
+    serves a client and connects to theirs. Build Jarvis to learn the
+    pipeline; sell the receptionist to learn the client-facing layer;
+    self-host when the demand is proven. See ops.voice_infrastructure
+    for the product side.
+
+    WHY IT MATTERS. It reduces the build bottleneck — an assistant
+    that can help build, and that queries the systems by voice. But
+    it is bigger than that. It is the shape of the whole project:
+    five things that are one thing, and a way to talk to all of it.
+
+    Raised 10 Oct, rewritten 12 Oct as the vision rather than a
+    gated feature. This is the destination; the product entries hang
+    off it.
+
+[ ] [GATED] ops.voice_infrastructure — The voice products. Two tiers
+    sharing one pipeline, and a chief of staff as the destination.
+
+    TIER ONE — THE AI RECEPTIONIST. Answers the phone when the
+    founder cannot. First sentence always declares itself: "Hello,
+    I'm the AI assistant for [name]. They're unable to take your
+    call at the moment, but I can help." It asks the discovery
+    questions, gathers details, books a call.
+
+      The human fallback: if the caller says they don't want to talk
+      to an AI, it says "Of course — I'll note that you called and
+      they'll call you back." Then it takes the message and ends the
+      call cleanly. This is the product working, not failing. Most
+      AI receptionists fail because they have no exit.
+
+      v1 uses a platform — Vapi (developer-first, bring-your-own LLM,
+      $0.05/min platform fee), Retell (managed, $0.07-0.18/min
+      all-in), or ElevenLabs Agents (best voice cloning, if the
+      client wants their own voice). v2 self-hosted, once demand is
+      proven. The differentiator is the Bosly integration: the call
+      outcome lands in the workspace as a card or contact. No generic
+      platform has that.
+
+    TIER TWO — THE CHIEF OF STAFF. The destination for the product.
+    Bosly with a phone line attached. It answers when the founder
+    cannot, and it also:
+
+      - Records and transcribes the calls the founder does take,
+        with consent asked first. If the client says no, the AI
+        switches off and the founder takes notes by hand. Not a
+        degraded product — the honest one.
+      - Briefs the founder before a call: who is this, what do they
+        want, what's the history.
+      - Sits in on the call, takes notes, summarises.
+      - Keeps track of clients and context, so nothing is forgotten.
+
+    What a busy professional pays an assistant £30k a year for. For a
+    solo consultant, it is the difference between running one
+    business and running three.
+
+    THE FIRST CLIENT IS THE FOUNDER. Build the receptionist for the
+    consultancy line. Use it daily. Test it ruthlessly — call it from
+    a different phone, try to break it. Only then put it on the front
+    door. A clunky AI receptionist on a consultancy that sells AI
+    receptionists is the worst possible demo.
+
+    THEN SELL IT. Same shape as accord.business_setups. Tier one is
+    the entry product (£200-250/month). Tier two is the chief of
+    staff, which sells to businesses with staff and process, not to
+    sole traders. Likely priced per-seat, not flat — a two-chair
+    salon and an eight-practitioner clinic are different businesses
+    with the same software. Not decided yet.
+
+    THE DEMO IS THE PRODUCT. When a client asks what it does, the
+    answer is "call this number." Live, not a mock. One
+    implementation per vertical — the hairdresser version is the
+    same pipeline with different questions and a different voice.
 
     GATED on the first consultancy engagement that needs a voice
     receptionist, OR the home server upgrade. Do not build ahead of
-    demand.
-
-    Raised 10 Oct.
+    demand. Raised 10 Oct, expanded 12 Oct with the two-tier shape,
+    the fallback, the consent rule, and the chief-of-staff
+    destination.
 
 [ ] [GATED] accord.business_setups — Bosly stays as it is: free
     tier, Accord paid tier, no architectural change. On top of that,
