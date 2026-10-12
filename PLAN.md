@@ -629,6 +629,23 @@ that has actually happened.
     That is the practice: read the entry before acting on it. The
     drift problem is real but not checkable by pattern.
 
+    UPDATE 12 Oct: the plan grew about 30% in five days, 3909 lines
+    to 5051. The consultancy cluster is now scattered — ops.jarvis at
+    315, ops.voice_infrastructure at 361, accord.business_setups at
+    425, ops.consultancy at 703, ops.consultancy_design at 1769,
+    ops.consultancy_sales_sequence at 1791, ops.consultancy_contract_terms
+    at 1959. Related entries should sit together. Not urgent, because
+    the orientation finds them by marker, but a fresh reader looking
+    for "everything about the consultancy" has to grep for it, and
+    the point of the plan is that they should not have to.
+
+    And a method lesson: an insert run twice duplicates. Two entries
+    were duplicated this weekend — the claim-class cross-reference,
+    and ops.consultancy_sales_sequence. A replace is idempotent; an
+    insert is not. The check after any insert is: grep the plan for
+    the entry's own name and confirm it appears once. Worth adding to
+    the Working Agreement under Patches.
+
     Original entry follows.
     [ ] [DECISION] gov.plan_hygiene — The plan accumulates drifts. Five
     found and fixed on 5 Oct, all small, none caught by a check:
