@@ -440,6 +440,28 @@ that has actually happened.
     generalised setup, configured for the client, pays forever. This
     is the discipline that makes the consultancy scale.
 
+    EVERY SETUP CARRIES A VALUE REPORT. Not an add-on — part of the
+    product. The setup tracks what it delivered and reports it
+    monthly, from the real numbers, never estimated:
+
+      Hairdresser   calls answered, bookings made, revenue booked,
+                    no-shows prevented
+      Plumber       quotes sent, jobs won, time-to-quote, revenue
+      Dentist       appointments booked, no-shows prevented,
+                    reminders sent
+      Any           hours saved, £ recovered
+
+    It does three jobs. Retention — £350 in, £2,400 out, and the
+    numbers argue for the renewal. Case studies — "this hairdresser
+    recovered £X in three months" is the pitch for the next
+    hairdresser, and it is true. And product development — if 40 of
+    47 calls book for one client and 12 of 47 for another, the
+    variation tells you what works.
+
+    The report is honest by construction: every number comes from the
+    system, not from a summary. A report that only ever says "great
+    month" is a report the client stops reading.
+
     GATED on the first consultancy engagement that needs one. Do not
     build setups ahead of demand. When a real client of a given type
     pays, that is the signal to build their setup — and from then
@@ -1933,6 +1955,56 @@ that has actually happened.
     ones who take the call have qualified themselves.
 
     Raised 11 Oct.
+
+[ ] [LIVE] ops.consultancy_contract_terms — The foundation of the
+    client agreement. Not the full contract — the decisions that
+    shape it. A solicitor reviews the wording before it is used; this
+    is what it has to say.
+
+    THE OFFERING, FOUR PARTS SOLD AS ONE RELATIONSHIP:
+      Audit        £500-2,000, one-off. The entry point.
+      Build        £2,000-5,000, one-off. Website, receptionist, or
+                   setup.
+      Retainer     £200-500/month. Maintenance, hosting, updates,
+                   care.
+      Licence      Bosly owns the software; the client uses it.
+
+    THE TERM. Twelve months, then rolling monthly. The year recovers
+    the build cost and filters for serious clients. The roll after
+    keeps it flexible.
+
+    OWNERSHIP, STATED PLAINLY:
+      - The website and any software built by Bosly Ltd remain
+        Bosly's. The client holds a licence to use them.
+      - If the client cancels or does not renew, the software is
+        taken offline at the end of the billing period. Written
+        explicitly, not implied.
+      - The client's data is the client's. Handed over on exit, in a
+        usable format. Always. This is the same principle as Bosly's
+        export, and it is a selling point.
+      - The domain is the client's, always. If they have one, they
+        keep it. If they don't, they register it themselves. Bosly
+        never holds a domain as ransom — that is a business risk as
+        much as an ethics one: "my web guy held my domain hostage" is
+        the most damaging story a local consultant can have, and it
+        kills the referrals that are the growth engine.
+
+    THE BUYOUT. At any point the client can pay a one-off sum to own
+    the software outright and stop the subscription. Removes the "you
+    own nothing" objection, and is a route to a larger single payment.
+    Most will not take it.
+
+    ON EXIT. Find out why they are leaving, and note it. Three
+    clients leaving for the same reason is a product problem; a
+    business closing is nothing. The exit conversation is a signal,
+    not a retention trick. Then let them go cleanly — data handed
+    over, software down, domain untouched.
+
+    NOT YET DONE: the full wording, and a solicitor's review. This
+    entry is the decisions; the document comes when a client is
+    close, so it does not drift while it waits.
+
+    Raised 12 Oct.
 
 [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
     channel is the nodemailer email, sent via node. The script loads
