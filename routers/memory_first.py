@@ -102,8 +102,11 @@ def _norm_item(raw: dict, idx: int) -> dict[str, Any]:
     created_at = str(raw.get("created_at") or "")
     updated_at = str(raw.get("updated_at") or created_at or _now_iso())
 
+    project_slug = str(raw.get("project_slug") or "").strip()
+
     return {
         "id": rid,
+        "project_slug": project_slug,
         "item_type": item_type,
         "content": content,
         "metadata_json": metadata,
