@@ -4189,7 +4189,20 @@ system readable.
     was already accurate and is unchanged. bosly-gov/README.md was fixed
     21 Sept. Commit 611cab3.
 
-[ ] [LIVE] keep.scripts_typecheck_excluded — Keep's tsconfig.json
+[x] keep.scripts_typecheck_excluded — DONE 16 Oct, un-excluded. The
+    `scripts` exclude is removed from Keep's tsconfig. One error
+    surfaced: scripts/test-prices.ts imported getFundTickers from
+    lib/market-data, which no longer exports it. Nothing referenced
+    the file — a standalone diagnostic with no callers — so it is
+    archived to legacy/scripts-dead-20261016/.
+
+    The verify suite (scripts/diagnostics/verify-*.ts) now
+    typechecks, and it does run: scripts/run-tests.sh iterates every
+    verify-*.ts, and keep.invariants runs that script. tsc is clean.
+    Commit 7e515fa0.
+
+    Original entry follows.
+    [ ] [LIVE] keep.scripts_typecheck_excluded — Keep's tsconfig.json
     excludes `scripts`, so the verify suite
     (scripts/diagnostics/verify-*.ts) is never typechecked by tsc. The
     tests pass and assert, so nothing is broken — but a type error in a
