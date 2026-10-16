@@ -3278,6 +3278,81 @@ that has actually happened.
     persistent view. Current state is Option B (documented
     transparently).
 
+[ ] [LIVE] ops.security_posture — What Gov already covers, what the
+    SAST and SCA tools add, and the rules file for AI coding tools.
+    Written because the receptionist is being built, not because it
+    might be. Security is decided before the build, not after.
+
+    THE PRINCIPLE: AI output is a draft, not a finished product.
+    Every line shipped is the founder's responsibility, whatever
+    wrote it. The tooling exists. The discipline is the
+    differentiator. Gov is the discipline.
+
+    WHAT GOV ALREADY COVERS, mapped to the SHIELD framework:
+
+      Separation of duties — AI has no production access. The chat
+        reasons; the founder executes.
+      Human in the loop — every patcher aborts on missing anchors;
+        every change verified with tsc, build, check tier.
+      Input/output validation — gov.stub_detection,
+        gov.naming_honesty, gov.claim_invariants.
+      Security helper models — gov.secrets_audit (exposed
+        credentials), gov.email_password_plaintext.
+      Least agency — the chat drafts; the founder executes. No AI has
+        write access to the repos or server.
+      Defensive controls — gov.tsconfig_excludes (live code hidden
+        from the compiler), gov.orphaned_routes (unreachable code).
+
+    And the architectural ones built deliberately:
+      Zero-access encryption — the server never reads plaintext.
+      Consent gating — gov.consent_gating.
+      Public routes public, paid gated — gov.public_routes_are_public,
+        gov.paid_routes_gated. That is OWASP A01, the top risk.
+      Secrets handling — .env checked, no hardcoded credentials.
+
+    WHAT IS MISSING, and gets added before the receptionist ships:
+
+      1. SAST — taint analysis, tracking user input to dangerous
+         sinks. Gov checks invariants and behaviour; it does not do
+         this. basesec (npx basesec scan ./src --severity high) —
+         65 rules, taint analysis, Prisma and Next.js aware. Catches
+         SQL injection in $queryRaw, dangerouslySetInnerHTML, open
+         redirects, NEXT_PUBLIC_ secret exposure. Run once on the
+         existing code first; the result is evidence either way.
+
+      2. SCA — dependency scanning. OWASP 2025 ranks Software Supply
+         Chain Failures third. AI-suggested dependencies are a real
+         risk: typosquats, non-existent packages, compromised
+         versions. guardvibe scan_dependencies, checked against OSV
+         with reachability analysis.
+
+      3. Slopsquatting — AI generates placeholder package names that
+         do not exist; attackers register them. Verify every package
+         in package.json is real, maintained, and not flagged.
+
+      4. Prompt injection — becomes real the moment the receptionist
+         takes a call. @barric/next wraps Next.js route handlers
+         with injection detection and PII redaction. Non-optional
+         for any route that accepts user input.
+
+      5. Tenant isolation, when accord.business_setups ships —
+         multiple businesses on one Bosly instance is OWASP A01 at
+         the data layer. Prisma Row-Level Security via middleware,
+         with fail-closed default: a query without tenant context is
+         blocked, not allowed.
+
+    AND ONE FILE: a rules file for AI coding tools, in the repo root,
+    so every AI-assisted change is held to the same standard. VettIQ
+    publishes Next.js + Prisma security rules that Claude Code
+    enforces automatically. Drop it in; it costs nothing and catches
+    the class of mistake that is invisible in review.
+
+    THE ORDER: run basesec and the dependency scan on the existing
+    code first. Fix what they find. Then add the rules file. Then
+    build the receptionist with the SAST layer already in place.
+
+    Raised 15 Oct.
+
 [x] gov.secrets_audit — check that .env.production is 600, no
     .env files in git-tracked directories, no secrets in PM2
     logs. Replaces the retired bosly-secrets script.
