@@ -3351,7 +3351,36 @@ that has actually happened.
     code first. Fix what they find. Then add the rules file. Then
     build the receptionist with the SAST layer already in place.
 
-    Raised 15 Oct.
+    UPDATE 16 Oct: the dependency scan is done. npm audit found 51
+    vulnerabilities. The safe patch upgrades — next 15.5.15 to
+    15.5.28, next-auth 4.24.13 to 4.24.15 — closed two criticals.
+    Those were the ones that mattered: the Next.js middleware
+    bypasses are the same category that bit the public-routes list
+    on 10 Oct, and the next-auth issues included OAuth state not
+    bound to its provider. Both fixed, build passes, 60 pages, app
+    running.
+
+    The count stayed at 51 because the safe upgrades cannot touch
+    the rest — they need major version upgrades:
+      - nodemailer 7 to 10 (breaking — invoice, waitlist, and
+        support email all need re-testing)
+      - prisma 6 to 7 (breaking — schema and client both change)
+      - the DoS set in build tooling (tar, brace-expansion,
+        minimatch and the rest) — low priority, not in the runtime
+        path
+
+    And one lesson: npm audit fix --force would have upgraded
+    nodemailer, prisma, sharp and about 90 other packages in one go,
+    and closed zero vulnerabilities. The dry-run showed that. Do not
+    run it. The two criticals were fixable within the same major;
+    everything else needs a planned migration.
+
+    caniuse-lite updated to 1.0.30001816; the build warning is gone.
+
+    Still to do: basesec on the existing code, and the two major
+    upgrades, each its own session.
+
+    Raised 15 Oct, updated 16 Oct.
 
 [x] gov.secrets_audit — check that .env.production is 600, no
     .env files in git-tracked directories, no secrets in PM2
