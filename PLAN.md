@@ -3563,6 +3563,30 @@ that has actually happened.
     disagreeing, invisible to the checks. This is the check
     that would catch them. Build it.
 
+[~] keep.trade_idempotency — FOUND 16 Oct. /api/trades has no
+    deduplication, and the "Execute Buy" button re-enables before the
+    new signals land: fetchSignals() is not awaited and
+    setExecuting(null) runs immediately after. A double-click, a
+    network retry, or a fast user creates duplicate trades. Evidence:
+    four identical £300 TRIG buys on 2026-09-10, one second apart,
+    strategy "Bosly Keep Engine", manuallyExecuted: true, from the
+    signals page. Cash £1,813.16 → £613.16 in four steps. The
+    maxTradesPerDay guard lives in generateSignals() (the read path)
+    and is never consulted on write. Paper trading only — no real
+    money — but the same bug would misfire in production.
+
+    Fix (two parts):
+    (a) app/signals/page.tsx — await fetchSignals() before clearing
+        executing; add an in-flight useRef<Set<string>> guard so a
+        second click on the same ticker is a no-op.
+    (b) app/api/trades/route.ts — reject a duplicate trade (same
+        asset, type, quantity, price) within 10 seconds with 409.
+        This is the real fix; (a) only prevents honest mistakes.
+
+    Related: the £953.31 "loss" is the P/L figure. Deposited
+    £20,000, portfolio worth £19,046.69, difference = £953.31.
+    Unrealised, on paper, expected. Not a bug.
+
 [~] accord.password_recovery_gap — PARTIAL FIX 24 Sept. The
     autoComplete="new-password" attribute was added to the signup
     form, and a warning about saving the password. Browser now
