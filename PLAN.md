@@ -253,7 +253,14 @@ that has actually happened.
 
 [x] accord.dead_ui_wiring — named state and handlers are rendered.
 
-[~] accord.typecheck_clean — UPDATED 3 Oct. tsc reports 0 errors,
+[x] accord.typecheck_clean — DONE 16 Oct, superseded. The gap this
+    entry names — a check that reports which excluded directories
+    contain live imports — is filled by gov.tsconfig_excludes, which
+    is registered in the fast tier and passing. The remaining
+    excludes were audited as part of that work.
+
+    Original entry follows.
+    [~] accord.typecheck_clean — UPDATED 3 Oct. tsc reports 0 errors,
     but over a partial codebase. tsconfig.json has sixteen
     `exclude` entries, several whole directories. Two of them —
     lib/calendar/providers/** and app/api/calendar/icloud/** —
@@ -3731,7 +3738,15 @@ that has actually happened.
     When done, update /privacy and the FAQ to state it. Until
     then, both documents must not claim registration.
 
-[~] accord.doc_consistency_audit — SECOND PASS 26 Sept. The privacy page still described a Civo integration that stopped existing on 24 Sept, and said communication data is "stored encrypted" when it is only encrypted while a session key is loaded. Six corrections to privacy/page.tsx. The FAQ pricing answer and the BillingSettings cancel copy also described an AI assistant that no longer exists; both corrected. The README summary list was corrected as well.
+[x] accord.doc_consistency_audit — DONE 16 Oct, superseded. This
+    entry calls itself the "immediate predecessor to
+    gov.claim_invariants", and that check is now built, registered,
+    and passing. The two remaining items are tracked elsewhere: the
+    ICO registration claim waits on ops.ico_registration, and the
+    quantum claim waits on accord.kyber_status_decision.
+
+    Original entry follows.
+    [~] accord.doc_consistency_audit — SECOND PASS 26 Sept. The privacy page still described a Civo integration that stopped existing on 24 Sept, and said communication data is "stored encrypted" when it is only encrypted while a session key is loaded. Six corrections to privacy/page.tsx. The FAQ pricing answer and the BillingSettings cancel copy also described an AI assistant that no longer exists; both corrected. The README summary list was corrected as well.
 
     Remaining: (a) re-add ICO registration claim once ops.ico_registration completes; (b) the kyber decision (see accord.kyber_status_decision) affects whether the quantum claim ever returns; (c) full history of findings: Read every document that
     makes factual claims about Bosly (privacy, terms, safety,
