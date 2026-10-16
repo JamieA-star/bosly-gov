@@ -3563,6 +3563,65 @@ that has actually happened.
     disagreeing, invisible to the checks. This is the check
     that would catch them. Build it.
 
+[~] keep.price_history_missing — FOUND 16 Oct, DESIGN GAP. This
+    is the systemic finding; the four entries below are its symptoms.
+
+    The app records the current price of each asset
+    (Asset.currentPrice) and the current portfolio value
+    (PortfolioSnapshot). It does not record the history of either.
+    PricePoint exists in the schema and has 0 rows. Consequence: the
+    evolution engine cannot compare "what I did" to "what could have
+    happened" — it has no price series to evaluate rules against.
+    EthicalScoreHistory has 242 rows and Trade has 73, but the prices
+    between the two are not stored. A system that only knows "now"
+    cannot learn.
+
+    Three-layer fix:
+      L1. app/api/prices/route.ts appends one PricePoint per asset
+          per day. Not a rewrite of currentPrice — an append. Ten
+          lines. Small enough to apply this week.
+      L2. Backfill PricePoint from Yahoo daily history for the gap
+          (10 Sept → 16 Oct, and back as far as wanted). Yahoo's
+          chart endpoint returns daily bars for any range; fetch
+          once, insert many. Real work, next session.
+      L3. Derive PortfolioSnapshot from PricePoint × holdings per
+          day. Snapshot becomes computable rather than primary.
+          Then a backfilled snapshot history is correct rather than
+          approximated.
+
+    This is the foundation for gov.evolve_loop_feedback. The
+    evolution engine needs a price ledger to evolve against.
+
+[~] keep.price_cron_missing — FOUND 16 Oct. Bosly Keep has no
+    heartbeat. The user crontab runs five jobs (sync-email every 10
+    min, backup, monitor, two gov check tiers), none of them touch
+    Keep. app/api/prices/route.ts works — it fetches Yahoo, updates
+    every asset, and writes a PortfolioSnapshot — but nothing calls
+    it. Result: Asset.priceUpdatedAt and PortfolioSnapshot were both
+    frozen at 2026-09-10 14:07, five weeks ago. Fix: a weekday
+    22:00 UTC cron line POSTing to the endpoint. Installed 16 Oct.
+    Verify tomorrow that Asset.priceUpdatedAt has advanced.
+
+[~] keep.snapshot_backfill — FOUND 16 Oct. PortfolioSnapshot has a
+    five-week gap (10 Sept → 16 Oct) with no rows. Snapshots are
+    point-in-time; the gap cannot be filled with today's prices
+    without lying. Backfill requires fetching daily Yahoo closes
+    for each held asset across the gap and recomputing the
+    portfolio value per day. Real feature, not tonight's work.
+
+[~] keep.pricepoint_empty — FOUND 16 Oct. The PricePoint table
+    exists (schema is present) but has 0 rows. app/api/prices/route.ts
+    updates Asset.currentPrice but never inserts PricePoint. There
+    is no per-asset price history — only the latest value. Cannot
+    answer "what was X worth on date Y". Same class as the missing
+    snapshots: a table designed to record history, and it isn't.
+
+[~] keep.udmy_404 — FOUND 16 Oct. Yahoo returns HTTP 404 for UDMY
+    (Udemy). One of 83 assets has no price. Every portfolio total
+    either misvalues the position or omits it. Decide: delisted?
+    Acquired? Remove from the screened universe, or hold and mark
+    it manually.
+
 [~] keep.trade_idempotency — FOUND 16 Oct. /api/trades has no
     deduplication, and the "Execute Buy" button re-enables before the
     new signals land: fetchSignals() is not awaited and
