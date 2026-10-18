@@ -4999,58 +4999,76 @@ POSTED (keep for recycling — earliest recycle March 2027)
 SCHEDULED
 ================================================================
 
-26 Sept (Fri) — Unsent invoice / lost client
-  Format: talking head
-  Four weeks angry at a client for not paying.
-  Sent follow-up. Nothing. Sent another. Less patient.
-  Nothing. Drafting angry emails in my head.
-  She replied: "I never got your invoice."
-  Checked drafts. It was sitting there. Never sent.
-  Lost the client.
-  Cost: not the money. The relationship.
-  Comment bait: "Tell me your worst version of this — the
-  thing you were self-righteous about, then found out was
-  your fault. And if you've got a system that stops you
-  doing it, share it. Mine clearly isn't working."
+NOTHING SCHEDULED. This section is an ideas bank, not a calendar.
 
-2 Oct (Fri) — Founding Members ask
-  Format: talking head
-  Context: audience knows Bosly exists. This isn't a reveal.
-  Been working on it. Running my own life through it.
-  Need to know if it works for other ADHD brains.
-  Looking for 20 people to help shape what it becomes.
-  What they get: free AI features for life. £15/mo instead
-  of £25. Not a discount — a seat at the table.
-  What you get: real feedback from real users before launch.
-  Framing: same shape as the meds post. Asking for help
-  with a specific thing, not selling.
-  Comment bait: "If you're ADHD and running your own thing,
-  comment 'IN' or DM me. Tell me which of my fuck-ups you
-  related to most — that's how I know you're the right fit."
-  Note: this post goes up on Stories too. Repeat it over the
-  following week in different forms.
+WHY NOTHING IS SCHEDULED — the not-Meta decision, 17 Oct 2026
 
-10 Oct (Fri) — Path walk, no app stores
-  Format: path walk + voiceover
-  Argument: app stores ask for 30% and a hundred pages of
-  terms nobody reads. The trade is your data for convenience.
-  Bosly isn't on them because that trade breaks the promise.
-  Not about the 30% alone — about what agreeing to it means.
-  Turn: the data never leaves your control. That's the whole
-  reason.
-  Optional comment bait: "Would you give up an app store
-  listing to keep your data private? Genuine question."
+For two months I posted consistently on Instagram and Facebook:
+three a week, captions, the lot. Result: about 60 followers on
+Instagram, almost nothing on Facebook, and a slow drift into
+being an "ADHD creator" — posting ADHD tax stories and personal
+stuff because the algorithm rewarded it. That was not who I
+wanted to be and not what Bosly is.
 
-17 Oct (Fri) — Path walk, quantum readiness
-  Format: path walk + voiceover
-  Argument: most apps encrypt with today's standards. Quantum
-  computers will break those in 10-15 years. Data stored
-  today in plain AES becomes readable in 2040.
-  Bosly encrypts with post-quantum cryptography. Not because
-  it matters now. Because it will matter then.
-  Turn: building for 2040, not 2026.
-  Optional comment bait: "Do you care about encryption that
-  survives the next 15 years, or is today's enough?"
+Then a seven-hour doom-scroll in a single day. That was the
+number that made the decision. The apps are deleted from the
+phone. The accounts stay (business pages) but there is no
+posting on either platform.
+
+The reasoning, so it doesn't get relitigated:
+- The things that get traction on Instagram are misinformation,
+  bodies, animals, funny clips. An echo chamber of nothing.
+  Hours of scrolling produced nothing I'd remember the next day.
+- "You can't sell on Instagram" is true, but the answer isn't
+  "so post relatable content forever." The answer is that
+  Instagram is the wrong audience for a deliberate, principled
+  investing product.
+- The effort/value ratio was bad: two months of consistent
+  effort for 60 followers, and exhaustion two months in. If I'm
+  exhausted at month two, I can't sustain it to month twelve.
+  So I'm not trying.
+- The ADHD resource is good and stays. It goes in LinkedIn's
+  Featured section as a thing I built, not as a content series.
+
+What replaced it:
+- LinkedIn, once a week, Thursday. One post, written because
+  there's something to say. If there isn't, skip the week.
+- Morning routine: coffee, 5-10 minutes, like a couple of
+  things, comment on 2-3 where I have something genuinely
+  useful to add. Participation, not consumption. Bounded.
+- Primary URL: the consultancy page. Featured cards: the ADHD
+  resource, the waiting well page, Bosly Accord, Bosly Keep.
+- Reassess 1 February 2027. The question: did this produce
+  consultancy enquiries or Accord signups? Not "did it go
+  viral." Real output.
+- A prompt for the social-media chat was written 17 Oct.
+
+IDEAS BANK — for Thursdays when there's something to say,
+but nothing drafted yet. One line each; expand when used.
+
+- The unsent invoice. Four weeks angry at a client for not
+  paying. She never got the invoice. It was in drafts. Lost
+  the client. Cost: the relationship, not the money.
+  (Personal. Instagram-shaped. May not translate to LinkedIn
+  — decide if it's worth adapting.)
+
+- Founding Members ask. Looking for 20 people to shape Bosly
+  Keep. Free AI features for life, £15/mo instead of £25. A
+  seat at the table, not a discount.
+  (Check the numbers against the current plan before using —
+  this was drafted pre-decision and may be out of date.)
+
+- No app stores. App stores ask for 30% and a hundred pages
+  of terms nobody reads; the trade is your data for
+  convenience. Bosly isn't on them because that trade breaks
+  the promise. The data never leaves your control.
+  (Strong on LinkedIn. The argument doesn't need the video.)
+
+- Quantum readiness. Most apps encrypt to today's standards;
+  quantum will break those in 10-15 years. Data stored today
+  in plain AES becomes readable in 2040. Bosly uses
+  post-quantum cryptography. Building for 2040, not 2026.
+  (Strong on LinkedIn. Works as text.)
 
 ================================================================
 BACKLOG
