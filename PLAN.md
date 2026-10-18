@@ -1,5 +1,47 @@
 BOSLY GOV — PLAN
-Last updated: 9 October 2026
+Last updated: 18 October 2026
+
+================================================================
+THE SHAPE OF BOSLY  (read this first)
+================================================================
+
+Bosly Limited is the company. It has four branches. This block is
+here so that, when you open this file and have forgotten everything,
+the shape is the first thing you see. Every entry below hangs from
+one of these four.
+
+  BOSLY LIMITED  (registered company, Companies House)
+  │
+  ├─ CONSULTANCY ............ THE MAIN BUSINESS. Launches January.
+  │    Front door: bosley.app/consulting (live 10 Oct).
+  │    Workflow audits, small AI/automation builds, and Bosly
+  │    Accord set up for clients. This is where the finance comes
+  │    from. Everything else serves this.
+  │
+  ├─ BOSLY ACCORD ........... THE PRODUCT THE CONSULTANCY SELLS.
+  │    £25/month base: calendar, inbox, finance, tax, chief of
+  │    staff — what it already is. Plus feature toggles built
+  │    per client and priced against the human equivalent
+  │    (e.g. AI receptionist: £1,000–£1,500 build + £250–£300/mo
+  │    ongoing, versus £1,200–£1,500/mo for a human). Pricing per
+  │    client; some bear £500/mo, some don't.
+  │    The loop: build for yourself → use it → sell it → learn
+  │    from clients → build more toggles → sell those too.
+  │
+  ├─ BOSLY KEEP ............. PERSONAL. Back burner.
+  │    Your own portfolio tool. Cannot be sold until it is
+  │    registered and compliant — years away. Needs spare money
+  │    and proper testing. NOT on the critical path for January.
+  │    Its bugs are interesting, not urgent. Portfolio piece at
+  │    most, for now.
+  │
+  └─ THE GARDENING BUSINESS .  Existing income. Not a branch of
+       growth — the thing the consultancy replaces. Runs on
+       Bosly Accord internally, which is how Accord gets built.
+
+How to use this map: find the branch you are working on, then
+look for entries with that prefix. Consultancy work is ops.*.
+Accord is accord.*. Keep is keep.*. The company itself is gov.*.
 
 ================================================================
 WHAT BOSLY GOV IS
@@ -724,10 +766,72 @@ that has actually happened.
     cap is raised. The post must state what is actually true.
 
 
+[~] ops.social_strategy — DECIDED 17 Oct. No more Meta posting.
+    Instagram and Facebook apps deleted from the phone 17 Oct
+    after seven hours of doom-scrolling in a single day. The
+    decision, recorded here so it does not get relitigated:
+
+    - No posting on Instagram or Facebook. Accounts stay (business
+      pages); if needed, post from a browser, never from an app.
+    - LinkedIn, once a week, Thursday. One post, written because
+      there is something to say. If there is nothing to say, skip
+      the week. The cadence serves the founder, not the algorithm.
+    - Morning routine: coffee, 5-10 minutes on LinkedIn, like a
+      couple of things, comment on 2-3 where there is something
+      genuinely useful to add. Participation, not consumption.
+      Bounded — it has a start and an end.
+    - No ADHD-creator role. The ADHD resource exists and is good;
+      it goes in LinkedIn's Featured section as a thing built, not
+      as a content series. The algorithm was drifting the founder
+      into a niche he did not choose. Stepped off.
+    - Primary LinkedIn URL: the consultancy page. Featured cards:
+      the ADHD resource, the waiting well page, Bosly Accord,
+      Bosly Keep.
+    - Reassess 1 February 2027, not before. The question then:
+      did this produce consultancy enquiries or Accord signups?
+      Not "did it go viral." Real output.
+
+    A prompt for the other chat (the social-media chat) was written
+    17 Oct and pasted there. It holds the line.
+
+[ ] [LIVE] ops.findability — Done once, then left alone.
+    The handful of places a real person looks, so the consultancy
+    can be found without posting daily. This is not a channel
+    strategy; it is a one-off structural job.
+
+    - LinkedIn Website field: bosley.app/consulting. One URL. This
+      is the primary link; when someone clicks the founder's name
+      from a comment, they land on the consultancy page.
+    - LinkedIn Featured section: the ADHD resource, the waiting
+      well page, Bosly Accord, Bosly Keep. Framed as "things I've
+      built," not as a pitch. Descriptions one line each.
+    - Google Business Profile for Bosly Limited, consultancy
+      trading. Category: business consultant / automation. Service
+      area, not a shopfront.
+    - Backlinks: from being useful in public (LinkedIn comments,
+      carefully-chosen forums), not from directory submissions.
+      One good answer to a real question is worth more than fifty
+      directory entries.
+    - No submission sprees. No guest-post treadmill. The work
+      accrues from use.
+
+    [ ] Phase 1 — LinkedIn URL and Featured cards
+    [ ] Phase 2 — Google Business Profile
+    [ ] Phase 3 — one or two real directories, chosen, not swept
+    [ ] Phase 4 — leave it alone for three months
+
 [ ] [LIVE] ops.consultancy — Bosly Limited's consultancy arm.
     Workflow audits and small AI/automation builds for UK small
-    businesses drowning in admin. Replaces gardening income while
-    the app grows. Front door at bosley.app/consulting.
+    businesses drowning in admin. Front door at bosley.app/consulting.
+
+    REVISED 18 Oct — this is the MAIN BUSINESS, not a bridge. The
+    earlier framing ("replaces gardening income while the app
+    grows") is out of date. The shape now: consultancy is the
+    business; Bosly Accord is the product it sells (£25/month base
+    plus feature toggles, priced per client against the human
+    equivalent); Bosly Keep is personal and off the critical path.
+    See THE SHAPE OF BOSLY at the top of this file. Everything
+    before January serves this entry.
 
     The runway: winter is naturally slower, and January is when
     small business owners have had a break and rethink their admin.
@@ -3563,8 +3667,15 @@ that has actually happened.
     disagreeing, invisible to the checks. This is the check
     that would catch them. Build it.
 
-[~] keep.price_history_missing — FOUND 16 Oct, DESIGN GAP. This
-    is the systemic finding; the four entries below are its symptoms.
+[~] keep.price_history_missing — FOUND 16 Oct, DESIGN GAP.
+    DEPRIORITISED 18 Oct: Keep is personal and off the critical
+    path. This is real work and worth doing, but it does not block
+    January, and the interesting-ness of the bug is not a reason to
+    work on it before the consultancy. Do it when there is spare
+    time, not before.
+
+    This is the systemic finding; the four entries below are its
+    symptoms.
 
     The app records the current price of each asset
     (Asset.currentPrice) and the current portfolio value
