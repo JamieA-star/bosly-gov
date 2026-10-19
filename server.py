@@ -359,6 +359,11 @@ class BoslyHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         path = parsed.path
+        # Strip the /gov prefix the UI uses. Exact-match routes below
+        # would otherwise fall through to the static-file fallback
+        # and serve index.html for /gov/api/* paths.
+        if path.startswith("/gov/"):
+            path = path[len("/gov"):]
         if path == "/api/health":
             self.handle_api_health()
             return
@@ -465,6 +470,8 @@ class BoslyHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
         path = parsed.path
+        if path.startswith("/gov/"):
+            path = path[len("/gov"):]
         if path == "/api/chat":
             self.handle_api_chat()
             return
