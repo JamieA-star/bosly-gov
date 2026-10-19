@@ -1311,7 +1311,60 @@ class BoslyHandler(BaseHTTPRequestHandler):
             )
 
             request_id = f"req-{int(time.time() * 1000)}"
-            status_code, llm_result = run_chat_once({"message": user_message, "project": slug, "request_id": request_id}, self._state().config)
+
+            # If tools are enabled, use the tool loop. The context_header
+            # built above becomes the system prompt, so the model sees the
+            # Accord, the current report, memory, recent chat, AND the tools.
+            state = self._state()
+            tools_enabled = bool(state.config.get("tools_enabled", False))
+            if tools_enabled and run_with_tools is not None:
+                answer_parts = []
+                tool_events = []
+                try:
+                    for ev in run_with_tools(user_message, system_prompt=context_header):
+                        et = str(ev.get("type") or "")
+                        if et == "token":
+                            answer_parts.append(str(ev.get("text", "")))
+                        elif et == "tool_call":
+                            tool_events.append({
+                                "name": ev.get("name", ""),
+                                "ok": bool(ev.get("ok")),
+                                "error": ev.get("error", ""),
+                            })
+                        elif et == "error":
+                            self._send_json(
+                                {"ok": False, "error": ev.get("error", "Tool loop error")},
+                                status=HTTPStatus.INTERNAL_SERVER_ERROR,
+                            )
+                            return
+                except Exception as e:
+                    logging.exception("tool loop failure in project chat: %s", e)
+                    self._send_json(
+                        {"ok": False, "error": f"Tool loop failure: {e}"},
+                        status=HTTPStatus.INTERNAL_SERVER_ERROR,
+                    )
+                    return
+
+                reply = "".join(answer_parts).strip()
+                if not reply:
+                    reply = "(no reply text)"
+
+                updated_chat = chat_history + [
+                    {"role": "user", "message": user_message},
+                    {"role": "assistant", "message": reply},
+                ]
+                if len(updated_chat) > 50:
+                    updated_chat = updated_chat[-50:]
+                _write_json_file(_get_chat_path(slug), updated_chat)
+                self._send_json({
+                    "ok": True,
+                    "reply": reply,
+                    "mode": "tools",
+                    "tool_calls": tool_events,
+                })
+                return
+
+            status_code, llm_result = run_chat_once({"message": user_message, "project": slug, "request_id": request_id}, state.config)
 
             if not isinstance(llm_result, dict):
                 self._send_json({"ok": False, "error": "Invalid LLM response"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)

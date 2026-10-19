@@ -81,15 +81,28 @@ def append_plan_entry(entry: str) -> Dict[str, Any]:
             "error": f"PLAN.md does not start with {PLAN_FIRST_LINE!r} — refusing to append",
         }
 
-    # Must contain at least one marker line: [ ] or [~] or [x]
+    # Must contain at least one well-formed marker line:
+    #   [ ] name — description
+    #   [~] name — IN PROGRESS ...
+    #   [x] name — DONE date. description
+    # A bare "[x] some text" is not a plan entry; it has no name
+    # and no em-dash separator, so it doesn't sort or grep right.
+    import re as _re
+    marker_re = _re.compile(
+        r"^\s*\[([ x~])\]\s+\S+\s+[—\-]\s+\S"
+    )
     has_marker = any(
-        line.lstrip().startswith(("[ ]", "[~]", "[x]"))
-        for line in entry.splitlines()
+        marker_re.match(line) for line in entry.splitlines()
     )
     if not has_marker:
         return {
             "ok": False,
-            "error": "entry has no [ ]/[~]/[x] marker line — not a plan entry",
+            "error": (
+                "entry has no well-formed marker line. "
+                "Expected a line like: "
+                "[x] entry.name — DONE 19 Oct. What was done. "
+                "(marker, space, name, space, em-dash or hyphen, space, description)"
+            ),
         }
 
     # Append: ensure exactly one blank line between existing content and entry

@@ -4,7 +4,15 @@ You have four tools. Use them when the user asks you to record
 something, to look at a file, or to check something.
 
   append_plan_entry — append a new entry to PLAN.md.
-    The entry must contain a marker line: [ ] or [~] or [x].
+    The entry must be well-formed, exactly like the entries
+    already in the file:
+
+        [x] entry.name — DONE 19 Oct. What was done and why.
+        [ ] entry.name — What needs doing.
+        [~] entry.name — IN PROGRESS. What is happening.
+
+    The shape is: marker, space, name, space, em-dash, space,
+    description. A bare "[x] some text" will be refused.
     It only appends. It never edits or deletes existing text.
 
   save_memory — save a memory entry for one of the three repos.
