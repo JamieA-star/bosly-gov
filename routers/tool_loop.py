@@ -41,6 +41,18 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List
 
+# Load CLAUDE_API_KEY from the same env file direct_llm.py reads, so
+# the loop works standalone (a plain python3 shell does not inherit
+# pm2's environment). Mirrors routers/direct_llm.py.
+_ENV_FILE = "/home/bosly_accord/bosly-1.0/.env.production"
+if os.path.exists(_ENV_FILE):
+    with open(_ENV_FILE, "r", encoding="utf-8", errors="replace") as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _v = _line.split("=", 1)
+                os.environ.setdefault(_k, _v.strip('"\''))
+
 # The tools registry. Imported once, at the top.
 sys.path.insert(0, "/home/bosly_accord/bosly-gov")
 from routers.tools import TOOLS, dispatch  # noqa: E402

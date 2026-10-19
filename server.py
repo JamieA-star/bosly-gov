@@ -35,6 +35,11 @@ else:
     _llm_import_error = None
 
 try:
+    from routers.tool_loop import run_with_tools
+except Exception:
+    run_with_tools = None
+
+try:
     from routers.memory_consolidator import consolidate_messages
 except Exception as e:
     consolidate_messages = None
@@ -682,6 +687,47 @@ class BoslyHandler(BaseHTTPRequestHandler):
             self._send_json(command_result, status=HTTPStatus.OK)
             return
 
+        # If tools are enabled, run the tool loop and return its answer.
+        # Mirrors handle_api_chat_stream so the API and the UI behave
+        # the same way. If tools are off, fall through to run_chat_once.
+        tools_enabled = bool(state.config.get("tools_enabled", False))
+        if tools_enabled and run_with_tools is not None:
+            answer_parts = []
+            tool_events = []
+            try:
+                for ev in run_with_tools(message):
+                    et = str(ev.get("type") or "")
+                    if et == "token":
+                        answer_parts.append(str(ev.get("text", "")))
+                    elif et == "tool_call":
+                        tool_events.append({
+                            "name": ev.get("name", ""),
+                            "ok": bool(ev.get("ok")),
+                            "error": ev.get("error", ""),
+                        })
+                    elif et == "error":
+                        self._send_json(
+                            {"ok": False, "error": ev.get("error", "Tool loop error")},
+                            status=HTTPStatus.INTERNAL_SERVER_ERROR,
+                        )
+                        return
+            except Exception as e:
+                logging.exception("tool loop failure: %s", e)
+                self._send_json(
+                    {"ok": False, "error": f"Tool loop failure: {e}"},
+                    status=HTTPStatus.INTERNAL_SERVER_ERROR,
+                )
+                return
+
+            self._send_json({
+                "ok": True,
+                "answer": "".join(answer_parts).strip(),
+                "mode": "tools",
+                "request_id": request_id,
+                "tool_calls": tool_events,
+            }, status=HTTPStatus.OK)
+            return
+
         try:
             status_code, llm_result = run_chat_once({"message": message, "request_id": request_id}, state.config)
         except Exception as e:
@@ -733,12 +779,27 @@ class BoslyHandler(BaseHTTPRequestHandler):
         self._start_sse()
         try:
             self._write_sse("meta", {"ok": True, "mode": "llm", "request_id": request_id})
-            for ev in route_llm_stream({"message": message, "request_id": request_id}, state.config):
+
+            # Branch: use the tool loop when enabled, otherwise the plain path.
+            tools_enabled = bool(state.config.get("tools_enabled", False))
+            if tools_enabled and run_with_tools is not None:
+                events = run_with_tools(message)
+            else:
+                events = route_llm_stream({"message": message, "request_id": request_id}, state.config)
+
+            for ev in events:
                 et = str(ev.get("type") or "")
                 if et == "context":
                     self._write_sse("context", ev.get("context", {}))
                 elif et == "token":
                     self._write_sse("token", {"text": ev.get("text", "")})
+                elif et == "tool_call":
+                    # New event: show in the UI that a tool was used.
+                    self._write_sse("tool_call", {
+                        "name": ev.get("name", ""),
+                        "ok": bool(ev.get("ok")),
+                        "error": ev.get("error", ""),
+                    })
                 elif et == "error":
                     self._write_sse("error", {"ok": False, "error": ev.get("error", "Stream error")})
                     break

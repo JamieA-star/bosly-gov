@@ -376,7 +376,31 @@
     };
   }
 
-  async function streamChatMessage(message, onContext, onToken, onDone) {
+  function onToolCall(payload) {
+  // Render a small inline line showing that a tool was used.
+  // Understated: visibility, not noise.
+  try {
+    const box =
+      document.getElementById("chatMessages") ||
+      document.getElementById("chatLog") ||
+      document.getElementById("messages") ||
+      document.body;
+    const el = document.createElement("div");
+    el.style.cssText =
+      "font-size: 12px; color: #a78bfa; padding: 2px 0; opacity: 0.85;";
+    const ok = payload && payload.ok !== false;
+    const name = safeText((payload && payload.name) || "tool");
+    const err = safeText((payload && payload.error) || "");
+    el.textContent = (ok ? "\uD83D\uDD27 used " : "\u26A0\uFE0F refused ") + name +
+      (err ? ": " + err : "");
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+  } catch (e) {
+    // Never let UI rendering break the stream
+  }
+}
+
+async function streamChatMessage(message, onContext, onToken, onDone) {
     const controller = new AbortController();
     activeAbort = controller;
 
@@ -419,6 +443,7 @@
         try { payload = JSON.parse(data); } catch { continue; }
 
         if (eventName === "context") onContext(payload);
+        else if (eventName === "tool_call") onToolCall(payload);
         else if (eventName === "token") onToken(safeText(payload.text || ""));
         else if (eventName === "done") {
           onDone(payload);

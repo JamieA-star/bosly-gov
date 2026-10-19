@@ -5,5 +5,5 @@
   "prompt_path": "/usr/local/bin/bosly-prompt-oneline.txt",
   "commands_glob": "/usr/local/bin/bosly-*",
   "log_level": "INFO",
-  "tools_enabled": false
+  "tools_enabled": true
 }
