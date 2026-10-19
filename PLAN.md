@@ -2112,6 +2112,27 @@ that has actually happened.
     rarely, on rented GPU hours, from data accumulated locally.
     Home machine runs it; cloud trains it, occasionally.
 
+[ ] [LIVE] accord.invoice_mobile_layout — The line-item row in
+    the Accord invoice editor is squished on mobile. It stacks
+    (flex-col sm:flex-row, patched 19 Oct), but each input is
+    still tight and the columns are hard to read on a phone.
+    Deferred because the founder is the only user right now.
+    Fix: proper mobile form layout — labels, or a two-column
+    grid, or a mobile-specific row shape. Also affects the
+    preview table (5 columns on a phone).
+
+    Also found: components/workspace/InvoicePreview.tsx is dead
+    code — nothing imports it. It was patched on 19 Oct before
+    that was discovered, and the actual preview is inline in
+    InvoiceEditor.tsx. Decide: delete it, or wire it in as the
+    real preview.
+
+    Also found: two invoice tools (app/(marketing)/invoice — free,
+    public; components/workspace/InvoiceEditor — the Accord one).
+    They don't share a line-item type or a render. Every invoice
+    change must be made twice. Consider unifying the LineItem
+    shape at least.
+
 [ ] [LIVE] ops.consultancy_design — The front door looks correct,
     not striking. The structure and copy are settled; the gap is
     visual — proportion, rhythm, weight, motion. A page worth hiring
