@@ -1149,6 +1149,29 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
+[ ] [LIVE] ops.send_email_test_address — FOUND 19 Oct. The full
+    lead workflow works: find, draft, deliver, confirm, send. The
+    end-to-end test sent to hello@cafecorner.example, which is a
+    reserved .example domain with no mail server — the send failed
+    with a 550, and the Executive reported it honestly ("nothing
+    was sent").
+
+    The .example domain is the right test address: it can never
+    reach a real person. When testing the send path, use an
+    @example.com or @cafecorner.example address, never a real
+    client's. That is how the guard was proven without emailing a
+    stranger.
+
+    Also: send_email now logs failures as well as sends
+    (status: sent / failed), so there is a trail of what was tried,
+    not only what went out.
+
+    Unblocked once Overpass is back: run_lead_scout finds real
+    candidates; save_thing records them; draft_email drafts;
+    send_draft_to_me delivers; send_email sends to a real address
+    with confirmed=True. Every piece is built and tested except the
+    live scout run.
+
 [ ] [LIVE] gov.tool_results_not_persisted — FOUND 19 Oct. The
     Executive loses conversational continuity between turns because
     only the user message and the assistant's summary are saved to

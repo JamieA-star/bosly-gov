@@ -735,26 +735,31 @@ def send_email(
     except Exception as e:
         return {"ok": False, "error": f"mailer unavailable: {e}"}
 
+    import json as _json, time as _time
+
+    def _log(status: str, detail: str) -> None:
+        try:
+            EMAIL_LOG.parent.mkdir(parents=True, exist_ok=True)
+            with EMAIL_LOG.open("a", encoding="utf-8") as f:
+                f.write(_json.dumps({
+                    "ts": _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime()),
+                    "to": to,
+                    "subject": subject,
+                    "body_chars": len(body),
+                    "body": body,
+                    "status": status,
+                    "detail": detail,
+                }) + "\n")
+        except Exception:
+            pass  # logging is best-effort
+
     try:
         _send(to=to, subject=subject, body=body)
     except Exception as e:
+        _log("failed", str(e)[:500])
         return {"ok": False, "error": f"send failed: {e}"}
 
-    # Log the send
-    try:
-        import json as _json, time as _time
-        EMAIL_LOG.parent.mkdir(parents=True, exist_ok=True)
-        with EMAIL_LOG.open("a", encoding="utf-8") as f:
-            f.write(_json.dumps({
-                "ts": _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime()),
-                "to": to,
-                "subject": subject,
-                "body_chars": len(body),
-                "body": body,
-            }) + "\n")
-    except Exception:
-        pass  # logging is best-effort; the send already happened
-
+    _log("sent", "")
     return {
         "ok": True,
         "result": {"to": to, "subject": subject, "sent": True},
