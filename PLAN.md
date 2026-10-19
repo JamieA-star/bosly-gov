@@ -3628,6 +3628,24 @@ that has actually happened.
     persistent view. Current state is Option B (documented
     transparently).
 
+[ ] [LIVE] ops.gate_private_hostnames — DONE 19 Oct. The Custodian
+    and Keep were both publicly readable on the internet:
+    gov.bosly.app returned 200 and /api/projects returned the
+    names of all three repos; keep.bosly.app was equally open.
+    Both are now behind Cloudflare Access (Zero Trust): a
+    self-hosted application per hostname, an Allow policy
+    matching jr-arnott@outlook.com, deny by default. Access
+    remembers the browser for 24 hours, so a second hostname
+    opens without a prompt once you have logged in once — that
+    is SSO, not a misconfiguration. bosly.app (Accord) stays
+    public, which is correct.
+
+    What is not done: the tunnel's "Protect with Access"
+    toggle (defence in depth — validates the JWT at cloudflared,
+    not required for the prompt but worth turning on). Any new
+    hostname added to the tunnel must be gated the same way
+    before it goes live.
+
 [ ] [LIVE] ops.security_posture — What Gov already covers, what the
     SAST and SCA tools add, and the rules file for AI coding tools.
     Written because the receptionist is being built, not because it
