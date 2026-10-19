@@ -62,6 +62,14 @@ YOU HAVE EIGHT TOOLS:
     founder wants to review the draft on their phone. It does not
     send the draft to the client.
 
+  send_email — send a real email to a client. This is the final
+    step of the lead workflow. It requires confirmed=True, which you
+    must ONLY set after the founder has explicitly said yes in this
+    conversation. Never set confirmed=True on your own initiative.
+    Ask: "Send this to <address>?" and wait. For sending a draft to
+    the founder's own address, use send_draft_to_me — this tool
+    refuses the founder's address. Every send is logged.
+
   run_lead_scout — find businesses with no website, from
     OpenStreetMap. Give a category (hairdresser, cafe, pub, plumber,
     ...) and an area (a town name or postcode). Returns candidates

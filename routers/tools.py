@@ -625,6 +625,95 @@ def run_lead_scout(category: str, area: str, timeout: int = 180) -> Dict[str, An
     }
 
 
+# ---------------------------------------------------------------------------
+# The guarded client send. This is the tool that emails a real person.
+# The guard is `confirmed`: the model must pass True, which means "the
+# founder said yes". The prompt tells the model never to set it without
+# an explicit yes. Every send is logged.
+# ---------------------------------------------------------------------------
+
+EMAIL_LOG = Path("/mnt/bosly/bosly-data/.data/governor/email-sends.jsonl")
+
+
+def send_email(
+    to: str,
+    subject: str,
+    body: str,
+    confirmed: bool = False,
+) -> Dict[str, Any]:
+    """Send an email to a client. Requires confirmed=True.
+
+    Guards:
+      - confirmed must be True — the model must not send without an
+        explicit yes from the founder
+      - to must be a valid email address (has @ and a dot after it)
+      - to must NOT be the founder's own address — that is what
+        send_draft_to_me is for
+      - subject and body are required, body under 50 KB
+    Every send is appended to EMAIL_LOG as a JSON line.
+    """
+    if confirmed is not True:
+        return {
+            "ok": False,
+            "error": (
+                "send_email requires confirmed=True. Ask the founder "
+                "explicitly ('send it to X?') and only call this tool "
+                "with confirmed=True after they say yes."
+            ),
+        }
+
+    to = (to or "").strip()
+    subject = (subject or "").strip()
+    body = body or ""
+
+    if not to or "@" not in to or "." not in to.split("@")[-1]:
+        return {"ok": False, "error": f"send_email: {to!r} is not a valid email address"}
+    if to.lower() == FOUNDER_EMAIL.lower():
+        return {
+            "ok": False,
+            "error": (
+                "send_email refuses the founder's own address — use "
+                "send_draft_to_me for that. send_email is for clients."
+            ),
+        }
+    if not subject:
+        return {"ok": False, "error": "send_email: subject is required"}
+    if not body.strip():
+        return {"ok": False, "error": "send_email: body is empty"}
+    if len(body) > 50_000:
+        return {"ok": False, "error": f"send_email: body is {len(body)} chars (max 50000)"}
+
+    try:
+        from lib.alert import send_email as _send
+    except Exception as e:
+        return {"ok": False, "error": f"mailer unavailable: {e}"}
+
+    try:
+        _send(to=to, subject=subject, body=body)
+    except Exception as e:
+        return {"ok": False, "error": f"send failed: {e}"}
+
+    # Log the send
+    try:
+        import json as _json, time as _time
+        EMAIL_LOG.parent.mkdir(parents=True, exist_ok=True)
+        with EMAIL_LOG.open("a", encoding="utf-8") as f:
+            f.write(_json.dumps({
+                "ts": _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime()),
+                "to": to,
+                "subject": subject,
+                "body_chars": len(body),
+                "body": body,
+            }) + "\n")
+    except Exception:
+        pass  # logging is best-effort; the send already happened
+
+    return {
+        "ok": True,
+        "result": {"to": to, "subject": subject, "sent": True},
+    }
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -839,6 +928,33 @@ TOOLS = [
         },
         "fn": run_lead_scout,
     },
+    {
+        "name": "send_email",
+        "description": (
+            "Send a real email to a client. This is the final step of "
+            "the lead workflow. It requires confirmed=True, which you "
+            "must ONLY set after the founder has explicitly said yes "
+            "in this conversation. Never set confirmed=True on your "
+            "own initiative. Ask: 'Send this to <address>?' and wait. "
+            "For sending a draft to the founder's own address, use "
+            "send_draft_to_me instead — this tool refuses the founder's "
+            "address."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "to": {"type": "string", "description": "the client's email address"},
+                "subject": {"type": "string"},
+                "body": {"type": "string"},
+                "confirmed": {
+                    "type": "boolean",
+                    "description": "must be true, and only after the founder has said yes",
+                },
+            },
+            "required": ["to", "subject", "body", "confirmed"],
+        },
+        "fn": send_email,
+    },
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}
@@ -958,6 +1074,22 @@ def _selftest() -> int:
 
     r = run_lead_scout(category="hairdresser", area="Hexham; rm -rf /")
     check("run_lead_scout refuses shell metacharacters", not r["ok"])
+
+    # --- send_email guards (no real send) ---
+    r = send_email(to="client@example.com", subject="x", body="y", confirmed=False)
+    check("send_email refuses without confirmed=True", not r["ok"])
+
+    r = send_email(to="notanemail", subject="x", body="y", confirmed=True)
+    check("send_email refuses invalid address", not r["ok"])
+
+    r = send_email(to="jr-arnott@outlook.com", subject="x", body="y", confirmed=True)
+    check("send_email refuses the founder's own address", not r["ok"])
+
+    r = send_email(to="client@example.com", subject="", body="y", confirmed=True)
+    check("send_email refuses empty subject", not r["ok"])
+
+    r = send_email(to="client@example.com", subject="x", body="", confirmed=True)
+    check("send_email refuses empty body", not r["ok"])
 
     print()
     print(f"SUMMARY: {passed} passed, {failed} failed")
