@@ -1320,8 +1320,15 @@ class BoslyHandler(BaseHTTPRequestHandler):
             if tools_enabled and run_with_tools is not None:
                 answer_parts = []
                 tool_events = []
+                # The system prompt must contain BOTH the tools prompt
+                # (who the Executive is, what the eight tools do) AND
+                # the project context. Passing context_header alone
+                # told the model it was a code copilot, and it refused
+                # to use the business memory tools.
+                from routers.tool_loop import _read_prompt as _read_tools_prompt
+                combined_prompt = _read_tools_prompt() + "\n\n---\n\n" + context_header
                 try:
-                    for ev in run_with_tools(user_message, system_prompt=context_header):
+                    for ev in run_with_tools(user_message, system_prompt=combined_prompt):
                         et = str(ev.get("type") or "")
                         if et == "token":
                             answer_parts.append(str(ev.get("text", "")))
