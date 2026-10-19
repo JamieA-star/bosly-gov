@@ -2141,8 +2141,76 @@ that has actually happened.
     it is built first — it is the founder's tool and the
     template for the product.
 
-    Build order — each step is useful on its own, each teaches
-    what the next needs to be:
+    BUILD ORDER — the current sequencing, written 19 Oct. Each
+    step is useful on its own; each teaches what the next needs
+    to be.
+
+    The Custodian is the foundation. The Executive reuses its
+    four tools (read_file, append_plan_entry, save_memory,
+    run_check) and its guards. It does not get its own tools.
+    Every Executive action goes through a Custodian guard.
+
+    STEP 1 — THE BUSINESS MEMORY. Clients, projects, leads.
+    A schema and a store for the business's state, distinct
+    from the memory store (which holds lessons and patterns,
+    not "what is going on"). Clients with their needs. Projects
+    with their status. Leads with their fit. Tools for the
+    Executive to read and write it: save_client, read_clients,
+    list_projects, etc. Same guard pattern as the Custodian's
+    four.
+    WHY FIRST: without it, the Executive is a chatbot with
+    tools. With it, it knows the business rather than guessing.
+    Every later step reads from this store.
+    DONE WHEN: the Executive can answer "who are my clients
+    and what do they need?" from the store, not from memory
+    search.
+
+    STEP 2 — THE MORNING BRIEFING. "What's going on today?"
+    Read-only. Calendar, inbox, plan, business memory. One
+    answer. No actions.
+    WHY SECOND: it is the first job from the spec, and it is
+    the first thing that makes the Executive feel like a chief
+    of staff rather than a chat window. Read-only, so it is
+    safe to build before the proactive loop.
+    DONE WHEN: the founder asks "what's going on today?" and
+    gets a real answer drawn from all four sources.
+
+    STEP 3 — THE PROACTIVE LOOP. "Leave that with me." A task
+    queue, a scheduler, a report-back path. The Executive works
+    while the founder is not watching, and calls back with
+    what it did. Real rollback, visible: if it acted, it must
+    be able to undo, and it must report when it rolled back.
+    WHY THIRD: it is the biggest piece and the one where the
+    balance of powers matters most. Every action goes through
+    the Custodian. It depends on steps 1 and 2: there is
+    nothing to work on proactively until the Executive knows
+    the business and can brief on it.
+    DONE WHEN: "leave that with me" produces a real report
+    later, and a failure produces a real rollback and a
+    real explanation.
+
+    STEP 4 — EMAIL AND CALLS. The integrations. Drafting
+    first (the Executive writes, the founder approves, it
+    sends). Listening later (call transcription and notes).
+    WHY FOURTH: it needs the proactive loop to be useful —
+    drafting an email that waits in a queue is a draft; the
+    loop is what makes it a chief of staff that handles the
+    admin.
+    DONE WHEN: a client email arrives, the Executive drafts a
+    reply, the founder approves it, it sends.
+
+    STEP 5 — THE VOICE. Text-to-speech first (it speaks, you
+    listen). Listening last (it hears the call). The wrapper,
+    not the substance.
+    WHY LAST: the substance comes first. By the time the
+    voice is built, the Executive will already be useful by
+    text. The voice is the way in, not the thing itself.
+    DONE WHEN: the founder talks to it and it answers by
+    voice, from the same business memory.
+
+    EARLIER SEQUENCING (superseded 19 Oct, kept for the
+    history — the first three are now done):
+
       1. Text interface, working, used daily. Talk to it; it
          writes to the plan and memory through Custodian tools.
          This is "stop being the courier" and it's close —
@@ -2154,23 +2222,31 @@ that has actually happened.
          /gov/api/health returned index.html via the static
          fallback. One strip at the top of each handler fixed it.
          Verified: the Custodian UI answers a message with real
-         context from the manifest and memory. Commit pending.
+         context from the manifest and memory. Commit a89fef6.
 
-         [ ] Tools: the conversation can read the plan, write a
+         [x] Tools: the conversation can read the plan, write a
          plan entry, write a memory entry, read a file, run a
-         check. Until these exist, the founder is still the
-         courier.
+         check. DONE 19 Oct. routers/tools.py, 13-case
+         self-test. read_file and append_plan_entry tested end
+         to end through the UI; save_memory and run_check
+         untested but built.
       2. Tool loop. It reads the code, proposes patches, runs
          the checks. Now it builds with you.
+
+         [x] Tool loop — DONE 19 Oct. routers/tool_loop.py,
+         8-case self-test. Wired into /api/chat,
+         /api/chat/stream, and /api/project/{slug}/chat (the
+         endpoint the UI uses). Verified through the UI.
       3. Email and admin. It drafts, you approve, it sends.
-         First "saves me time" feature.
+         First "saves me time" feature. — moved to Step 4 above.
       4. Client memory and portfolios. It remembers the
-         hairdresser needs X.
+         hairdresser needs X. — moved to Step 1 above.
       5. Text-to-speech. It speaks to you. Easier than listening,
-         high value.
+         high value. — moved to Step 5 above.
       6. Listening (call transcription). Last, because it's the
          hardest and the most likely to disappoint. By the time
-         it's built you'll know whether the product works.
+         it's built you'll know whether the product works. —
+         moved to Step 4 (later half) and Step 5 (last) above.
 
     The rule that makes it safe: the Executive cannot verify its
     own work. Every action goes through Custodian checks. When
