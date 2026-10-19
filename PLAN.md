@@ -1149,6 +1149,19 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
+[ ] [LIVE] gov.prompt_identity_wins — FOUND 19 Oct. The model
+    refused to save a business lead through the Executive, saying
+    "this is a code copilot, not a CRM." It was right — the system
+    prompt was the project context_header ("Bosly Developer
+    Copilot for bosly-gov"), not the tools prompt. The tools
+    existed; the identity told the model not to use them. Fixed:
+    the tool branch now sends tools_prompt + context_header, so
+    the model sees both. Same class as
+    gov.project_chat_context_ignored: the right context exists,
+    but a wrong one is winning. General lesson: when a model
+    refuses a valid action, check what identity it was given
+    before checking the tools.
+
 [ ] [LIVE] gov.project_chat_context_ignored — FOUND 19 Oct. The
     project chat handler (_handle_project_chat_post) builds a
     context_header containing the Accord, the current report,
