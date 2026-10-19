@@ -918,6 +918,18 @@ that has actually happened.
     Not a SaaS. Not a web app. Not a front end. A script that runs
     and outputs a list.
 
+    THE EXECUTIVE IS THE JUDGMENT AROUND THIS SCRIPT. The script
+    stays a script — it runs, it outputs a CSV, it's done. The
+    Executive calls it: "find me companies" → run_lead_scout →
+    CSV rows → the Executive picks five, researches each, drafts
+    the email adapted to each, asks before sending. The "manual
+    read of the site" in this entry becomes the Executive's job.
+    Each shortlisted lead becomes a thing in the business memory
+    (ID, status, outcome) — which is the "each lead gets an ID;
+    note the outcome" line below, made real. The loop between
+    the script and the memory is what makes the weights evidence
+    rather than guesses.
+
     Legal: official APIs and open data only. No scraping the
     directories. Google used on the shortlist only — Places data is
     not stored permanently.
@@ -2166,6 +2178,40 @@ that has actually happened.
     Read this before proposing a feature that touches storage,
     auth, or hosting. If the proposal breaks one of these, it's
     not the feature that's wrong, it's the proposal.
+
+[ ] [LIVE] gov.executive_orientation_and_reporting — DEFINED 19 Oct.
+    How the Executive briefs, reports, and asks permission.
+
+    ORIENTATION IS ABSORBED, NOT DELETED. The `bosly` command
+    becomes a thin wrapper that asks the Executive. The Executive
+    runs the same checks, reads the plan, the memory, and the
+    business store, and answers "what's going on?" in
+    conversation. That is the morning briefing: what broke
+    overnight, what needs a decision, what can wait. The founder
+    says "off you go" — that is permission — and the Executive
+    fixes it, with the Custodian's checks confirming the fix.
+
+    THE THREE REPORTING CHANNELS, escalating by urgency:
+      1. Email — the default. What it did, why, how, whether
+         action is needed, and a severity: low / medium / high /
+         critical. Low/medium say "no action needed"; high/
+         critical say "ACTION NEEDED" and say what.
+      2. In-conversation — when the founder is in the UI. The
+         tool-call events already do this; results follow.
+      3. Phone call — later, when connected. For time-sensitive
+         and high-value: "I found a client, this is time-
+         sensitive, do you want me to email them?" An email takes
+         a day; the opportunity does not.
+
+    THE PERMISSION MODEL: ASKING IS GRANTING. "Find me companies"
+    is permission to search. "Off you go" is permission to fix.
+    But sending, posting, deleting, spending — always a question
+    first, with the proposed action stated plainly. Sensitive
+    actions get a question BEFORE the action, not a report after.
+
+    Build needs: the report tool takes severity and needs_action;
+    the permission rule in tools_prompt.txt (done 19 Oct); the
+    `bosly` command changed to call the Executive's briefing.
 
 [ ] [LIVE] ops.bosly_executive — THE CHIEF OF STAFF. The
     conversation that holds the whole of the digital side of the
