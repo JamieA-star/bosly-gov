@@ -1149,6 +1149,33 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
+[ ] [LIVE] gov.tool_results_not_persisted — FOUND 19 Oct. The
+    Executive loses conversational continuity between turns because
+    only the user message and the assistant's summary are saved to
+    chat.json. The tool calls and their results are not. So on the
+    next turn the model cannot see the draft it just produced, and
+    asks the founder to repeat themselves — which the digital
+    butler should never do.
+
+    Two consequences found today:
+      - 'send it' failed because the draft was not in history. Fixed
+        by saving drafts as things (kind 'draft') and letting
+        send_email take a draft_thing_id. That is the artefact
+        stored; this entry is about the conversation.
+      - 'yes pls send it' asked again which of two drafts, because
+        the model could not tell whether 'it' referred to the draft
+        it had just shown. It was being correct — it just could not
+        see the confirmation it had already given.
+
+    Same class as gov.project_chat_context_ignored: the context is
+    there, but not the right context. The fix: save the tool calls
+    and results alongside the messages in chat.json, so a turn can
+    see what the previous turn actually did. Then the model can
+    answer 'the draft I just showed you' instead of asking again.
+
+    Not blocking the workflow — it finds, drafts, delivers, asks,
+    and sends when told. It just makes the conversation smoother.
+
 [ ] [LIVE] gov.prompt_identity_wins — FOUND 19 Oct. The model
     refused to save a business lead through the Executive, saying
     "this is a code copilot, not a CRM." It was right — the system
