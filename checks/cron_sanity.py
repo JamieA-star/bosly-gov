@@ -35,6 +35,19 @@ CRON_PATH = "/usr/bin:/bin"
 # it's not reachable under CRON_PATH, the script must provide it.
 WATCHED_BINARIES = ["node", "pm2", "psql", "curl", "python3", "bash", "git"]
 
+# Repos whose *.sh files should be scanned for a shebang on byte 1.
+# Added 19 Oct: the check previously only looked at cron-invoked
+# scripts and /usr/local/bin/bosly-*. deploy.sh and restore-bosly.sh
+# had CRLF-broken shebangs and were not covered (see 23 Sept fix).
+REPOS = [
+    Path("/home/bosly_accord/bosly-1.0"),
+    Path("/home/bosly_accord/bosly-keep"),
+    Path("/home/bosly_accord/bosly-gov"),
+]
+
+# Directories not to descend into when scanning for *.sh.
+SKIP_DIRS = {"node_modules", ".next", "legacy", ".git", "dist", "build"}
+
 # Patterns in a script that indicate it loads its own PATH.
 SELF_PATH_PATTERNS = [
     re.compile(r"nvm\.sh"),
@@ -150,6 +163,22 @@ def extract_cron_script_paths(crontab: str) -> list[Path]:
     return paths
 
 
+def find_repo_sh_files() -> list[Path]:
+    """Every *.sh in the three repos, skipping node_modules, .next,
+    legacy and other build dirs.
+    """
+    out: list[Path] = []
+    for repo in REPOS:
+        if not repo.exists():
+            continue
+        for root, dirs, files in os.walk(repo):
+            dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+            for name in files:
+                if name.endswith(".sh"):
+                    out.append(Path(root) / name)
+    return sorted(out)
+
+
 def binaries_in_script(path: Path) -> set[str]:
     """Return the WATCHED_BINARIES this script appears to call.
 
@@ -235,6 +264,17 @@ def main() -> int:
                            f"script does not load its own PATH. Add a "
                            f"PATH export or nvm sourcing at the top.",
                 )
+
+    # --- 4. Every *.sh in the repos has a shebang on byte 1 ---
+    repo_scripts = find_repo_sh_files()
+    print(f"  repo *.sh files found: {len(repo_scripts)}")
+    for s in repo_scripts:
+        print(f"    {s}")
+    print("")
+    for script in repo_scripts:
+        check(f"{script.name} shebang on byte 1", has_shebang(script),
+              detail="First two bytes are not '#!/'. "
+                     "Check for CRLF line endings and a stray BOM.")
 
     # --- 3. /usr/local/bin/bosly-* scripts have shebangs ---
     bin_dir = Path("/usr/local/bin")
