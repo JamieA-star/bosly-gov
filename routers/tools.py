@@ -469,13 +469,38 @@ def draft_email(to: str, subject: str, body: str) -> Dict[str, Any]:
     if len(body) > 50_000:
         return {"ok": False, "error": f"draft_email: body is {len(body)} chars (max 50000)"}
 
+    to_clean = str(to).strip()
+    subject_clean = str(subject).strip()
+    body_clean = str(body)
+
+    # Persist the draft as a thing so the next turn can find it.
+    # The draft is a thing of kind "draft"; the recipient goes in the
+    # tags as "to:<address>". If the save fails, the draft still
+    # returns — it is better to have a draft that is not saved than
+    # to lose the draft because the store is unhappy.
+    thing_id = ""
+    try:
+        saved = _save_thing_impl(
+            kind="draft",
+            title=subject_clean,
+            body=body_clean,
+            status="active",
+            tags=f"to:{to_clean},draft-email",
+        )
+        if saved.get("ok"):
+            thing_id = saved["result"]["id"]
+    except Exception:
+        pass
+
     return {
         "ok": True,
         "result": {
-            "to": str(to).strip(),
-            "subject": str(subject).strip(),
-            "body": str(body),
-            "char_count": len(body),
+            "to": to_clean,
+            "subject": subject_clean,
+            "body": body_clean,
+            "char_count": len(body_clean),
+            "thing_id": thing_id,
+            "saved_as_thing": bool(thing_id),
         },
     }
 
@@ -640,6 +665,7 @@ def send_email(
     subject: str,
     body: str,
     confirmed: bool = False,
+    draft_thing_id: str = "",
 ) -> Dict[str, Any]:
     """Send an email to a client. Requires confirmed=True.
 
@@ -661,6 +687,27 @@ def send_email(
                 "with confirmed=True after they say yes."
             ),
         }
+
+    # If the model passes the draft's thing_id, use the saved draft.
+    if draft_thing_id and _read_thing_impl is not None:
+        try:
+            got = _read_thing_impl(thing_id=draft_thing_id)
+        except Exception as e:
+            return {"ok": False, "error": f"could not read draft {draft_thing_id!r}: {e}"}
+        if not got.get("ok"):
+            return {"ok": False, "error": f"draft {draft_thing_id!r} not found"}
+        thing = got["result"]
+        if thing.get("kind") != "draft":
+            return {"ok": False, "error": f"thing {draft_thing_id!r} is not a draft"}
+        subject = thing.get("title") or subject
+        body = thing.get("body") or body
+        # The 'to' is stored as a tag 'to:<address>'. If the caller did
+        # not pass 'to', extract it from the tags.
+        if not (to or "").strip():
+            for tag in (thing.get("tags") or "").split(","):
+                if tag.startswith("to:"):
+                    to = tag[3:]
+                    break
 
     to = (to or "").strip()
     subject = (subject or "").strip()
@@ -949,6 +996,10 @@ TOOLS = [
                 "confirmed": {
                     "type": "boolean",
                     "description": "must be true, and only after the founder has said yes",
+                },
+                "draft_thing_id": {
+                    "type": "string",
+                    "description": "optional: the id of a saved draft thing. If given, its subject and body are used instead of the ones passed.",
                 },
             },
             "required": ["to", "subject", "body", "confirmed"],
