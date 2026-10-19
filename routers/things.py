@@ -36,6 +36,7 @@ from __future__ import annotations
 import os
 import sqlite3
 import tempfile
+import unicodedata
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -66,9 +67,24 @@ def _connect() -> sqlite3.Connection:
             body TEXT NOT NULL DEFAULT '',
             tags TEXT NOT NULL DEFAULT '',
             created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL
+            updated_at TEXT NOT NULL,
+            title_norm TEXT NOT NULL DEFAULT '',
+            body_norm TEXT NOT NULL DEFAULT ''
         )
     """)
+    # Migration: add the columns if this is an old db
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(things)").fetchall()}
+    if "title_norm" not in cols:
+        conn.execute("ALTER TABLE things ADD COLUMN title_norm TEXT NOT NULL DEFAULT ''")
+    if "body_norm" not in cols:
+        conn.execute("ALTER TABLE things ADD COLUMN body_norm TEXT NOT NULL DEFAULT ''")
+    # Backfill existing rows whose norm columns are empty
+    for row in conn.execute("SELECT id, title, body FROM things WHERE title_norm = ''").fetchall():
+        conn.execute(
+            "UPDATE things SET title_norm = ?, body_norm = ? WHERE id = ?",
+            (_norm(row["title"]), _norm(row["body"] or ""), row["id"]),
+        )
+    conn.commit()
     conn.execute("CREATE INDEX IF NOT EXISTS idx_things_kind ON things(kind)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_things_status ON things(status)")
     conn.commit()
@@ -77,6 +93,15 @@ def _connect() -> sqlite3.Connection:
 
 def _now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def _norm(s: str) -> str:
+    """Strip accents and lowercase — 'Café' -> 'cafe'."""
+    if not s:
+        return ""
+    n = unicodedata.normalize("NFD", s)
+    n = "".join(c for c in n if unicodedata.category(c) != "Mn")
+    return n.lower()
 
 
 def _new_id() -> str:
@@ -118,18 +143,22 @@ def save_thing(
                 return {"ok": False, "error": f"no thing with id {thing_id!r}"}
             conn.execute(
                 """UPDATE things
-                   SET kind=?, title=?, status=?, body=?, tags=?, updated_at=?
+                   SET kind=?, title=?, status=?, body=?, tags=?, updated_at=?,
+                       title_norm=?, body_norm=?
                    WHERE id=?""",
-                (kind, title, status, body, tags, now, thing_id),
+                (kind, title, status, body, tags, now,
+                 _norm(title), _norm(body), thing_id),
             )
             saved_id = thing_id
         else:
             saved_id = _new_id()
             conn.execute(
                 """INSERT INTO things
-                   (id, kind, title, status, body, tags, created_at, updated_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                (saved_id, kind, title, status, body, tags, now, now),
+                   (id, kind, title, status, body, tags, created_at, updated_at,
+                    title_norm, body_norm)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (saved_id, kind, title, status, body, tags, now, now,
+                 _norm(title), _norm(body)),
             )
         conn.commit()
     finally:
@@ -187,9 +216,11 @@ def find_things(
         clauses.append("status = ?")
         params.append(status)
     if query:
-        clauses.append("(title LIKE ? OR body LIKE ? OR tags LIKE ?)")
-        q = f"%{query}%"
-        params.extend([q, q, q])
+        # Search the normalised columns so "Cafe" finds "Café".
+        clauses.append("(title_norm LIKE ? OR body_norm LIKE ? OR tags LIKE ?)")
+        qn = f"%{_norm(query)}%"
+        qr = f"%{query}%"
+        params.extend([qn, qn, qr])
 
     where = (" WHERE " + " AND ".join(clauses)) if clauses else ""
     sql = f"SELECT * FROM things{where} ORDER BY updated_at DESC LIMIT ?"

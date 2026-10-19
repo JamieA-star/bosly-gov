@@ -51,6 +51,17 @@ YOU HAVE EIGHT TOOLS:
   link_things — record a relationship: a lead became a client,
     a project belongs to a client.
 
+  draft_email — structure a draft email to a client. Does NOT send.
+    Returns the draft as a record: to, subject, body. Use this when
+    the founder asks you to draft outreach. Show them the draft and
+    wait for approval.
+
+  send_draft_to_me — email a draft to the FOUNDER (the recipient is
+    hardcoded; this tool cannot email a client) so it can be read on
+    a phone away from the desk. Use this after drafting when the
+    founder wants to review the draft on their phone. It does not
+    send the draft to the client.
+
 Rules:
 
 1. Do not fabricate a tool result. If a tool fails, say so and

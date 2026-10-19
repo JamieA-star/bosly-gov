@@ -55,6 +55,11 @@ FORBIDDEN_NAMES = {".env", ".env.production", ".env.local", ".env.development"}
 FORBIDDEN_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".secret"}
 FORBIDDEN_DIRS = {".git", "node_modules", ".next", "__pycache__"}
 
+# The founder's own address. send_draft_to_me can only send here — it
+# is not a parameter, so the tool cannot be talked into emailing anyone
+# else. That is the guard.
+FOUNDER_EMAIL = "jr-arnott@outlook.com"
+
 
 # ---------------------------------------------------------------------------
 # Tool 1 — append_plan_entry
@@ -441,6 +446,86 @@ def link_things(from_id: str, to_id: str,
         return {"ok": False, "error": f"link_things raised: {e}"}
 
 
+# ---------------------------------------------------------------------------
+# Draft tools. draft_email structures a draft; send_draft_to_me sends it
+# to the founder's own address (hardcoded) so it can be read on a phone.
+# Neither sends to a client. send_email to a client is a separate,
+# guarded tool that requires explicit approval.
+# ---------------------------------------------------------------------------
+
+def draft_email(to: str, subject: str, body: str) -> Dict[str, Any]:
+    """Structure a draft email. Does not send.
+
+    The draft is returned as a record so the loop can show it, and so
+    a later tool (send_email) can take it. Guards: to is non-empty,
+    subject is non-empty, body is under 50 KB.
+    """
+    if not to or "@" not in str(to):
+        return {"ok": False, "error": "draft_email: 'to' must be an email address"}
+    if not subject or not str(subject).strip():
+        return {"ok": False, "error": "draft_email: 'subject' is required"}
+    if not body or not str(body).strip():
+        return {"ok": False, "error": "draft_email: 'body' is empty"}
+    if len(body) > 50_000:
+        return {"ok": False, "error": f"draft_email: body is {len(body)} chars (max 50000)"}
+
+    return {
+        "ok": True,
+        "result": {
+            "to": str(to).strip(),
+            "subject": str(subject).strip(),
+            "body": str(body),
+            "char_count": len(body),
+        },
+    }
+
+
+def send_draft_to_me(subject: str, body: str, note: str = "") -> Dict[str, Any]:
+    """Email the draft to the founder so it can be read on a phone.
+
+    The recipient is FOUNDER_EMAIL, hardcoded. The tool cannot send to
+    anyone else. The subject gets a [DRAFT] prefix so it is not mistaken
+    for a sent email.
+    """
+    if not subject or not str(subject).strip():
+        return {"ok": False, "error": "send_draft_to_me: 'subject' is required"}
+    if not body or not str(body).strip():
+        return {"ok": False, "error": "send_draft_to_me: 'body' is empty"}
+    if len(body) > 100_000:
+        return {"ok": False, "error": f"send_draft_to_me: body is {len(body)} chars (max 100000)"}
+
+    try:
+        from lib.alert import send_email
+    except Exception as e:
+        return {"ok": False, "error": f"mailer unavailable: {e}"}
+
+    full_subject = f"[DRAFT] {str(subject).strip()}"
+    NL = chr(10)
+    note_line = (str(note).strip() + NL) if note else ""
+    full_body = (
+        "This is a draft. It has NOT been sent to anyone." + NL
+        + note_line
+        + NL + "---" + NL + NL
+        + str(body)
+        + NL + NL + "---" + NL
+        + "Sent by the Executive so you can read it away from the desk."
+    )
+
+    try:
+        send_email(to=FOUNDER_EMAIL, subject=full_subject, body=full_body)
+    except Exception as e:
+        return {"ok": False, "error": f"send failed: {e}"}
+
+    return {
+        "ok": True,
+        "result": {
+            "to": FOUNDER_EMAIL,
+            "subject": full_subject,
+            "sent": True,
+        },
+    }
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -586,6 +671,46 @@ TOOLS = [
             "required": ["from_id", "to_id"],
         },
         "fn": link_things,
+    },
+    {
+        "name": "draft_email",
+        "description": (
+            "Structure a draft email to a client. Does not send. "
+            "Returns the draft as a record: to, subject, body. Use "
+            "this when the founder asks you to draft outreach, then "
+            "show them the draft and wait for approval."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "to": {"type": "string", "description": "the client's email address"},
+                "subject": {"type": "string"},
+                "body": {"type": "string", "description": "the draft text"},
+            },
+            "required": ["to", "subject", "body"],
+        },
+        "fn": draft_email,
+    },
+    {
+        "name": "send_draft_to_me",
+        "description": (
+            "Email a draft to the FOUNDER so it can be read on a phone "
+            "while away from the desk. The recipient is hardcoded to "
+            "the founder's own address — this tool cannot email a "
+            "client. Use it after drafting when the founder wants to "
+            "review the draft away from the UI. It does not send the "
+            "draft to the client; that is a separate step."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "subject": {"type": "string"},
+                "body": {"type": "string"},
+                "note": {"type": "string", "description": "optional note above the draft"},
+            },
+            "required": ["subject", "body"],
+        },
+        "fn": send_draft_to_me,
     },
 ]
 

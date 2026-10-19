@@ -60,6 +60,38 @@ def _load_config() -> dict:
     }
 
 
+def send_email(to: str, subject: str, body: str) -> None:
+    """Send a plain-text email.
+
+    The general send used by the Executive (send_draft_to_me). The
+    failure alert below still builds its own body; this is for
+    arbitrary text. SMTP config is the same single source of truth.
+    """
+    if not to or "@" not in to:
+        raise ValueError("send_email: 'to' must be an email address")
+    if not subject:
+        raise ValueError("send_email: 'subject' is required")
+
+    cfg = _load_config()
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = cfg["from"]
+    msg["To"] = to
+    msg.set_content(body)
+
+    if cfg["secure"]:
+        ctx = ssl.create_default_context()
+        with smtplib.SMTP_SSL(cfg["host"], cfg["port"], context=ctx) as s:
+            s.login(cfg["user"], cfg["password"])
+            s.send_message(msg)
+    else:
+        with smtplib.SMTP(cfg["host"], cfg["port"]) as s:
+            s.starttls(context=ssl.create_default_context())
+            s.login(cfg["user"], cfg["password"])
+            s.send_message(msg)
+
+
 def send_failure_alert(failed_reports: list, run_tier: str, reports_dir: str) -> None:
     """Send one email summarising all failures from a run."""
     cfg = _load_config()
