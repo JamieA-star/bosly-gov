@@ -4,5 +4,6 @@
   "llm_script_path": "/usr/local/bin/bosly-call-llm.py",
   "prompt_path": "/usr/local/bin/bosly-prompt-oneline.txt",
   "commands_glob": "/usr/local/bin/bosly-*",
-  "log_level": "INFO"
+  "log_level": "INFO",
+  "tools_enabled": false
 }
