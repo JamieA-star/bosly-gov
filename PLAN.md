@@ -1979,6 +1979,19 @@ that has actually happened.
          writes to the plan and memory through Custodian tools.
          This is "stop being the courier" and it's close —
          Custodian already has the API and the UI (broken).
+
+         [x] UI connects and answers — DONE 19 Oct. The UI was
+         calling /gov/api/*, but do_GET and do_POST exact-matched
+         /api/* routes. /gov/api/chat/stream 404'd and
+         /gov/api/health returned index.html via the static
+         fallback. One strip at the top of each handler fixed it.
+         Verified: the Custodian UI answers a message with real
+         context from the manifest and memory. Commit pending.
+
+         [ ] Tools: the conversation can read the plan, write a
+         plan entry, write a memory entry, read a file, run a
+         check. Until these exist, the founder is still the
+         courier.
       2. Tool loop. It reads the code, proposes patches, runs
          the checks. Now it builds with you.
       3. Email and admin. It drafts, you approve, it sends.
