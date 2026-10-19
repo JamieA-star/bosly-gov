@@ -1294,7 +1294,7 @@ that has actually happened.
       intent_classifier.py — what is the founder asking for.
       deploy_after_fix.py — deploy after a change.
       validation_pipeline.py — check the output before it lands.
-      tool_loop.py, tools.py — the four tools, built 19 Oct.
+      tool_loop.py, tools.py — the tools, built 19 Oct.
 
     THE CUSTODIAN'S PARTS (verification, honesty, the record):
       All 17 checks in manifests/checks.yml.
@@ -1342,8 +1342,9 @@ that has actually happened.
 
 [~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
 
-    DONE 19 Oct: routers/tools.py (four tools + guards, 13-case
-    self-test), routers/tool_loop.py (the loop, 8-case self-test
+    DONE 19 Oct: routers/tools.py (four Custodian tools + guards,
+    13-case self-test; ten tools now, see the Executive's build
+    order), routers/tool_loop.py (the loop, 8-case self-test
     monkey-patching the API), tools_prompt.txt (the system prompt),
     config.json tools_enabled switch. Wired into all three chat
     paths: /api/chat, /api/chat/stream, and
@@ -2488,28 +2489,37 @@ that has actually happened.
     run_check) and its guards. It does not get its own tools.
     Every Executive action goes through a Custodian guard.
 
-    STEP 1 — THE BUSINESS MEMORY. Clients, projects, leads.
-    A schema and a store for the business's state, distinct
-    from the memory store (which holds lessons and patterns,
-    not "what is going on"). Clients with their needs. Projects
-    with their status. Leads with their fit. Tools for the
-    Executive to read and write it: save_client, read_clients,
-    list_projects, etc. Same guard pattern as the Custodian's
-    four.
-    WHY FIRST: without it, the Executive is a chatbot with
-    tools. With it, it knows the business rather than guessing.
-    Every later step reads from this store.
-    DONE WHEN: the Executive can answer "who are my clients
-    and what do they need?" from the store, not from memory
-    search.
+    UPDATE 19 Oct: there are now ten tools, not four. The four
+    Custodian tools above, plus six Executive tools:
+    save_thing, read_thing, find_things, link_things (the
+    business memory), draft_email, send_draft_to_me,
+    run_lead_scout, and send_email. All in routers/tools.py,
+    same {ok, result|error} shape, same guard pattern. The
+    Executive does not have a separate tool registry — the
+    tools are one list, and the guards are one pattern.
 
-    STEP 2 — THE MORNING BRIEFING. "What's going on today?"
+    STEP 1 — THE BUSINESS MEMORY. [x] DONE 19 Oct.
+    routers/things.py: a SQLite store of "things" — kind (free
+    string: client, lead, project, idea, draft), title, status,
+    body (markdown), tags. Accent-insensitive search ("Cafe"
+    finds "Café"). Four tools: save_thing, read_thing,
+    find_things, link_things. 16-case self-test. 17-case
+    tool-wrapper self-test.
+    DONE WHEN: the Executive can answer "who are my clients
+    and what do they need?" from the store — verified: it
+    found the Café Corner lead by name and read the email
+    from the record.
+
+    STEP 2 — THE MORNING BRIEFING. [~] PARTIAL 19 Oct.
     Read-only. Calendar, inbox, plan, business memory. One
     answer. No actions.
-    WHY SECOND: it is the first job from the spec, and it is
-    the first thing that makes the Executive feel like a chief
-    of staff rather than a chat window. Read-only, so it is
-    safe to build before the proactive loop.
+    BUILT: the pickup (routers/pickup.py) — the Executive
+    notices a new scout CSV and opens with "3 new candidates".
+    Verified end to end.
+    STILL OPEN: the general "what's going on today?" — the
+    calendar, the inbox, the plan, the business memory, in one
+    answer. The pickup is the first piece of the briefing, not
+    the whole of it.
     DONE WHEN: the founder asks "what's going on today?" and
     gets a real answer drawn from all four sources.
 
