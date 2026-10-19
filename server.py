@@ -40,6 +40,11 @@ except Exception:
     run_with_tools = None
 
 try:
+    from routers.pickup import maybe_pickup as _maybe_pickup
+except Exception:
+    _maybe_pickup = None
+
+try:
     from routers.memory_consolidator import consolidate_messages
 except Exception as e:
     consolidate_messages = None
@@ -783,7 +788,19 @@ class BoslyHandler(BaseHTTPRequestHandler):
             # Branch: use the tool loop when enabled, otherwise the plain path.
             tools_enabled = bool(state.config.get("tools_enabled", False))
             if tools_enabled and run_with_tools is not None:
-                events = run_with_tools(message)
+                # Pickup check: a new scout file is context, not an action.
+                _brief = None
+                if _maybe_pickup is not None:
+                    try:
+                        _brief = _maybe_pickup()
+                    except Exception as _pe:
+                        logging.exception("pickup check failed: %s", _pe)
+                if _brief:
+                    events = run_with_tools(
+                        _brief + "\n\n---\n\n" + message
+                    )
+                else:
+                    events = run_with_tools(message)
             else:
                 events = route_llm_stream({"message": message, "request_id": request_id}, state.config)
 
@@ -1327,6 +1344,19 @@ class BoslyHandler(BaseHTTPRequestHandler):
                 # to use the business memory tools.
                 from routers.tool_loop import _read_prompt as _read_tools_prompt
                 combined_prompt = _read_tools_prompt() + "\n\n---\n\n" + context_header
+                # The Executive notices a new scout file before it answers.
+                # Read-only: the brief is context; no action is taken.
+                if _maybe_pickup is not None:
+                    try:
+                        _pickup_brief = _maybe_pickup()
+                        if _pickup_brief:
+                            combined_prompt = (
+                                _pickup_brief
+                                + "\n\n---\n\n"
+                                + combined_prompt
+                            )
+                    except Exception as _pe:
+                        logging.exception("pickup check failed: %s", _pe)
                 try:
                     for ev in run_with_tools(user_message, system_prompt=combined_prompt):
                         et = str(ev.get("type") or "")
