@@ -1182,6 +1182,89 @@ that has actually happened.
     Not yet: a schema check. The memory has one (memory_schema);
     capsules don't. Worth adding when the habit is established.
 
+[ ] [LIVE] gov.custodian_executive_map — THE FURNITURE.
+    WRITTEN 19 Oct, after the conversation drifted once too often.
+
+    THE ORIGIN, PLAINLY. Bosly Gov was meant to be the chief of
+    staff. As it was built, the checks turned out to be the
+    foundation, and Gov became the custodian. The Executive is the
+    original vision, built on the custodian's foundation. That is
+    not a failure — it is the right path, arrived at by building.
+    Gov is now two roles in one codebase, and that is fine:
+
+      - THE CUSTODIAN verifies. The plan, the memory, the checks,
+        the invariants, the provenance. It does not act.
+      - THE EXECUTIVE acts. The conversation, the tools, the
+        builds, the notes, the emails, the searches, the reports.
+        It does not verify its own work.
+
+    They are ONE SYSTEM WITH TWO ROLES, not two systems. The same
+    process, the same LLM connection, the same tools, the same
+    memory. The Executive acts; the Custodian checks what it did.
+    That is why they can live in one codebase — because they are
+    one thing, seen from two sides.
+
+    THE INVENTORY — what exists, and where it belongs. This is the
+    real state as of 19 Oct, not what we remember building.
+
+    THE EXECUTIVE'S ALREADY-BUILT PARTS (living under Gov's name,
+    built for the wrong role, readied for the right one):
+      agent_router.py — the agent loop, session management,
+        deploy stages. Propose, act, pause, resume.
+      agent_state_store.py — sessions.
+      patch_engine.py — structured patches. Building code.
+      fix_router.py — "fix this file." Building code.
+      file_access_router.py — read and search files.
+      command_router.py — commands the founder types.
+      intent_classifier.py — what is the founder asking for.
+      deploy_after_fix.py — deploy after a change.
+      validation_pipeline.py — check the output before it lands.
+      tool_loop.py, tools.py — the four tools, built 19 Oct.
+
+    THE CUSTODIAN'S PARTS (verification, honesty, the record):
+      All 17 checks in manifests/checks.yml.
+      answer_verifier.py — multi-pass verification. The core.
+      provenance.py — where did this come from.
+      consent_flow.py, consent_store.py — the consent contract.
+      error_types.py — typed errors.
+      observability.py, metrics_router.py — what happened.
+      session_digest_router.py — the failure digest.
+      memory_first.py, memory_store.py — the memory store (the
+        schema check that guards it is Custodian's).
+
+    THE SHARED SUBSTRATE (both use, neither owns):
+      direct_llm.py, llm_router.py — the LLM connection.
+      context_engine.py, context_orchestrator.py, context_graph.py,
+        project_graph.py — building the context the LLM sees.
+      prompt_compactor.py, token_budget.py, snippet_cache.py —
+        keeping the prompt small.
+      The PLAN file. The memory files. The capsules.
+
+    WHAT THIS REVEALS. The Executive is already most-built. The
+    agent loop, the patch engine, the fix router, the file access,
+    the intent classifier — these are Executive capabilities that
+    exist and work. They were built for Gov because Gov was the
+    chief of staff. What the Executive is missing is:
+      (a) the business memory — clients, projects, leads, ideas,
+          notes. The "everything" store.
+      (b) the proactive loop — "leave that with me" and the
+          report-back.
+    Everything else is a matter of moving modules to the right
+    side of the line, not building them.
+
+    THE TWO PURPOSES, BOTH REAL. It serves the founder first:
+    "what's on my schedule, what's going on, what clients, how do
+    we email, build me this code." And it becomes a saleable item:
+    the same architecture, tuned per client, multi-tenant,
+    isolated data, shared inference (see ops.architecture). The
+    founder's Executive is the template for the product. That is
+    not a later concern — it shapes the build.
+
+    THE NOTE THAT STOPS THE DRIFT. When the conversation drifts —
+    and it will — this entry is the reference. The Executive acts.
+    The Custodian checks. The tools grow; the shape does not
+    change. It serves the founder, then it sells.
+
 [~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
 
     DONE 19 Oct: routers/tools.py (four tools + guards, 13-case
