@@ -1,47 +1,81 @@
 BOSLY GOV — PLAN
-Last updated: 18 October 2026
+Last updated: 19 October 2026
 
 ================================================================
 THE SHAPE OF BOSLY  (read this first)
 ================================================================
 
-Bosly Limited is the company. It has four branches. This block is
-here so that, when you open this file and have forgotten everything,
-the shape is the first thing you see. Every entry below hangs from
-one of these four.
+Bosly Limited is the company. Five products, one platform. This
+block is here so that, when you open this file and have forgotten
+everything, the shape is the first thing you see. Every entry below
+hangs from one of these.
 
   BOSLY LIMITED  (registered company, Companies House)
   │
-  ├─ CONSULTANCY ............ THE MAIN BUSINESS. Launches January.
-  │    Front door: bosley.app/consulting (live 10 Oct).
-  │    Workflow audits, small AI/automation builds, and Bosly
-  │    Accord set up for clients. This is where the finance comes
-  │    from. Everything else serves this.
-  │
-  ├─ BOSLY ACCORD ........... THE PRODUCT THE CONSULTANCY SELLS.
+  ├─ BOSLY ACCORD ........... THE PLATFORM. One app, multi-user.
   │    £25/month base: calendar, inbox, finance, tax, chief of
-  │    staff — what it already is. Plus feature toggles built
-  │    per client and priced against the human equivalent
-  │    (e.g. AI receptionist: £1,000–£1,500 build + £250–£300/mo
-  │    ongoing, versus £1,200–£1,500/mo for a human). Pricing per
-  │    client; some bear £500/mo, some don't.
-  │    The loop: build for yourself → use it → sell it → learn
-  │    from clients → build more toggles → sell those too.
+  │    staff — what it already is. A client logs into Accord and
+  │    turns on the products they've paid for. Everything below
+  │    is a toggle inside Accord. Accord is the foundation; the
+  │    rest are features of it. This is what the consultancy sells.
   │
-  ├─ BOSLY KEEP ............. PERSONAL. Back burner.
-  │    Your own portfolio tool. Cannot be sold until it is
-  │    registered and compliant — years away. Needs spare money
-  │    and proper testing. NOT on the critical path for January.
-  │    Its bugs are interesting, not urgent. Portfolio piece at
-  │    most, for now.
+  ├─ BOSLY EXECUTIVE ........ THE CHIEF OF STAFF. The conversation.
+  │    Talk to it. Plan with it. It holds the whole of the digital
+  │    side of the business — email, calls, clients, projects,
+  │    leads, admin — so the founder's ADHD doesn't have to.
+  │    The interface to everything. Acts, proposes, remembers.
+  │    CANNOT verify its own work — see Bosly Custodian.
+  │    Priority: build first. It's the founder's tool and the
+  │    model for the client version.
+  │
+  ├─ BOSLY RECEPTIONIST ..... THE FIRST CLIENT TOGGLE. Bounded
+  │    workflow: answer the call, transcribe, classify intent,
+  │    book or route, log it. Built per client, priced against
+  │    the human equivalent: £1,000–£1,500 build + £250–£500/mo
+  │    ongoing, versus £1,200–£1,500/mo for a human receptionist.
+  │    Priority: build second. January deadline.
+  │
+  ├─ BOSLY KEEP ............. WEALTH AND INVESTMENT. Personal now,
+  │    product later. Your own portfolio tool. Cannot be sold
+  │    until it is registered and compliant — years away. Needs
+  │    spare money and proper testing. NOT on the critical path
+  │    for January. Its bugs are interesting, not urgent.
+  │
+  ├─ BOSLY CUSTODIAN ........ (was Bosly Gov). THE CHECKS. The
+  │    plan, the memory, the invariants, the verification.
+  │    Reads what the Executive does and says whether it's true.
+  │    Does NOT act. Does NOT decide whether a plan was good —
+  │    only whether what was done matches what was said.
+  │    Standalone, independent, un-editable by the Executive.
   │
   └─ THE GARDENING BUSINESS .  Existing income. Not a branch of
        growth — the thing the consultancy replaces. Runs on
        Bosly Accord internally, which is how Accord gets built.
 
-How to use this map: find the branch you are working on, then
-look for entries with that prefix. Consultancy work is ops.*.
-Accord is accord.*. Keep is keep.*. The company itself is gov.*.
+THE BALANCE OF POWERS. The Executive has judgment but no restraint.
+The Custodian has restraint but no judgment. Together they're a
+whole. The rule:
+
+  - The Executive proposes and acts.
+  - The Custodian verifies and reports.
+  - The Executive cannot verify its own work.
+  - Every Executive action runs through Custodian checks.
+  - When the Custodian says no, the Executive reports it. It does
+    not route around it.
+  - When the Executive wants to do something the Custodian has no
+    check for, that is a NEW CHECK, not a bypass.
+
+This is the same principle as the trade-idempotency fix and the
+memory-schema fix: the builder wrote something that looked right,
+the check caught it. The Executive will be a much more prolific
+builder, and will need the Custodian more, not less.
+
+How to use this map: find the product you are working on, then
+look for entries with that prefix. Accord is accord.*. Keep is
+keep.*. Custodian is gov.*. The consultancy (front door and sales)
+is ops.consultancy*. The Executive is ops.bosly_executive. The
+Receptionist is ops.bosly_receptionist. The principles and the
+hardware plan are ops.architecture and ops.hardware_plan.
 
 ================================================================
 WHAT BOSLY GOV IS
@@ -1893,6 +1927,190 @@ that has actually happened.
     EmailConnectionForm.tsx. Gmail, Yahoo, and custom IMAP (IONOS)
     all work via app password; only Microsoft OAuth is absent.
     Raised 30 Sept.
+
+[ ] [LIVE] ops.architecture — The principles the build decisions
+    hang from. Written down because every argument about a feature
+    will come back to one of these.
+
+    1. One app, many tenants. Bosly Accord is the platform; the
+       products are toggles inside it. A client logs in once and
+       sees what they've paid for. Not five apps with five logins.
+    2. Isolated data. Each client's data is separate at the
+       storage layer — separate databases, separate keys, separate
+       memory directories. Not "we have access controls"; the data
+       is not together in the first place.
+    3. Shared inference. One model serves many clients. Each
+       request carries its client's context. The model is the
+       expensive part and is paid for once, not once per client.
+    4. No cloud. Ever. The client product runs on hardware Bosly
+       controls. The reason the product is worth anything is that
+       the data never leaves a machine the client's supplier
+       controls. If it outgrows the box, the answer is a bigger
+       box or a second box, both owned. Not a rented one.
+    5. Scale is vertical until it isn't. One machine, upgradeable
+       pieces. The GPU is the swappable heart; RAM, storage, PSU
+       are independent. Current-gen motherboard so the next
+       generation is a swap, not a rebuild.
+
+    Read this before proposing a feature that touches storage,
+    auth, or hosting. If the proposal breaks one of these, it's
+    not the feature that's wrong, it's the proposal.
+
+[ ] [LIVE] ops.bosly_executive — THE CHIEF OF STAFF. The
+    conversation that holds the whole of the digital side of the
+    business so the founder's ADHD doesn't have to.
+
+    What it is: you talk to it, it talks back. You plan together;
+    it holds the plan. You say "leave that with me"; it does the
+    work, and reports back. If something fails, it rolls back and
+    tells you, and you work out what happened together.
+
+    What it does: email, call transcripts and notes, client
+    records and portfolios, projects, leads, admin, the plan, the
+    memory. The threads that currently fall through the cracks.
+
+    What it is not: not a chatbot, not a command line. A
+    persistent colleague that knows the business and the person
+    running it.
+
+    Build order — each step is useful on its own, each teaches
+    what the next needs to be:
+      1. Text interface, working, used daily. Talk to it; it
+         writes to the plan and memory through Custodian tools.
+         This is "stop being the courier" and it's close —
+         Custodian already has the API and the UI (broken).
+      2. Tool loop. It reads the code, proposes patches, runs
+         the checks. Now it builds with you.
+      3. Email and admin. It drafts, you approve, it sends.
+         First "saves me time" feature.
+      4. Client memory and portfolios. It remembers the
+         hairdresser needs X.
+      5. Text-to-speech. It speaks to you. Easier than listening,
+         high value.
+      6. Listening (call transcription). Last, because it's the
+         hardest and the most likely to disappoint. By the time
+         it's built you'll know whether the product works.
+
+    The rule that makes it safe: the Executive cannot verify its
+    own work. Every action goes through Custodian checks. When
+    the Custodian says no, the Executive reports it; it does not
+    route around it. This is the balance of powers — see the map
+    at the top of this file.
+
+    Unattended action requires real rollback. If it acts while
+    the founder is not watching, it must be able to undo, and it
+    must tell the founder when it did. Claimed rollback is not
+    rollback. That is a build in itself.
+
+    Priority: build first. It's the founder's tool and the model
+    for the client version.
+
+[ ] [LIVE] ops.bosly_receptionist — THE AI RECEPTIONIST. The
+    first client-facing toggle. Bounded, and that's the point: a
+    workflow, not a general assistant.
+
+    What it does: answers the call, transcribes, classifies
+    intent (book / enquire / complaint / other), books or routes,
+    logs the call. Same workflow for every client, with their
+    rules and their calendar.
+
+    Why it's bounded: it's a workflow, so it can be specced,
+    built, and verified. Unlike the Executive, it has a finite
+    list of jobs. That's why it's second: the Executive teaches
+    the tooling, the Receptionist proves it on a client.
+
+    Pricing: £1,000–£1,500 build + £250–£500/month ongoing,
+    priced per client against the human equivalent
+    (£1,200–£1,500/month for a human receptionist). Same
+    principle as every toggle: the ceiling is what the human
+    costs, the floor is what the client can bear. Price each one.
+
+    Deadline: January. The first thing a hairdresser (or any
+    small business drowning in phone admin) will pay for.
+
+    Build order: spec the workflow first. The code is mechanical
+    once the spec is right.
+
+[ ] [LIVE] ops.training_set — THE FRAME. The plan, the memory,
+    and the capsule are not admin. They are the training set.
+
+    Long-term intent: Bosly becomes its own AI — a model shaped
+    by the founder's decisions, reasoning, and corrections, fine-
+    tuned on the accumulated data. Not trained from scratch;
+    steered by everything written. Same base, different shape.
+
+    What that needs:
+      - Plans (decisions and why). Have these.
+      - Memory entries (lessons, patterns, incidents). Have
+        these; consistent style matters.
+      - Decisions with reasoning. The gold. In plan entries and
+        in conversations.
+      - Corrections (the "no, not that" moments). Most valuable,
+        because judgment is mostly knowing what not to do.
+      - Domain knowledge (investing principles, ethical
+        exclusions, UK compliance, the consultancy offer).
+
+    What's missing: conversations as data. The reasoning that
+    produced the entries is where the learning is, and right now
+    it evaporates. The capsule is the attempt to hold it. The
+    habit is not yet as strict as the plan or the memory. It is
+    the one to strengthen — the plan holds the result, the
+    capsule holds the thinking, and the thinking cannot be
+    reconstructed after the fact.
+
+    Retrieval first, fine-tuning second. The thing that makes
+    an assistant feel like yours is mostly that it remembers
+    your context. The memory system is retrieval. The fastest
+    path to "Bosly feels like Bosly" is better retrieval, not a
+    bigger model. Fine-tuning comes after.
+
+    The data must be clean to train on. The memory schema check
+    is the model: a model trained on malformed entries learns
+    the malformation. The checks that keep the system honest
+    are the checks that keep the training data good.
+
+    Write for yourself, not for the model. The training value
+    is a side effect of writing well, not a reason to write
+    differently. If plan entries start being written as training
+    data, they stop being good plan entries, and the thing that
+    made them valuable is lost.
+
+[ ] [LIVE] ops.hardware_plan — The box. And the constraint that
+    shapes it.
+
+    Constraint: no cloud. The client product runs on hardware
+    Bosly controls. See ops.architecture, principle 4. This is
+    not a cost decision, it's the promise the product is built
+    on. AWS was used and removed because control of the machine
+    is the whole point.
+
+    Now (personal/first-few-clients box): £1,200–£1,500.
+      - GPU: used RTX 3090 (24GB) is the sweet spot. Runs a
+        14B model comfortably, 32B quantised. The single
+        decision that matters most.
+      - RAM: 32GB minimum, 64GB if running assistant + voice +
+        model together. Cheap, max it.
+      - CPU: mid-range Ryzen. Don't over-spend.
+      - PSU: 1000W. Over-specify now so a second GPU later
+        doesn't need a swap.
+      - Storage: 1TB NVMe.
+      - Motherboard: current-gen. The one place not to save
+        money — it determines how easy every future upgrade is.
+
+    Later (the platform box, when 5+ clients are real): a bigger
+    server for the client tenants. One machine, many tenants,
+    isolated data, shared inference. Not 50 machines; not cloud.
+
+    Upgrade path — the pieces age independently:
+      - GPU: swap when the model grows or clients need more.
+      - RAM / storage: add sticks / add an NVMe. Cheap.
+      - PSU: already sized for a second GPU.
+      - CPU: ages slowest; only swap with a motherboard jump.
+      - Motherboard: current-gen buys 5 years of easy upgrades.
+
+    Home server runs inference, not training. Fine-tuning is done
+    rarely, on rented GPU hours, from data accumulated locally.
+    Home machine runs it; cloud trains it, occasionally.
 
 [ ] [LIVE] ops.consultancy_design — The front door looks correct,
     not striking. The structure and copy are settled; the gap is
