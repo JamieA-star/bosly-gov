@@ -526,6 +526,105 @@ def send_draft_to_me(subject: str, body: str, note: str = "") -> Dict[str, Any]:
     }
 
 
+# ---------------------------------------------------------------------------
+# The scout tool. Runs scripts/lead_scout.py with a validated category
+# and area, reads the CSV it writes, and returns the rows. The model
+# names the job; the tool runs the script. No shell, no free-form args.
+# ---------------------------------------------------------------------------
+
+SCOUT_SCRIPT = Path("/home/bosly_accord/bosly-gov/scripts/lead_scout.py")
+SCOUT_CSV = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout.csv")
+
+# The categories the script knows. Kept in sync with
+# scripts/lead_scout.py CATEGORY_TAGS. If the script gains a
+# category, add it here too — the tool refuses anything not listed.
+SCOUT_CATEGORIES = {
+    "hairdresser", "barber", "beauty", "cafe", "restaurant", "pub",
+    "bakery", "butcher", "florist", "plumber", "electrician", "gardener",
+}
+
+
+def run_lead_scout(category: str, area: str, timeout: int = 180) -> Dict[str, Any]:
+    """Run scripts/lead_scout.py, then read and return the CSV.
+
+    Guards:
+      - category must be in SCOUT_CATEGORIES
+      - area must be a plain string, max 80 chars, no shell metacharacters
+      - the script is invoked with a fixed argv shape — the model cannot
+        add flags or change the output path
+    The output path is fixed (SCOUT_CSV) so the pickup can find it.
+    """
+    category = (category or "").strip().lower()
+    area = (area or "").strip()
+
+    if category not in SCOUT_CATEGORIES:
+        return {
+            "ok": False,
+            "error": f"category {category!r} not in {sorted(SCOUT_CATEGORIES)}",
+        }
+    if not area:
+        return {"ok": False, "error": "area is required (a town name or postcode)"}
+    if len(area) > 80:
+        return {"ok": False, "error": f"area is {len(area)} chars (max 80)"}
+    # No shell metacharacters: this argument goes into an argv list, but
+    # be strict anyway — an area is a name or a postcode.
+    import re as _re
+    if not _re.match(r"^[A-Za-z0-9][A-Za-z0-9 ,.\-'/]*$", area):
+        return {
+            "ok": False,
+            "error": "area must be a plain place name or postcode (letters, digits, spaces, commas, hyphens, apostrophes)",
+        }
+    if not SCOUT_SCRIPT.exists():
+        return {"ok": False, "error": f"scout script not found at {SCOUT_SCRIPT}"}
+
+    import subprocess as _sp
+    try:
+        proc = _sp.run(
+            ["python3", str(SCOUT_SCRIPT),
+             "--category", category,
+             "--area", area,
+             "--out", str(SCOUT_CSV)],
+            capture_output=True, text=True, timeout=timeout,
+        )
+    except _sp.TimeoutExpired:
+        return {"ok": False, "error": f"scout timed out after {timeout}s"}
+    except Exception as e:
+        return {"ok": False, "error": f"could not run the scout: {e}"}
+
+    # The script writes its progress to stdout and its errors (via
+    # SystemExit) to stderr. A non-zero exit with 'mirrors failed' in
+    # stderr means the endpoint is down — say so honestly.
+    combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
+    if proc.returncode != 0:
+        return {
+            "ok": False,
+            "error": "scout failed — endpoint problem, not a zero result. "
+                     + (proc.stderr or proc.stdout or "")[:800],
+        }
+
+    # Read the CSV
+    import csv as _csv
+    if not SCOUT_CSV.exists():
+        return {"ok": False, "error": f"scout ran but wrote no CSV at {SCOUT_CSV}"}
+    try:
+        with SCOUT_CSV.open(encoding="utf-8", newline="") as f:
+            rows = [dict(r) for r in _csv.DictReader(f)]
+    except Exception as e:
+        return {"ok": False, "error": f"could not read the scout CSV: {e}"}
+
+    return {
+        "ok": True,
+        "result": {
+            "category": category,
+            "area": area,
+            "csv_path": str(SCOUT_CSV),
+            "count": len(rows),
+            "rows": rows,
+            "stdout": (proc.stdout or "")[-1000:],
+        },
+    }
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -712,6 +811,34 @@ TOOLS = [
         },
         "fn": send_draft_to_me,
     },
+    {
+        "name": "run_lead_scout",
+        "description": (
+            "Find businesses with no website, from OpenStreetMap, by "
+            "running the lead-scout script. Give a category (hairdresser, "
+            "cafe, pub, plumber, ...) and an area (a town name or "
+            "postcode). Returns the candidates as rows: name, city, "
+            "phone, and whether they have a website. If the Overpass "
+            "endpoint is down, it says so — a failure is never reported "
+            "as zero results. After running, you can save chosen "
+            "candidates with save_thing."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "description": "one of: hairdresser, barber, beauty, cafe, restaurant, pub, bakery, butcher, florist, plumber, electrician, gardener",
+                },
+                "area": {
+                    "type": "string",
+                    "description": "a town name or postcode, e.g. 'Hexham' or 'NE46'",
+                },
+            },
+            "required": ["category", "area"],
+        },
+        "fn": run_lead_scout,
+    },
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}
@@ -818,6 +945,19 @@ def _selftest() -> int:
         import shutil as _sh
         _sh.rmtree(_tmpdir, ignore_errors=True)
         _os.environ.pop("BOSLY_THINGS_DB", None)
+
+    # --- run_lead_scout guards (no network) ---
+    r = run_lead_scout(category="notacategory", area="Hexham")
+    check("run_lead_scout refuses unknown category", not r["ok"])
+
+    r = run_lead_scout(category="hairdresser", area="")
+    check("run_lead_scout refuses empty area", not r["ok"])
+
+    r = run_lead_scout(category="hairdresser", area="X" * 200)
+    check("run_lead_scout refuses oversized area", not r["ok"])
+
+    r = run_lead_scout(category="hairdresser", area="Hexham; rm -rf /")
+    check("run_lead_scout refuses shell metacharacters", not r["ok"])
 
     print()
     print(f"SUMMARY: {passed} passed, {failed} failed")
