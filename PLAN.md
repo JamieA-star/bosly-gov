@@ -2088,18 +2088,58 @@ that has actually happened.
     conversation that holds the whole of the digital side of the
     business so the founder's ADHD doesn't have to.
 
-    What it is: you talk to it, it talks back. You plan together;
-    it holds the plan. You say "leave that with me"; it does the
-    work, and reports back. If something fails, it rolls back and
-    tells you, and you work out what happened together.
+    WHAT IT IS, IN THE FOUNDER'S WORDS. "It will save me from my
+    ADHD, and keep on top of all of the digital stuff for me."
+    You talk to it like a person. It talks back. You plan
+    together, and the plan persists — not a chat that scrolls
+    away, but PLAN.md itself, written as you go. You dump
+    everything that's in your head, and it catches it.
 
-    What it does: email, call transcripts and notes, client
-    records and portfolios, projects, leads, admin, the plan, the
-    memory. The threads that currently fall through the cracks.
+    WHAT IT DOES — THE JOBS IT HOLDS. Each of these is a thing
+    the founder currently does by hand, or drops:
 
-    What it is not: not a chatbot, not a command line. A
+    - The morning briefing. "What's going on today?" — the
+      calendar, the inbox, the plan, the leads, in one answer.
+    - The dump. Everything in the founder's head, said out loud,
+      held. The day, the clients, the builds, the ideas. So the
+      ADHD doesn't have to hold them.
+    - The plan. Planned together, written to PLAN.md, and
+      remembered. The plan entry the Custodian wrote today is
+      the first piece of this working.
+    - "Leave that with me." The founder goes shopping. It works.
+      It calls: "I found the client for that build, I've done X,
+      Y, Z, shall I go ahead?" Yes or no, or "what happened?"
+      and it tells you.
+    - Failure, handled. "That didn't work, but I've rolled it
+      all back. Everything's safe. Should we work out what
+      happened?" Rollback must be real, not claimed, and it must
+      report when it rolled back.
+    - Call notes. It listens to client calls, specialist calls,
+      the hairdresser. It records the useful facts and reads
+      them back.
+    - Client portfolios. "This client is a hairdresser, they
+      need X and Y." It knows that, remembers it, builds from
+      it.
+    - The digital admin. Email, follow-ups, invoices,
+      notifications. The threads that fall through the cracks.
+    - Leads. Businesses that look like a good fit, researched
+      and brought back.
+    - The interface to everything. Accord, Keep, Custodian, the
+      consultancy. One way in. "What's going on?" dips between
+      all of them and answers.
+
+    WHAT IT IS NOT: not a chatbot, not a command line. A
     persistent colleague that knows the business and the person
-    running it.
+    running it. And not the verifier — the Custodian verifies.
+    The Executive proposes and acts; it cannot verify its own
+    work.
+
+    IT IS ALSO A PRODUCT. The same shape, tuned to each client.
+    A hairdresser's chief of staff is the same architecture,
+    different instance. The Executive the founder builds for
+    themselves is the model for the client version. This is why
+    it is built first — it is the founder's tool and the
+    template for the product.
 
     Build order — each step is useful on its own, each teaches
     what the next needs to be:
