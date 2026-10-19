@@ -1137,7 +1137,32 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
-[~] gov.custodian_tools — THE CHIEF OF STAFF. IN PROGRESS 19 Oct.
+[ ] [LIVE] gov.project_chat_context_ignored — FOUND 19 Oct. The
+    project chat handler (_handle_project_chat_post) builds a
+    context_header containing the Accord, the current report,
+    memory, and recent chat — then never passes it to the LLM.
+    run_chat_once only receives {message, project}. So the project
+    chat has been answering without its context. The tool branch
+    (added 19 Oct) now passes context_header as the system prompt
+    when tools are on. The plain path (tools off) still does not.
+    Fix: pass context_header to run_chat_once too, or remove the
+    dead build if it was deliberately abandoned.
+
+[~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
+
+    DONE 19 Oct: routers/tools.py (four tools + guards, 13-case
+    self-test), routers/tool_loop.py (the loop, 8-case self-test
+    monkey-patching the API), tools_prompt.txt (the system prompt),
+    config.json tools_enabled switch. Wired into all three chat
+    paths: /api/chat, /api/chat/stream, and
+    /api/project/{slug}/chat (the endpoint the UI uses). Verified
+    end to end through the UI: read_file and append_plan_entry
+    both work, and the append guard now requires a well-formed
+    entry ([x] name — description), not a bare marker.
+
+    Still open: save_memory and run_check untested through the
+    UI; and the tool behaviour in the plain path (tools off) is
+    unchanged, which is correct but worth confirming.
 
     THE REFRAMING. Until today the Custodian's LLM was explicitly
     told it had NO tools ("You have NO runtime tools in this
@@ -1186,20 +1211,20 @@ that has actually happened.
       - deleting anything
 
     THE BUILD:
-      [ ] routers/tools.py — the four functions, their JSON
+      [x] routers/tools.py — the four functions, their JSON
           schemas, and their guards. No LLM involvement yet;
           testable on their own.
-      [ ] routers/tool_loop.py — the agent loop: call the API
+      [x] routers/tool_loop.py — the agent loop: call the API
           with tools=[...], handle stop_reason == "tool_use",
           run the tool, feed the result back, repeat until
           "end_turn". This is the piece that replaces the
           "no tools" instruction.
-      [ ] server.py — wire the loop into handle_api_chat_stream
+      [x] server.py — wire the loop into handle_api_chat_stream
           (and handle_api_chat), replacing the plain route_llm
           call when tools are enabled.
-      [ ] Remove the "NO runtime tools" instruction from the
+      [x] Remove the "NO runtime tools" instruction from the
           system prompt, but only after the loop is proven.
-      [ ] Test each tool in isolation first, then together, then
+      [x] Test each tool in isolation first, then together, then
           the loop, then the UI.
 
     TIMELINE: real build, not a patch. The tool module is the
