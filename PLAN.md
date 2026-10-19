@@ -4367,7 +4367,19 @@ that has actually happened.
     Hygiene, not growth. Stops you getting bitten; doesn't
     make people buy.
 
-[ ] [LIVE] gov.cron_sanity_repo_wide — Extend checks/cron_sanity.py to
+[x] gov.cron_sanity_repo_wide — DONE 19 Oct. checks/cron_sanity.py
+    now scans every *.sh under bosly-1.0, bosly-keep and bosly-gov
+    for a shebang on byte 1, not just cron-invoked scripts and
+    /usr/local/bin/bosly-*. Skips node_modules, .next, legacy,
+    .git, dist, build. Eight files newly covered (deploy.sh,
+    pm2-start.sh, restore-bosly.sh, start-bosly.sh, scripts/
+    postbuild.sh, scripts/migrate.sh, deploy-safe.sh, and
+    bosly-keep/scripts/run-tests.sh) — all pass. SUMMARY: 30
+    passed, 0 failed. The CRLF class can no longer enter via a
+    repo script.
+
+    Original entry follows.
+    [ ] [LIVE] gov.cron_sanity_repo_wide — Extend checks/cron_sanity.py to
     scan every *.sh file in the repo (not just cron-invoked
     scripts and /usr/local/bin/bosly-*). deploy.sh and
     restore-bosly.sh both had CRLF-broken shebangs and were
