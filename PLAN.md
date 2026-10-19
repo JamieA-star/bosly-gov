@@ -1137,6 +1137,75 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
+[~] gov.custodian_tools — THE CHIEF OF STAFF. IN PROGRESS 19 Oct.
+
+    THE REFRAMING. Until today the Custodian's LLM was explicitly
+    told it had NO tools ("You have NO runtime tools in this
+    mode", llm_router.py:59), and any output resembling a tool
+    call was scrubbed. That was a safety valve, built because the
+    founder was scared the model would go rogue and trash the
+    code. The fear was reasonable. The valve is now the wrong
+    answer, because it means the Custodian can only talk, not act,
+    and the founder is still the courier between the conversation
+    and the plan, memory, and code.
+
+    WHAT IT BECOMES. A chief of staff that can act — but only
+    through declared tools, each with a check on what it writes.
+    The model cannot invent a tool. It cannot run arbitrary code.
+    It cannot write outside the declared shapes. Every action it
+    takes is one of four, and every one is guarded.
+
+    THE FOUR TOOLS (v1):
+      1. append_plan_entry — append a new entry to PLAN.md.
+         Guard: the file must start with "BOSLY GOV — PLAN" (so we
+         are not writing to the wrong file), and the entry must
+         parse as a valid plan block (a [ ]/[~]/[x] marker line).
+         The tool refuses if either check fails.
+      2. save_memory — write a memory entry. Goes through
+         store_memory_item (routers/memory_first.py), so the
+         schema check applies. project_slug must be one of the
+         three known repos. No raw writes to memory.json.
+      3. read_file — read a file under one of the three repos.
+         Bounded: the path must resolve inside the repo root.
+         No traversal, no reads outside the repos, no .env.
+      4. run_check — run a registered check by id (from
+         manifests/checks.yml). No arbitrary commands. The model
+         names a check, not a shell command.
+
+    THE PRINCIPLE, SAME AS THE EXECUTIVE: the Custodian proposes
+    and acts; the checks verify what it did. The model cannot
+    verify its own work. Every write runs the relevant check
+    before it lands, and if the check fails, the tool returns an
+    error to the model, which sees it and tries again or stops.
+
+    WHAT IS NOT A TOOL, AND NEVER WILL BE:
+      - arbitrary shell execution
+      - writing outside the four declared shapes
+      - editing files (only appending — no replace, no delete)
+      - reading .env, secrets, or anything outside the repos
+      - deleting anything
+
+    THE BUILD:
+      [ ] routers/tools.py — the four functions, their JSON
+          schemas, and their guards. No LLM involvement yet;
+          testable on their own.
+      [ ] routers/tool_loop.py — the agent loop: call the API
+          with tools=[...], handle stop_reason == "tool_use",
+          run the tool, feed the result back, repeat until
+          "end_turn". This is the piece that replaces the
+          "no tools" instruction.
+      [ ] server.py — wire the loop into handle_api_chat_stream
+          (and handle_api_chat), replacing the plain route_llm
+          call when tools are enabled.
+      [ ] Remove the "NO runtime tools" instruction from the
+          system prompt, but only after the loop is proven.
+      [ ] Test each tool in isolation first, then together, then
+          the loop, then the UI.
+
+    TIMELINE: real build, not a patch. The tool module is the
+    safe part — write it and test it before the loop exists. The
+    loop is the part that needs the guards to be proven first.
+
 [~] gov.evolve_loop_feedback — IN PROGRESS, digest built. The
     unknown-intents digest is live: lib/intent_classify.py labels each
     question bug / feature / question / other, evolve_feedback.py
