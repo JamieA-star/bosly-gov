@@ -4167,9 +4167,12 @@ that has actually happened.
     llms.txt, llms-full.txt, and possibly elsewhere. The
     kyber code exists but no user data is protected by it.
 
-[ ] [LIVE] ops.ico_registration — Register with the ICO. Not done yet.
-    When done, update /privacy and the FAQ to state it. Until
-    then, both documents must not claim registration.
+[ ] [LIVE] ops.ico_registration — Register with the ICO.
+    SCHEDULED: end of December, just before the day-0 emails go
+    out. Not before — the fee is annual and there's no reason to
+    start paying it months before there are clients to process
+    data for. When done, update /privacy and the FAQ to state it.
+    Until then, both documents must not claim registration.
 
 [x] accord.doc_consistency_audit — DONE 16 Oct, superseded. This
     entry calls itself the "immediate predecessor to
