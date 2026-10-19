@@ -2179,6 +2179,93 @@ that has actually happened.
     auth, or hosting. If the proposal breaks one of these, it's
     not the feature that's wrong, it's the proposal.
 
+[ ] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
+
+    WHAT THIS IS, IN ONE LINE: a digital butler. A personal PA for
+    the founder's life and work — the thing that holds the threads,
+    does the admin, and brings back the work without being asked
+    twice. This entry is the first real job that proves it: finding
+    clients for the consultancy, from search to sent email, with
+    the founder in the loop at every gate.
+
+    THE SEQUENCE, with trigger and guard for each step:
+
+    1. THE SCRIPT RUNS (weekly, cron). The lead-gen script from
+       ops.consultancy Phase 3 runs Sunday night. It reads public
+       data, writes a CSV, exits. Nobody watching. The script is
+       read-only against the internet; it writes one file. No
+       guard needed — it cannot touch anything else.
+
+    2. THE EXECUTIVE NOTICES (on startup or first message). A
+       timestamp check: is lead-scout.csv newer than the last time
+       I read it? If yes, read it and brief the founder: "3 new
+       candidates. Company X has no site and takes bookings by
+       phone. Company Y has a site but no booking. Company Z looks
+       too big. Want the details?" That is the morning briefing,
+       applied to leads. Read-only.
+
+    3. PERMISSION TO RESEARCH. The founder says "go on then" or
+       "research these three". Asking is granting. The Executive
+       reads each site, checks their presence, works out the fit.
+       Read-only — fetching a page doesn't need permission.
+
+    4. THE FOUNDER'S OWN SEARCH. Deliberately in the loop. The
+       Executive's research is an input, not the answer. The
+       founder looks too.
+
+    5. PERMISSION TO DRAFT. The founder says "draft the emails".
+       The Executive writes one per company, adapted to each,
+       using the specific findings from step 3. It does NOT send.
+       Draft is text; it is not an action on the world.
+
+    6. THE DRAFT COMES TO THE FOUNDER. send_draft_to_me emails the
+       drafts to jr-arnott@outlook.com (the address the monitor
+       already uses). SMS is later. The point: the founder reads
+       the draft while on the phone to the Executive, or walking,
+       or away from the desk. Two channels, one loop.
+
+    7. THE FOUNDER APPROVES, and only then: send_email. Guarded.
+       Requires an explicit "send it". Each lead becomes a thing
+       in the business memory — ID, company, what was found, the
+       email sent, the outcome, the date. The "each lead gets an
+       ID; note the outcome" loop from Phase 3, made real.
+
+    THE PROACTIVE TRIGGER IS A FILE, NOT A TIMER. The Executive
+    does not hold a scheduler. It checks "is this file newer than
+    the last time I read it?" A small state file records the
+    last-read timestamp. That is the whole proactive loop, and it
+    is about 20 lines. It means the Executive cannot forget to
+    run; the cron does. It means the Executive only acts when
+    there is something new.
+
+    THE GUARDS, in one place:
+      - The script: writes one CSV, reads public data only.
+      - Step 2 (notice): read-only.
+      - Step 3 (research): fetch, read-only.
+      - Step 5 (draft): produces text, no action.
+      - Step 6 (send draft to founder): sends to the founder only.
+      - Step 7 (send email): guarded, requires explicit approval.
+
+    WHAT THIS NEEDS TO BUILD, in order:
+      [ ] The business memory (Step 1 of the Executive build
+          order). Leads are things. Every step after this writes
+          a thing.
+      [ ] The scouting script as a cron job. The script is Phase 3
+          of ops.consultancy; the cron line is new.
+      [ ] The "new CSV" pickup in the Executive. Timestamp check,
+          read, brief.
+      [ ] draft_email tool. The model drafts, the tool returns
+          the text.
+      [ ] send_draft_to_me tool. Emails the draft to the founder.
+      [ ] send_email tool. Guarded; requires explicit approval.
+
+    WHY THIS IS THE FIRST REAL JOB. It is concrete, it pays
+    (it finds clients), it exercises every part of the Executive
+    (notice, research, draft, ask, send, record), and every step
+    has a natural gate where the founder stays in control. Build
+    this, and the Executive is a working PA. The rest — calls,
+    admin, the voice — is more of the same with different tools.
+
 [ ] [LIVE] gov.executive_orientation_and_reporting — DEFINED 19 Oct.
     How the Executive briefs, reports, and asks permission.
 
