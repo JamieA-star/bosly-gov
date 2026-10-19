@@ -30,6 +30,12 @@ import sys
 from pathlib import Path
 from typing import Any, Dict
 
+# Make "from routers.things import ..." work when this file is run
+# directly (python3 routers/tools.py) — sys.path[0] is routers/ then,
+# not the repo root.
+import sys as _sys
+_sys.path.insert(0, "/home/bosly_accord/bosly-gov")
+
 # ---------------------------------------------------------------------------
 # Roots and constants
 # ---------------------------------------------------------------------------
@@ -363,6 +369,78 @@ def run_check(check_id: str, timeout: int = 120) -> Dict[str, Any]:
 # Registry — what the loop passes to the API
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# The business memory tools (routers/things.py). Same guards as the four
+# Custodian tools: the model cannot invent a store, only use the declared
+# operations.
+# ---------------------------------------------------------------------------
+try:
+    from routers.things import (
+        save_thing as _save_thing_impl,
+        read_thing as _read_thing_impl,
+        find_things as _find_things_impl,
+        link_things as _link_things_impl,
+    )
+except Exception as _things_import_error:
+    _save_thing_impl = None
+    _read_thing_impl = None
+    _find_things_impl = None
+    _link_things_impl = None
+
+
+# ---------------------------------------------------------------------------
+# Tool wrappers for the business memory. Each returns {ok, result|error}
+# exactly like the four Custodian tools, so the loop does not care which
+# family a tool belongs to.
+# ---------------------------------------------------------------------------
+
+def save_thing(kind: str, title: str, body: str = "",
+               status: str = "active", tags: str = "",
+               thing_id: str = "") -> Dict[str, Any]:
+    if _save_thing_impl is None:
+        return {"ok": False, "error": "things store unavailable"}
+    try:
+        return _save_thing_impl(
+            kind=kind, title=title, body=body,
+            status=status, tags=tags,
+            thing_id=thing_id or None,
+        )
+    except Exception as e:
+        return {"ok": False, "error": f"save_thing raised: {e}"}
+
+
+def read_thing(thing_id: str) -> Dict[str, Any]:
+    if _read_thing_impl is None:
+        return {"ok": False, "error": "things store unavailable"}
+    try:
+        return _read_thing_impl(thing_id=thing_id)
+    except Exception as e:
+        return {"ok": False, "error": f"read_thing raised: {e}"}
+
+
+def find_things(kind: str = "", status: str = "",
+                query: str = "", limit: int = 50) -> Dict[str, Any]:
+    if _find_things_impl is None:
+        return {"ok": False, "error": "things store unavailable"}
+    try:
+        return _find_things_impl(
+            kind=kind or None, status=status or None,
+            query=query or None, limit=int(limit) if limit else 50,
+        )
+    except Exception as e:
+        return {"ok": False, "error": f"find_things raised: {e}"}
+
+
+def link_things(from_id: str, to_id: str,
+                relation: str = "related") -> Dict[str, Any]:
+    if _link_things_impl is None:
+        return {"ok": False, "error": "things store unavailable"}
+    try:
+        return _link_things_impl(from_id=from_id, to_id=to_id, relation=relation)
+    except Exception as e:
+        return {"ok": False, "error": f"link_things raised: {e}"}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -432,6 +510,82 @@ TOOLS = [
             "required": ["check_id"],
         },
         "fn": run_check,
+    },
+    {
+        "name": "save_thing",
+        "description": (
+            "Save a thing in the business memory: a client, a project, "
+            "a lead, an idea, anything the founder needs held. `kind` "
+            "is a free string (client, lead, project, idea, ...). "
+            "`title` is one line. `body` is markdown detail. If you "
+            "pass an existing `thing_id`, it updates; otherwise it "
+            "creates. Only the declared fields are stored."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "kind": {"type": "string", "description": "e.g. client, lead, project, idea"},
+                "title": {"type": "string", "description": "one-line label"},
+                "body": {"type": "string", "description": "markdown detail"},
+                "status": {"type": "string", "enum": ["active", "paused", "done", "lost"]},
+                "tags": {"type": "string", "description": "comma-separated tags, optional"},
+                "thing_id": {"type": "string", "description": "pass to update an existing thing"},
+            },
+            "required": ["kind", "title"],
+        },
+        "fn": save_thing,
+    },
+    {
+        "name": "read_thing",
+        "description": (
+            "Read one thing from the business memory by id. Returns "
+            "the full record: kind, title, status, body, tags, "
+            "timestamps."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "thing_id": {"type": "string", "description": "the thing's id"},
+            },
+            "required": ["thing_id"],
+        },
+        "fn": read_thing,
+    },
+    {
+        "name": "find_things",
+        "description": (
+            "Search the business memory. Filter by kind, status, and/or "
+            "a text query (matches title, body, and tags). Returns up "
+            "to 50 things by default, newest-updated first."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "kind": {"type": "string"},
+                "status": {"type": "string", "enum": ["active", "paused", "done", "lost"]},
+                "query": {"type": "string"},
+                "limit": {"type": "integer", "description": "1-500, default 50"},
+            },
+        },
+        "fn": find_things,
+    },
+    {
+        "name": "link_things",
+        "description": (
+            "Record a relationship between two things, e.g. a lead "
+            "becoming a client, or a project belonging to a client. "
+            "Stored as a tag line on the from-thing."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "from_id": {"type": "string"},
+                "to_id": {"type": "string"},
+                "relation": {"type": "string", "description": "e.g. became, belongs_to, related_to"},
+            },
+            "required": ["from_id", "to_id"],
+        },
+        "fn": link_things,
     },
 ]
 
@@ -516,6 +670,29 @@ def _selftest() -> int:
         "run_check allows gov.memory_schema",
         r["ok"] and r["result"]["exit_code"] in (0, 1),
     )
+
+    # --- business memory wrappers (use a temp DB) ---
+    import os as _os, tempfile as _tmp
+    _tmpdir = _tmp.mkdtemp()
+    _os.environ["BOSLY_THINGS_DB"] = str(Path(_tmpdir) / "things.db")
+    try:
+        r = save_thing(kind="lead", title="Test lead",
+                       body="Testing the wrapper")
+        check("save_thing wrapper creates",
+              r["ok"] and "id" in r["result"], detail=str(r))
+        tid = r["result"]["id"] if r["ok"] else ""
+        r = read_thing(tid)
+        check("read_thing wrapper reads",
+              r["ok"] and r["result"]["title"] == "Test lead", detail=str(r))
+        r = find_things(kind="lead")
+        check("find_things wrapper finds",
+              r["ok"] and r["result"]["count"] >= 1, detail=str(r))
+        r = save_thing(kind="", title="x")
+        check("save_thing wrapper refuses empty kind", not r["ok"])
+    finally:
+        import shutil as _sh
+        _sh.rmtree(_tmpdir, ignore_errors=True)
+        _os.environ.pop("BOSLY_THINGS_DB", None)
 
     print()
     print(f"SUMMARY: {passed} passed, {failed} failed")
