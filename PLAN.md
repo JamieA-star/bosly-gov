@@ -1149,6 +1149,42 @@ that has actually happened.
 
 [x] accord.usage_capture_wiring — DONE 21 Sept. Wired useUsageTracking into all nine workspace pills (active, finance, health, calendar, contacts, inbox, invoice-analytics, social, data-health). Removed the duplicate hook at components/useUsageTracking.ts. UsageEvent now captures product usage. Unblocks gov.evolve_loop. (The original task text was left below the DONE summary until 5 Oct, which made the entry read as half-open.)
 
+[x] accord.db_in_git — DONE 19 Oct. A database backup,
+    prisma/dev.db.pre-onboarding-reset.20260308-095110, had been
+    tracked in git since March (commit c9ff4ba).
+
+    WHAT WAS IN IT, inspected 19 Oct: one user
+    (jr-arnott@outlook.com, name "bosly", a pbkdf2 password hash —
+    not a plaintext password), five contacts (Test Contact, Kevin,
+    Jamie Arnott, Sarah, Tom — the founder's own contacts and test
+    entries), eight test tasks ("AUTH TEST — created via PA",
+    "Real-use test task", "Work"), thirty-four test cards (mostly
+    "TEST CARD 3" duplicates, one hairdressing lead), six activity-
+    log rows. Every other table empty — no inbox, no messages, no
+    conversations, no social accounts, no channel accounts.
+
+    The only real third-party detail was a business email of the
+    founder's own (contact@emporiumon.co.uk). No client data, no
+    third party's data, no financial records.
+
+    DECIDED: left in git history, not rewritten. A history rewrite
+    is a destructive operation with a real chance of error, and the
+    thing protected is the founder's own dead test data from March.
+    Revisit if the repo ever becomes public, or if the password
+    hash could ever be a live credential.
+
+    FIXED: prisma/dev.db (the live database) was untracked but not
+    ignored, because the .gitignore rule named bosly.db, not the
+    prisma path the app writes to. .gitignore now covers
+    prisma/dev.db, prisma/*.db, prisma/*.pre-onboarding-reset*,
+    prisma/*.backup*. The March backup is untracked (git rm
+    --cached). The file remains on disk for inspection. Commit
+    0e525e3.
+
+    The lesson: a database file is live data, not source. It must
+    be ignored from the first day, at the path the app actually
+    uses, not at the path someone guessed.
+
 [ ] [LIVE] ops.send_email_test_address — FOUND 19 Oct. The full
     lead workflow works: find, draft, deliver, confirm, send. The
     end-to-end test sent to hello@cafecorner.example, which is a
