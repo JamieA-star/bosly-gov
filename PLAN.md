@@ -1148,6 +1148,40 @@ that has actually happened.
     Fix: pass context_header to run_chat_once too, or remove the
     dead build if it was deliberately abandoned.
 
+[ ] [LIVE] ops.capsule — THE CAPSULE HABIT. DEFINED 19 Oct.
+
+    A capsule is a session record: not a summary, not a memory
+    entry, but the reasoning trail. It answers "how did this
+    session go, and why" for a future session — and, long-term,
+    it is part of the training set.
+
+    LOCATION: /mnt/bosly/bosly-data/copilot-knowledge/<slug>/capsules/YYYY-MM-DD-name.md
+
+    FORMAT:
+      - Date and session name
+      - Commits made
+      - What happened (the arc, a few paragraphs)
+      - The decisions, and why (the valuable part)
+      - What was built
+      - What was found (bugs, gaps, findings)
+      - What's open (what a future session picks up)
+      - The lesson, if there is one
+
+    RULE: write for yourself, not for the model. The training
+    value is a side effect of writing well, not a reason to write
+    differently. A capsule that is good to read is good training
+    data; one written as training data is neither.
+
+    THE HABIT: one capsule per session that produced something.
+    Not every conversation — every session that shipped, found,
+    or decided. The plan holds the result; the capsule holds the
+    thinking.
+
+    First capsule: 2026-10-19-custodian-tools.md.
+
+    Not yet: a schema check. The memory has one (memory_schema);
+    capsules don't. Worth adding when the habit is established.
+
 [~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
 
     DONE 19 Oct: routers/tools.py (four tools + guards, 13-case
