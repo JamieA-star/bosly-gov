@@ -2192,6 +2192,43 @@ that has actually happened.
     auth, or hosting. If the proposal breaks one of these, it's
     not the feature that's wrong, it's the proposal.
 
+[ ] [LIVE] accord.lead_machinery — FOUND 19 Oct, forgotten. A
+    real lead pipeline already exists in Accord, built for the
+    gardening business, and it was not in the plan. Three files:
+
+    lib/auto-lead.ts (5.4 KB) — maybeAutoLeadFromConversationId:
+    reads a conversation, decrypts the inbound message, checks
+    whether it is already linked to a card, and if not, creates a
+    lead card from the contact. The card carries the source
+    (email / WhatsApp / Instagram / Facebook / phone / website),
+    the contact details, and the first meaningful line of the
+    message as the title.
+
+    lib/leadSources.ts (110 B) — the six-source taxonomy.
+
+    .data/lead-values.json — per-lead values. Eight entries now
+    (hedge trimming £80, patio cleaning £150, ...). Used to
+    prioritise; probably test data but the structure is real.
+
+    Wired into the app: app/api/user/route.ts:24 exposes
+    leadSources, so this is live, not dead code.
+
+    THREE THINGS CALLED "LEAD", and they must not be conflated:
+      1. accord.lead_machinery (this) — the gardening business's
+         inbox-to-lead capture and valuation. Live in the app.
+      2. ops.consultancy Phase 3 — the scouting script that finds
+         businesses with no website. A script, not the app.
+      3. The Executive's business memory (things store) — holds
+         leads among everything else. A store, not a pipeline.
+
+    They could meet one day: a gardening lead is a thing, and
+    could live in the things store. But they are different jobs
+    today, and the plan should say so before the word "lead"
+    hides the difference.
+
+    Not touched by today's work. Recorded so it is not forgotten
+    again.
+
 [ ] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
 
     WHAT THIS IS, IN ONE LINE: a digital butler. A personal PA for
