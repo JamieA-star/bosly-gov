@@ -2192,6 +2192,28 @@ that has actually happened.
     auth, or hosting. If the proposal breaks one of these, it's
     not the feature that's wrong, it's the proposal.
 
+[ ] [LIVE] ops.external_services_degrade_honestly — FOUND 19 Oct.
+    Three times today an external thing failed and the system lied
+    about it:
+
+    - pm2 restart did not reload changed Python; the service kept
+      running old code and reported 'online'.
+    - Cloudflare Access looked configured but was not attached;
+      gov.bosly.app went straight through with no login.
+    - All three Overpass mirrors 502'd or timed out; the lead
+      scout printed '0 businesses found', which looked identical
+      to a real zero.
+
+    The rule: when an external service fails, say so. A zero result
+    and an outage are different states and must read differently.
+    The lead scout now does this ('this is an endpoint problem,
+    not a zero result'). The pm2 note is: use delete + start, not
+    restart. The Cloudflare note is: attach the policy and save
+    the application, or the login never appears.
+
+    General: any code that calls something outside the process
+    must distinguish 'it failed' from 'it returned nothing'.
+
 [ ] [LIVE] accord.lead_machinery — FOUND 19 Oct, forgotten. A
     real lead pipeline already exists in Accord, built for the
     gardening business, and it was not in the plan. Three files:
