@@ -230,11 +230,17 @@ def run_with_tools(
             result = dispatch(name, args)
             result_for_model = _truncate_for_model(result)
 
+            _tid = ""
+            if result.get("ok"):
+                _r = result.get("result") or {}
+                if isinstance(_r, dict):
+                    _tid = str(_r.get("thing_id") or "")
             yield {
                 "type": "tool_call",
                 "name": name,
                 "ok": bool(result.get("ok")),
                 "error": result.get("error", ""),
+                "thing_id": _tid,
             }
 
             tool_results.append({

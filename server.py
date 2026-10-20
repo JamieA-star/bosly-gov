@@ -1307,10 +1307,25 @@ class BoslyHandler(BaseHTTPRequestHandler):
                 chat_history = []
 
             recent_chat = chat_history[-50:] if len(chat_history) > 50 else chat_history
+            def _render_chat_msg(m):
+                role = m.get("role", "unknown")
+                text = m.get("message") or m.get("content") or ""
+                extra = ""
+                tc = m.get("tool_calls")
+                if isinstance(tc, list) and tc:
+                    bits = []
+                    for t in tc:
+                        if not isinstance(t, dict):
+                            continue
+                        nm = str(t.get("name", "?"))
+                        tid = str(t.get("thing_id") or "")
+                        bits.append(f"{nm} ({tid})" if tid else nm)
+                    if bits:
+                        extra = " [used: " + ", ".join(bits) + "]"
+                return f"{role}: {text}{extra}"
+
             recent_chat_text = "\n".join(
-                f"{m.get('role', 'unknown')}: {m.get('message', m.get('content', ''))}"
-                for m in recent_chat
-                if isinstance(m, dict)
+                _render_chat_msg(m) for m in recent_chat if isinstance(m, dict)
             )
 
             # Redact sensitive info before sending to LLM
@@ -1319,11 +1334,12 @@ class BoslyHandler(BaseHTTPRequestHandler):
             recent_chat_text = _redact_sensitive(recent_chat_text)
 
             context_header = (
+                f"[Recent chat — read this first, it is the conversation so far]\n"
+                f"{recent_chat_text[:4000]}\n\n"
                 f"[Project: {slug}]\n"
-                f"[Governance Accord:]\n{accord_content[:3000]}\n\n"
-                f"[Current Report:]\n{report_content[:5000]}\n\n"
-                f"[Memory:]\n{json.dumps(memory_data, indent=2)[:2000]}\n\n"
-                f"[Recent chat:]\n{recent_chat_text[:3000]}\n\n"
+                f"[Governance Accord:]\n{accord_content[:1500]}\n\n"
+                f"[Current Report:]\n{report_content[:2000]}\n\n"
+                f"[Memory:]\n{json.dumps(memory_data, indent=2)[:1000]}\n\n"
                 f"User message: {user_message}"
             )
 
@@ -1363,11 +1379,14 @@ class BoslyHandler(BaseHTTPRequestHandler):
                         if et == "token":
                             answer_parts.append(str(ev.get("text", "")))
                         elif et == "tool_call":
-                            tool_events.append({
+                            _te = {
                                 "name": ev.get("name", ""),
                                 "ok": bool(ev.get("ok")),
                                 "error": ev.get("error", ""),
-                            })
+                            }
+                            if ev.get("thing_id"):
+                                _te["thing_id"] = ev["thing_id"]
+                            tool_events.append(_te)
                         elif et == "error":
                             self._send_json(
                                 {"ok": False, "error": ev.get("error", "Tool loop error")},
@@ -1386,9 +1405,16 @@ class BoslyHandler(BaseHTTPRequestHandler):
                 if not reply:
                     reply = "(no reply text)"
 
+                # Save the assistant turn WITH the tool events, so the
+                # next turn can see what was actually done. Events, not
+                # results — a read_file result can be 400 KB; the event
+                # is {name, ok, error}, which is small and enough.
+                assistant_turn = {"role": "assistant", "message": reply}
+                if tool_events:
+                    assistant_turn["tool_calls"] = tool_events
                 updated_chat = chat_history + [
                     {"role": "user", "message": user_message},
-                    {"role": "assistant", "message": reply},
+                    assistant_turn,
                 ]
                 if len(updated_chat) > 50:
                     updated_chat = updated_chat[-50:]
