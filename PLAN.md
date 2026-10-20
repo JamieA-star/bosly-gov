@@ -888,7 +888,12 @@ that has actually happened.
     discipline: invoice the moment a milestone is hit, Pay Now link,
     no Net 30. These gate everything — no paid work without them.
 
-    [ ] Phase 3 — The lead-gen tool.
+    [~] Phase 3 — The lead-gen tool. BUILT 20 Oct (see
+    ops.scout_cron for the pipeline details). OSM discovery,
+    Companies House enrichment, and ranking are done. Google is
+    built and inert until the key exists. Employee count and ICO
+    are not done; they are optional size signals.
+
     The filter. Reduces hundreds of thousands of businesses to a
     shortlist worth researching by hand. Not a research engine, not
     a CRM — it finds strong candidates and hands them over.
@@ -1208,20 +1213,39 @@ that has actually happened.
     with confirmed=True. Every piece is built and tested except the
     live scout run.
 
-[x] ops.scout_cron — DONE 20 Oct. The lead scout runs on its own:
-    Sunday 22:00, hairdresser in Newcastle upon Tyne, writing to
-    .data/governor/lead-scout.csv with a log alongside. The
-    Executive's pickup notices the CSV when it changes and briefs
-    on the candidates.
+[x] ops.scout_cron — DONE 20 Oct. The pipeline: sweep -> Companies
+    House -> Google (when keyed) -> rank.
 
-    Verified: the exact cron command runs now, and fails honestly
-    when Overpass is down ('endpoint problem, not a zero result').
-    When the endpoint is back, the scout writes hairdressers and
-    the pickup briefs on them — no code change needed.
+    WHAT WAS BUILT:
+      scripts/lead_scout.py     county sweep from lead-scout.config.json.
+        50 counties in rotation, state file remembers where it is,
+        wraps after a year. Every shop and craft with a phone and
+        no website, capped at 250, split by tag family so Overpass
+        is not overloaded.
+      scripts/ch_enrich.py      Companies House: status, incorporation
+        date, age, SIC, directors, with a match confidence.
+      scripts/google_enrich.py  Google Places Text Search: rating,
+        review count, status. Built and inert until
+        GOOGLE_PLACES_API_KEY exists. Skips cleanly.
+      scripts/lead_rank.py      weights from config. CH signals count
+        only at medium/high confidence, so a guess does not outrank
+        a verified company. Top 15, top 10 call-listed.
+      scripts/lead_pipeline.py  one entry point, the thing the cron
+        calls.
 
-    Change the category or area by editing the crontab line. When
-    there is more than one category/area pair worth running, move
-    them into a config file (Phase 3: config not code).
+    VERIFIED on Northumberland, 20 Oct: 250 rows swept, 250 CH
+    lookups, ranked to 15. The top 5 all have verified limited
+    companies with real ages and directors. The low-confidence
+    name matches fell out of the top.
+
+    STILL TO DO:
+      - Install the cron: Saturday 23:00 (sweep), Sunday 23:00
+        (--retry), Monday 06:00 (rank).
+      - Point the Executive's pickup at lead-scout-ranked.csv, not
+        lead-scout.csv, so it briefs on the 15, not the 250.
+      - Google key: register, paste, no code change.
+      - Employee count (Phase 3 step 3): Companies House accounts
+        files. Fiddly; approximate from SIC or skip in v1.
 
 [x] gov.tool_results_not_persisted — DONE 20 Oct. The Executive
     lost continuity between turns because only the message was
