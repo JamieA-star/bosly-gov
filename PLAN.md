@@ -1213,6 +1213,26 @@ that has actually happened.
     with confirmed=True. Every piece is built and tested except the
     live scout run.
 
+[ ] [LIVE] gov.config_patch_preserve_keys — FOUND 20 Oct. Three
+    times today a config file lost data to a patch that rewrote it
+    from a partial state:
+      1. lead-scout.config.json: the fit.weights object was replaced
+         with only the three new keys, dropping has_phone,
+         bookable_trade, has_address and the CH weights. Every row
+         scored 0; the ranking looked broken.
+      2. Earlier: the same class on a smaller scale — a config edit
+         that set one key and dropped others.
+
+    The fix, in code: the ranker now refuses to run if fit.weights
+    is missing core keys. A loud refusal is better than a silent
+    zero.
+
+    The rule, for the future: a patch that edits a JSON or YAML
+    config must PRESERVE the keys it does not own. Load, modify,
+    write — never reconstruct from a partial dict. And where a
+    partial config would silently misbehave, add a guard that
+    refuses.
+
 [x] ops.scout_cron — DONE 20 Oct. The pipeline: sweep -> Companies
     House -> Google (when keyed) -> rank.
 
