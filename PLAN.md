@@ -1208,13 +1208,20 @@ that has actually happened.
     with confirmed=True. Every piece is built and tested except the
     live scout run.
 
-[ ] [LIVE] gov.tool_results_not_persisted — FOUND 19 Oct. The
-    Executive loses conversational continuity between turns because
-    only the user message and the assistant's summary are saved to
-    chat.json. The tool calls and their results are not. So on the
-    next turn the model cannot see the draft it just produced, and
-    asks the founder to repeat themselves — which the digital
-    butler should never do.
+[x] gov.tool_results_not_persisted — DONE 20 Oct. The Executive
+    lost continuity between turns because only the message was
+    saved. Three fixes: tool_call events now carry the result's
+    thing_id; the saved tool_events and the context renderer show
+    it ('[used: draft_email (thing-...)]'); and the context header
+    puts [Recent chat] first, with the project background smaller.
+    Plus: the prompt says check for an existing active draft before
+    drafting.
+
+    Verified: turn 1 reused the existing draft instead of making a
+    second; turn 2 found the draft by name, checked the .example
+    address, refused it, and asked for a real one. The model no
+    longer says 'the recent exchange was about what Bosly Gov is
+    for'.
 
     Two consequences found today:
       - 'send it' failed because the draft was not in history. Fixed
