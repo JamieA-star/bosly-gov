@@ -1274,6 +1274,47 @@ that has actually happened.
         nothing has been restored into a scratch database. That is
         the next session's first job.
 
+[x] ops.backups — DONE 20 Oct. Four backup holes found, all closed.
+
+    WHAT WAS FOUND:
+      - The Postgres dump of the Accord database had been EMPTY for
+        at least five days. Every bosly-db-*.gz was 20 bytes — a
+        gzipped nothing. Cause: sudo -u postgres needs a password
+        cron cannot give, and '2>/dev/null || true' turned the
+        failure into a success.
+      - The data tarball was 370 MB per day, 98% of it node_modules
+        (1.1 GB of npm packages), backed up seven times.
+      - The governor state (things.db, memory, lead CSVs, capsules)
+        had no backup at all.
+      - The state backup's cron line was misspelled three times
+        (backup_stat.py), each time silently.
+
+    WHAT WAS FIXED:
+      - Postgres: a bosly_accord role with peer auth and grants on
+        the bosly database, default privileges for future tables.
+        pg_dump -d bosly works without sudo, under cron. The dump is
+        126 KB. No '|| true'; a dump under 1 KB exits non-zero.
+      - The data tarball excludes node_modules, _snapshots, test
+        output, and logs: 370 MB -> 8.1 MB.
+      - scripts/backup_state.py discovers the governor state by
+        rule, not by list — a new memory.json, chat.json, .db, or
+        capsule is covered without editing the script. Every file
+        checked non-empty; every .db gets PRAGMA quick_check.
+        14-case self-test. Keeps 14 days.
+      - Both scripts live in the repo; the cron points at them.
+      - Backup dir: 4.1 GB -> 74 MB.
+
+    THE LESSON: '2>/dev/null || true' is how a backup dies silently.
+    A backup that has never been restored is a hope, not a backup.
+    Every backup step must fail loudly, and every backup must be
+    checked for size and integrity — not just for having run.
+
+    STILL TO DO:
+      - Test a restore. The dump opens and the things.db opens, but
+        nothing has been restored into a scratch database. That is
+        the next session's first job — the only proof a backup is
+        real.
+
 [x] ops.scout_routes — DONE 20 Oct. The Executive works each
     candidate by its contact_route.
 
