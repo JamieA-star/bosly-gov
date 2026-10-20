@@ -1208,6 +1208,21 @@ that has actually happened.
     with confirmed=True. Every piece is built and tested except the
     live scout run.
 
+[x] ops.scout_cron — DONE 20 Oct. The lead scout runs on its own:
+    Sunday 22:00, hairdresser in Newcastle upon Tyne, writing to
+    .data/governor/lead-scout.csv with a log alongside. The
+    Executive's pickup notices the CSV when it changes and briefs
+    on the candidates.
+
+    Verified: the exact cron command runs now, and fails honestly
+    when Overpass is down ('endpoint problem, not a zero result').
+    When the endpoint is back, the scout writes hairdressers and
+    the pickup briefs on them — no code change needed.
+
+    Change the category or area by editing the crontab line. When
+    there is more than one category/area pair worth running, move
+    them into a config file (Phase 3: config not code).
+
 [x] gov.tool_results_not_persisted — DONE 20 Oct. The Executive
     lost continuity between turns because only the message was
     saved. Three fixes: tool_call events now carry the result's
