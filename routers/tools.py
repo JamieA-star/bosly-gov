@@ -766,6 +766,53 @@ def send_email(
     }
 
 
+# ---------------------------------------------------------------------------
+# read_leads — this week's ranked shortlist, as structured rows.
+# The path is fixed. The model asks for "this week's leads" and gets
+# the rows; it does not pass a path, so it cannot read the log or the
+# state or anything else in the governor directory.
+# ---------------------------------------------------------------------------
+
+LEADS_CSV = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout-ranked.csv")
+
+
+def read_leads(only_call_list: bool = False, limit: int = 15) -> Dict[str, Any]:
+    """Read the ranked lead shortlist.
+
+    Guards: fixed path; only_call_list is a bool; limit is 1-50.
+    Returns the rows as dicts, in ranked order.
+    """
+    if not LEADS_CSV.exists():
+        return {
+            "ok": False,
+            "error": (
+                "no ranked lead file yet — the Saturday sweep may not "
+                "have run, or the ranker has not written it"
+            ),
+        }
+    if limit < 1 or limit > 50:
+        return {"ok": False, "error": "limit must be 1-50"}
+    try:
+        import csv as _csv
+        with LEADS_CSV.open(newline="", encoding="utf-8") as f:
+            rows = [dict(r) for r in _csv.DictReader(f)]
+    except Exception as e:
+        return {"ok": False, "error": f"could not read leads: {e}"}
+
+    if only_call_list:
+        rows = [r for r in rows if (r.get("call_list") or "") == "yes"]
+    rows = rows[:limit]
+
+    return {
+        "ok": True,
+        "result": {
+            "count": len(rows),
+            "total_in_file": len(rows),
+            "rows": rows,
+        },
+    }
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1011,6 +1058,33 @@ TOOLS = [
         },
         "fn": send_email,
     },
+    {
+        "name": "read_leads",
+        "description": (
+            "Read this week's ranked lead shortlist: the top businesses "
+            "the scout found, ranked by fit, with Companies House and "
+            "Google data attached. Use this when the founder says 'work "
+            "this week's list' or 'what's in this week's sweep?'. Set "
+            "only_call_list=true to get just the top 10 marked for a "
+            "call. Each row has name, phone, city, category, fit_score, "
+            "fit_breakdown, call_list, ch_name, ch_status, ch_age_months, "
+            "match_confidence, and google_rating/reviews if available."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "only_call_list": {
+                    "type": "boolean",
+                    "description": "true to return only the call-list rows",
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "max rows, 1-50 (default 15)",
+                },
+            },
+        },
+        "fn": read_leads,
+    },
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}
@@ -1146,6 +1220,12 @@ def _selftest() -> int:
 
     r = send_email(to="client@example.com", subject="x", body="", confirmed=True)
     check("send_email refuses empty body", not r["ok"])
+
+    # read_leads guards (no file dependency for the refusal cases)
+    r = read_leads(limit=0)
+    check("read_leads refuses limit 0", not r["ok"])
+    r = read_leads(limit=999)
+    check("read_leads refuses limit 999", not r["ok"])
 
     print()
     print(f"SUMMARY: {passed} passed, {failed} failed")
