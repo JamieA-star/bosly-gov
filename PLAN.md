@@ -78,6 +78,124 @@ Receptionist is ops.bosly_receptionist. The principles and the
 hardware plan are ops.architecture and ops.hardware_plan.
 
 ================================================================
+PRODUCT DESIGN — DECIDED 20 OCTOBER 2026
+================================================================
+
+These decisions were made in conversation and are recorded here in
+full, because they define what Accord is and what it is not.
+
+ACCORD — TWO PRODUCTS, TWO PROMISES
+
+  ACCORD VAULT — as it stands now. Nothing changes. Fully
+  encrypted, the user owns their data, the developer is blind.
+  Anyone can sign up and feel safe. No hosted assistant runs
+  against it, so the promise stays true. Includes the health pill.
+
+  ACCORD MANAGED — for consultancy clients from Day Zero. Bosly
+  sets it up, hands over the passwords, strongly recommends the
+  client changes them, and keeps backend access to monitor and
+  maintain — not to read business content.
+
+    INCLUDED IN THE BASE (£25/month):
+      active, calendar, contacts, finances, settings
+
+    IN SETTINGS, AS TOGGLES, EACH AN EXTRA COST:
+      the Executive
+      the AI receptionist
+      anything built thereafter
+
+    THE PRINCIPLE: the base is one product at one price. Every
+    toggle is a separate product, priced per client against the
+    human it replaces or the value it adds.
+
+    THE HEALTH PILL IS NOT PRESENT in the managed instance. Not
+    "switched off" — not there. Health is a vault feature. A
+    business instance holds business data; the owner's medical
+    records are not business data. This removes special-category
+    data from the managed product entirely, which simplifies the
+    ICO registration, the DPIA, and the privacy notice.
+
+    DATA HEALTH (the security scan — leaked credentials, breaches,
+    dark web) IS in the managed base, and the Executive can read
+    it. It is about the business's safety, not the owner's body.
+
+THE EXECUTIVE IS THE CHATBOT, NOT A NEW SCREEN
+
+  Accord already has a chatbot: a conversation window in the PWA,
+  client-side, with the key in the session. ChatDrawer.tsx already
+  calls useVault() and decrypt() in the browser — the decryption is
+  client-side today.
+
+  The Executive is that same chat window, in managed mode, with
+  tools:
+    Vault: read-only. Answers questions about the user's data,
+      which it can read because it is in their session. NO tools.
+    Managed, Executive toggle ON: the same chat gains tools —
+      read the calendar, draft the email, save a thing, call the
+      scout, read the ecosystem. It acts in the client's session,
+      with the client's key.
+    Managed, Executive toggle OFF: the vault chatbot again.
+
+  THE TOGGLE IS THE GUARD: tools are present only in managed mode,
+  and only when the Executive is on. A vault chat can never gain a
+  tool. That is what keeps the vault promise true.
+
+THE ONE THING THAT MOVES: THE MODEL CALL
+
+  Today the chat posts to /api/chat, a server route, so the prompt
+  (and the decrypted content) goes to the server for the model
+  call. Decryption is client-side; the model call is not.
+
+  The target: the model call moves out of the server. Through a
+  proxy for now (the prompt leaves the device; the key does not).
+  A local model on the client's device is the direction, when the
+  hardware exists.
+
+  THE HONEST CAVEAT: a PWA's memory is not a hardware enclave. A
+  determined attacker with the device unlocked could in principle
+  read the key while the Executive runs. The promise is "the
+  server cannot see it" — true. It is not "no one can."
+
+THE RECEPTIONIST IS HYBRID
+
+  A phone call needs a server to answer it. The receptionist hears
+  the call, and the transcript is encrypted immediately with the
+  client's key. The Executive reads it in the PWA. The server sees
+  the audio; it never holds the plaintext transcript. Stated, not
+  hidden.
+
+THE TRANSPARENCY STATEMENT, shown in the managed instance
+
+  "This is a managed Accord. The person who set it up for you —
+  Bosly — can access the areas you switch on, to support you and
+  adapt your products. You can see exactly what is on, switch any
+  of it off, change your passwords, or remove Bosly's access
+  entirely. We do not read your data unless you ask us to, and
+  every access is logged."
+
+THE CLIENT MUST BE ABLE TO LEAVE
+
+  Change password, revoke access, and the managed instance becomes
+  a vault. If they cannot, it is not consent, it is lock-in.
+
+NOT YET
+
+  the toggle table, the audit log, the revoke flow, the per-mode
+  privacy notice, the client-side model call, the pricing per
+  toggle.
+
+THE BUILD, IN ORDER
+
+  1. Move the model call out of /api/chat into the browser, via a
+     proxy. Decryption is already client-side.
+  2. Managed mode: the same chat, with the tool loop added when the
+     Executive toggle is on.
+  3. The tools, client-side: read_file, draft_email, save_thing,
+     ecosystem_state. The server holds ciphertext and routes.
+  4. The receptionist: hybrid, with the transcript encrypted
+     immediately.
+
+================================================================
 WHAT BOSLY GOV IS
 ================================================================
 
