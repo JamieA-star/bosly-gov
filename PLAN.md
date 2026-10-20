@@ -2729,18 +2729,26 @@ that has actually happened.
     found the Café Corner lead by name and read the email
     from the record.
 
-    STEP 2 — THE MORNING BRIEFING. [~] PARTIAL 19 Oct.
+    STEP 2 — THE MORNING BRIEFING. [~] PARTIAL 20 Oct.
     Read-only. Calendar, inbox, plan, business memory. One
     answer. No actions.
-    BUILT: the pickup (routers/pickup.py) — the Executive
-    notices a new scout CSV and opens with "3 new candidates".
-    Verified end to end.
-    STILL OPEN: the general "what's going on today?" — the
-    calendar, the inbox, the plan, the business memory, in one
-    answer. The pickup is the first piece of the briefing, not
-    the whole of it.
-    DONE WHEN: the founder asks "what's going on today?" and
-    gets a real answer drawn from all four sources.
+
+    BUILT:
+      - The pickup (routers/pickup.py) — notices a new scout CSV.
+      - routers/ecosystem.py — ecosystem_state(section), one reader
+        for the whole ecosystem: plan, things, scout, capsules.
+        Verified: "What is going on today?" returns a real picture
+        from all four working sources in one tool call.
+      - The accord section is present but says 'not yet — needs the
+        session token'.
+
+    STILL OPEN: the accord sections (calendar, inbox, invoices)
+    need the session token (gov.executive_access). Until then the
+    briefing covers plan, things, scout, and capsules.
+
+    DONE WHEN: the founder asks "what's going on today?" and gets a
+    real answer drawn from the plan, the business memory, the
+    scout, AND Accord's calendar and inbox.
 
     STEP 3 — THE PROACTIVE LOOP. "Leave that with me." A task
     queue, a scheduler, a report-back path. The Executive works
