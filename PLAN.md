@@ -1233,6 +1233,36 @@ that has actually happened.
     partial config would silently misbehave, add a guard that
     refuses.
 
+[x] ops.scout_routes — DONE 20 Oct. The Executive works each
+    candidate by its contact_route.
+
+    THE THREE ROUTES, decided by the audit:
+      email         the site has an address -> draft_email, send to
+                    the founder's phone, approve, send
+      contact_page  the site has a contact form but no email -> a
+                    note with the URL and what to say on the form
+      call          no website, or no other contact -> a call brief
+
+    THE TOOL: read_leads(only_call_list, limit) returns the ranked
+    rows as structured data. Fixed path; the model cannot read the
+    log or the state.
+
+    THE PROMPT: tools_prompt.txt now says, per route, what to
+    produce. It also says: cite Companies House details ONLY when
+    match_confidence is medium or high. A low-confidence match gets
+    flagged, not cited.
+
+    VERIFIED: the Executive read 10 call-list rows, found all were
+    route=call (OSM rarely carries a website), checked each CH
+    match, cited only Ashleys Hair Salon (high confidence), and kept
+    the rest to OSM facts.
+
+    WHAT THE DATA SAYS: the no-website list is the majority, and it
+    is the call list. The email and contact-page routes are thin,
+    because OSM rarely has a website tag. Google Places (when keyed)
+    returns a website for businesses that have one, which is the
+    single biggest lever for more email routes.
+
 [x] ops.scout_cron — DONE 20 Oct. The pipeline: sweep -> Companies
     House -> Google (when keyed) -> rank.
 
