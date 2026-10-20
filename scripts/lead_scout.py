@@ -54,7 +54,7 @@ OVERPASS_ENDPOINTS = [
 ]
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 USER_AGENT = "bosly-lead-scout/0.1 (contact: jr-arnott@outlook.com)"
-HTTP_TIMEOUT = 30  # per request; shorter so a dead mirror fails fast
+HTTP_TIMEOUT = 60  # per request; a county query can be slow, and 30s is too eager to give up
 DEFAULT_OUT = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout.csv")
 
 # Map a friendly category to an OSM tag. Extend as needed.
@@ -104,22 +104,24 @@ def geocode_area(area: str) -> tuple[float, float, float, float] | None:
     return (south, west, north, east)
 
 
-def overpass_query(category: str, bbox: tuple[float, float, float, float]) -> str:
-    """Build an Overpass QL query for businesses of a category in a bbox."""
-    if category not in CATEGORY_TAGS:
-        raise SystemExit(
-            f"unknown category {category!r}; known: {sorted(CATEGORY_TAGS)}"
-        )
-    key, value = CATEGORY_TAGS[category]
-    south, west, north, east = bbox
+def overpass_query(bbox: tuple[float, float, float, float], family: str) -> str:
+    """Build an Overpass QL query for ONE tag family in a bbox.
+
+    A whole county with every family in one request times out the
+    mirrors. So the sweep asks for one family at a time: shop, then
+    amenity, then craft, then office, then healthcare. Each is a
+    fraction of the load, and a slow family does not block the rest.
+    """
+    s, w, n, e = bbox
     return f"""
-[out:json][timeout:60];
+[out:json][timeout:90];
 (
-  node["{key}"="{value}"]({south},{west},{north},{east});
-  way["{key}"="{value}"]({south},{west},{north},{east});
+  node["{family}"]({s},{w},{n},{e});
+  way["{family}"]({s},{w},{n},{e});
 );
 out tags center;
 """.strip()
+
 
 
 
@@ -155,80 +157,208 @@ def overpass_request(query: str) -> Dict[str, Any]:
 
 
 
-def extract_rows(elements: List[Dict[str, Any]], category: str) -> List[Dict[str, str]]:
-    """Turn Overpass elements into CSV rows.
+def _category_of(tags: dict) -> str:
+    """Which business tag family this element has."""
+    for key in ("shop", "amenity", "craft", "office", "healthcare"):
+        if key in tags:
+            return f"{key}={tags[key]}"
+    return ""
 
-    Only rows with no `website` tag are returned. A business with a
-    website is not a candidate for the first product (a site); it
-    might still be a candidate for a booking page or an AI
-    receptionist, but that is a later, richer assessment.
+
+def extract_rows(elements, gap: dict) -> list:
+    """Turn Overpass elements into CSV rows, filtered to the gap.
+
+    gap = {"has_phone": True, "no_website": True}
+    A row survives if it has a phone (when required) and no website
+    (when required), and has a name.
     """
-    rows: List[Dict[str, str]] = []
+    want_phone = bool(gap.get("has_phone", False))
+    want_no_website = bool(gap.get("no_website", False))
+
+    rows = []
     for el in elements:
         tags = el.get("tags") or {}
         name = (tags.get("name") or "").strip()
         if not name:
             continue
-        has_website = "website" in tags or "contact:website" in tags
-        if has_website:
+
+        website = tags.get("website") or tags.get("contact:website") or ""
+        phone = tags.get("phone") or tags.get("contact:phone") or ""
+
+        if want_no_website and website:
             continue
+        if want_phone and not phone:
+            continue
+
         lat = el.get("lat") or (el.get("center") or {}).get("lat") or ""
         lon = el.get("lon") or (el.get("center") or {}).get("lon") or ""
         rows.append({
             "name": name,
-            "category": category,
+            "category": _category_of(tags),
             "lat": str(lat),
             "lon": str(lon),
             "street": tags.get("addr:street", ""),
             "city": tags.get("addr:city", ""),
             "postcode": tags.get("addr:postcode", ""),
-            "phone": tags.get("phone", tags.get("contact:phone", "")),
+            "phone": phone,
             "osm_id": f'{el.get("type", "")}/{el.get("id", "")}',
-            "has_website": "no",
+            "has_website": "yes" if website else "no",
         })
     return rows
 
 
-def write_csv(rows: List[Dict[str, str]], out: Path) -> None:
+
+
+def write_csv(rows: list, out: Path, area: str = "") -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     fields = ["name", "category", "lat", "lon", "street", "city",
-              "postcode", "phone", "osm_id", "has_website"]
+              "postcode", "phone", "osm_id", "has_website", "area"]
     with out.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         for r in rows:
-            w.writerow(r)
+            r2 = dict(r)
+            r2["area"] = area
+            w.writerow(r2)
+
+
+def _retry_path(state_path: Path) -> Path:
+    return state_path.with_name("lead-scout.retry.json")
+
+
+def _write_retry(state_path: Path, area: str, area_index: int) -> None:
+    p = _retry_path(state_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps({
+        "area": area,
+        "area_index": area_index,
+        "first_failed": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "attempts": 1,
+    }, indent=2) + "\n", encoding="utf-8")
+
+
+def _read_retry(state_path: Path) -> dict:
+    p = _retry_path(state_path)
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _clear_retry(state_path: Path) -> None:
+    p = _retry_path(state_path)
+    try:
+        p.unlink()
+    except FileNotFoundError:
+        pass
+
+
+def _read_state(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _write_state(path: Path, state: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Find businesses with no website, from OSM.")
-    ap.add_argument("--category", required=True,
-                    help=f"one of: {', '.join(sorted(CATEGORY_TAGS))}")
-    ap.add_argument("--area", required=True,
-                    help="a town name or postcode, e.g. Hexham or NE46")
-    ap.add_argument("--out", default=str(DEFAULT_OUT),
-                    help=f"output CSV path (default: {DEFAULT_OUT})")
+    ap = argparse.ArgumentParser(description="Lead scout sweep — one area per run.")
+    ap.add_argument("--config", default="/home/bosly_accord/bosly-gov/lead-scout.config.json",
+                    help="path to lead-scout.config.json")
+    ap.add_argument("--retry", action="store_true",
+                    help="retry the area that failed last run, if a marker exists")
     args = ap.parse_args()
 
-    print(f"lead_scout: {args.category} in {args.area}")
+    cfg = json.loads(Path(args.config).read_text(encoding="utf-8"))
+    areas = cfg.get("areas") or []
+    if not areas:
+        raise SystemExit("config has no areas")
+
+    gap = cfg.get("gap") or {}
+    out = Path(cfg.get("output") or DEFAULT_OUT)
+    state_path = Path(cfg.get("state") or "/mnt/bosly/bosly-data/.data/governor/lead-scout.sweep.json")
+    cap = int(cfg.get("max_rows_per_area") or 250)
+
+    state = _read_state(state_path)
+    retry = _read_retry(state_path)
+
+    if args.retry and retry.get("area"):
+        # A previous run failed. Try that area again.
+        area = retry["area"]
+        idx = int(retry.get("area_index", 0)) % len(areas)
+        retry["attempts"] = int(retry.get("attempts", 1)) + 1
+        print(f"lead_scout RETRY (attempt {retry['attempts']}): {area}")
+    else:
+        idx = int(state.get("next_index", 0)) % len(areas)
+        area = areas[idx]
+        print(f"lead_scout sweep: area {idx+1}/{len(areas)} — {area}")
+
+    print(f"lead_scout sweep: area {idx+1}/{len(areas)} — {area}")
     print("  geocoding area...")
-    bbox = geocode_area(args.area)
+    bbox = geocode_area(area)
     if bbox is None:
-        raise SystemExit(f"could not geocode {args.area!r} — try a postcode or a fuller name")
+        raise SystemExit(f"could not geocode {area!r}")
     print(f"  bbox: {bbox}")
-    query = overpass_query(args.category, bbox)
-    print("  querying Overpass (mirrors, in order)...")
-    data = overpass_request(query)
-    elements = data.get("elements") or []
-    print(f"  {len(elements)} businesses found")
+    # shop and craft are the trades the gap is for. amenity returns
+    # every bench and bus stop, office returns every estate agent,
+    # healthcare is sparse. Dropping them makes the sweep gentler on
+    # Overpass and the shortlist more relevant. Add them back if the
+    # shortlist needs cafés or clinics.
+    families = ["shop", "craft"]
+    elements = []
+    for fam in families:
+        print(f"  querying Overpass: {fam}...")
+        try:
+            data = overpass_request(overpass_query(bbox, fam))
+            got = data.get("elements") or []
+            elements.extend(got)
+            print(f"    {fam}: {len(got)} elements")
+        except SystemExit as e:
+            print(f"    {fam}: FAILED ({str(e)[:120]})")
+            # A failed family does not stop the sweep; the others
+            # still return. The row count will be lower, honestly.
+            continue
+        # Sleep between families: a burst of requests gets throttled,
+        # a trickle does not. 4 seconds is enough to stay polite.
+        time.sleep(4)
+    print(f"  {len(elements)} elements found in total")
+    if not elements:
+        print("  NO ELEMENTS — all families failed or returned nothing.")
+        print("  Not writing the CSV. Not advancing the sweep.")
+        if retry.get("area") == area:
+            _write_retry(state_path, area, idx)
+        else:
+            _write_retry(state_path, area, idx)
+        print(f"  retry marker written for {area}; a 12-hour cron will try again.")
+        raise SystemExit(1)
 
-    rows = extract_rows(elements, args.category)
-    print(f"  {len(rows)} with no website")
+    rows = extract_rows(elements, gap)
+    print(f"  {len(rows)} match the gap")
+    if len(rows) > cap:
+        rows = rows[:cap]
+        print(f"  capped at {cap}")
 
-    out = Path(args.out)
-    write_csv(rows, out)
+    write_csv(rows, out, area=area)
     print(f"  written: {out}")
+
+    _clear_retry(state_path)
+    next_idx = (idx + 1) % len(areas)
+    _write_state(state_path, {
+        "next_index": next_idx,
+        "last_area": area,
+        "last_run": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "last_count": len(rows),
+    })
+    print(f"  next area: {areas[next_idx]}")
     return 0
+
+
 
 
 if __name__ == "__main__":
