@@ -103,6 +103,23 @@ def score_row(row: Dict[str, str], weights: Dict[str, int],
         score += weights.get("has_address", 0)
         bits.append("address")
 
+    # Contact route: email is more workable than call, so it scores.
+    route = (row.get("contact_route") or "").lower()
+    if route == "email":
+        score += weights.get("route_email", 1)
+        bits.append("route:email")
+    elif route == "contact_page":
+        score += weights.get("route_contact_page", 1)
+        bits.append("route:page")
+
+    # Audit: a high audit_score means more gaps, i.e. more to sell.
+    # Only count it when there is a website and a real audit.
+    if route in ("email", "contact_page", "call") and row.get("has_website") == "yes":
+        a = _to_int(row.get("audit_score"), 0)
+        if a >= 5:
+            score += weights.get("audit_high", 1)
+            bits.append(f"audit{a}")
+
     # Google, if present
     gr = _to_float(row.get("google_rating"), 0.0)
     grc = _to_int(row.get("google_reviews"), 0)
@@ -119,6 +136,15 @@ def score_row(row: Dict[str, str], weights: Dict[str, int],
 def rank_rows(rows: List[Dict[str, str]], cfg: Dict[str, Any]) -> List[Dict[str, str]]:
     fit = cfg.get("fit") or {}
     weights = fit.get("weights") or DEFAULT_WEIGHTS
+    # Guard: a partial weight set is a silent failure — scores read 0
+    # and the ranking looks broken. Require the core keys.
+    required = {"has_phone", "bookable_trade", "has_address"}
+    missing = required - set(weights.keys())
+    if missing:
+        raise SystemExit(
+            f"config fit.weights is missing core keys: {sorted(missing)}. "
+            f"Every row would score 0. Fix lead-scout.config.json."
+        )
     bookable = fit.get("bookable_trades") or DEFAULT_BOOKABLE
     thresholds = fit.get("google_thresholds") or DEFAULT_THRESHOLDS
     pick = int(fit.get("pick", 15))

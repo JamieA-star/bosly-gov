@@ -56,5 +56,19 @@
   },
   "output": "/mnt/bosly/bosly-data/.data/governor/lead-scout.csv",
   "state": "/mnt/bosly/bosly-data/.data/governor/lead-scout.sweep.json",
-  "max_rows_per_area": 250
+  "max_rows_per_area": 250,
+  "fit": {
+    "weights": {
+      "has_phone": 1,
+      "ch_active": 1,
+      "ch_age_over_12m": 1,
+      "bookable_trade": 1,
+      "has_address": 1,
+      "route_email": 1,
+      "route_contact_page": 1,
+      "audit_high": 1,
+      "google_good_reviews": 2,
+      "google_few_reviews": -1
+    }
+  }
 }
