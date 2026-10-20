@@ -41,7 +41,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-DEFAULT_CSV = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout.csv")
+DEFAULT_CSV = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout-ranked.csv")
 DEFAULT_STATE = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout.state.json")
 
 
@@ -105,26 +105,33 @@ def maybe_pickup() -> Optional[str]:
         _write_state({"last_read_mtime": mtime, "last_count": 0})
         return None
 
-    # Build a short, honest brief. First 5 names; count the rest.
-    names = [r.get("name") or "(unnamed)" for r in rows[:5]]
-    more = len(rows) - len(names)
+    # Build a short, honest brief. The file is the ranked list, so
+    # each row has rank, fit_score, and call_list — use them.
+    call_count = sum(1 for r in rows if (r.get("call_list") or "") == "yes")
+    more = len(rows) - 5
     lines = [
         "[Scout file update — new since your last check]",
-        f"{len(rows)} new candidate(s) in lead-scout.csv.",
-        "First few:",
+        f"{len(rows)} ranked candidate(s) in lead-scout-ranked.csv "
+        f"({call_count} on the call list).",
+        "Top 5:",
     ]
     for r in rows[:5]:
         bits = [r.get("name") or "(unnamed)"]
         if r.get("city"):
             bits.append(r["city"])
-        if r.get("category"):
-            bits.append(r["category"])
+        cat = (r.get("category") or "").replace("shop=", "").replace("craft=", "")
+        if cat:
+            bits.append(cat)
+        if r.get("fit_score"):
+            bits.append(f"score {r['fit_score']}")
+        if (r.get("call_list") or "") == "yes":
+            bits.append("CALL")
         lines.append("  - " + " — ".join(bits))
     if more > 0:
         lines.append(f"  ... and {more} more.")
     lines.append(
-        "When the founder's message arrives, mention the new candidates "
-        "briefly. Do not act on them until asked."
+        "When the founder's message arrives, mention the top candidates "
+        "and the call list briefly. Do not act on them until asked."
     )
     brief = "\n".join(lines)
 
