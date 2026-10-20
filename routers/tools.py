@@ -813,6 +813,26 @@ def read_leads(only_call_list: bool = False, limit: int = 15) -> Dict[str, Any]:
     }
 
 
+# ---------------------------------------------------------------------------
+# ecosystem_state — one reader for the whole ecosystem.
+# ---------------------------------------------------------------------------
+try:
+    import sys as _sys_eco
+    _sys_eco.path.insert(0, "/home/bosly_accord/bosly-gov")
+    from routers.ecosystem import ecosystem_state as _ecosystem_state_impl  # type: ignore
+except Exception:
+    _ecosystem_state_impl = None
+
+
+def ecosystem_state(section: str = "all") -> Dict[str, Any]:
+    if _ecosystem_state_impl is None:
+        return {"ok": False, "error": "ecosystem reader unavailable"}
+    try:
+        return _ecosystem_state_impl(section=section)
+    except Exception as e:
+        return {"ok": False, "error": f"ecosystem_state raised: {e}"}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1085,6 +1105,29 @@ TOOLS = [
         },
         "fn": read_leads,
     },
+    {
+        "name": "ecosystem_state",
+        "description": (
+            "Read the state of the whole ecosystem in one call. Use it "
+            "when the founder asks 'what's going on?' or before acting "
+            "on something that depends on the current state. Sections: "
+            "plan (in-progress plan items), things (active clients, "
+            "leads, drafts, projects), scout (this week's ranked list "
+            "with contact routes), capsules (the latest reasoning "
+            "trail), accord (not yet — needs the session token). Pass "
+            "section='all' for everything, or one section name."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "section": {
+                    "type": "string",
+                    "enum": ["all", "plan", "things", "scout", "capsules", "accord"],
+                },
+            },
+        },
+        "fn": ecosystem_state,
+    },
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}
@@ -1226,6 +1269,9 @@ def _selftest() -> int:
     check("read_leads refuses limit 0", not r["ok"])
     r = read_leads(limit=999)
     check("read_leads refuses limit 999", not r["ok"])
+
+    r = ecosystem_state(section="nope")
+    check("ecosystem_state refuses unknown section", not r["ok"])
 
     print()
     print(f"SUMMARY: {passed} passed, {failed} failed")
