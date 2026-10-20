@@ -2616,12 +2616,17 @@ that has actually happened.
     step is useful on its own; each teaches what the next needs
     to be.
 
-    The Custodian is the foundation. The Executive reuses its
-    four tools (read_file, append_plan_entry, save_memory,
-    run_check) and its guards. It does not get its own tools.
-    Every Executive action goes through a Custodian guard.
+    The Custodian is the foundation. The Executive reuses the
+    Custodian's four tools (read_file, append_plan_entry,
+    save_memory, run_check) and its guards, and adds six of its
+    own (save_thing, read_thing, find_things, link_things,
+    draft_email, send_draft_to_me, run_lead_scout, read_leads,
+    send_email — ten in all). Every Executive action goes
+    through a guard, and the guards are one pattern, not two.
 
-    UPDATE 19 Oct: there are now ten tools, not four. The four
+    UPDATE 19-20 Oct: ten tools now, not four. The Executive
+    does have tools of its own; the Custodian's are the
+    foundation, not the whole. The four
     Custodian tools above, plus six Executive tools:
     save_thing, read_thing, find_things, link_things (the
     business memory), draft_email, send_draft_to_me,
