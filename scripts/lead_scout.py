@@ -55,6 +55,16 @@ OVERPASS_ENDPOINTS = [
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 USER_AGENT = "bosly-lead-scout/0.1 (contact: jr-arnott@outlook.com)"
 HTTP_TIMEOUT = 60  # per request; a county query can be slow, and 30s is too eager to give up
+# The site audit is optional: if it is missing, the sweep still runs and
+# every has-website row gets contact_route 'contact_page' (safer than
+# 'email', which needs a real address).
+try:
+    import sys as _sys
+    _sys.path.insert(0, "/home/bosly_accord/bosly-gov")
+    from scripts.site_audit import audit_url as _audit_url  # type: ignore
+except Exception:
+    _audit_url = None
+
 DEFAULT_OUT = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout.csv")
 
 # Map a friendly category to an OSM tag. Extend as needed.
@@ -203,21 +213,83 @@ def extract_rows(elements, gap: dict) -> list:
             "phone": phone,
             "osm_id": f'{el.get("type", "")}/{el.get("id", "")}',
             "has_website": "yes" if website else "no",
+            "website_url": website,
         })
     return rows
 
 
 
 
+def add_contact_route(rows: list, do_audit: bool = True) -> list:
+    """For each row, decide how to contact the business.
+
+    no website            -> contact_route = 'call'
+    website, email found  -> 'email'
+    website, contact page -> 'contact_page'
+    website, neither      -> 'call'
+
+    If the audit module is unavailable, every has-website row gets
+    'contact_page' — the safe default, because we cannot confirm an
+    email.
+    """
+    out = []
+    for i, row in enumerate(rows):
+        website = (row.get("has_website") or "").lower() == "yes"
+        route = "call"
+        audit_fields = {}
+        if website and do_audit and _audit_url is not None:
+            url = row.get("website_url") or ""
+            # The OSM extractor does not put the URL in the CSV; we need
+            # it. If it is absent, skip the audit and default to
+            # contact_page.
+            if url:
+                try:
+                    a = _audit_url(url)
+                except Exception:
+                    a = {}
+                if a and not a.get("error"):
+                    audit_fields = {
+                        "audit_score": str(a.get("audit_score", "")),
+                        "audit_email": ";".join(a.get("email_found") or []),
+                        "audit_booking": "yes" if a.get("has_booking") else "no",
+                        "audit_contact_page": "yes" if a.get("has_contact_page") else "no",
+                        "audit_viewport": "yes" if a.get("has_viewport") else "no",
+                        "audit_https": "yes" if a.get("has_https") else "no",
+                        "audit_copyright": str(a.get("copyright_year", "")),
+                    }
+                    if a.get("email_found"):
+                        route = "email"
+                    elif a.get("has_contact_page"):
+                        route = "contact_page"
+                    else:
+                        route = "call"
+            else:
+                # Website flagged but no URL captured — be honest, ask a
+                # human to look.
+                route = "contact_page"
+        elif website:
+            route = "contact_page"
+        merged = dict(row)
+        merged.update(audit_fields)
+        merged["contact_route"] = route
+        out.append(merged)
+        if (i + 1) % 25 == 0:
+            print(f"  audited {i+1}/{len(rows)}", file=sys.stderr)
+    return out
+
+
 def write_csv(rows: list, out: Path, area: str = "") -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     fields = ["name", "category", "lat", "lon", "street", "city",
-              "postcode", "phone", "osm_id", "has_website", "area"]
+              "postcode", "phone", "osm_id", "has_website", "website_url",
+              "contact_route", "audit_score", "audit_email", "audit_booking",
+              "audit_contact_page", "audit_viewport", "audit_https",
+              "audit_copyright", "area"]
     with out.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         for r in rows:
-            r2 = dict(r)
+            r2 = {k: r.get(k, "") for k in fields}
             r2["area"] = area
             w.writerow(r2)
 
@@ -343,6 +415,12 @@ def main() -> int:
     if len(rows) > cap:
         rows = rows[:cap]
         print(f"  capped at {cap}")
+    print("  deciding contact route (auditing websites)...")
+    rows = add_contact_route(rows, do_audit=True)
+    n_email = sum(1 for r in rows if r.get("contact_route") == "email")
+    n_page = sum(1 for r in rows if r.get("contact_route") == "contact_page")
+    n_call = sum(1 for r in rows if r.get("contact_route") == "call")
+    print(f"  routes: email={n_email} contact_page={n_page} call={n_call}")
 
     write_csv(rows, out, area=area)
     print(f"  written: {out}")

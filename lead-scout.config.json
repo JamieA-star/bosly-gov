@@ -52,8 +52,7 @@
     "Belfast"
   ],
   "gap": {
-    "has_phone": true,
-    "no_website": true
+    "has_phone": true
   },
   "output": "/mnt/bosly/bosly-data/.data/governor/lead-scout.csv",
   "state": "/mnt/bosly/bosly-data/.data/governor/lead-scout.sweep.json",
