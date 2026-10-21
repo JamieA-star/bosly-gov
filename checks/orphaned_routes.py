@@ -47,6 +47,8 @@ DELIBERATE_NO_CALLER = [
     "api/finance/pension",       # future feature
     "api/finance/status",        # future feature
     "api/finance/tax-position",  # future feature
+    "api/account/reinvite-managed",  # the client's re-invite route, built 21 Oct;
+                                     # no caller until the re-invite flow, December work
 ]
 
 REPORT_ONLY = False
