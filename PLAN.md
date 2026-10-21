@@ -247,6 +247,57 @@ THE BUILD, IN ORDER
     toggle management for products beyond the Executive, and the
     pricing-per-client record.
 
+[ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct. The split
+    works for the founder; it does not need to work for a client
+    until January. The work now is the things that earn.
+
+    ORDER:
+      1. The Executive working for the founder — the model call out
+         of /api/chat, client-side via a proxy; the calendar and
+         inbox read and decrypted in the browser.
+      2. The AI receptionist — the first client product.
+      3. The consultancy page — one page, through Claude, shipped.
+
+    DEFERRED TO DECEMBER (not bugs, not forgotten):
+      - the two privacy statements per mode
+      - the client-attach flow (Bosly attaches a real client)
+      - toggles beyond the Executive
+      - the pricing-per-client record
+      - the invite link for a client to attach Bosly
+
+[ ] [LIVE] accord.executive_state_now — RECORDED 21 Oct. What the
+    Executive actually is, for the founder, at the close of 21 Oct.
+
+    TOOLS (14, all in routers/tools.py on the Gov side):
+      append_plan_entry, save_memory, read_file, run_check
+      save_thing, read_thing, find_things, link_things
+      draft_email, send_draft_to_me, run_lead_scout, send_email
+      read_leads, ecosystem_state
+
+    ECOSYSTEM SECTIONS THAT WORK: plan, things, scout, capsules.
+    The accord section says 'not yet — needs the session token'.
+
+    WHAT IT CAN DO FOR THE FOUNDER: hold the business memory; read
+    the plan, the scout, the capsules; find leads, draft outreach,
+    send drafts to the phone, send guarded emails; run the county
+    scout. The pickup notices a new sweep.
+
+    WHAT IT CANNOT DO: see the founder's calendar or inbox; reason
+    in Accord (/api/chat is a deterministic router, not an LLM);
+    work while the founder is away; listen to a call.
+
+    THE NEXT BUILD, and it is one piece: the client-side Executive
+    in Accord. /api/executive/proxy for the model call; a browser
+    reader for calendar and inbox that decrypts encryptedData with
+    the session key; the chat gains a mode when the Executive is on.
+
+    WHAT WAS FOUND: the calendar route returns encryptedData as
+    JSON, undecrypted, alongside plaintext title and startTime. The
+    browser can decrypt it; the server never does. encryptedData
+    exists on twelve models. So the client-side Executive is
+    buildable, and the calendar's plaintext titles are the one
+    caveat worth stating.
+
 ================================================================
 WHAT BOSLY GOV IS
 ================================================================
