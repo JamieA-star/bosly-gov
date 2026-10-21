@@ -195,6 +195,31 @@ THE BUILD, IN ORDER
   4. The receptionist: hybrid, with the transcript encrypted
      immediately.
 
+[ ] [LIVE] accord.vault_managed_split — BUILT 21 Oct. The data
+    model and read path for the two products.
+
+    User.managedById (self-relation): set means a managed instance,
+    null means a vault. It records WHO manages the instance — the
+    question the transparency statement must answer — rather than a
+    boolean mode.
+
+    ProductToggle: userId, product, enabled, enabledAt, enabledBy,
+    notes. No price column; the price is per client and lives in the
+    notes.
+
+    lib/managed.ts: isManaged, hasProduct, productsFor.
+    GET /api/account/mode returns the mode, the manager, and the
+    products switched on.
+
+    Verified: the founder is managed, the manager is named, and the
+    Executive toggle is on; a user without managedById returns
+    'vault' with no products.
+
+    NOT YET: the Settings UI (mode indicator, toggle list, revoke),
+    the two privacy statements per mode, the toggle management
+    routes for Bosly to switch a product on for a client, and the
+    pricing-per-client record.
+
 ================================================================
 WHAT BOSLY GOV IS
 ================================================================
