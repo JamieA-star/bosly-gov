@@ -247,6 +247,18 @@ THE BUILD, IN ORDER
     toggle management for products beyond the Executive, and the
     pricing-per-client record.
 
+[x] accord.delete_route_toggle_cleanup — DONE 21 Oct. The
+    vault/managed split added ProductToggle as a child of User. The
+    delete route enumerates child models manually, and the
+    delete-route-coverage invariant caught the drift immediately:
+    deleting a user would have left their toggle rows behind. Added
+    prisma.productToggle.deleteMany to the transaction. test-fast.ts:
+    11 passed, 0 failed.
+
+    This is the invariant doing exactly what the manual-list pattern
+    predicted: a list that drifts silently when the schema grows,
+    now caught by a check on the first run after the change.
+
 [ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct. The split
     works for the founder; it does not need to work for a client
     until January. The work now is the things that earn.
