@@ -78,6 +78,9 @@ projects:
         - id: gov.vault_plaintext_calendar
           severity: high
           command: python3 checks/vault_plaintext_calendar.py
+        - id: gov.executive_proxy_no_db
+          severity: high
+          command: python3 checks/executive_proxy_no_db.py
       slow:
         - id: gov.waiting_well
           severity: medium
