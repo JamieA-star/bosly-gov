@@ -223,10 +223,29 @@ THE BUILD, IN ORDER
     and GET /api/account/mode returns mode 'vault'. This is the
     action that makes the transparency statement true.
 
-    NOT YET: the Settings UI (mode indicator, toggle list, revoke
-    button), the two privacy statements per mode, the toggle
-    management routes for Bosly to switch a product on for a client,
-    the re-invite flow, and the pricing-per-client record.
+    THE SETTINGS UI — BUILT 21 Oct. The Instance pill at the top of
+    Settings. Vault: one line and a 'Grant Bosly Ltd access' button.
+    Managed: names the manager as Bosly Ltd, lists the products, and
+    offers 'Remove Bosly Ltd's access' with the full confirmation.
+
+    THE LOCK — BUILT 21 Oct. 'This cannot be undone by Bosly' is a
+    database rule. User.managedRevokedAt is set when the client
+    revokes. While set, set-managed.sql reports UPDATE 0 and Bosly
+    cannot re-attach. Verified: after a revoke, UPDATE 0 and toggles
+    0; the revoke route is idempotent (already: true).
+
+    THE GRANT — BUILT 21 Oct. The mirror of the revoke, in the same
+    pill: vault shows 'Grant Bosly Ltd access'. POST
+    /api/account/grant-managed attaches Bosly Ltd to the caller's own
+    instance, clears the revoke, and switches the Executive back on,
+    in one transaction. Verified by button: vault -> grant -> managed
+    with the Executive listed; managed -> remove -> vault with the
+    grant button back.
+
+    NOT YET: an invite link so a *client* can attach Bosly without the
+    client being the founder, the two privacy statements per mode, the
+    toggle management for products beyond the Executive, and the
+    pricing-per-client record.
 
 ================================================================
 WHAT BOSLY GOV IS
