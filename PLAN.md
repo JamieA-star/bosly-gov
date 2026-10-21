@@ -215,10 +215,18 @@ THE BUILD, IN ORDER
     Executive toggle is on; a user without managedById returns
     'vault' with no products.
 
-    NOT YET: the Settings UI (mode indicator, toggle list, revoke),
-    the two privacy statements per mode, the toggle management
-    routes for Bosly to switch a product on for a client, and the
-    pricing-per-client record.
+    THE RIGHT TO LEAVE — BUILT 21 Oct: POST
+    /api/account/revoke-managed sets managedById to null and deletes
+    every ProductToggle row, in a transaction. The instance becomes
+    a vault. Idempotent. Verified: revoke returns
+    {ok:true,mode:'vault',revoked:true}, the user's toggles go to 0,
+    and GET /api/account/mode returns mode 'vault'. This is the
+    action that makes the transparency statement true.
+
+    NOT YET: the Settings UI (mode indicator, toggle list, revoke
+    button), the two privacy statements per mode, the toggle
+    management routes for Bosly to switch a product on for a client,
+    the re-invite flow, and the pricing-per-client record.
 
 ================================================================
 WHAT BOSLY GOV IS
