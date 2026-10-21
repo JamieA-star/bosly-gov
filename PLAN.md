@@ -1951,6 +1951,31 @@ that has actually happened.
     over chat-memory.txt, and a duplicate of bosly-brain.ts.
     Commits 5347025, f3ed729. The live chat is ChatDrawer.
 
+[x] gov.vault_plaintext_calendar — DONE 21 Oct. The vault promise
+    ("the developer is blind") was enforced nowhere: no calendar route
+    gates on managed mode, the list route selects the plaintext title
+    unconditionally, and CalendarEvent stores plaintext and ciphertext
+    side by side. Today there are no vault users, so nothing leaks —
+    but the structure did not enforce the promise.
+
+    The check (0e60ae0) queries the real database and fails if any
+    user with managedById IS NULL has a CalendarEvent with a non-empty
+    title. It passes vacuously today (zero vault rows), which is the
+    correct state. Fast tier, high severity, REPORT_ONLY for
+    calibration — flip when trusted.
+
+    DEFERRED TO DECEMBER (named, now watched):
+      - gate calendar/list so vault users get encryptedData only
+      - gate the write path on isManaged before writing plaintext
+      - backfill (no-op today: zero vault data)
+      - the broad version across every model with encryptedData
+
+    OPERATIONAL: the fast tier now requires DATABASE_URL in the
+    environment that launches run_checks.py, including cron.
+
+    Same shape as managedRevokedAt: a promise enforced nowhere is
+    marketing; the invariant is the enforcement.
+
 [x] gov.orphaned_routes — DONE 11 Oct. 75 orphaned routes found;
     zero remain. Registered in the fast tier (16 checks now), and
     REPORT_ONLY is false: a new route with no caller fails the
