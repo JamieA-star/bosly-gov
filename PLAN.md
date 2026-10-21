@@ -1951,6 +1951,76 @@ that has actually happened.
     over chat-memory.txt, and a duplicate of bosly-brain.ts.
     Commits 5347025, f3ed729. The live chat is ChatDrawer.
 
+[~] accord.executive_proxy — BUILT 21 Oct. The model call, out of
+    /api/chat, into the browser's reach. Gated by the toggle.
+
+    WHAT EXISTS:
+      - app/api/executive/proxy/route.ts — a relay, not a composer.
+        requireAccord (paid tier), then hasProduct(uid, "executive")
+        (the toggle). Body is { messages } built by the browser. It
+        calls Claude via fetch, copying the social routes' pattern
+        (CLAUDE_API_KEY / CLAUDE_MODEL, anthropic-version 2023-06-01).
+      - components/chat/ChatDrawer.tsx — when /api/chat returns
+        unknownIntent, the chat asks the proxy. A 403 (not managed,
+        or toggle off) falls through to the deterministic reply. The
+        client does not check the toggle; the server is the authority.
+
+    THE STRUCTURAL GUARANTEE: the proxy has no path to the database.
+    No prisma import, no model query. Data-minimisation happens in the
+    browser (the prompt) and in the client-side tools (step 3). The
+    promise "the LLM never sees a user's sensitive business data" is
+    enforced by the route having nowhere to read from.
+    Watched by gov.executive_proxy_no_db (fast tier, PASS).
+
+    VERIFIED: tsc clean; route in .next/standalone build; live on
+    3100 (303 anonymous = live, not 404); health 200.
+
+    NOT YET VERIFIED: the browser end-to-end (branch fires, proxy
+    accepts, Claude answers). Needs a logged-in managed+Executive-on
+    session. Founder action, pending.
+
+    THE SCOPE DECISION (21 Oct): managed-only. The vault backup is
+    PARKED — a policy question (loosening zero-access, keeping
+    finance and health encrypted) that the proxy build does not
+    resolve. A vault user gets 403 from hasProduct and the
+    deterministic reply stands.
+
+    NEXT CHECKS (one at a time, report-only first):
+      gov.executive_proxy_gated (both gates present)
+      gov.executive_proxy_managed_only (hasProduct called with "executive")
+      gov.hasProduct_vault_false (DB-backed)
+      gov.executive_proxy_live (the 303/401 probe)
+
+[~] ops.deploy_safe_ordering — FOUND 21 Oct. The deploy script
+    destroyed the backup before taking a new one, and a missing
+    build artifact became a downed app.
+
+    deploy-safe.sh does rm -rf "$PREV_STANDALONE" BEFORE
+    cp -r .next/standalone "$PREV_STANDALONE". When the source is
+    absent, the backup is already gone and the rollback has nothing
+    to restore. On 21 Oct a manual `npx next build` left .next/
+    without .next/standalone/, deploy-safe.sh ran, removed the
+    backup, failed the copy, called fail, restarted pm2 — and pm2
+    errored the app (server.js missing). Health returned 000.
+
+    RECOVERY: npm run build (regenerated .next/standalone/server.js),
+    pm2 restart bosly. Health 200, proxy 303. No code changed; the
+    outage was infrastructure.
+
+    THE FIX (next session): verify .next/standalone exists BEFORE
+    touching the backup, and copy to a new path before removing the
+    old one. A failed backup must not destroy the last good build.
+
+    ALSO: the deploy's smoke test is health-only
+    (http://localhost:3100/api/health/smoke). It does not curl new
+    routes, so a green deploy does not prove a new route is live.
+    Verification of a new route is a manual curl to 3100 — 303
+    anonymous is the live signal; 404 is the deploy trap.
+
+    OPERATIONAL FACT (for the plan): the app runs on 3100, pm2-
+    managed, deployed by deploy-safe.sh. curl health on 3100 to
+    check the app; curl a route on 3100 to check the route.
+
 [x] gov.vault_plaintext_calendar — DONE 21 Oct. The vault promise
     ("the developer is blind") was enforced nowhere: no calendar route
     gates on managed mode, the list route selects the plaintext title
