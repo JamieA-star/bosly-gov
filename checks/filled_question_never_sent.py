@@ -60,6 +60,15 @@ def main() -> int:
     if re.search(r"\$\{[^}]*\.question", body):
         findings.append("proxy body interpolates a .question field")
 
+    # Rung D: the fill is local. No fetch anywhere in the client may
+    # carry the template, the values, or the assembled string.
+    for bad in ("fillTemplate", "fillValues", "assembleFill"):
+        for fm in re.finditer(r"fetch\(", src):
+            fend = src.find("});", fm.start())
+            slice_ = src[fm.start(): fend + 3 if fend != -1 else fm.start() + 400]
+            if bad in slice_:
+                findings.append(f"a fetch references '{bad}' — the fill must be local")
+
     if findings:
         print(f"  FAIL: {len(findings)} finding(s)")
         for f in findings:
