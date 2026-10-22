@@ -2062,6 +2062,28 @@ that has actually happened.
       slotted, and the check verifies the claim. That is the independent
       angle C needs before shapes are shared.
 
+    HARDENING BUILT 22 Oct (hasSlots):
+      - app/api/executive/cache/route.ts (ba06285) — extractShape()
+        returns { shape, hasSlots }; hasSlots is true when the shape
+        differs from the question. Every entry records it.
+      - checks/shape_contains_no_sensitive.py (f1172d6) — verifies the
+        claim: hasSlots true -> the shape has a [slot]; hasSlots false
+        -> the shape equals the question. A lying/no-op extractor
+        fails. Calibrated by flipping the flag: the check fails with
+        'hasSlots false but the shape differs from the question', then
+        passes on the restore.
+
+    WHAT IT CLOSES: the lying-extractor hole — an extractor that claims
+      to have slotted and didn't, or claims not to and did. The check
+      reads the claim and the shape and fails on disagreement.
+
+    WHAT IT DOES NOT CLOSE: a value that neither the extractor's rules
+      nor the check's rules recognise (a lowercase client name, say).
+      hasSlots makes it REVIEWABLE (a human sees hasSlots: false on a
+      question that looks like it had a value) but the automated proof
+      does not cover it. That is the rules widening, and C waits on it.
+
+
     FOUND BESIDE IT, FIXED 22 Oct: every chat memory save returned
       400 invalid_encrypted_payload — encrypt() returns version as a
       number, isEncryptedPayload checked a string. Silent (the client
