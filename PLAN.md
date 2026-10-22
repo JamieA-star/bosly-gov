@@ -2007,12 +2007,44 @@ that has actually happened.
     down, the tier fails on executive_proxy_live — correct, but the
     cron log will show it.
 
-[ ] [LIVE] accord.learned_answer_cache — FOUND 22 Oct. THE GOAL:
+[~] accord.learned_answer_cache — FOUND 22 Oct. RUNG A BUILT AND
+    PROVEN 22 Oct. THE GOAL:
     Bosly learns. The LLM is called less as Bosly accumulates memory;
     the memory becomes the seed of Bosly's own model, the local model
     the product design already names as the direction. Efficient,
     sustainable, and it respects everyone's sensitive information: Gov
     holds templates, the browser holds the data.
+
+    RUNG A BUILT 22 Oct (per-user cache, non-sensitive only):
+      - app/api/executive/cache/route.ts (02c56fe) — per-user store in
+        Gov memory (answer-cache/<uid>.json). GET ?q= returns a hit;
+        POST {question, answer} refuses if the question looks like it
+        carries a value (digit, currency/percent token, two capitalised
+        words, health-value term + digit). Gated twice, like the proxy.
+      - components/chat/ChatDrawer.tsx (26d4aa6) — on unknownIntent the
+        chat asks the cache first. A hit answers without calling the
+        LLM; a miss calls the proxy and stores the answer (fire-and-
+        forget, so a failed store never breaks the reply).
+      - checks/answer_cache_no_sensitive.py — the data check: every
+        answer-cache/*.json is scanned, and a stored question with a
+        value is a breach. Registered in the fast tier.
+
+    PROVEN END TO END 22 Oct: the same question asked twice — the
+      second answered from the cache, GET hit, no POST to the proxy.
+      The cache file holds the question and answer, no digits. This is
+      the answer to "Bosly remembers what it was asked, so the LLM is
+      not called twice" — true in the running build.
+
+    FOUND BESIDE IT, FIXED 22 Oct: every chat memory save returned
+      400 invalid_encrypted_payload — encrypt() returns version as a
+      number, isEncryptedPayload checked a string. Silent (the client
+      logs and continues), so nothing persisted until this was found.
+      Fixed (version: 'string' -> 'number'), verified (POST ok: true,
+      history persists across refresh). Watched by
+      gov.encrypted_payload_shape: it reads the type's fields and the
+      validator's typeof checks and fails on disagreement. The type is
+      an interface, not a type alias; the scan accepts both. Calibrated
+      by reverting the validator: the check fails, then passes.
 
     THE PROBLEM TODAY: the LLM is called every time an unhandled
     question is asked. The conversation is remembered (ChatDrawer
