@@ -2145,6 +2145,32 @@ that has actually happened.
       HUMAN REVIEW for the residue. The lowercase-name case is the
       demonstrated reason C waits.
 
+    C'S PRECONDITION MET 22 Oct (d909d88) — the vocabulary check.
+      The residue ('acme', a lowercase client name) passed the pattern
+      check because the pattern check and the extractor share rules.
+      gov.vocabulary_covers_shapes is the independent angle: it does
+      not look for values, it asks whether EVERY token in a shape is a
+      known-safe word or a slot. It caught 'acme' by name; the human
+      removed the shape; the store is clean.
+
+      The vocabulary is a whitelist at
+      answer-cache/vocabulary.txt, one word per line, grown as words
+      are proven safe. A safe word not on it is a false positive
+      (flag, review, add); a dangerous word on it is a false negative.
+      That is the honest ceiling of a whitelist, and it is why HUMAN
+      REVIEW is the last layer before C shares a shape.
+
+      Two tokeniser fixes on the way: a bare 's is not a word, and a
+      slot may carry a possessive ([date]'s) — the SLOT regex owns it.
+      The fix that makes a check right is the one that matches the
+      structure.
+
+    C IS UNBLOCKED: every stored shape is now proven token-safe or
+      human-reviewed. C shares a shape with a generic answer; D adds
+      the client-side fill and the hard rule (the filled question is
+      never sent to Gov).
+
+
 
 
     FOUND BESIDE IT, FIXED 22 Oct: every chat memory save returned
