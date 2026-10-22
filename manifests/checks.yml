@@ -90,6 +90,9 @@ projects:
         - id: gov.hasProduct_vault_false
           severity: high
           command: python3 checks/hasProduct_vault_false.py
+        - id: gov.executive_proxy_live
+          severity: high
+          command: python3 checks/executive_proxy_live.py
       slow:
         - id: gov.waiting_well
           severity: medium
