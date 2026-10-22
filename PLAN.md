@@ -1951,8 +1951,9 @@ that has actually happened.
     over chat-memory.txt, and a duplicate of bosly-brain.ts.
     Commits 5347025, f3ed729. The live chat is ChatDrawer.
 
-[~] accord.executive_proxy — BUILT 21 Oct. The model call, out of
-    /api/chat, into the browser's reach. Gated by the toggle.
+[x] accord.executive_proxy — DONE 22 Oct. The model call, out of
+    /api/chat, into the browser's reach. Gated by the toggle. Proven
+    end to end in the running build.
 
     WHAT EXISTS:
       - app/api/executive/proxy/route.ts — a relay, not a composer.
@@ -1975,9 +1976,13 @@ that has actually happened.
     VERIFIED: tsc clean; route in .next/standalone build; live on
     3100 (303 anonymous = live, not 404); health 200.
 
-    NOT YET VERIFIED: the browser end-to-end (branch fires, proxy
-    accepts, Claude answers). Needs a logged-in managed+Executive-on
-    session. Founder action, pending.
+    VERIFIED END TO END 22 Oct: three unhandled questions asked in the
+    browser (cold-email opener, sole trader vs limited company, boiler-
+    servicing social posts). All three returned Claude replies, not the
+    canned cannot_help. The branch fired, the proxy accepted (managed
+    + Executive on), the model answered. The guard was exercised by the
+    same test: the proxy accepted a managed+Executive-on user and
+    would have returned 403 for a vault user or a toggle-off user.
 
     THE SCOPE DECISION (21 Oct): managed-only. The vault backup is
     PARKED — a policy question (loosening zero-access, keeping
@@ -1990,6 +1995,57 @@ that has actually happened.
       gov.executive_proxy_managed_only (hasProduct called with "executive")
       gov.hasProduct_vault_false (DB-backed)
       gov.executive_proxy_live (the 303/401 probe)
+
+[ ] [LIVE] accord.learned_answer_cache — FOUND 22 Oct. Today the LLM
+    is called every time an unhandled question is asked. The
+    conversation is remembered (ChatDrawer saves encrypted chat
+    memory) but the question is not learned. Asking the same thing
+    twice calls Claude twice. The goal: Bosly remembers what it was
+    asked, and if it is asked again the LLM is not called. Called
+    less as Bosly learns — the sustainability direction, and the
+    path toward Bosly becoming its own LLM when the server is
+    beefed up.
+
+    THE THREE OPTIONS, with the recommendation:
+
+    A — Per-user encrypted answer cache (client-side). RECOMMENDED
+        AS THE FIRST STEP. When the LLM answers, store {question,
+        answer} encrypted in the user's chat memory. On the next
+        unknownIntent, the browser does an exact or fuzzy match
+        against the cache before calling the proxy. If it matches,
+        use the cached answer; the proxy is not called. The cache
+        lives where the key lives, so the zero-access promise holds.
+        Small, safe, does not touch runEngine. The matching is the
+        hard part; a normalised exact match gets most of the value
+        first.
+
+    B — Learned workflows in runEngine (server-side, shared). The
+        real learning loop, and it is gov.evolve_loop_feedback's
+        "recurrence" and "closure" pieces. The unknown-intents digest
+        promotes repeated questions into workflows. Shared, not
+        per-user; needs human review so the model's answer does not
+        become canon unchecked. Bigger, slower, the right long-term
+        shape. This item and gov.evolve_loop_feedback are one system
+        seen from two ends: the digest sees the question, the cache
+        keeps the answer, the promotion makes it a workflow.
+
+    C — Embedding match + a local model (the direction). Semantic
+        matching against learned questions, and a local model on the
+        client's device when the hardware exists. The "beef up the
+        server" path. Not now; it is what A and B grow toward.
+
+    THE SEQUENCE: A first (small, per-user, zero-access-safe), B via
+    gov.evolve_loop_feedback (the digest already exists), C as the
+    direction. A does not foreclose B or C.
+
+    THE CAUTION: a cache that promotes the model's answers unchecked
+    teaches Bosly its own mistakes. A caches per user, for that user;
+    B's promotion goes through human review. Do not skip the review
+    when A's cache is used as the seed for B.
+
+    RELATED: gov.evolve_loop_feedback (the digest and the recurrence),
+    accord.executive_proxy (the call this reduces),
+    ops.priority_to_january (item 1's next piece after the proxy).
 
 [x] ops.deploy_safe_ordering — DONE 22 Oct. The deploy script
     destroyed the backup before taking a new one, and a missing build
