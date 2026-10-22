@@ -96,6 +96,9 @@ projects:
         - id: gov.answer_cache_no_sensitive
           severity: high
           command: python3 checks/answer_cache_no_sensitive.py
+        - id: gov.encrypted_payload_shape
+          severity: high
+          command: python3 checks/encrypted_payload_shape.py
       slow:
         - id: gov.waiting_well
           severity: medium
