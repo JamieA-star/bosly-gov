@@ -2007,56 +2007,98 @@ that has actually happened.
     down, the tier fails on executive_proxy_live — correct, but the
     cron log will show it.
 
-[ ] [LIVE] accord.learned_answer_cache — FOUND 22 Oct. Today the LLM
-    is called every time an unhandled question is asked. The
-    conversation is remembered (ChatDrawer saves encrypted chat
-    memory) but the question is not learned. Asking the same thing
-    twice calls Claude twice. The goal: Bosly remembers what it was
-    asked, and if it is asked again the LLM is not called. Called
-    less as Bosly learns — the sustainability direction, and the
-    path toward Bosly becoming its own LLM when the server is
-    beefed up.
+[ ] [LIVE] accord.learned_answer_cache — FOUND 22 Oct. THE GOAL:
+    Bosly learns. The LLM is called less as Bosly accumulates memory;
+    the memory becomes the seed of Bosly's own model, the local model
+    the product design already names as the direction. Efficient,
+    sustainable, and it respects everyone's sensitive information: Gov
+    holds templates, the browser holds the data.
 
-    THE THREE OPTIONS, with the recommendation:
+    THE PROBLEM TODAY: the LLM is called every time an unhandled
+    question is asked. The conversation is remembered (ChatDrawer
+    saves encrypted chat memory) but the question is not learned.
+    Asking the same thing twice calls Claude twice.
 
-    A — Per-user encrypted answer cache (client-side). RECOMMENDED
-        AS THE FIRST STEP. When the LLM answers, store {question,
-        answer} encrypted in the user's chat memory. On the next
-        unknownIntent, the browser does an exact or fuzzy match
-        against the cache before calling the proxy. If it matches,
-        use the cached answer; the proxy is not called. The cache
-        lives where the key lives, so the zero-access promise holds.
-        Small, safe, does not touch runEngine. The matching is the
-        hard part; a normalised exact match gets most of the value
-        first.
+    THE LADDER. The end goal is D. Build in order; each rung is
+    honest on its own and none forecloses the next.
 
-    B — Learned workflows in runEngine (server-side, shared). The
-        real learning loop, and it is gov.evolve_loop_feedback's
-        "recurrence" and "closure" pieces. The unknown-intents digest
-        promotes repeated questions into workflows. Shared, not
-        per-user; needs human review so the model's answer does not
-        become canon unchecked. Bigger, slower, the right long-term
-        shape. This item and gov.evolve_loop_feedback are one system
-        seen from two ends: the digest sees the question, the cache
-        keeps the answer, the promotion makes it a workflow.
+    A (FIRST) — per-user cache. One JSON per user in Gov memory,
+      non-sensitive only. Read before the proxy; a hit answers
+      without calling the LLM; a miss calls the proxy and stores
+      the answer. No sharing, no extractor. Proves the
+      read-before-proxy path and the denylist. Smallest honest step.
 
-    C — Embedding match + a local model (the direction). Semantic
-        matching against learned questions, and a local model on the
-        client's device when the hardware exists. The "beef up the
-        server" path. Not now; it is what A and B grow toward.
+    B — the extractor. Shape extraction: a template with sensitive
+      slots removed, PROVEN to contain no sensitive terms (denylist
+      + no client names, amounts, dates). The risk lives here; it
+      gets its own check, like the vault-plaintext check. Do not
+      share a shape until the extractor is proven.
 
-    THE SEQUENCE: A first (small, per-user, zero-access-safe), B via
-    gov.evolve_loop_feedback (the digest already exists), C as the
-    direction. A does not foreclose B or C.
+    C — shared shapes, generic answers. B's shape offered to another
+      client as a TEMPLATE ("here is how to write a cold email to a
+      trade firm"), no fill. Safe, useful, no fill-in discipline
+      required.
+
+    D (THE GOAL) — shared shapes, client-side fill. The browser
+      matches the shape, fills the sensitive slots with its own data,
+      and produces the answer — and the filled question is NEVER sent
+      to Gov. Gov holds templates; the browser holds the data. That
+      is how Bosly learns across clients without seeing anyone's
+      sensitive information.
+
+    THE HARD RULE FOR D (in the plan and the code from the start):
+      the filled question is never sent to Gov. The match is on the
+      shape; the fill is client-side; the proxy is not called. If a
+      slot is filled, the filled version goes nowhere but the screen.
 
     THE CAUTION: a cache that promotes the model's answers unchecked
-    teaches Bosly its own mistakes. A caches per user, for that user;
-    B's promotion goes through human review. Do not skip the review
-    when A's cache is used as the seed for B.
+      teaches Bosly its own mistakes. A caches per user, for that
+      user. D's shapes go through B's extractor and its check. Do not
+      skip the check when A's cache is used as the seed for B.
 
-    RELATED: gov.evolve_loop_feedback (the digest and the recurrence),
-    accord.executive_proxy (the call this reduces),
-    ops.priority_to_january (item 1's next piece after the proxy).
+    THE SECOND SIGNAL: this item is the ANSWER side of the learning.
+      The question side is gov.pattern_signal — Bosly reads what is
+      asked and what the app contains to find what to build next.
+      Together they are the seed of Bosly's own model.
+
+    RELATED: gov.pattern_signal, gov.evolve_loop_feedback (the
+      digest and recurrence), accord.executive_proxy (the call this
+      reduces), ops.priority_to_january.
+
+[ ] [LIVE] gov.pattern_signal — FOUND 22 Oct. Bosly reads patterns
+    from the app itself — what is asked, what is needed, what the
+    app contains — to find what to build next. This is the QUESTION
+    side of the learning loop; accord.learned_answer_cache is the
+    ANSWER side. Together they are the seed of Bosly's own model.
+
+    WHAT IT READS (non-sensitive signal only):
+      - the unknown-intents log (what the engine cannot answer) —
+        already the seed of gov.evolve_loop_feedback's digest
+      - the shape of questions the Executive answers (which kinds of
+        help are asked for)
+      - the app's own usage (which pills, which features, which
+        workflows fire) — UsageEvent rows already exist
+
+    WHAT IT PRODUCES: a periodic signal of what Bosly should become
+      — the features implied by what is asked and what is used —
+      for the founder to read and decide. Not automatic building;
+      a signal, like the digest, for a human to act on.
+
+    WHAT IT MUST NOT READ: client content. No calendar titles, no
+      invoice amounts, no contact names, no messages. The signal is
+      shape and frequency, not content. Same rule as the proxy: the
+      route that reads patterns has no path to sensitive content.
+
+    THE RELATION: gov.evolve_loop_feedback is the first instance
+      (the digest groups unknown intents by label and names the
+      recurring feature). This item generalises it: from questions
+      to questions + usage + shapes. Keep them linked; this is the
+      umbrella, the digest is the first reader.
+
+    THE DIRECTION: Bosly develops itself from what it is asked and
+      what it uses, so the next build is chosen from evidence, not
+      guesswork. That is ops.jarvis's "one voice" seen from the
+      build side: the app tells you what it wants to become.
 
 [x] ops.deploy_safe_ordering — DONE 22 Oct. The deploy script
     destroyed the backup before taking a new one, and a missing build
