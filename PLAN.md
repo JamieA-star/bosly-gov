@@ -259,6 +259,47 @@ THE BUILD, IN ORDER
     predicted: a list that drifts silently when the schema grows,
     now caught by a check on the first run after the change.
 
+[ ] [LIVE] accord.executive_unattended_loop — DECIDED 22 Oct. The
+    last rung. The Executive running "work this week's list" without
+    the founder in the chat. Not a new tool, not a new model: a
+    trigger, a door, and a delivery.
+
+    THE DOOR: a route or script that runs the same tool loop the
+    chat runs, callable without a conversation. The same tools, the
+    same guard, no chat window.
+
+    THE TRIGGER: a new ranked CSV (the pickup already watches for
+    it), or a cron tick. The work arrives; the loop runs.
+
+    THE DELIVERY: send_draft_to_me emails the drafts to the
+    founder's phone. He reads them, approves, sends.
+
+    THE GUARD, UNCHANGED: the loop DRAFTS and DELIVERS TO THE
+    FOUNDER ONLY. It never sends to a client. send_email still
+    requires confirmed=true and an explicit yes. The toggle is
+    still the guard; the loop does not bypass it.
+
+    WHY IT IS THE LAST RUNG, NOT THE NEXT: it depends on every rung
+    under it being trustworthy. An unattended loop on an unproven
+    Executive is a machine that does the wrong thing while the
+    founder is asleep. The checks, the toggle guard, the capsule —
+    those are what make the loop safe to build, not a substitute
+    for it.
+
+    THE ORDER, AND WHY IT MATTERS:
+      Now:      the Executive's loose ends, then the consultancy
+                page.
+      After:    the loop's door.
+      Then:     the trigger.
+      January:  the founder wakes Monday, the drafts are on the
+                phone, he approves and sends.
+
+    The unattended loop is AFTER the loose ends and the page. Not
+    before. A loop that runs on an unproven Executive is the thing
+    that makes January fail quietly.
+
+    NOT YET: the door, the trigger, the delivery test.
+
 [ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct. The split
     works for the founder; it does not need to work for a client
     until January. The work now is the things that earn.
