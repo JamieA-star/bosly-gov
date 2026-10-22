@@ -81,6 +81,9 @@ projects:
         - id: gov.executive_proxy_no_db
           severity: high
           command: python3 checks/executive_proxy_no_db.py
+        - id: gov.executive_proxy_gated
+          severity: high
+          command: python3 checks/executive_proxy_gated.py
       slow:
         - id: gov.waiting_well
           severity: medium
