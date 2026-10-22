@@ -105,6 +105,9 @@ projects:
         - id: gov.vocabulary_covers_shapes
           severity: high
           command: python3 checks/vocabulary_covers_shapes.py
+        - id: gov.filled_question_never_sent
+          severity: high
+          command: python3 checks/filled_question_never_sent.py
       slow:
         - id: gov.waiting_well
           severity: medium
