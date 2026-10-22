@@ -1991,13 +1991,14 @@ that has actually happened.
       gov.hasProduct_vault_false (DB-backed)
       gov.executive_proxy_live (the 303/401 probe)
 
-[~] ops.deploy_safe_ordering — FOUND 21 Oct. The deploy script
-    destroyed the backup before taking a new one, and a missing
-    build artifact became a downed app.
+[x] ops.deploy_safe_ordering — DONE 22 Oct. The deploy script
+    destroyed the backup before taking a new one, and a missing build
+    artifact became a downed app (21 Oct). The fix is committed and
+    verified both ways.
 
-    deploy-safe.sh does rm -rf "$PREV_STANDALONE" BEFORE
-    cp -r .next/standalone "$PREV_STANDALONE". When the source is
-    absent, the backup is already gone and the rollback has nothing
+    deploy-safe.sh did rm -rf "$PREV_STANDALONE" BEFORE
+    cp -r .next/standalone "$PREV_STANDALONE". When the source was
+    absent, the backup was already gone and the rollback had nothing
     to restore. On 21 Oct a manual `npx next build` left .next/
     without .next/standalone/, deploy-safe.sh ran, removed the
     backup, failed the copy, called fail, restarted pm2 — and pm2
@@ -2007,19 +2008,29 @@ that has actually happened.
     pm2 restart bosly. Health 200, proxy 303. No code changed; the
     outage was infrastructure.
 
-    THE FIX (next session): verify .next/standalone exists BEFORE
-    touching the backup, and copy to a new path before removing the
-    old one. A failed backup must not destroy the last good build.
+    THE FIX (committed 22 Oct): verify .next/standalone exists BEFORE
+    touching the backup. If absent, refuse cleanly — no rm, no build,
+    no pm2 restart, the app stays up. If present, copy to a temp path,
+    verify, then swap; the old backup is only removed after the new
+    one is proven. The last good build is never the one being removed.
 
-    ALSO: the deploy's smoke test is health-only
-    (http://localhost:3100/api/health/smoke). It does not curl new
-    routes, so a green deploy does not prove a new route is live.
-    Verification of a new route is a manual curl to 3100 — 303
-    anonymous is the live signal; 404 is the deploy trap.
+    VERIFIED BOTH WAYS: with .next/standalone absent, the script
+    refuses and exits 1 with the app up; with it present, a full
+    deploy completes, health 200, proxy 303.
 
-    OPERATIONAL FACT (for the plan): the app runs on 3100, pm2-
-    managed, deployed by deploy-safe.sh. curl health on 3100 to
-    check the app; curl a route on 3100 to check the route.
+    OPERATIONAL FACT: the app runs on 3100, pm2-managed, deployed by
+    deploy-safe.sh. curl health on 3100 to check the app; curl a route
+    on 3100 to check the route.
+
+[~] ops.deploy_smoke_test_covers_routes — FOUND 22 Oct. The deploy
+    smoke test is http://localhost:3100/api/health/smoke only. It does
+    not curl the routes that changed, so a green deploy is green for
+    health, not for the feature. Verification of a new route is a
+    manual curl to 3100 — 303 anonymous is the live signal; 404 is the
+    deploy trap. A smoke test that covers the changed routes is a
+    separate, small item: either the script takes a list of routes to
+    curl after deploy, or a per-route check is registered in the fast
+    tier. Not urgent; named.
 
 [x] gov.vault_plaintext_calendar — DONE 21 Oct. The vault promise
     ("the developer is blind") was enforced nowhere: no calendar route
