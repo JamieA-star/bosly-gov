@@ -1990,11 +1990,22 @@ that has actually happened.
     resolve. A vault user gets 403 from hasProduct and the
     deterministic reply stands.
 
-    NEXT CHECKS (one at a time, report-only first):
-      gov.executive_proxy_gated (both gates present)
-      gov.executive_proxy_managed_only (hasProduct called with "executive")
-      gov.hasProduct_vault_false (DB-backed)
-      gov.executive_proxy_live (the 303/401 probe)
+    CHECKS BUILT 22 Oct (five, all registered in the fast tier):
+      gov.executive_proxy_no_db — the proxy has no DB path (21 Oct)
+      gov.executive_proxy_gated — requireAccord AND hasProduct,
+        both before the model call
+      gov.executive_proxy_managed_only — hasProduct is called with
+        the literal "executive", so the guard cannot be re-pointed
+      gov.hasProduct_vault_false — DB-backed: no vault user has an
+        enabled ProductToggle. lib/managed.ts's docstring as a rule.
+      gov.executive_proxy_live — the deploy trap, live: 303/401/403
+        pass; 404 fails (not deployed); 000 fails (app down)
+
+    OPERATIONAL: the fast tier now requires DATABASE_URL and the app
+    up on 3100, in addition to the filesystem and Node. The cron that
+    runs run_checks.py --tier fast must carry both. If the app is
+    down, the tier fails on executive_proxy_live — correct, but the
+    cron log will show it.
 
 [ ] [LIVE] accord.learned_answer_cache — FOUND 22 Oct. Today the LLM
     is called every time an unhandled question is asked. The
