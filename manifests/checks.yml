@@ -102,6 +102,9 @@ projects:
         - id: gov.shape_contains_no_sensitive
           severity: high
           command: python3 checks/shape_contains_no_sensitive.py
+        - id: gov.vocabulary_covers_shapes
+          severity: high
+          command: python3 checks/vocabulary_covers_shapes.py
       slow:
         - id: gov.waiting_well
           severity: medium
