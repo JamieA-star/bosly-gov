@@ -2193,6 +2193,31 @@ that has actually happened.
     THE ANSWER SHAPE stays per-user (useful for D). The shared store is
       question-only. The check is questions-only.
 
+    RUNG D FOUNDATION BUILT 22-23 Oct (a9c0703, 7318090, 1eb44a7).
+      The answer shape is shared only when it is a TEMPLATE — a ratio,
+      not a count: at least minSlots (2) and no more than maxFreeWords
+      (20) free words. The rule lives in ONE file,
+      answer-cache/template-rule.json, read by the route and the check,
+      so the two cannot drift. A paragraph with two slots in it is
+      prose, not a template; the prose answer shape that was shared (2
+      slots, ~150 free words) was removed.
+
+      THE HARD RULE, WATCHED: the filled question is never sent to Gov.
+      gov.filled_question_never_sent reads the proxy call in
+      ChatDrawer.tsx and fails if the body references a filled template
+      (filled/assembled/.question interpolation). The proxy carries the
+      shape (sharedHint), not a filled string.
+
+      TWO GATES, ONE SOURCE: the structural gate is the ratio; the
+      vocabulary check is the second gate. Both read template-rule.json
+      and vocabulary.txt from the data mount — one source, two readers.
+
+      NOT YET: the fill UI. The client does not yet show slots for the
+      user to fill; it still calls the proxy with the shape as a hint.
+      That is the end product, and it waits on this foundation — the
+      shapes are proven templates, and the hard rule is already watched.
+
+
 
 
 
