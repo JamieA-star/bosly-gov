@@ -65,11 +65,27 @@ def main() -> int:
         if not isinstance(entries, list):
             continue
         for i, e in enumerate(entries):
-            shape = (e or {}).get("shape")
+            entry = e or {}
+            shape = entry.get("shape")
+            has_slots = entry.get("hasSlots")
+            question = entry.get("question", "")
+
             if not isinstance(shape, str) or not shape:
-                # An entry with no shape is a pre-B entry, or a bug.
                 findings.append((f.name, i, "no shape field", ""))
                 continue
+            if not isinstance(has_slots, bool):
+                findings.append((f.name, i, "no hasSlots field (pre-hardening entry)", shape[:100]))
+                continue
+
+            # The claim must match the shape: hasSlots true -> a [slot];
+            # hasSlots false -> the shape equals the question.
+            if has_slots and not SLOT.search(shape):
+                findings.append((f.name, i, "hasSlots true but no [slot] — the claim is false", shape[:100]))
+                continue
+            if (not has_slots) and shape != question:
+                findings.append((f.name, i, "hasSlots false but the shape differs from the question", shape[:100]))
+                continue
+
             for pattern, label in SENSITIVE:
                 if pattern.search(shape):
                     findings.append((f.name, i, label, shape[:100]))
