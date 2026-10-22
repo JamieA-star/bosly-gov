@@ -2035,6 +2035,33 @@ that has actually happened.
       the answer to "Bosly remembers what it was asked, so the LLM is
       not called twice" — true in the running build.
 
+    RUNG B BUILT 22 Oct (the extractor, shape with slots):
+      - app/api/executive/cache/route.ts (ffd96eb) — extractShape()
+        replaces value-looking tokens with slots: a date-like token ->
+        [date], a currency amount -> [amount], a digit run -> [number],
+        a capitalised pair -> [name]. Every entry gains a shape field.
+      - checks/shape_contains_no_sensitive.py (30feec9, registered
+        36f003f) — the data check: no stored shape carries a value.
+
+    PROVEN 22 Oct: 'How do I write a follow-up email after a Tuesday
+      meeting?' -> shape 'How do I write a follow-up email after a
+      [date] meeting?'. The value is slotted; the category words stay.
+      A value-free question's shape is itself — correct, not a defect.
+
+    CALIBRATION FINDING: the first stored entry (a value-free question)
+      failed the check's original 'at least one slot' rule. The rule was
+      wrong, not the shape: a value-free question has nothing to slot,
+      and the rule is 'no value in the shape'. The fix was the rule.
+      Two patcher aborts on the way (the type is an interface not a
+      type alias; a line-number sed deleted the break) — both the check
+      and the edit refusing to guess.
+
+    THE HOLE, NAMED: the check and the extractor use the SAME SENSITIVE
+      rules, so a value both miss would pass. The hardening before C is
+      hasSlots: boolean on each entry — the extractor records whether it
+      slotted, and the check verifies the claim. That is the independent
+      angle C needs before shapes are shared.
+
     FOUND BESIDE IT, FIXED 22 Oct: every chat memory save returned
       400 invalid_encrypted_payload — encrypt() returns version as a
       number, isEncryptedPayload checked a string. Silent (the client
