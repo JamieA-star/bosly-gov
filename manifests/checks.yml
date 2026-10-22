@@ -87,6 +87,9 @@ projects:
         - id: gov.executive_proxy_managed_only
           severity: high
           command: python3 checks/executive_proxy_managed_only.py
+        - id: gov.hasProduct_vault_false
+          severity: high
+          command: python3 checks/hasProduct_vault_false.py
       slow:
         - id: gov.waiting_well
           severity: medium
