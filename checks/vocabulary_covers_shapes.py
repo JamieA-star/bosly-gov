@@ -32,6 +32,16 @@ REPORT_ONLY = True
 
 CACHE_DIR = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/answer-cache")
 VOCAB = CACHE_DIR / "vocabulary.txt"
+RULE = CACHE_DIR / "template-rule.json"
+
+def load_rule() -> tuple[int, int]:
+    """The template rule, the same file the route reads."""
+    try:
+        import json as _json
+        d = _json.loads(RULE.read_text(encoding="utf-8"))
+        return int(d.get("minSlots", 2)), int(d.get("maxFreeWords", 20))
+    except Exception:
+        return 2, 20
 
 # A slot may carry a possessive: [date]'s. Swallow it, so the 's is
 # part of the slot and not a word the tokeniser invents.
@@ -97,6 +107,29 @@ def main() -> int:
             unknown = [t for t in TOKEN.findall(masked) if t not in vocab]
             if unknown:
                 findings.append((f.name, i, ", ".join(sorted(set(unknown))), shape[:90]))
+                continue
+            # Rung D: a shared answer shape must be a TEMPLATE — at least
+            # two slots, and every free token known-safe.
+            # The slot-heavy rule applies to the SHARED file only. A
+            # per-user entry may carry any answer shape (it is useful for
+            # D); only a shared one must be a template.
+            if f.name == "shared.json":
+                answer_shape = (e or {}).get("answerShape")
+                if isinstance(answer_shape, str) and answer_shape:
+                    min_slots, max_free = load_rule()
+                    slots = len(re.findall(r"\[[a-z][a-z ]*\]", answer_shape))
+                    if slots < min_slots:
+                        findings.append((f.name, i, f"answer: {slots} slot(s), needs >= {min_slots}", answer_shape[:90]))
+                        continue
+                    stripped = re.sub(r"\[[a-z][a-z ]*\]", " ", answer_shape)
+                    free = len(re.findall(r"[a-zA-Z0-9']+", stripped))
+                    if free > max_free:
+                        findings.append((f.name, i, f"answer: {free} free words, prose not a template (max {max_free})", answer_shape[:90]))
+                        continue
+                    amasked = SLOT.sub(" ", answer_shape.lower())
+                    aunknown = [t for t in TOKEN.findall(amasked) if t not in vocab]
+                    if aunknown:
+                        findings.append((f.name, i, "answer: " + ", ".join(sorted(set(aunknown))), answer_shape[:90]))
 
     if unreadable:
         print(f"  FAIL: {len(unreadable)} cache file(s) could not be read")
