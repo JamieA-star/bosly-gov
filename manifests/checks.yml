@@ -93,6 +93,9 @@ projects:
         - id: gov.executive_proxy_live
           severity: high
           command: python3 checks/executive_proxy_live.py
+        - id: gov.answer_cache_no_sensitive
+          severity: high
+          command: python3 checks/answer_cache_no_sensitive.py
       slow:
         - id: gov.waiting_well
           severity: medium
