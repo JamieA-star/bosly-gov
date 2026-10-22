@@ -2170,6 +2170,30 @@ that has actually happened.
       the client-side fill and the hard rule (the filled question is
       never sent to Gov).
 
+    RUNG C BUILT 22 Oct (935fa6d, 1f44e73) — share the QUESTION shape.
+      - app/api/executive/cache/route.ts — a shared store
+        (answer-cache/shared.json) holding {shape, hasSlots} only. A
+        shape that passes looksSensitive is promoted; the shared file
+        is deduplicated and capped. GET returns `shared` after a
+        per-user miss.
+      - components/chat/ChatDrawer.tsx — on a shared hit with no
+        per-user hit, the client passes the shape to the proxy as a
+        system hint and STILL CALLS IT. The answer is fresh, per
+        client; the shape is the only thing shared.
+
+    THE TRADE, AND WHY IT IS THE SAFEST VERSION: the first attempt
+      shared answer shapes. The vocabulary check proved it could not
+      carry them — an answer is a paragraph, and a paragraph needs a
+      dictionary, and a dictionary weakens the whitelist ('Smith' is a
+      common word and a client name). So the answer shape is NOT
+      shared. The question is the small, token-safe, provable part; it
+      is what crosses. C saves the SEARCH, not the call. D saves the
+      call, when the client fills the slots.
+
+    THE ANSWER SHAPE stays per-user (useful for D). The shared store is
+      question-only. The check is questions-only.
+
+
 
 
 
