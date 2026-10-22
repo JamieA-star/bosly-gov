@@ -2319,6 +2319,36 @@ that has actually happened.
       guesswork. That is ops.jarvis's "one voice" seen from the
       build side: the app tells you what it wants to become.
 
+[ ] [LIVE] gov.evolve_loop_feed — FOUND 23 Oct. The questions and
+    actions the user gives, fed to the evolve loop so the founder can
+    see where Bosly needs improving.
+
+    WHAT IT IS: every question the user asks, and every action they
+    take (open the calendar, draft an invoice, look up a contact), is
+    a SIGNAL. This feed carries the signal to the evolve loop: the
+    question SHAPE, the action LABEL, and the OUTCOME (answered,
+    refused, or failed). The founder reads the feed and sees the
+    patterns — what is asked, what is refused, what is done — and
+    chooses what to build next from evidence.
+
+    WHAT IT IS NOT: not a second logger. unknown-intents.jsonl already
+    records what the engine cannot answer; the feedback log records
+    what users flag. This feed adds the SUCCESSFUL questions and the
+    ACTIONS — the things that worked, which tell you what Bosly should
+    do more of, not just what it missed.
+
+    THE BOUNDARY: the feed carries the question SHAPE (the same [name]/
+    [date] slots), the action LABEL, and the OUTCOME. Not the content —
+    no client name, no amount, no message. The same rule as the cache:
+    the shape crosses, the data does not.
+
+    WHAT IT FEEDS: gov.evolve_loop_feedback's digest, gov.pattern_signal's
+    question side, and the founder's build decisions. The digest sees the
+    misses; this feed sees the successes; together they are the whole
+    picture of what Bosly is asked and what it should become.
+
+    NOT YET: the feed route, the action labels, the digest integration.
+
 [x] ops.deploy_safe_ordering — DONE 22 Oct. The deploy script
     destroyed the backup before taking a new one, and a missing build
     artifact became a downed app (21 Oct). The fix is committed and
