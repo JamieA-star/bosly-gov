@@ -2083,6 +2083,28 @@ that has actually happened.
       question that looks like it had a value) but the automated proof
       does not cover it. That is the rules widening, and C waits on it.
 
+    WIDENING ATTEMPTED 22 Oct (fd7e1de) — measured, partially reverted.
+      CATCHES: relative dates ('next Tuesday' -> [date]), a capitalised
+        word after a preposition ('to Acme' -> [name]), more currency
+        forms ('450 GBP' -> [amount]), slash dates, the Nth, Qn, end of
+        month, Month Nth.
+      MISSES: a lowercase client name ('acme plumbing'). Demonstrated
+        in the store: shape = the question, hasSlots false, and the
+        check PASSES it because the check shares the rules.
+      CORRUPTED, THEN FIXED: the possessive rule turned 'What's' into
+        '[name]'s, mangling ordinary contractions while still missing
+        the lowercase name. The check passed the corrupted shape too.
+        Removed. A false positive that mangles the shape is worse than
+        a false negative that leaves it intact.
+
+    THE VERDICT: patterns REDUCE the hole; they cannot close it, and
+      they can break the shape. C's precondition is not more patterns —
+      it is a different kind of check: a VOCABULARY check (any token
+      that is not a safe word is flagged, regardless of pattern) plus
+      HUMAN REVIEW for the residue. The lowercase-name case is the
+      demonstrated reason C waits.
+
+
 
     FOUND BESIDE IT, FIXED 22 Oct: every chat memory save returned
       400 invalid_encrypted_payload — encrypt() returns version as a
