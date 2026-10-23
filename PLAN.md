@@ -469,6 +469,15 @@ THE BUILD, IN ORDER
     The Copilot sees the plan and the repo; the next readers make it
     see the whole ecosystem.
 
+    THE BUTLER'S TOOLS: the build tools (plan, repo, checks, patch,
+    scout) and the business tools (read_accord: calendar, invoices,
+    mode) are in ONE loop. The model picks by what you ask. The app
+    and the UI butler are the same butler; the message decides the
+    tool. read_accord reads the founder's Accord through the app's
+    routes, with the butler's token — the founder's key, narrow.
+    PROVEN 23 Oct: 'what is on my calendar this week?' ran read_accord
+    through the butler and returned the calendar.
+
 
     THE RELATION TO THE LOOP: accord.executive_unattended_loop is
     the Executive's door, unattended. The Custodian room is the
