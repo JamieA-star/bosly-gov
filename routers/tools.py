@@ -833,6 +833,38 @@ def ecosystem_state(section: str = "all") -> Dict[str, Any]:
         return {"ok": False, "error": f"ecosystem_state raised: {e}"}
 
 
+def read_accord(section: str = "calendar") -> Dict[str, Any]:
+    """Read the founder's Accord.founder through the app's own routes.
+
+    The Executive's key is FOUNDER_SERVICE_TOKEN; the userId is
+    FOUNDER_USER_ID. The Copilot never sees the token; this tool sends
+    it. A client's Accord is never read — the token is the founder's.
+    Sections: calendar, invoices, mode.
+    """
+    import json as _json
+    import urllib.request as _urllib
+
+    token = (os.environ.get("FOUNDER_SERVICE_TOKEN") or "").strip()
+    if not token:
+        return {"ok": False, "error": "FOUNDER_SERVICE_TOKEN not set"}
+    base = "http://localhost:3100"
+    paths = {
+        "calendar": "/api/calendar/list",
+        "invoices": "/api/invoices",
+        "mode": "/api/account/mode",
+    }
+    path = paths.get(section)
+    if not path:
+        return {"ok": False, "error": f"unknown section {section!r}; known: {sorted(paths)}"}
+    req = _urllib.Request(base + path, headers={"Authorization": f"Bearer {token}"})
+    try:
+        with _urllib.urlopen(req, timeout=30) as r:
+            data = _json.loads(r.read().decode("utf-8"))
+        return {"ok": True, "result": data}
+    except Exception as e:
+        return {"ok": False, "error": f"read_accord failed: {e}"}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1127,6 +1159,22 @@ TOOLS = [
             },
         },
         "fn": ecosystem_state,
+    },
+    {
+        "name": "read_accord",
+        "description": (
+            "Read the founder's Accord.founder: the calendar, the invoices, "
+            "or the account mode. Use this to see the founder's day and the "
+            "business. The founder's own data, through the app's routes."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "section": {"type": "string", "enum": ["calendar", "invoices", "mode"]},
+            },
+            "required": ["section"],
+        },
+        "fn": read_accord,
     },
 ]
 
