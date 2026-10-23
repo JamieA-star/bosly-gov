@@ -424,10 +424,13 @@ THE BUILD, IN ORDER
     the terminal today, and through the founder's Accord tomorrow. A
     client's manage never has it.
 
-    THE NAMES: the room is Executive Custodian (static/index.html +
-    static/app.js). The assistant is the Executive. The Copilot is the
-    tool — the model and the tool loop. The door is
-    /api/executive/founder.
+    THE NAMES: the butler is the assistant — the Executive and the
+    Custodian, together. The Executive is the acting half (judgment,
+    action, the conversation). The Custodian is the restraining half
+    (the checks, the plan, the memory). The Copilot is the tool — the
+    build hands, run inside the Custodian. Accord.founder is the app's
+    door to the digital butler. The UI butler is the laptop's door to
+    the digital butler.
 
 [ ] [LIVE] gov.founder_door — BUILT 23 Oct. The founder's chat
     reaches the Custodian. The door is open and proven.

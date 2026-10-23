@@ -658,7 +658,7 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
     await checkHealth();
     chatInput.focus();
     if (!messageHistory.length) {
-      addMessage("system", "The Executive Custodian is ready. Calm mode enabled.");
+      addMessage("system", "The UI butler is ready. Calm mode enabled.");
     }
   }
 
