@@ -351,6 +351,99 @@ THE BUILD, IN ORDER
     buildable, and the calendar's plaintext titles are the one
     caveat worth stating.
 
+[ ] [LIVE] gov.custodian_front_door — DECIDED 23 Oct. One Executive,
+    two rooms, one front door.
+
+    THE FRONT DOOR: the founder talks to the Custodian Executive.
+    It is the server screen, the room the founder walks into. It
+    holds the plan, the memory, the checks, and the build tools.
+    It is where the work happens.
+
+    BEHIND IT, THE OTHER ROOMS:
+      ACCORD MANAGED — the business room. Invoices, emails, the
+        calendar, the day-to-day. It runs the founder's business.
+      BOSLY KEEP — the personal portfolio. Personal, not a product.
+      THE SCOUT — the county sweep, the ranked shortlist.
+      THE CONSULTANCY — the front door at bosley.app/consulting.
+
+    THE CUSTODIAN TALKS TO ACCORD ON THE FOUNDER'S BEHALF. The
+    founder asks once, in one conversation. "Have I forgotten an
+    invoice?" — the Custodian asks Accord, gets the answer, tells
+    the founder, and acts on a yes. One voice, two rooms, no
+    tab-switching. That is what makes it a butler rather than two
+    assistants.
+
+    THE GUARD IS UNCHANGED. The Custodian's trust contract binds it:
+    nothing changes without explicit consent; consent is
+    per-action. The Accord Executive's vault/managed toggle and the
+    proxy's guards are unchanged. The front door is a conversation,
+    not a new permission.
+
+    THE TOOLS DIFFER BY ROOM. Accord's tools: business work —
+    leads, drafts, briefings. The Custodian's tools: build work —
+    the plan, the repo, patches, checks, the ecosystem reader.
+    Same assistant, same memory, same plan, same guards. Different
+    tools because the work is different.
+
+    WHY IT IS SERVER-SIDE. The build room is plaintext, on the
+    machine the founder controls. The repo, the plan, the checks,
+    the memory — all server-side by design. The Accord room is
+    encrypted and client-side. Two security models, one assistant,
+    one front door.
+
+    THE NOTE: the founder's own Accord is a managed instance,
+    managed by Bosly Ltd. The Custodian room is developer-only, for
+    the founder. Nothing in this entry changes the client model or
+    the vault/managed split; it records where the founder sits.
+
+    THE PRODUCT IS THE TEMPLATE. What is built for the founder is
+    the working version. The client version is the same butler,
+    tuned to their business, with their toggles. Every rough edge
+    sanded off is a rough edge the client version does not have.
+
+    THE RELATION TO THE LOOP: accord.executive_unattended_loop is
+    the Executive's door, unattended. The Custodian room is the
+    founder's door, attended. Different doors, different guards.
+
+[ ] [LIVE] ops.plan_to_january_v2 — DECIDED 23 Oct. The order to
+    January, refined. This supersedes the ORDER in
+    ops.priority_to_january; the old entry stays for the record.
+    Where they differ, v2 wins.
+
+    NOW (late October) — the Accord Executive's loose ends, then
+      the tool loop in the proxy. One day for the loop: the loop
+      exists; it is a port, not a build.
+
+    NEXT (November) — the Custodian room. A usable chat, the full
+      tool set, the room view. This is the build that removes the
+      bottleneck: the founder talks to the Custodian, the Custodian
+      builds and tests and reports. A week or more, because UI is
+      where estimates slip.
+
+    THEN (late November to early December) — the receptionist, the
+      Keep fixes, the consultancy page. Built WITH the Custodian
+      Executive rather than by hand. This is where the time saved
+      starts to pay back.
+
+    DECEMBER — not idle. The Custodian Executive does the heavy
+      lifting: the scout runs, drafts are reviewed, the pitch is
+      refined. The founder uses the machine rather than building
+      it. A light rhythm, one or two sessions a week. Rest, not
+      dormant.
+
+    JANUARY — the wave. 15 contacts a week from the scout. The
+      Custodian drafts, the founder approves. A paying client at
+      the end of January is a good outcome, not a slow one. The
+      reply comes mid-January; the contract after that.
+
+    FEBRUARY ONWARD — the butler assembles, room by room. The
+      client version is the same butler with different keys.
+
+    THE PRODUCT IS THE TEMPLATE. The founder's own business is the
+    proving ground. What is built for the founder is the working
+    version; the client version is the same, tuned.
+
+
 ================================================================
 WHAT BOSLY GOV IS
 ================================================================
