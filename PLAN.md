@@ -464,10 +464,12 @@ THE BUILD, IN ORDER
     with the right statuses. The Copilot read the plan; the door
     returned it; the chat showed it. No /api/chat, no proxy, no cache.
 
-    WHAT IS NOT YET: the Accord reader (the founder's diary and
-    invoices as tools) and the Keep reader (Keep's fix list as a tool).
-    The Copilot sees the plan and the repo; the next readers make it
-    see the whole ecosystem.
+    THE ACCORD READER — BUILT 23 Oct (02a1184). read_accord reads the
+    founder's Accord through the app's routes: the calendar, the mode,
+    and the sections to come (invoices, finance). The token is the
+    butler's key, and it lives where the loop runs.
+    WHAT IS NOT YET: the invoices and finance sections of read_accord,
+    and the Keep reader (Keep's fix list as a tool).
 
     THE BUTLER'S TOOLS: the build tools (plan, repo, checks, patch,
     scout) and the business tools (read_accord: calendar, invoices,
@@ -477,6 +479,48 @@ THE BUILD, IN ORDER
     routes, with the butler's token — the founder's key, narrow.
     PROVEN 23 Oct: 'what is on my calendar this week?' ran read_accord
     through the butler and returned the calendar.
+
+[ ] [LIVE] ops.butler_test_day — DECIDED 23 Oct. Tomorrow: test the
+    app butler and the UI butler, and build a few small items.
+
+    THE TEST: ask the butler the real questions, in both doors — the
+    calendar, the plan, the invoices, a scout run. Note what it does
+    and what it misses. The test is the proof, and the gaps are the
+    next builds.
+
+    THE SMALL BUILDS: the invoices and finance sections of read_accord;
+    a tool description pass (so the model picks better); one small
+    thing from the rough-edges list. Built WITH the butler, as the
+    loop intends.
+
+    NOT YET: the Keep reader, the UI butler's full screen, the feed.
+
+[ ] [LIVE] gov.prompt_caching — FOUND 23 Oct. The stable prefix, the
+    cost lever.
+
+    WHAT IT IS: the butler's request sends the same stable context on
+    every call — the system prompt, the tool definitions, the plan,
+    the memory. Anthropic prompt caching reads that prefix at ~10% of
+    normal input price; a cache write is ~1.25x, a cache read ~0.1x.
+    The cache is the reduction; the prompt cache is the lever.
+
+    THE CONSTRAINT: the cached prefix must be byte-for-byte identical
+    between requests. Stable content first, dynamic content after.
+
+    NOT YET: the cache_control directive in the butler's request; the
+    measurement (tokens before and after).
+
+[ ] [LIVE] gov.butler_rough_edges — FOUND 23 Oct. The list, named,
+    not built.
+
+    - read_accord: the invoices and finance sections.
+    - The tool descriptions: clear enough that the model picks right.
+    - The Keep reader: Keep's fix list as a tool.
+    - The UI butler's full screen: the readers, the tool calls shown.
+    - The client's manage tools: later, adapted.
+    - gov.evolve_loop_feed: the feed that turns questions into builds.
+
+    The test day names which of these the butler asks for first.
 
 
     THE RELATION TO THE LOOP: accord.executive_unattended_loop is
