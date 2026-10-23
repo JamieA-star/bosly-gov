@@ -330,7 +330,7 @@
     box.className = "thinking-card";
     box.id = "thinkingCard";
     box.innerHTML = `
-      <div class="thinking-title">Bosly is working</div>
+      <div class="thinking-title">The Executive is working</div>
       <div class="thinking-line">Reading your files... <span class="dots"><span></span><span></span><span></span></span></div>
       <div class="thinking-line">Checking the Accord... <span class="dots"><span></span><span></span><span></span></span></div>
       <div class="thinking-line">Thinking... <span class="dots"><span></span><span></span><span></span></span></div>
@@ -658,7 +658,7 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
     await checkHealth();
     chatInput.focus();
     if (!messageHistory.length) {
-      addMessage("system", "Bosly Gov is ready. Calm mode enabled.");
+      addMessage("system", "The Executive Custodian is ready. Calm mode enabled.");
     }
   }
 

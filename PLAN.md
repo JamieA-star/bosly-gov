@@ -424,6 +424,11 @@ THE BUILD, IN ORDER
     the terminal today, and through the founder's Accord tomorrow. A
     client's manage never has it.
 
+    THE NAMES: the room is Executive Custodian (static/index.html +
+    static/app.js). The assistant is the Executive. The Copilot is the
+    tool — the model and the tool loop. The door is
+    /api/executive/founder.
+
 [ ] [LIVE] gov.founder_door — BUILT 23 Oct. The founder's chat
     reaches the Custodian. The door is open and proven.
 
