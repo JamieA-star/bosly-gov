@@ -12,12 +12,15 @@ hangs from one of these.
 
   BOSLY LIMITED  (registered company, Companies House)
   │
-  ├─ BOSLY ACCORD ........... THE PLATFORM. One app, multi-user.
-  │    £25/month base: calendar, inbox, finance, tax, chief of
-  │    staff — what it already is. A client logs into Accord and
-  │    turns on the products they've paid for. Everything below
-  │    is a toggle inside Accord. Accord is the foundation; the
-  │    rest are features of it. This is what the consultancy sells.
+  ├─ BOSLY ACCORD ........... THE PLATFORM. One app, three products.
+  │    .vault  — public, encrypted, no assistant. The safe one.
+  │    .manage — sold to small businesses: the base (£25/mo) plus
+  │              toggles (the Executive, the receptionist).
+  │    .founder — the founder's own instance: the whole ecosystem,
+  │              the Custodian Executive, not for sale.
+  │    A client logs into Accord and turns on the products they've
+  │    paid for. Accord is the foundation; the rest are features of
+  │    it. This is what the consultancy sells.
   │
   ├─ BOSLY EXECUTIVE ........ THE CHIEF OF STAFF. The conversation.
   │    Talk to it. Plan with it. It holds the whole of the digital
@@ -247,6 +250,12 @@ THE BUILD, IN ORDER
     toggle management for products beyond the Executive, and the
     pricing-per-client record.
 
+    THE THIRD PRODUCT — accord.founder (DECIDED 23 Oct). The founder's
+    instance. It is a managed instance with User.isFounder true, and
+    it is the only instance whose Executive has the Custodian's build
+    tools. Vault and manage are unchanged; founder is the founder's
+    own, not for sale. The gate is isFounder.
+
 [x] accord.delete_route_toggle_cleanup — DONE 21 Oct. The
     vault/managed split added ProductToggle as a child of User. The
     delete route enumerates child models manually, and the
@@ -409,6 +418,49 @@ THE BUILD, IN ORDER
     the working version. The client version is the same butler,
     tuned to their business, with their toggles. Every rough edge
     sanded off is a rough edge the client version does not have.
+
+    THE ROOM: the Custodian Executive lives in Accord.founder — the
+    founder's managed instance, with isFounder true. Reached through
+    the terminal today, and through the founder's Accord tomorrow. A
+    client's manage never has it.
+
+[ ] [LIVE] gov.founder_door — BUILT 23 Oct. The founder's chat
+    reaches the Custodian. The door is open and proven.
+
+    WHAT IT IS: POST /api/executive/founder — gated by User.isFounder,
+    then calling the Copilot's /api/chat (localhost:3102), which runs
+    the tool loop (routers/tool_loop.py, run_with_tools). The founder
+    talks to the Executive in Accord.founder; the Executive reaches the
+    Copilot's tools; the founder never touches the Copilot directly.
+
+    THE CHAT BRANCH: ChatDrawer reads /api/account/mode (isFounder).
+    For the founder, the message goes to the door FIRST and returns;
+    /api/chat, the proxy and the cache are the business door and are
+    unchanged. Two doors, two routers: the founder's is the Copilot;
+    the business's is /api/chat.
+
+    THE BUG AND THE FIX: the first attempt put the founder branch
+    inside the unknownIntent check, after /api/chat. The deterministic
+    router answered 'what's on the plan?' with 'nothing scheduled for
+    that period', and the door was never reached. The fix was the
+    order: the founder's message goes to the door first. The order is
+    the architecture.
+
+    THE GATE: gov.founder_gate — the route calls isFounder, returns
+    founder_only for a non-founder, and reaches the Copilot. A
+    client's manage never has isFounder true, so a client never
+    reaches the Copilot's tools through this door.
+
+    PROVEN 23 Oct: 'What's on the plan?' in Accord.founder returned
+    the plan's actual content — 15 in-progress items, the right ones,
+    with the right statuses. The Copilot read the plan; the door
+    returned it; the chat showed it. No /api/chat, no proxy, no cache.
+
+    WHAT IS NOT YET: the Accord reader (the founder's diary and
+    invoices as tools) and the Keep reader (Keep's fix list as a tool).
+    The Copilot sees the plan and the repo; the next readers make it
+    see the whole ecosystem.
+
 
     THE RELATION TO THE LOOP: accord.executive_unattended_loop is
     the Executive's door, unattended. The Custodian room is the
