@@ -1,5 +1,5 @@
 BOSLY GOV — PLAN
-Last updated: 19 October 2026
+Last updated: 23 October 2026
 
 ================================================================
 THE SHAPE OF BOSLY  (read this first)
@@ -300,9 +300,12 @@ THE BUILD, IN ORDER
 
     NOT YET: the door, the trigger, the delivery test.
 
-[ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct. The split
-    works for the founder; it does not need to work for a client
-    until January. The work now is the things that earn.
+[ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct. SUPERSEDED by
+    ops.plan_to_january_v2 (23 Oct). Kept for the record; where they
+    differ, v2 wins.
+
+    The split works for the founder; it does not need to work for a
+    client until January. The work now is the things that earn.
 
     ORDER:
       1. The Executive working for the founder — the model call out
@@ -318,8 +321,14 @@ THE BUILD, IN ORDER
       - the pricing-per-client record
       - the invite link for a client to attach Bosly
 
-[ ] [LIVE] accord.executive_state_now — RECORDED 21 Oct. What the
-    Executive actually is, for the founder, at the close of 21 Oct.
+[ ] [LIVE] accord.executive_state_now — RECORDED 21 Oct. HISTORICAL:
+    this is what the Executive was at the close of 21 Oct. The ladder
+    since built (A-D, accord.learned_answer_cache) and the front door
+    (gov.custodian_front_door, 23 Oct) supersede the 'next build'
+    below. Kept for the record.
+
+    What the Executive actually is, for the founder, at the close of
+    21 Oct.
 
     TOOLS (14, all in routers/tools.py on the Gov side):
       append_plan_entry, save_memory, read_file, run_check
@@ -2141,8 +2150,10 @@ that has actually happened.
     down, the tier fails on executive_proxy_live — correct, but the
     cron log will show it.
 
-[~] accord.learned_answer_cache — FOUND 22 Oct. RUNG A BUILT AND
-    PROVEN 22 Oct. THE GOAL:
+[~] accord.learned_answer_cache — FOUND 22 Oct. THE LADDER BUILT
+    22-23 Oct: A (per-user cache), B (the extractor), C (the shared
+    question shape), D (the template rule, the fill form, the hard
+    rule). The feed is named (gov.evolve_loop_feed). THE GOAL:
     Bosly learns. The LLM is called less as Bosly accumulates memory;
     the memory becomes the seed of Bosly's own model, the local model
     the product design already names as the direction. Efficient,
