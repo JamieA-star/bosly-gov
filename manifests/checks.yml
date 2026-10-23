@@ -111,6 +111,9 @@ projects:
         - id: gov.founder_gate
           severity: high
           command: python3 checks/founder_gate.py
+        - id: gov.founder_token_not_repo
+          severity: high
+          command: python3 checks/founder_token_not_repo.py
       slow:
         - id: gov.waiting_well
           severity: medium
