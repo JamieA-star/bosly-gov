@@ -569,7 +569,7 @@ SCOUT_CATEGORIES = {
 }
 
 
-def run_lead_scout(category: str, area: str, timeout: int = 180) -> Dict[str, Any]:
+def run_lead_scout(category: str, area: str, timeout: int = 300) -> Dict[str, Any]:
     """Run scripts/lead_scout.py, then read and return the CSV.
 
     Guards:
@@ -603,18 +603,33 @@ def run_lead_scout(category: str, area: str, timeout: int = 180) -> Dict[str, An
         return {"ok": False, "error": f"scout script not found at {SCOUT_SCRIPT}"}
 
     import subprocess as _sp
+    import json as _json
+    import tempfile as _tempfile
+
+    # The script sweeps a list of areas from a config file; the category
+    # is not a config key — the script sweeps its map, and the tool
+    # filters the result. Write a one-area config, run --config.
+    cfg = {"areas": [area], "output": str(SCOUT_CSV)}
+    tmp = _tempfile.NamedTemporaryFile(
+        mode="w", suffix=".json", delete=False, encoding="utf-8"
+    )
     try:
-        proc = _sp.run(
-            ["python3", str(SCOUT_SCRIPT),
-             "--category", category,
-             "--area", area,
-             "--out", str(SCOUT_CSV)],
-            capture_output=True, text=True, timeout=timeout,
-        )
-    except _sp.TimeoutExpired:
-        return {"ok": False, "error": f"scout timed out after {timeout}s"}
-    except Exception as e:
-        return {"ok": False, "error": f"could not run the scout: {e}"}
+        tmp.write(_json.dumps(cfg))
+        tmp.close()
+        try:
+            proc = _sp.run(
+                ["python3", str(SCOUT_SCRIPT), "--config", tmp.name],
+                capture_output=True, text=True, timeout=timeout,
+            )
+        except _sp.TimeoutExpired:
+            return {"ok": False, "error": f"scout timed out after {timeout}s"}
+        except Exception as e:
+            return {"ok": False, "error": f"could not run the scout: {e}"}
+    finally:
+        try:
+            Path(tmp.name).unlink()
+        except Exception:
+            pass
 
     # The script writes its progress to stdout and its errors (via
     # SystemExit) to stderr. A non-zero exit with 'mirrors failed' in
@@ -636,6 +651,12 @@ def run_lead_scout(category: str, area: str, timeout: int = 180) -> Dict[str, An
             rows = [dict(r) for r in _csv.DictReader(f)]
     except Exception as e:
         return {"ok": False, "error": f"could not read the scout CSV: {e}"}
+
+    # The script sweeps every category in its map; the tool's category is
+    # a filter on the result. The category argument is honoured, and the
+    # script's interface is untouched.
+    if category:
+        rows = [r for r in rows if (r.get("category") or "").strip().lower() == category]
 
     return {
         "ok": True,
@@ -1077,8 +1098,10 @@ TOOLS = [
         "description": (
             "Find businesses with no website, from OpenStreetMap, by "
             "running the lead-scout script. Give a category (hairdresser, "
-            "cafe, pub, plumber, ...) and an area (a town name or "
-            "postcode). Returns the candidates as rows: name, city, "
+            "cafe, pub, plumber, ...) and an area (a POSTCODE or a "
+            "small area, e.g. 'NE46' or 'Kemptown' — a whole town is a "
+            "huge bounding box and Overpass times out). Returns the "
+            "candidates as rows: name, city, "
             "phone, and whether they have a website. If the Overpass "
             "endpoint is down, it says so — a failure is never reported "
             "as zero results. After running, you can save chosen "
@@ -1093,7 +1116,7 @@ TOOLS = [
                 },
                 "area": {
                     "type": "string",
-                    "description": "a town name or postcode, e.g. 'Hexham' or 'NE46'",
+                    "description": "a POSTCODE or small area, e.g. 'NE46' or 'Kemptown' — not a whole town",
                 },
             },
             "required": ["category", "area"],
@@ -1184,9 +1207,13 @@ TOOLS = [
     {
         "name": "read_accord",
         "description": (
-            "Read the founder's Accord.founder: the calendar, the invoices, "
-            "or the account mode. Use this to see the founder's day and the "
-            "business. The founder's own data, through the app's routes."
+            "Read the founder's Accord.founder. Sections: "
+            "'calendar' — events for a period; "
+            "'invoices' — the invoice list, what is issued and outstanding; "
+            "'mode' — the account mode. "
+            "Finance is NOT readable here: income, expenses and profit are "
+            "encrypted client-side. For 'how much did I make' or tax, tell "
+            "the founder to ask in Accord, where the session has the key."
         ),
         "input_schema": {
             "type": "object",

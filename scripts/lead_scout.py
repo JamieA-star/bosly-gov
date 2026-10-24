@@ -95,6 +95,9 @@ def geocode_area(area: str) -> tuple[float, float, float, float] | None:
         "q": area,
         "format": "json",
         "limit": 1,
+        # Nominatim geocodes on the raw string; "NE46" without a country
+        # matched Nebraska, USA. Restrict to the UK.
+        "countrycodes": "gb",
     })
     req = urllib.request.Request(
         f"{NOMINATIM_URL}?{params}",
