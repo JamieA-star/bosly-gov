@@ -554,6 +554,19 @@ THE BUILD, IN ORDER
     The butler's honesty is a feature: every failure was reported as a
     failure, never as a zero. The gaps are named, not guessed.
 
+    CLOSED 24 Oct: the invoices path (the middleware redirected the
+    butler's token — the token branch lets it through); the tool's
+    honesty (status and content-type, never a parse error); finance
+    (removed — encrypted client-side; the butler says ask in Accord,
+    where the session has the key); the scout (the tool writes a
+    one-area config, runs --config, filters the CSV; timeout 300s;
+    countrycodes=gb so NE46 is Hexham, not Nebraska). The scout found
+    Overpass down on the retry; the tool refused the bad CSV and set a
+    retry marker.
+
+    STILL OPEN: read_accord has no period — "next week" cannot be read.
+    The calendar path needs ?from=...&to=...
+
 
     THE RELATION TO THE LOOP: accord.executive_unattended_loop is
     the Executive's door, unattended. The Custodian room is the
