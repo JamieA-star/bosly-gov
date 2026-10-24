@@ -534,6 +534,26 @@ THE BUILD, IN ORDER
 
     The test day names which of these the butler asks for first.
 
+    TESTED 24 Oct (both doors). WORKED: the plan (read_file, accurate),
+    the calendar (read_accord, empty but honest), the Keep list (the
+    plan's items). FOUND:
+      - read_accord("invoices") returns invalid JSON ("Expecting value:
+        line 1 column 1"). The path is wrong (the route is likely not
+        /api/invoices) or the route returns a 401/HTML; the tool does
+        not parse the error, so the butler cannot say why.
+      - finance: the same broken path; "how much did I make" fails the
+        same way. Needs its own route.
+      - the scout: lead_scout rejects --category/--area; the script's
+        usage is [--config] [--retry]. A CLI mismatch.
+      - THE BUTLER CANNOT WRITE CODE. The Copilot's tools are read_file,
+        run_check, append_plan_entry, save_memory — no patch/write. So
+        "add the invoices section" cannot be done by the butler. This is
+        the biggest gap: the loop that builds the butler needs a write.
+      - read_accord has no period: "next week" cannot be read; the butler
+        asked which week, honestly, but the tool cannot answer.
+    The butler's honesty is a feature: every failure was reported as a
+    failure, never as a zero. The gaps are named, not guessed.
+
 
     THE RELATION TO THE LOOP: accord.executive_unattended_loop is
     the Executive's door, unattended. The Custodian room is the
