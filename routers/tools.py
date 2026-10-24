@@ -859,10 +859,31 @@ def read_accord(section: str = "calendar") -> Dict[str, Any]:
     req = _urllib.Request(base + path, headers={"Authorization": f"Bearer {token}"})
     try:
         with _urllib.urlopen(req, timeout=30) as r:
-            data = _json.loads(r.read().decode("utf-8"))
+            status = r.status
+            ctype = r.headers.get("content-type", "")
+            body = r.read().decode("utf-8", "replace")
+        # A failure is not a zero. If the route answered with HTML (a
+        # redirect to signin, a middleware page) or an error, say so —
+        # never parse it as data and never report it as empty.
+        if "application/json" not in ctype:
+            return {
+                "ok": False,
+                "error": f"Accord returned {status} {ctype or '(no content-type)'}",
+                "body_preview": body[:160],
+            }
+        try:
+            data = _json.loads(body)
+        except ValueError:
+            return {
+                "ok": False,
+                "error": f"Accord returned {status} but the body was not JSON",
+                "body_preview": body[:160],
+            }
         return {"ok": True, "result": data}
+    except _urllib.HTTPError as e:
+        return {"ok": False, "error": f"Accord returned HTTP {e.code} for {path}"}
     except Exception as e:
-        return {"ok": False, "error": f"read_accord failed: {e}"}
+        return {"ok": False, "error": f"read_accord failed: {type(e).__name__}: {e}"}
 
 
 TOOLS = [
