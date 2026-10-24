@@ -495,6 +495,18 @@ THE BUILD, IN ORDER
 
     NOT YET: the Keep reader, the UI butler's full screen, the feed.
 
+[x] ops.cron_environment — DONE 24 Oct. The fast-tier cron ran at
+    05:00 with no environment: no DATABASE_URL, no HOME, no nvm. Three
+    checks failed — keep.invariants (no Node), vault_plaintext_calendar
+    and hasProduct_vault_false (no DB). The email was a false alarm;
+    the 09:18 live run was 29/29.
+
+    THE FIX: PATH and DATABASE_URL at the top of the crontab, the fast
+    tier moved to 07:00 (after the DB and app are up), and run under
+    `bash -lc` so a login shell loads HOME, nvm, and Node. Verified:
+    `bash -lc` gives 29/29 — the cron's environment now matches the
+    shell's. An alarm that only fires for real problems.
+
 [ ] [LIVE] gov.prompt_caching — FOUND 23 Oct. The stable prefix, the
     cost lever.
 
