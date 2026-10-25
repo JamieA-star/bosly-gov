@@ -911,6 +911,7 @@ def ecosystem_state(section: str = "all") -> Dict[str, Any]:
         return {"ok": False, "error": f"ecosystem_state raised: {e}"}
 
 
+# read_accord: the founder's read tool
 def read_accord(section: str = "calendar") -> Dict[str, Any]:
     """Read the founder's Accord.founder through the app's own routes.
 
