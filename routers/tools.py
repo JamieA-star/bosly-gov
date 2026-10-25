@@ -289,7 +289,64 @@ def read_file(path: str, max_bytes: int = 400_000) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Tool 4 — run_check
+# Tools 4a/4b — write_file and patch_file
+# ---------------------------------------------------------------------------
+
+def write_file(path: str, content: str) -> Dict[str, Any]:
+    """Write a file under one of the three repos.
+
+    Guards: must resolve inside a repo; no .env/.key/.pem; no .git,
+    node_modules, .next (the same resolver as read_file). A .bak is
+    written before the change.
+    """
+    resolved = _resolve_safe(path)
+    if resolved is None:
+        return {"ok": False, "error": f"path {path!r} is outside the repos or forbidden"}
+    if resolved.exists() and not resolved.is_file():
+        return {"ok": False, "error": f"{resolved} is not a regular file"}
+    if resolved.exists():
+        try:
+            resolved.with_suffix(resolved.suffix + ".bak-write").write_text(
+                resolved.read_text(encoding="utf-8"), encoding="utf-8")
+        except Exception as e:
+            return {"ok": False, "error": f"could not back up {resolved}: {e}"}
+    try:
+        resolved.parent.mkdir(parents=True, exist_ok=True)
+        resolved.write_text(content, encoding="utf-8")
+    except Exception as e:
+        return {"ok": False, "error": f"could not write {resolved}: {e}"}
+    return {"ok": True, "result": {"path": str(resolved), "bytes": len(content.encode("utf-8"))}}
+
+
+def patch_file(path: str, anchor: str, replacement: str) -> Dict[str, Any]:
+    """Replace ONE occurrence of anchor with replacement.
+
+    Aborts if the anchor is not found exactly once — never a partial
+    edit. A .bak is written before the change. This is the tool the
+    butler uses to patch the code.
+    """
+    resolved = _resolve_safe(path)
+    if resolved is None:
+        return {"ok": False, "error": f"path {path!r} is outside the repos or forbidden"}
+    if not resolved.is_file():
+        return {"ok": False, "error": f"{resolved} is not a regular file"}
+    try:
+        src = resolved.read_text(encoding="utf-8")
+    except Exception as e:
+        return {"ok": False, "error": f"could not read {resolved}: {e}"}
+    n = src.count(anchor)
+    if n != 1:
+        return {"ok": False, "error": f"anchor found {n} times, expected 1 — aborting, nothing changed"}
+    try:
+        resolved.with_suffix(resolved.suffix + ".bak-patch").write_text(src, encoding="utf-8")
+        resolved.write_text(src.replace(anchor, replacement, 1), encoding="utf-8")
+    except Exception as e:
+        return {"ok": False, "error": f"could not write {resolved}: {e}"}
+    return {"ok": True, "result": {"path": str(resolved), "replaced": True}}
+
+
+# ---------------------------------------------------------------------------
+# Tool 5 — run_check
 # ---------------------------------------------------------------------------
 
 def _load_checks() -> Dict[str, Dict[str, str]]:
@@ -1223,6 +1280,48 @@ TOOLS = [
             "required": ["section"],
         },
         "fn": read_accord,
+    },
+    {
+        "name": "write_file",
+        "description": (
+            "Write a file under one of the three repos. The same guards as "
+            "read_file: inside a repo, no .env/.key/.pem, no .git/"
+            "node_modules/.next. A .bak is written before the change. Use "
+            "this for a new file or a full rewrite; use patch_file for a "
+            "small anchored change."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "content": {"type": "string"},
+            },
+            "required": ["path", "content"],
+        },
+        "fn": write_file,
+    },
+    {
+        "name": "patch_file",
+        "description": (
+            "Replace ONE occurrence of anchor with replacement in a file. "
+            "Aborts if the anchor is not found exactly once — never a "
+            "partial edit. A .bak is written before the change. This is the "
+            "tool for a small, anchored code change: read the file first, "
+            "pick a unique anchor, then patch. This includes the tools "
+            "themselves — routers/tools.py, and this tool's own schema and "
+            "read_accord's sections, are files like any other and can be "
+            "patched here."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "anchor": {"type": "string", "description": "the exact text to replace; must appear exactly once"},
+                "replacement": {"type": "string", "description": "the text to put in its place"},
+            },
+            "required": ["path", "anchor", "replacement"],
+        },
+        "fn": patch_file,
     },
 ]
 
