@@ -5,6 +5,8 @@ Bosly Gov v4 - Web Backend Server
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 import json
 import logging
 import mimetypes
@@ -482,6 +484,9 @@ class BoslyHandler(BaseHTTPRequestHandler):
         path = parsed.path
         if path.startswith("/gov/"):
             path = path[len("/gov"):]
+        if path == "/api/transcript":
+            self.handle_api_transcript()
+            return
         if path == "/api/chat":
             self.handle_api_chat()
             return
@@ -660,6 +665,40 @@ class BoslyHandler(BaseHTTPRequestHandler):
         except Exception as e:
             logging.exception("Failed reading pending action: %s", e)
             self._send_json({"ok": False, "error": "Failed to read pending action."}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    def handle_api_transcript(self) -> None:
+        """Append one message to the shared transcript.
+
+        Both rooms write here — the app and the UI butler. The ts is set
+        here, so the UI's renderer always has a timestamp. The butler
+        reads the transcript with read_chat.
+        """
+        try:
+            data = parse_json_body(self)
+        except ValueError as e:
+            self._send_json({"ok": False, "error": str(e)}, status=HTTPStatus.BAD_REQUEST)
+            return
+        room = str(data.get("room", "")).strip()
+        role = str(data.get("role", "")).strip()
+        text = str(data.get("text", "")).strip()
+        if not room or not role or not text:
+            self._send_json({"ok": False, "error": "room, role, text required"}, status=HTTPStatus.BAD_REQUEST)
+            return
+        entry = {
+            "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "room": room,
+            "role": role,
+            "text": text[:4000],
+        }
+        path = Path("/mnt/bosly/bosly-data/.data/governor/chat-transcript.jsonl")
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception as e:
+            self._send_json({"ok": False, "error": f"could not append: {e}"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
+            return
+        self._send_json({"ok": True})
 
     def handle_api_chat(self) -> None:
         state = self._state()

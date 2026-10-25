@@ -32,11 +32,15 @@
   function safeText(v) { return v == null ? "" : String(v); }
   function nowIso() { return new Date().toISOString(); }
   function formatTime(iso) {
+    if (!iso) return "—";
     const d = new Date(iso);
+    if (isNaN(d.getTime())) return "—";
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
   function formatDateTime(iso) {
+    if (!iso) return "—";
     const d = new Date(iso);
+    if (isNaN(d.getTime())) return "—";
     return d.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   }
 
@@ -161,7 +165,7 @@
     meta.className = "meta";
 
     const left = document.createElement("span");
-    left.textContent = `${msg.role === "user" ? "You" : msg.role === "bosly" ? "Bosly" : "System"} • ${formatTime(msg.timestamp)}`;
+    left.textContent = `${msg.role === "user" ? "You" : msg.role === "bosly" ? "Bosly" : "System"} • ${formatTime(msg.timestamp || msg.ts)}`;
     meta.appendChild(left);
 
     if (msg.role === "bosly") {
@@ -266,6 +270,12 @@
     };
     messageHistory.push(msg);
     persistChat();
+    // Append to the shared transcript — both rooms write here.
+    fetch("/gov/api/transcript", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ room: "ui", role, text: msg.text }),
+    }).catch(() => {});
     chatArea.appendChild(createMessageEl(msg, messageHistory.length - 1));
     scrollToBottom();
     return msg;
@@ -599,6 +609,12 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
       const answer = safeText(res.reply || res.text || res.answer || "Done.");
       hideThinking();
       updateMessageText(liveMessage.id, answer, { context });
+      // The bot's reply appends to the shared transcript.
+      fetch("/gov/api/transcript", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ room: "ui", role: "bosly", text: answer }),
+      }).catch(() => {});
     } catch (err) {
       hideThinking();
       updateMessageText(liveMessage.id, `Request error: ${safeText(err.message || err)}`, { role: "system", context: null });
