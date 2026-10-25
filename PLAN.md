@@ -507,6 +507,27 @@ THE BUILD, IN ORDER
     `bash -lc` gives 29/29 — the cron's environment now matches the
     shell's. An alarm that only fires for real problems.
 
+[x] gov.shared_transcript — BUILT 25 Oct. One butler, two rooms,
+    one log.
+
+    Both rooms write /api/transcript (Gov): the UI butler from app.js,
+    the app from ChatDrawer via Accord's own route, which forwards and
+    is gated by requireAccord. Each line is {ts, room, role, text}; the
+    ts fixes the UI's "Invalid Date" and the room records where it was
+    said. read_chat (b90abf5) reads the log — both rooms, last N,
+    optionally filtered — so "what did we say about X" is a read, not a
+    guess. Proven: the Café Corner question answered from the lead store
+    and the transcript.
+
+    ALSO BUILT 25 Oct: write_file and patch_file (f341db6) — the butler
+    patches code, anchored, aborting on a bad anchor, backed up, guarded
+    by the same resolver as read_file. Proven: it patched routers/tools.py,
+    ran the checks, and reported.
+
+    STILL OPEN: the loop returns an empty answer when the model ends
+    without text (the empty-answer guard); read_accord's period; the
+    finance route (encrypted client-side, the honest boundary).
+
 [ ] [LIVE] gov.prompt_caching — FOUND 23 Oct. The stable prefix, the
     cost lever.
 
