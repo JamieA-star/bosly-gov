@@ -965,6 +965,34 @@ def read_accord(section: str = "calendar") -> Dict[str, Any]:
         return {"ok": False, "error": f"read_accord failed: {type(e).__name__}: {e}"}
 
 
+def read_chat(room: str = "all", limit: int = 40) -> Dict[str, Any]:
+    """Read the shared transcript — both rooms, one log.
+
+    Every message from the app and the UI butler is appended to
+    chat-transcript.jsonl with ts, room, role, text. This tool reads
+    the last N, optionally filtered by room. Use it to answer "what did
+    we say about X" — read, never guess.
+    """
+    import json as _json
+    path = Path("/mnt/bosly/bosly-data/.data/governor/chat-transcript.jsonl")
+    if not path.exists():
+        return {"ok": True, "result": {"messages": []}}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()[-limit:]
+    except Exception as e:
+        return {"ok": False, "error": f"could not read the transcript: {e}"}
+    msgs = []
+    for line in lines:
+        try:
+            e = _json.loads(line)
+        except Exception:
+            continue
+        if room != "all" and e.get("room") != room:
+            continue
+        msgs.append(e)
+    return {"ok": True, "result": {"messages": msgs}}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1323,6 +1351,23 @@ TOOLS = [
             "required": ["path", "anchor", "replacement"],
         },
         "fn": patch_file,
+    },
+    {
+        "name": "read_chat",
+        "description": (
+            "Read the shared transcript — both rooms (app and ui), one "
+            "log, with timestamps. Use this to answer 'what did we say "
+            "about X' or to remember the conversation. Read, never guess."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "room": {"type": "string", "enum": ["all", "app", "ui"]},
+                "limit": {"type": "integer"},
+            },
+            "required": [],
+        },
+        "fn": read_chat,
     },
 ]
 
