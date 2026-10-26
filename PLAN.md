@@ -204,26 +204,23 @@ THE BUILD, IN ORDER
     the butler chose 2025 and returned a true zero for the wrong year:
     nothing in the prompt says today's date.
 
-    The prompt is a file: /home/bosly_accord/bosly-gov/tools_prompt.txt
-    (8841 bytes), read fresh on every call by routers/tool_loop.py
-    _read_prompt (PROMPT_FILE, line 71). The file begins:
-    "You are Bosly Executive, the founder's chief of staff."
-    It has no date anywhere.
+    The prompt is a file: /home/bosly_accord/bosly-gov/tools_prompt.txt,
+    read fresh on every call by routers/tool_loop.py _read_prompt
+    (PROMPT_FILE, line 71). It begins "You are Bosly Executive, the
+    founder's chief of staff." and had no date anywhere.
 
-    STEP 1 (butler-doable, no code, no restart). Read tools_prompt.txt,
-    patch_file the anchor "You are Bosly Executive, the founder's chief
-    of staff." to insert a line beneath it: "Today is <weekday> <D>
-    <Month> <YYYY> (Europe/London)." The file is read per turn, so the
-    change is live without a rebuild.
+    STEP 1 DONE 26 Oct. The line "Today is Monday 26 October 2026
+    (Europe/London)." now sits beneath the opening line. Applied by the
+    founder; verified by the butler, which read the file fresh and
+    quoted the line.
 
-    STEP 2 (code, later). A static date goes stale. Change _read_prompt
-    to inject a fresh datetime.now(ZoneInfo("Europe/London")) each call,
-    and either drop the file's date line or make it a placeholder.
+    STEP 2 OPEN. A static date goes stale. Change _read_prompt to inject
+    a fresh datetime.now(ZoneInfo("Europe/London")) each call, and drop
+    the static line or make it a placeholder. Code change; needs a Gov
+    restart, verified against the running process.
 
     Verify: ask the butler "what's on 27-29 October?" and it must resolve
-    to 2026, not 2025. The smallest real build, and the first task the
-    butler can do itself: a file the plan names, an anchor it can see,
-    a diff the founder reads.
+    to 2026, not 2025.
 
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
