@@ -28,6 +28,8 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from datetime import date, timedelta, datetime as _dt
+from zoneinfo import ZoneInfo
 from typing import Any, Dict
 
 # Make "from routers.things import ..." work when this file is run
@@ -911,8 +913,88 @@ def ecosystem_state(section: str = "all") -> Dict[str, Any]:
         return {"ok": False, "error": f"ecosystem_state raised: {e}"}
 
 
+_LONDON = ZoneInfo("Europe/London")
+
+_PERIOD_FORMS = (
+    "today, tomorrow, yesterday, this week, next week, last week, "
+    "this month, next month, last month, next 7 days, "
+    "YYYY-MM-DD (single day), YYYY-MM-DD..YYYY-MM-DD"
+)
+
+
+def _resolve_period(period, today=None):
+    """Resolve a period to inclusive ISO dates (start, end, label).
+
+    Raises ValueError naming the accepted forms. today is injectable so
+    a check can pin a date. Weeks are Monday-Sunday, Europe/London.
+    """
+    if today is None:
+        today = _dt.now(_LONDON).date()
+    p = (period or "").strip().lower()
+    if not p:
+        p = "this week"
+
+    def week_bounds(d):
+        monday = d - timedelta(days=d.weekday())
+        return monday, monday + timedelta(days=6)
+
+    def month_bounds(y, m):
+        start = date(y, m, 1)
+        end = date(y + (m == 12), (m % 12) + 1, 1) - timedelta(days=1)
+        return start, end
+
+    if p == "today":
+        return today.isoformat(), today.isoformat(), "today"
+    if p == "tomorrow":
+        d = today + timedelta(days=1)
+        return d.isoformat(), d.isoformat(), "tomorrow"
+    if p == "yesterday":
+        d = today - timedelta(days=1)
+        return d.isoformat(), d.isoformat(), "yesterday"
+    if p == "this week":
+        s, e = week_bounds(today)
+        return s.isoformat(), e.isoformat(), "this week"
+    if p == "week":
+        raise ValueError("ambiguous period 'week'; try 'this week' or 'next week'")
+    if p == "next week":
+        s, e = week_bounds(today + timedelta(days=7))
+        return s.isoformat(), e.isoformat(), "next week"
+    if p == "last week":
+        s, e = week_bounds(today - timedelta(days=7))
+        return s.isoformat(), e.isoformat(), "last week"
+    if p == "this month":
+        s, e = month_bounds(today.year, today.month)
+        return s.isoformat(), e.isoformat(), "this month"
+    if p == "next month":
+        y, m = (today.year + (today.month == 12), (today.month % 12) + 1)
+        s, e = month_bounds(y, m)
+        return s.isoformat(), e.isoformat(), "next month"
+    if p == "last month":
+        y, m = (today.year - (today.month == 1), (today.month - 2) % 12 + 1)
+        s, e = month_bounds(y, m)
+        return s.isoformat(), e.isoformat(), "last month"
+    if p == "next 7 days":
+        return today.isoformat(), (today + timedelta(days=6)).isoformat(), "next 7 days"
+
+    if ".." in p:
+        a, b = p.split("..", 1)
+        try:
+            s = date.fromisoformat(a.strip())
+            e = date.fromisoformat(b.strip())
+        except ValueError:
+            raise ValueError(f"unrecognised date in range {period!r}; use YYYY-MM-DD..YYYY-MM-DD")
+        if e < s:
+            raise ValueError(f"reversed range: end {e} is before start {s}")
+        return s.isoformat(), e.isoformat(), f"{s.isoformat()}..{e.isoformat()}"
+    try:
+        d = date.fromisoformat(p)
+    except ValueError:
+        raise ValueError(f"unrecognised period {period!r}; accepted: {_PERIOD_FORMS}")
+    return d.isoformat(), d.isoformat(), p
+
+
 # read_accord: the founder's read tool
-def read_accord(section: str = "calendar") -> Dict[str, Any]:
+def read_accord(section: str = "calendar", period: str = "") -> Dict[str, Any]:
     """Read the founder's Accord.founder through the app's own routes.
 
     The Executive's key is FOUNDER_SERVICE_TOKEN; the userId is
@@ -957,6 +1039,31 @@ def read_accord(section: str = "calendar") -> Dict[str, Any]:
                 "ok": False,
                 "error": f"Accord returned {status} but the body was not JSON",
                 "body_preview": body[:160],
+            }
+        # The calendar route returns every event in a wide window and
+        # does not filter deleted rows. Resolve the period here, and
+        # filter on the route's own local `date` string (YYYY-MM-DD).
+        if section == "calendar":
+            if not isinstance(data, dict) or not isinstance(data.get("events"), list):
+                return {"ok": False, "error": "calendar response had no events list"}
+            try:
+                start, end, label = _resolve_period(period)
+            except ValueError as e:
+                return {"ok": False, "error": str(e)}
+            kept = []
+            dropped_deleted = 0
+            for ev in data["events"]:
+                if ev.get("isDeleted"):
+                    dropped_deleted += 1
+                    continue
+                d = ev.get("date")
+                if isinstance(d, str) and start <= d <= end:
+                    kept.append(ev)
+            data = dict(data)
+            data["events"] = kept
+            data["period"] = {
+                "start": start, "end": end, "label": label,
+                "dropped_deleted": dropped_deleted,
             }
         return {"ok": True, "result": data}
     except _urllib.HTTPError as e:
@@ -1294,7 +1401,11 @@ TOOLS = [
         "name": "read_accord",
         "description": (
             "Read the founder's Accord.founder. Sections: "
-            "'calendar' — events for a period; "
+            "'calendar' — events for a period (default this week; "
+            "pass period='next week' or '2026-11-02..2026-11-08'). "
+            "Titles and details are encrypted client-side: you get the "
+            "times and structure, not the content. To read what an event "
+            "is, tell the founder to open Accord. "
             "'invoices' — the invoice list, what is issued and outstanding; "
             "'mode' — the account mode. "
             "Finance is NOT readable here: income, expenses and profit are "
@@ -1305,6 +1416,15 @@ TOOLS = [
             "type": "object",
             "properties": {
                 "section": {"type": "string", "enum": ["calendar", "invoices", "mode"]},
+                "period": {
+                    "type": "string",
+                    "description": (
+                        "For 'calendar' only. today, tomorrow, yesterday, "
+                        "this week, next week, last week, this month, next "
+                        "month, last month, next 7 days, YYYY-MM-DD, or "
+                        "YYYY-MM-DD..YYYY-MM-DD. Omit for this week."
+                    ),
+                },
             },
             "required": ["section"],
         },
