@@ -198,6 +198,23 @@ THE BUILD, IN ORDER
   4. The receptionist: hybrid, with the transcript encrypted
      immediately.
 
+## FOUND — 26 Oct
+
+[ ] accord.butler_knows_today — FOUND 26 Oct. Asked "27-29 October"
+    the butler chose 2025 and returned a true zero for the wrong year:
+    nothing in the prompt says today's date. Fix: put the current date
+    (Europe/London) in the system prompt, not the tool. The smallest
+    honest fix; the butler cannot resolve an unqualified date without
+    it.
+
+[ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
+    already in read_accord: dates, times, contactId, isAllDay, source.
+    The content is in encryptedData, client-side. The app holds the
+    key: it can decrypt and match titles to the shape the butler
+    returns, so the user sees "3 events with Cafe Corner" while the
+    model sees only the skeleton. LLM conductor, browser executor. The
+    UI build that uses it.
+
 [ ] [LIVE] accord.vault_managed_split — BUILT 21 Oct. The data
     model and read path for the two products.
 
