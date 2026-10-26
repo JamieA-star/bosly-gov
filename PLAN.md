@@ -215,6 +215,32 @@ THE BUILD, IN ORDER
     model sees only the skeleton. LLM conductor, browser executor. The
     UI build that uses it.
 
+[ ] accord.onboarding_state_write_dead — FOUND 26 Oct. onboardingStep
+    and onboardingComplete are read in three places (auth/signin/route.ts
+    :52, user/route.ts:21, user/route.ts:104) and written in none. Every
+    user's values are empty/false, the founder's included. A branch on a
+    field that is always false is a lie in the control flow. Symptom:
+    user girosprodromos@gmail.com signed up 22 Oct 18:51, updatedAt 18:52,
+    and the app cannot say whether they explored or stalled, because the
+    field that would show it has never been written. Fix is open: wire the
+    writes, or retire the fields and the reads that trust them.
+
+[ ] gov.activity_event_write_dead — FOUND 26 Oct. ActivityEvent has a
+    model and a route (app/api/activity/log/route.ts) and zero rows ever.
+    ActivityLog, meanwhile, records exactly one action: chat_interaction
+    (41 rows), so it is a chat counter, not a general activity log. The
+    app has no record of non-chat actions — calendar, contacts, onboarding
+    — for any user. A check that "if an activity route exists, it writes"
+    would catch this class.
+
+[ ] gov.no_general_activity_record — FOUND 26 Oct. The three write-dead
+    findings above share a shape: the app's own record of what a user did
+    is absent. Not a defect in one route, a gap in the system: "are they
+    using the app?" has no system that can answer it. This item exists so
+    the question is not lost; it may resolve into the two above, or into
+    a small purpose-built record. Do not build until the wire-vs-retire
+    call on onboarding_state is made.
+
 [ ] [LIVE] accord.vault_managed_split — BUILT 21 Oct. The data
     model and read path for the two products.
 
