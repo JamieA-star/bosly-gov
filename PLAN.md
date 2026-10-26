@@ -222,6 +222,18 @@ THE BUILD, IN ORDER
     Verify: ask the butler "what's on 27-29 October?" and it must resolve
     to 2026, not 2025.
 
+[ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
+    appends to the end of PLAN.md; it cannot attach an update to the
+    item it names. Asked to record progress on accord.butler_knows_today,
+    the butler produced a true status block 7,000 lines from the entry —
+    the plan read false at the item and true at the tail. The tool does
+    what it says (append) and not what the plan needs (update). Same
+    family as the write-dead fields: a structure that promises "here is
+    this item's status" and a tool that delivers "here is a new line at
+    the end". Fix is an anchored update capability, or a settled
+    convention that each item's status lives in the item. Do not rely on
+    append for status.
+
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the
