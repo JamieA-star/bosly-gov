@@ -234,6 +234,67 @@ THE BUILD, IN ORDER
     convention that each item's status lives in the item. Do not rely on
     append for status.
 
+[ ] gov.jarvis_shape — FOUND 26 Oct. THE DESTINATION, named so the
+    next sessions point at it and do not re-derive it. A digital butler
+    that holds the pile, does the decided work, and keeps a record that
+    is TRUE. The truth is the product; the overnight runs are the
+    labour; the morning report is the handoff. The aim is that ideas
+    compound instead of disappearing, and that the founder's head is
+    free for the decisions only the founder can make.
+
+    THE RAMP, IN ORDER. Each step is useful on its own.
+    1. BACKLOG — a quiet home for the dump (a thought, a bug, a "this
+       isn't working", a "I want it to do X"). Low-friction, never lost,
+       not the plan. The plan is for decided work; the backlog is where
+       undecided work waits. Smallest build, biggest relief, and every
+       later step reads from it.
+    2. READING HABITS — the butler in the app reaches for PLAN.md,
+       memory, and the transcript at the start of a conversation, the
+       way this session did, unprompted. Today's UI test showed it can
+       once told; this is making it a habit.
+    3. ONE WATCHED ITEM — one plan item run with its check, by the
+       butler, with the founder reading the diff. The gate proven once.
+    4. THE RUNNER — a checkpointed, one-item-at-a-time, check-gated
+       executor. One item per bounded conversation; a checkpoint after
+       each; a check as the gate; stop on failure, not continue.
+    5. THE REPORT — a short email on completion or failure (what was
+       done, what passed, what failed, what to look at) plus the full
+       run-state record. The email is the view; the record is the truth.
+
+    THE LOW-DAY RULE. On a bad day or a bad week the system does LESS
+    and holds MORE, and never creates urgent work. It works the safe
+    tier and queues the rest. The business moves; nothing that needs the
+    founder happens without the founder. This is a design constraint,
+    not a wish: the system must be useful on the worst day, not only the
+    best.
+
+    AUTONOMY TIERS, named so a future build cannot quietly skip them.
+    SAFE-UNATTENDED: reads, scouts, checks, website/receptionist
+    monitoring. SIGN-OFF: patches to live code, emails to clients.
+    NEVER-AUTOMATED: money, pricing, client commitments. On a low day
+    the butler works tier 1 and queues 2 and 3.
+
+    LEGAL LINES, already held as habits — a line in the plan, not a
+    build, so the receptionist cannot go live without them. (a) The AI
+    receptionist declares it is AI and asks whether the caller wishes to
+    continue. (b) The butler listening to a client conversation says so
+    verbally, says why, and asks permission; if refused, notes by hand.
+    (c) A record of what the agent did, why, and who was accountable —
+    the plan/memory/capsule/run-state record IS that answer. (d) A kill
+    switch, and least privilege: no long-lived credentials. (e) Before
+    any client-facing AI goes live: disclosure, a test plan, a monitoring
+    process, and a named human accountable (the founder).
+
+    THE TRUST GATE. No batch runs without a check per item, and the
+    first run is watched. A system that says "done" while it isn't is
+    worse than no system, because it corrupts the last reliable thing —
+    the founder's own judgement about what is real. The checks are the
+    compliance, the record is the defence, and the trust is the joy.
+
+    WHY, one line: six years of good ideas that did not compound. This
+    is the thing that makes them compound — a record that does not
+    forget when attention moves on.
+
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the
