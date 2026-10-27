@@ -274,6 +274,22 @@ THE BUILD, IN ORDER
     not done until one real unanswered question lands as a thing and a
     check watches kind="unanswered".
 
+[ ] accord.founder_door_does_not_log — FOUND 27 Oct. THE INVERTED
+    PILE. ChatDrawer.tsx routes by user: the founder's message goes to
+    /api/executive/founder -> Gov /api/chat -> the butler, and the comment
+    is explicit that it never touches /api/chat or the deterministic
+    engine. A client's message goes to /api/chat (workflows) and then
+    /api/executive/proxy. logUnknownIntent is wired into /api/chat, so
+    the pile records the CLIENTS' misses and not the FOUNDER'S. The
+    questions that should shape the next build are the ones not being
+    logged. THE FIX is not string-matching the butler's prose. It is a
+    cannot_help signal from Gov's /api/chat (one field in the response,
+    set by the tool loop when it has nothing), which the founder route
+    then logs. One field, one route, one writer. Whether the app is
+    touched now or after the UI work is the founder's call, not a
+    premise from a misread: the founder door IS the same butler as the
+    UI, so "app frozen" was never a fact, only an inference.
+
 [ ] gov.jarvis_shape — FOUND 26 Oct. THE DESTINATION, named so the
     next sessions point at it and do not re-derive it. A digital butler
     that holds the pile, does the decided work, and keeps a record that
