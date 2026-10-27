@@ -487,6 +487,9 @@ class BoslyHandler(BaseHTTPRequestHandler):
         if path == "/api/transcript":
             self.handle_api_transcript()
             return
+        if path == "/api/unanswered":
+            self.handle_api_unanswered()
+            return
         if path == "/api/chat":
             self.handle_api_chat()
             return
@@ -699,6 +702,42 @@ class BoslyHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": False, "error": f"could not append: {e}"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
             return
         self._send_json({"ok": True})
+
+    def handle_api_unanswered(self) -> None:
+        """Record one unanswered question as a thing in the pile.
+
+        Plumbing for one machine-to-machine hop: Accord's
+        logUnknownIntent calls this instead of appending to
+        unknown-intents.jsonl (gov.one_pile). The message is already a
+        shape, not raw text — the app shapes it. Do not re-shape here;
+        one shaper, in the app. Localhost-only, like /api/transcript.
+        """
+        try:
+            data = parse_json_body(self)
+        except ValueError as e:
+            self._send_json({"ok": False, "error": str(e)}, status=HTTPStatus.BAD_REQUEST)
+            return
+        user_id = str(data.get("userId", "")).strip()
+        message = str(data.get("message", "")).strip()
+        if not user_id or not message:
+            self._send_json({"ok": False, "error": "userId, message required"}, status=HTTPStatus.BAD_REQUEST)
+            return
+        try:
+            from routers.things import save_thing
+        except Exception as e:
+            self._send_json({"ok": False, "error": f"things store unavailable: {e}"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
+            return
+        r = save_thing(
+            kind="unanswered",
+            title=message[:120],
+            body=message,
+            status="active",
+            tags=f"userId:{user_id}",
+        )
+        if not r.get("ok"):
+            self._send_json({"ok": False, "error": r.get("error", "save_thing failed")}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
+            return
+        self._send_json({"ok": True, "id": r["result"]["id"]})
 
     def handle_api_chat(self) -> None:
         state = self._state()
