@@ -286,18 +286,6 @@ THE BUILD, IN ORDER
     raise the number again without evidence. 20 iterations on one
     question is also the token drain.
 
-[ ] gov.the_loop_is_not_a_count — FOUND 27 Oct. Asked "did I fix the
-    invoice PDF cut-off?", the founder butler hit the tool-loop ceiling
-    at MAX_ITERATIONS=5. Raised to 20: it ran 20 and stopped again. So
-    5 was too few for investigation and 20 was still a loop, not
-    thoroughness. A raw iteration ceiling is the wrong shape. THE FIX,
-    once the evidence is in: (1) show tool_events - the founder route
-    returns data.tool_events and the drawer discards it, so the
-    diagnostic is captured and thrown away; (2) then guard the pattern -
-    the same tool with the same arguments twice - not a count. Do not
-    raise the number again without evidence. 20 iterations on one
-    question is also the token drain.
-
 [ ] accord.founder_door_does_not_log — FOUND 27 Oct. THE INVERTED
     PILE. ChatDrawer.tsx routes by user: the founder's message goes to
     /api/executive/founder -> Gov /api/chat -> the butler, and the comment
