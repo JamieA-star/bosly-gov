@@ -64,7 +64,11 @@ from routers.tools import TOOLS, dispatch  # noqa: E402
 API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
 
-MAX_ITERATIONS = 5          # how many tool rounds before we stop
+MAX_ITERATIONS = 20         # how many tool rounds before we stop.
+# 5 was fine for a one-shot chat answer; too few for investigation —
+# 'did I fix this bug?' needs find-file, read-file, find-route,
+# read-route, grep-for-symptom, then answer. The guard against a
+# runaway loop stays; the ceiling stops cutting off real work.
 TOOL_RESULT_LIMIT = 40_000  # bytes sent back to the model per tool result
 LLM_TIMEOUT = 120           # seconds per API call
 
