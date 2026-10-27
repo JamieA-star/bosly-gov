@@ -789,8 +789,10 @@ class BoslyHandler(BaseHTTPRequestHandler):
                             "error": ev.get("error", ""),
                         })
                     elif et == "error":
+                        err = ev.get("error", "Tool loop error")
+                        logging.error("tool loop error event: %s", err)
                         self._send_json(
-                            {"ok": False, "error": ev.get("error", "Tool loop error")},
+                            {"ok": False, "error": err},
                             status=HTTPStatus.INTERNAL_SERVER_ERROR,
                         )
                         return
