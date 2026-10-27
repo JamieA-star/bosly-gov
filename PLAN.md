@@ -234,6 +234,46 @@ THE BUILD, IN ORDER
     convention that each item's status lives in the item. Do not rely on
     append for status.
 
+[ ] gov.prompt_is_a_description — FOUND 27 Oct. THE RATCHET. The
+    prompt has grown by one script per failure: the plan-item rule, the
+    draft rule, and a full "working the week's list" procedure three
+    routes deep (tools_prompt.txt 120-260). Each script is true. Together
+    they are sediment, and sediment does not scale: every new behaviour
+    adds another rule the founder has to read. The fix is structure, not
+    deletion. Four parts: (1) THE WORLD — what exists and what it is for
+    (plan, things the pile, memory, transcript, the three repos). (2) THE
+    TOOLS — one line each, no procedure. (3) THE STANDING RULES — the few
+    that are genuinely constraints and stay: a failure is not a zero; a
+    plan item is work; never send, post, delete, or spend without the
+    founder's yes; the Custodian verifies, the Executive does not; do not
+    fabricate a tool result. These are already in the prompt (lines
+    240-260) and they are good. (4) THE SKILLS — procedures move to files
+    the butler reads when the job starts, not text it carries every turn.
+    "Working the week's list" becomes a skill. THE TEST: a new capability
+    means DESCRIBING a store or a tool, not adding a rule. Until this is
+    done, every session makes the pile heavier; this item is the ratchet
+    that stops it. Do not rewrite the prompt in this item — the rewrite is
+    its own session, against this shape.
+
+[ ] gov.one_pile — FOUND 27 Oct. THE CONSOLIDATION. There are three
+    piles: PLAN.md (decided work), things.db (ideas, clients, leads,
+    drafts), and the governor's unknown-intents.jsonl (questions the
+    butler could not answer — 39 total, 32 in the last 7 days, read by
+    nobody). A fourth, tasks-store.json, is dead ("cooking" x3, last
+    touched September). One pile is manageable; three is how a backlog
+    becomes another thing you do not read. THE FOLD: lib/intent_classify.py
+    (the writer, line 28) calls save_thing(kind="unanswered", ...) instead
+    of appending to the jsonl; the 39 existing rows backfill once;
+    evolve_feedback.py keeps reading the jsonl until the fold is proven,
+    then reads things. tasks-store.json is removed. No new door: the app
+    and the UI both reach the butler, and the butler has save_thing and
+    find_things. What is missing is not a route — it is the DESCRIPTION of
+    the pile in the prompt (see gov.prompt_is_a_description) and the fold
+    itself. THE RISK: the governor currently writes a jsonl, not a SQLite
+    file; a silent write failure is today's family of bugs. The fold is
+    not done until one real unanswered question lands as a thing and a
+    check watches kind="unanswered".
+
 [ ] gov.jarvis_shape — FOUND 26 Oct. THE DESTINATION, named so the
     next sessions point at it and do not re-derive it. A digital butler
     that holds the pile, does the decided work, and keeps a record that
