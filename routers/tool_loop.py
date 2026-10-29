@@ -183,6 +183,7 @@ def run_with_tools(
     messages: List[Dict[str, Any]] = [{"role": "user", "content": user_message}]
 
     _any_text = False
+    calls: list = []
     for iteration in range(max_iterations):
         try:
             response = _call_api(system_prompt, messages)
@@ -215,6 +216,11 @@ def run_with_tools(
             # text. Say so — never nothing. The tool calls are in the
             # events above.
             if not _any_text:
+                logging.warning(
+                    "tool loop: empty answer after %d rounds; calls: %s",
+                    iteration + 1,
+                    [(c.get("name"), c.get("ok"), (c.get("error") or "")[:80]) for c in calls],
+                )
                 yield {
                     "type": "token",
                     "text": (
@@ -253,6 +259,12 @@ def run_with_tools(
                 _r = result.get("result") or {}
                 if isinstance(_r, dict):
                     _tid = str(_r.get("thing_id") or "")
+            _call = {
+                "name": name,
+                "ok": bool(result.get("ok")),
+                "error": result.get("error", ""),
+            }
+            calls.append(_call)
             yield {
                 "type": "tool_call",
                 "name": name,
