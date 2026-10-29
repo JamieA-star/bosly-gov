@@ -3719,6 +3719,31 @@ that has actually happened.
     Not touched by today's work. Recorded so it is not forgotten
     again.
 
+[ ] [LIVE] ops.scout_persona_filter — FOUND 29 Oct. The LinkedIn tip:
+    run scout candidates past personas before acting.
+
+    THE TIP: a contact suggested personas-as-a-filter — create distinct
+    points of view, run leads through them, see what they say. The
+    second half (self-healing) waits: it needs a deterministic check
+    that can say whether a verdict was right, and that doesn't exist
+    yet. A healer on an unproven filter is the same mistake as raising
+    a number without evidence.
+
+    THE SHAPE: three personas (the skeptical café owner, the busy
+    hairdresser, the one who hates booking pages), one question each,
+    a structured verdict: interested / not / maybe, one line why. The
+    scout's ranking shows the persona verdict alongside — a high rank
+    with three "not interested" is visible, and that's the useful part.
+
+    WHY BUILD IT: MiroFish is a heavyweight (OASIS, GraphRAG, Zep,
+    Docker, two API keys, Flask + Vue) — the scout needs ~100 lines,
+    not that stack. Prior art proves the small version: personas in,
+    structured verdict out. The value is in the skeptical personas, not
+    the agreeing ones — if all the personas think like me, the filter
+    says yes to everything I already believe.
+
+    NOT NOW: the loop is first. This waits for the butler to run it.
+
 [ ] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
 
     WHAT THIS IS, IN ONE LINE: a digital butler. A personal PA for
