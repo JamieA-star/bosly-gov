@@ -274,7 +274,7 @@ THE BUILD, IN ORDER
     not done until one real unanswered question lands as a thing and a
     check watches kind="unanswered".
 
-[ ] gov.plan_as_boundary — FOUND 29 Oct. THE NEXT BUILD, and the thing
+[x] gov.plan_as_boundary — DONE 29 Oct. THE NEXT BUILD, and the thing
     that makes the butler useful without being steered. The plan is the
     boundary: the butler reads PLAN.md, finds the open item, and
     PROPOSES it — it does not act until the founder says go. The
@@ -290,6 +290,19 @@ THE BUILD, IN ORDER
     "what's next on the plan?" and it names gov.next_session_first (or
     the loop item) without being told. DO NOT AUTO-RUN: propose, never
     start.
+
+    PROVEN 29 Oct. First test at 13:51, after the item landed:
+    the butler listed 15 in-progress items instead of proposing —
+    the prompt said 'do what its STEP says', not 'pick one and
+    propose'. Added a paragraph: when asked what's next, read
+    PLAN.md, find the highest open item, propose it, ask 'shall I
+    do it?'. Second test, 13:56: it proposed butler_knows_today
+    step 2, correctly refusing to guess at the rest of the file.
+    Third test, 14:09: it wrote NEXT.md — 19 open items, the
+    closed ones named as omitted, the 40KB limit and the
+    truncated last entry flagged, and 'want me to read further?'
+    asked. Proposed, approved, built, proved. The dependency it
+    found (the plan is too big to read) is gov.the_plan_is_too_big.
 
 [ ] gov.the_loop_is_not_a_count — FOUND 27 Oct. Asked "did I fix the
     invoice PDF cut-off?", the founder butler hit the tool-loop ceiling
