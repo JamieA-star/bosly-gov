@@ -182,6 +182,7 @@ def run_with_tools(
     system_prompt = system_prompt or _read_prompt()
     messages: List[Dict[str, Any]] = [{"role": "user", "content": user_message}]
 
+    _any_text = False
     for iteration in range(max_iterations):
         try:
             response = _call_api(system_prompt, messages)
@@ -206,9 +207,22 @@ def run_with_tools(
                 text = block.get("text", "")
                 if text:
                     yield {"type": "token", "text": text}
+                    _any_text = True
 
         # ---- if the model is done, stop ----
         if stop_reason != "tool_use":
+            # The silence guard: the loop ran and the model ended without
+            # text. Say so — never nothing. The tool calls are in the
+            # events above.
+            if not _any_text:
+                yield {
+                    "type": "token",
+                    "text": (
+                        "I ran the tools but produced no answer. "
+                        "The tool calls are above; tell me to try again "
+                        "or ask differently."
+                    ),
+                }
             yield {
                 "type": "done",
                 "result": {
