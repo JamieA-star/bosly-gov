@@ -1110,7 +1110,7 @@ def read_accord(section: str = "calendar", period: str = "") -> Dict[str, Any]:
 
 
 # test proof
-def read_chat(room: str = "all", limit: int = 40) -> Dict[str, Any]:
+def read_chat(room: str = "all", limit: int = 40, week: str = "") -> Dict[str, Any]:
     """Read the shared transcript — both rooms, one log.
 
     Every message from the app and the UI butler is appended to
@@ -1119,13 +1119,27 @@ def read_chat(room: str = "all", limit: int = 40) -> Dict[str, Any]:
     we say about X" — read, never guess.
     """
     import json as _json
-    path = Path("/mnt/bosly/bosly-data/.data/governor/chat-transcript.jsonl")
-    if not path.exists():
+    from pathlib import Path as _Path
+    import glob as _glob
+
+    # The transcript is one file per ISO week. Read the current week's
+    # file by default; a "week" argument reads a specific one; no
+    # argument reads the current week. The old weeks stay, dated.
+    base = _Path("/mnt/bosly/bosly-data/.data/governor")
+    files = sorted(base.glob("chat-transcript-*.jsonl"))
+    if week:
+        files = [f for f in files if f"W{week}" in f.name or week in f.name]
+    elif files:
+        files = [files[-1]]   # the current week
+    if not files:
         return {"ok": True, "result": {"messages": []}}
-    try:
-        lines = path.read_text(encoding="utf-8").splitlines()[-limit:]
-    except Exception as e:
-        return {"ok": False, "error": f"could not read the transcript: {e}"}
+    lines = []
+    for f in files:
+        try:
+            lines.extend(f.read_text(encoding="utf-8").splitlines())
+        except Exception:
+            continue
+    lines = lines[-limit:]
     msgs = []
     for line in lines:
         try:
@@ -1525,6 +1539,7 @@ TOOLS = [
             "properties": {
                 "room": {"type": "string", "enum": ["all", "app", "ui"]},
                 "limit": {"type": "integer"},
+                "week": {"type": "string", "description": "an ISO week, e.g. '2026-W44'; empty reads the current week"},
             },
             "required": [],
         },

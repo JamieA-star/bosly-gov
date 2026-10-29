@@ -693,7 +693,14 @@ class BoslyHandler(BaseHTTPRequestHandler):
             "role": role,
             "text": text[:4000],
         }
-        path = Path("/mnt/bosly/bosly-data/.data/governor/chat-transcript.jsonl")
+        # The period split: one file per ISO week, by the ts.
+        # chat-transcript-YYYY-Www.jsonl. The old weeks stay, dated.
+        _now = datetime.now(timezone.utc)
+        _iso = _now.isocalendar()
+        path = Path(
+            f"/mnt/bosly/bosly-data/.data/governor/"
+            f"chat-transcript-{_iso.year}-W{_iso.week:02d}.jsonl"
+        )
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
             with path.open("a", encoding="utf-8") as f:
