@@ -1152,6 +1152,76 @@ def read_chat(room: str = "all", limit: int = 40, week: str = "") -> Dict[str, A
     return {"ok": True, "result": {"messages": msgs}}
 
 
+def roll_transcript(summary: str) -> Dict[str, Any]:
+    """Write the week's header, then start a fresh file.
+
+    The header is the index: a few sentences on what the week held. It
+    is the first line of the week's file, and read_chat reads it before
+    the transcript. At the week's end, the founder says roll; this
+    writes the summary and the next write goes to the new week's file.
+    """
+    import json as _json
+    from datetime import datetime, timezone
+    from pathlib import Path as _Path
+
+    base = _Path("/mnt/bosly/bosly-data/.data/governor")
+    now = datetime.now(timezone.utc)
+    iso = now.isocalendar()
+    period = f"{iso.year}-W{iso.week:02d}"
+    path = base / f"chat-transcript-{period}.jsonl"
+    if not summary or not summary.strip():
+        return {"ok": False, "error": "summary is required"}
+    entry = {
+        "ts": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "type": "header",
+        "period": period,
+        "summary": summary.strip()[:2000],
+    }
+    try:
+        base.mkdir(parents=True, exist_ok=True)
+        lines = []
+        if path.exists():
+            lines = [l for l in path.read_text(encoding="utf-8").splitlines()
+                     if l.strip() and '"type": "header"' not in l]
+        path.write_text(_json.dumps(entry, ensure_ascii=False) + "\n" +
+                        ("\n".join(lines) + "\n" if lines else ""),
+                        encoding="utf-8")
+    except Exception as e:
+        return {"ok": False, "error": f"could not write the header: {e}"}
+    return {"ok": True, "result": {"period": period, "path": str(path)}}
+
+
+def read_audit(from_date: str = "", to_date: str = "") -> Dict[str, Any]:
+    """Read the audit trail — the headers and the capsules in a range.
+
+    For the ICO: the headers say what each week held; the capsules say
+    what happened, what was found, the lesson. This returns them in a
+    range, so the founder can ask for the audit and get the output.
+    """
+    import json as _json
+    from pathlib import Path as _Path
+
+    base = _Path("/mnt/bosly/bosly-data/.data/governor")
+    caps = _Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/capsules")
+    headers = []
+    for f in sorted(base.glob("chat-transcript-*.jsonl")):
+        try:
+            first = f.read_text(encoding="utf-8").splitlines()[0]
+            e = _json.loads(first)
+            if e.get("type") == "header":
+                headers.append({"period": e.get("period"), "summary": e.get("summary")})
+        except Exception:
+            continue
+    capsules = []
+    for f in sorted(caps.glob("*.md")):
+        if from_date and f.name < from_date:
+            continue
+        if to_date and f.name > to_date:
+            continue
+        capsules.append({"file": f.name})
+    return {"ok": True, "result": {"headers": headers, "capsules": capsules}}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1544,6 +1614,38 @@ TOOLS = [
             "required": [],
         },
         "fn": read_chat,
+    },
+    {
+        "name": "roll_transcript",
+        "description": (
+            "At the week's end: write the week's header — a few sentences "
+            "on what the week held — as the first line of the transcript. "
+            "The header is the index; read_chat reads it before the "
+            "transcript. Ask the founder before rolling."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {"summary": {"type": "string"}},
+            "required": ["summary"],
+        },
+        "fn": roll_transcript,
+    },
+    {
+        "name": "read_audit",
+        "description": (
+            "The audit trail for the ICO: the headers and the capsules in "
+            "a date range. Use this when the founder asks for the audit, "
+            "or for a date range of the record."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "from_date": {"type": "string", "description": "YYYY-MM-DD"},
+                "to_date": {"type": "string", "description": "YYYY-MM-DD"},
+            },
+            "required": [],
+        },
+        "fn": read_audit,
     },
 ]
 
