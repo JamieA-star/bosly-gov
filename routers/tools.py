@@ -994,6 +994,36 @@ def _resolve_period(period, today=None):
 
 
 # read_accord: the founder's read tool
+def _parse_period(period: str) -> tuple[str, str]:
+    """Parse a period into (from, to) ISO dates.
+
+    today, tomorrow, this week, next week, this month, a date
+    (YYYY-MM-DD), or a range (YYYY-MM-DD..YYYY-MM-DD).
+    """
+    from datetime import date, timedelta
+    p = (period or "").strip().lower()
+    today = date.today()
+    if p in ("", "today"):
+        return today.isoformat(), today.isoformat()
+    if p == "tomorrow":
+        t = today + timedelta(days=1)
+        return t.isoformat(), t.isoformat()
+    if p == "this week":
+        start = today - timedelta(days=today.weekday())
+        return start.isoformat(), (start + timedelta(days=6)).isoformat()
+    if p == "next week":
+        start = today - timedelta(days=today.weekday()) + timedelta(days=7)
+        return start.isoformat(), (start + timedelta(days=6)).isoformat()
+    if p == "this month":
+        start = today.replace(day=1)
+        end = (start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        return start.isoformat(), end.isoformat()
+    if ".." in p:
+        a, b = p.split("..", 1)
+        return a.strip(), b.strip()
+    return p, p
+
+
 def read_accord(section: str = "calendar", period: str = "") -> Dict[str, Any]:
     """Read the founder's Accord.founder through the app's own routes.
 
@@ -1017,6 +1047,13 @@ def read_accord(section: str = "calendar", period: str = "") -> Dict[str, Any]:
     path = paths.get(section)
     if not path:
         return {"ok": False, "error": f"unknown section {section!r}; known: {sorted(paths)}"}
+    # The period, for the calendar: "next week" narrows the window.
+    if section == "calendar" and period:
+        try:
+            f, t = _parse_period(period)
+            path = f"{path}?from={f}&to={t}"
+        except Exception as e:
+            return {"ok": False, "error": f"could not parse period {period!r}: {e}"}
     req = _urllib.Request(base + path, headers={"Authorization": f"Bearer {token}"})
     try:
         with _urllib.urlopen(req, timeout=30) as r:
