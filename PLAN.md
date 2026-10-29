@@ -274,6 +274,23 @@ THE BUILD, IN ORDER
     not done until one real unanswered question lands as a thing and a
     check watches kind="unanswered".
 
+[ ] gov.plan_as_boundary — FOUND 29 Oct. THE NEXT BUILD, and the thing
+    that makes the butler useful without being steered. The plan is the
+    boundary: the butler reads PLAN.md, finds the open item, and
+    PROPOSES it — it does not act until the founder says go. The
+    principle is already in the plan ("the Executive proposes and
+    acts") but there is no item that wires it: today the founder must
+    name a plan item in the message ("accord.butler_knows_today, step
+    1") or nothing happens. THE SHAPE: when the founder asks "what's
+    next" or "what should I do", read PLAN.md with read_file, find the
+    highest open item (respecting START HERE / next_session_first and
+    the dependency notes in the items), and propose it in one
+    paragraph: what it is, what step, what it would touch, and the
+    question "shall I do it?". Wait for the yes. Proven once: ask
+    "what's next on the plan?" and it names gov.next_session_first (or
+    the loop item) without being told. DO NOT AUTO-RUN: propose, never
+    start.
+
 [ ] gov.the_loop_is_not_a_count — FOUND 27 Oct. Asked "did I fix the
     invoice PDF cut-off?", the founder butler hit the tool-loop ceiling
     at MAX_ITERATIONS=5. Raised to 20: it ran 20 and stopped again. So
