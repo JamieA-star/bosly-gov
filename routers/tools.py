@@ -1109,6 +1109,7 @@ def read_accord(section: str = "calendar", period: str = "") -> Dict[str, Any]:
         return {"ok": False, "error": f"read_accord failed: {type(e).__name__}: {e}"}
 
 
+# test proof
 def read_chat(room: str = "all", limit: int = 40) -> Dict[str, Any]:
     """Read the shared transcript — both rooms, one log.
 
@@ -1496,7 +1497,10 @@ TOOLS = [
             "pick a unique anchor, then patch. This includes the tools "
             "themselves — routers/tools.py, and this tool's own schema and "
             "read_accord's sections, are files like any other and can be "
-            "patched here."
+            "patched here. After patching, PROVE it: ask the question the "
+            "patch was meant to answer — the one the task was about — and "
+            "report the answer, not the diff. A patch that compiles is not a "
+            "patch that works."
         ),
         "input_schema": {
             "type": "object",
