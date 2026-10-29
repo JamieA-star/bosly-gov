@@ -694,6 +694,20 @@ THE BUILD, IN ORDER
 
     NOT YET: the Keep reader, the UI butler's full screen, the feed.
 
+[x] accord.calendar_period — DONE 29 Oct. The calendar can be read
+    for a period, not just the five-year window.
+
+    TWO HALVES, both silent: the calendar route hardcoded a window, so
+    a period could not narrow it; and read_accord's signature and
+    schema declared `period` while the body ignored it. The route now
+    reads ?from= and ?to=; the tool parses the period (today, tomorrow,
+    this week, next week, this month, a date, a range) and appends it.
+    Both doors get it — the patch is in the tool, not a room.
+
+    PROVEN: 'what is on my calendar next week?' returned 2–8 Nov, with
+    the encrypted-titles caveat stated. A declaration without a wiring
+    is a stub.
+
 [x] ops.cron_environment — DONE 24 Oct. The fast-tier cron ran at
     05:00 with no environment: no DATABASE_URL, no HOME, no nvm. Three
     checks failed — keep.invariants (no Node), vault_plaintext_calendar
