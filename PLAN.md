@@ -694,6 +694,16 @@ THE BUILD, IN ORDER
 
     NOT YET: the Keep reader, the UI butler's full screen, the feed.
 
+[x] gov.silence_guard — DONE 29 Oct. The loop speaks when it ends
+    without text.
+
+    The loop returned nothing when the model ended without a text block
+    — a task could vanish without a word. The guard tracks whether any
+    text was said, and yields a fallback before done: "I ran the tools
+    but produced no answer. The tool calls are above." PROVEN with a bad
+    anchor: the patch aborted (0 times, needs 1), the butler said so,
+    and offered to read the file first. Not silence — the honest report.
+
 [x] accord.calendar_period — DONE 29 Oct. The calendar can be read
     for a period, not just the five-year window.
 
