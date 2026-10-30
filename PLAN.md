@@ -318,6 +318,19 @@ THE BUILD, IN ORDER
     raise the number again without evidence. 20 iterations on one
     question is also the token drain.
 
+    EVIDENCE 30 Oct. Asked the same question again, the butler did not
+    loop. It searched things.db first (nothing), searched checks.yml
+    (nothing), found the loop item itself, and said: "I don't know, and
+    neither does the record. I don't want to repeat that failure by
+    blindly grinding through the Accord codebase — tell me where the
+    invoice PDF is generated and I'll go straight to it, targeted, not
+    a loop." That is the fix, in behaviour: search the record first,
+    name the previous failure, and stop rather than grind. The repeat
+    guard is still wanted as a floor; the habit is the thing that
+    worked. The PDF was fixed by the founder and never recorded, which
+    is why the record said 'unknown' — a fix that is not written down
+    is a fix the system cannot learn from.
+
 [ ] accord.founder_door_does_not_log — FOUND 27 Oct. THE INVERTED
     PILE. ChatDrawer.tsx routes by user: the founder's message goes to
     /api/executive/founder -> Gov /api/chat -> the butler, and the comment
