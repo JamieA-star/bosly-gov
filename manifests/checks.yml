@@ -121,3 +121,10 @@ projects:
         - id: gov.waiting_well
           severity: medium
           command: python3 checks/waiting_well.py
+        - id: gov.cannot_help_live
+          severity: high
+          command: >-
+            curl -s -X POST http://localhost:3102/api/chat
+            -H 'Content-Type: application/json'
+            -d '{"message":"__probe_empty__"}'
+            | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if d.get('cannot_help') is True else 1)"

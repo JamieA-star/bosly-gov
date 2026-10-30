@@ -66,6 +66,15 @@ API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
 
 MAX_ITERATIONS = 20         # how many tool rounds before we stop.
+
+# The silence guard's text, in one place so the guard and the
+# live probe (__probe_empty__) cannot drift apart.
+_SILENCE_TEXT = (
+    "I ran the tools but produced no answer. "
+    "The tool calls are above; tell me to try again "
+    "or ask differently."
+)
+_PROBE_SENTINEL = "__probe_empty__"
 # 5 was fine for a one-shot chat answer; too few for investigation —
 # 'did I fix this bug?' needs find-file, read-file, find-route,
 # read-route, grep-for-symptom, then answer. The guard against a
@@ -201,6 +210,14 @@ def run_with_tools(
     system_prompt = system_prompt or _read_prompt()
     messages: List[Dict[str, Any]] = [{"role": "user", "content": user_message}]
 
+    # The live probe's trigger: deterministic, no API call, no tokens.
+    # No real message is this string. It lets gov.the_check_proves_the_
+    # file_not_the_process prove the RUNNING process, not the file.
+    if user_message.strip() == _PROBE_SENTINEL:
+        yield {"type": "token", "cannot_help": True, "text": _SILENCE_TEXT}
+        yield {"type": "done", "result": {"ok": True, "iterations": 0, "stop_reason": "probe"}}
+        return
+
     _any_text = False
     calls: list = []
     for iteration in range(max_iterations):
@@ -243,11 +260,7 @@ def run_with_tools(
                 yield {
                     "type": "token",
                     "cannot_help": True,
-                    "text": (
-                        "I ran the tools but produced no answer. "
-                        "The tool calls are above; tell me to try again "
-                        "or ask differently."
-                    ),
+                    "text": _SILENCE_TEXT,
                 }
             yield {
                 "type": "done",
