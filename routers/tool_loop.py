@@ -91,9 +91,27 @@ API_TOOLS = [
 # ---------------------------------------------------------------------------
 
 def _read_prompt() -> str:
-    """Read the tools prompt. Falls back to a minimal one if missing."""
+    """Read the tools prompt. Falls back to a minimal one if missing.
+
+    The date line is injected live: the file says "Today is ..." and
+    that static date goes stale. Replace it with today's date in
+    Europe/London on every read, so the butler always knows the day
+    without the file mutating and without a restart.
+    """
     if PROMPT_FILE.exists():
-        return PROMPT_FILE.read_text(encoding="utf-8")
+        text = PROMPT_FILE.read_text(encoding="utf-8")
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        import re as _re
+        today = datetime.now(ZoneInfo("Europe/London")).strftime("%A %d %B %Y")
+        text = _re.sub(
+            r"^Today is .*$",
+            f"Today is {today} (Europe/London).",
+            text,
+            count=1,
+            flags=_re.MULTILINE,
+        )
+        return text
     return (
         "You are Bosly Custodian. You have four tools: "
         "append_plan_entry, save_memory, read_file, run_check. "
