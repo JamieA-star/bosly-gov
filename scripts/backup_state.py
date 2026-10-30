@@ -44,6 +44,7 @@ from pathlib import Path
 
 KNOWLEDGE = Path("/mnt/bosly/bosly-data/copilot-knowledge")
 GOVERNOR = Path("/mnt/bosly/bosly-data/.data/governor")
+GOV_DATA = Path("/home/bosly_accord/bosly-gov/data")
 BACKUPS = Path("/mnt/bosly/bosly-data/backups/state")
 KEEP_DAYS = 14
 
@@ -78,6 +79,12 @@ def discover(knowledge: Path, governor: Path) -> list[tuple[Path, str]]:
             if caps.exists():
                 for p in sorted(caps.glob("*.md")):
                     out.append((p, f"{slug}/capsules/{p.name}"))
+
+    # --- gov-data: live inputs moved inside the repo (gitignored) ---
+    if GOV_DATA.exists():
+        p = GOV_DATA / "unknown-intents.jsonl"
+        if p.is_file():
+            out.append((p, "gov-data/unknown-intents.jsonl"))
 
     # --- governor: lead scout state and the small jsonl files ---
     if governor.exists():

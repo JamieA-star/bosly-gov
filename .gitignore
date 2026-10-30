@@ -29,3 +29,4 @@ logs/
 *.bosly.bak
 patch_*.py
 *.bak-*
+data/*.jsonl
