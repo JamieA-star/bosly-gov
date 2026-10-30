@@ -306,6 +306,24 @@ THE BUILD, IN ORDER
     asked. Proposed, approved, built, proved. The dependency it
     found (the plan is too big to read) is gov.the_plan_is_too_big.
 
+[ ] gov.the_check_proves_the_file_not_the_process — FOUND 30 Oct. The
+    gap every code fix has. gov.tool_loop_selftest runs python3
+    routers/tool_loop.py in a SUBPROCESS, which imports the fixed file,
+    so it went green while the RUNNING Gov still had the old code: the
+    guard's NameError was fixed, committed, and passing, and the live
+    server still crashed until pm2 restart. A check that exercises the
+    code on disk is not a check that the server is running it. This is
+    the same shape as 26 Oct's FOUNDER_USER_ID: a file that changed and
+    a process that did not is a change the system says and does not do.
+    THE FIX: a live probe. The runner uses subprocess.run(shell=True),
+    so a check is any shell command — gov.executive_proxy_live already
+    hits localhost. A probe that POSTs to /api/chat with a known-empty
+    message and asserts cannot_help in the response proves the process,
+    not the file. THE COST: it calls Claude and needs the server up, so
+    it belongs in the SLOW tier, not the fast one — the fast tier stays
+    cheap and offline, the slow tier proves the process. Do not put it
+    in fast.
+
 [ ] gov.the_loop_is_not_a_count — FOUND 27 Oct. Asked "did I fix the
     invoice PDF cut-off?", the founder butler hit the tool-loop ceiling
     at MAX_ITERATIONS=5. Raised to 20: it ran 20 and stopped again. So
