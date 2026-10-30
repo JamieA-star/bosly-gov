@@ -306,7 +306,7 @@ THE BUILD, IN ORDER
     asked. Proposed, approved, built, proved. The dependency it
     found (the plan is too big to read) is gov.the_plan_is_too_big.
 
-[ ] gov.the_check_proves_the_file_not_the_process — FOUND 30 Oct. The
+[x] gov.the_check_proves_the_file_not_the_process — DONE 30 Oct. The
     gap every code fix has. gov.tool_loop_selftest runs python3
     routers/tool_loop.py in a SUBPROCESS, which imports the fixed file,
     so it went green while the RUNNING Gov still had the old code: the
@@ -323,6 +323,14 @@ THE BUILD, IN ORDER
     it belongs in the SLOW tier, not the fast one — the fast tier stays
     cheap and offline, the slow tier proves the process. Do not put it
     in fast.
+
+    PROVEN 30 Oct. The __probe_empty__ sentinel makes the guard
+    deterministic (no API call, no tokens); gov.cannot_help_live POSTs
+    it to /api/chat and asserts cannot_help, in the SLOW tier (cron
+    06:00). Proven both ways: sentinel broken + restart -> [FAIL]
+    gov.cannot_help_live; restored -> [PASS]. The probe goes red because
+    the RUNNING process is wrong, even when the code on disk is right —
+    which is the gap this item named. Fast stays 30; slow is 2.
 
 [ ] gov.the_loop_is_not_a_count — FOUND 27 Oct. Asked "did I fix the
     invoice PDF cut-off?", the founder butler hit the tool-loop ceiling
