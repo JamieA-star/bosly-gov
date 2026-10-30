@@ -34,6 +34,7 @@ Run the self-test (no API call, no tokens spent):
 from __future__ import annotations
 
 import json
+import logging
 import os
 import sys
 import urllib.error
@@ -402,6 +403,27 @@ def _selftest() -> int:
     if dones:
         check("done has iterations", dones[0].get("result", {}).get("iterations") == 2,
               detail=f"got {dones[0].get('result')}")
+
+    # ---- Silence guard: a round with no text sets cannot_help ----
+    silent = [
+        {"stop_reason": "end_turn", "content": []},
+    ]
+
+    def fake_silent(system_prompt, messages, timeout=LLM_TIMEOUT):
+        return silent.pop(0)
+
+    globals()["_call_api"] = fake_silent
+    try:
+        silent_events = list(run_with_tools("say nothing"))
+    finally:
+        globals()["_call_api"] = real_call
+
+    silent_tokens = [e for e in silent_events if e.get("type") == "token"]
+    check(
+        "silence guard sets cannot_help",
+        bool(silent_tokens) and silent_tokens[0].get("cannot_help") is True,
+        detail=f"tokens: {silent_tokens}",
+    )
 
     # ---- Second test: max_iterations stops a runaway loop ----
     def fake_runaway(system_prompt, messages, timeout=LLM_TIMEOUT):
