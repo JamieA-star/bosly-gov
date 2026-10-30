@@ -200,7 +200,7 @@ THE BUILD, IN ORDER
 
 ## FOUND — 26 Oct
 
-[ ] accord.butler_knows_today — FOUND 26 Oct. Asked "27-29 October"
+[x] accord.butler_knows_today — DONE 30 Oct. Asked "27-29 October"
     the butler chose 2025 and returned a true zero for the wrong year:
     nothing in the prompt says today's date.
 
