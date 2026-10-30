@@ -214,13 +214,15 @@ THE BUILD, IN ORDER
     founder; verified by the butler, which read the file fresh and
     quoted the line.
 
-    STEP 2 OPEN. A static date goes stale. Change _read_prompt to inject
-    a fresh datetime.now(ZoneInfo("Europe/London")) each call, and drop
-    the static line or make it a placeholder. Code change; needs a Gov
-    restart, verified against the running process.
-
-    Verify: ask the butler "what's on 27-29 October?" and it must resolve
-    to 2026, not 2025.
+    STEP 2 DONE 30 Oct. _read_prompt in routers/tool_loop.py replaces
+    the file's static "Today is ..." line with
+    datetime.now(ZoneInfo("Europe/London")) on every read — read-only,
+    no file mutation. Proven: "what's today?" -> Friday 30 October
+    2026; NEXT.md updated with 30 Oct. The stale date caused four wrong
+    dates (the 2025 pick, the NEXT.md header, a memory decision dated
+    26 Oct, and a tick dated 26 Oct). Ticked [x] above; the body was
+    stale when the tick landed, and the butler flagged the contradiction
+    rather than silently closing it — see gov.plan_updates_have_no_anchor.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
