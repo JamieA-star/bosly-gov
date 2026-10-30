@@ -347,6 +347,22 @@ THE BUILD, IN ORDER
     premise from a misread: the founder door IS the same butler as the
     UI, so "app frozen" was never a fact, only an inference.
 
+    STATUS 30 Oct. MECHANISM PROVEN. The silence guard sets
+    cannot_help (self-test: "PASS: silence guard sets cannot_help",
+    9/9 in routers/tool_loop.py); handle_api_chat returns it; the
+    founder route posts it to /api/unanswered, fire-and-forget. Along
+    the way the guard itself was found broken: the logging.warning
+    added to it referenced an unimported logging, so when the guard
+    fired it threw NameError instead of yielding the message — the
+    failure path crashed instead of reporting. Fixed (358fdf9). NOT YET
+    PROVEN END TO END: no real empty answer has occurred since the
+    wiring, so the pile has not yet received one from the founder door.
+    The first real empty will prove it. THE "I DON'T KNOW" CASE IS
+    STILL OPEN: the butler saying "I don't know" (as it did on the PDF
+    question) is not the silence guard and sets no flag — that needs a
+    tool the butler calls, not a field.
+
+
 [ ] gov.jarvis_shape — FOUND 26 Oct. THE DESTINATION, named so the
     next sessions point at it and do not re-derive it. A digital butler
     that holds the pile, does the decided work, and keeps a record that
