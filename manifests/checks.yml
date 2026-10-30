@@ -45,6 +45,9 @@ projects:
         - id: gov.memory_schema
           severity: high
           command: python3 checks/memory_schema.py
+        - id: gov.tool_loop_selftest
+          severity: high
+          command: python3 routers/tool_loop.py
         - id: gov.accord_compliance
           severity: high
           command: python3 checks/accord_compliance.py
