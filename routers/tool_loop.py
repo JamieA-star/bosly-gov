@@ -241,6 +241,7 @@ def run_with_tools(
                 )
                 yield {
                     "type": "token",
+                    "cannot_help": True,
                     "text": (
                         "I ran the tools but produced no answer. "
                         "The tool calls are above; tell me to try again "

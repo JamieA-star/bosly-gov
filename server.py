@@ -784,11 +784,14 @@ class BoslyHandler(BaseHTTPRequestHandler):
         if tools_enabled and run_with_tools is not None:
             answer_parts = []
             tool_events = []
+            cannot_help = False
             try:
                 for ev in run_with_tools(message):
                     et = str(ev.get("type") or "")
                     if et == "token":
                         answer_parts.append(str(ev.get("text", "")))
+                        if ev.get("cannot_help"):
+                            cannot_help = True
                     elif et == "tool_call":
                         tool_events.append({
                             "name": ev.get("name", ""),
@@ -815,6 +818,7 @@ class BoslyHandler(BaseHTTPRequestHandler):
                 "ok": True,
                 "answer": "".join(answer_parts).strip(),
                 "mode": "tools",
+                "cannot_help": cannot_help,
                 "request_id": request_id,
                 "tool_calls": tool_events,
             }, status=HTTPStatus.OK)
