@@ -38,10 +38,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
   in — part of (1) is landed; the drawer surfacing itself is still
   open.
 
-- [ ] accord.founder_door_does_not_log — THE INVERTED PILE. The
-  founder's questions never hit logUnknownIntent (only client misses
-  via /api/chat do). Fix: a cannot_help signal from Gov's /api/chat,
-  logged by the founder route — not string-matching the butler's prose.
+- [x] accord.founder_door_does_not_log — MECHANISM-PROVEN 30 Oct. THE
+  INVERTED PILE. The founder's questions never hit logUnknownIntent
+  (only client misses via /api/chat do). Fix: a cannot_help signal
+  from Gov's /api/chat, logged by the founder route — not
+  string-matching the butler's prose.
 
 - [ ] gov.jarvis_shape — THE DESTINATION. Five-step ramp: BACKLOG →
   READING HABITS → ONE WATCHED ITEM → THE RUNNER → THE REPORT. Plus
@@ -108,12 +109,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
 
 Several [x]-marked items (gov.silence_guard, accord.calendar_period,
 ops.cron_environment, gov.shared_transcript, accord.butler_knows_today)
-were DONE in this slice and are omitted here as closed. Note on
-accord.butler_knows_today specifically: PLAN.md marks the item [x]
-DONE 30 Oct, but its own body still reads "STEP 2 OPEN" (inject a
-live datetime.now(ZoneInfo("Europe/London")) into _read_prompt instead
-of the static date line) — the tick closes the item but the step text
-was not updated to match. Worth flagging if STEP 2 is in fact still
-undone. This file reflects only what is open in the portion of
-PLAN.md actually read (first 40,000 of 383,321 bytes) — there may be
-more open items further in the file.
+were DONE in this slice and are omitted here as closed.
+accord.butler_knows_today — CONFIRMED DONE 30 Oct by the founder; the
+earlier flag (PLAN.md body still read "STEP 2 OPEN" after the tick)
+is resolved, no longer open. accord.founder_door_does_not_log is now
+mechanism-proven (see FOUND section above, marked [x]). This file
+reflects only what is open in the portion of PLAN.md actually read
+(first 40,000 of 383,321 bytes) — there may be more open items
+further in the file.
