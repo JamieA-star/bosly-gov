@@ -331,6 +331,20 @@ THE BUILD, IN ORDER
     is why the record said 'unknown' — a fix that is not written down
     is a fix the system cannot learn from.
 
+    EVIDENCE 30 Oct, a named failure. The log line built for this item
+    fired: "tool loop: empty answer after 3 rounds; calls: [('read_file',
+    True, ''), ('read_file', True, '')]". The loop was not a runaway —
+    it read two files, produced no text, and stopped. That is a
+    different failure from the 20-iteration grind, and the log named it
+    rather than guessing. The fix that followed was a prompt rule, not
+    a number: "reading is not doing — the turn is not complete until
+    patch_file or write_file returns ok, or you say what is missing."
+    After the rule, the same task completed: two patches, ok:true, the
+    diff landed, 200 in the access log. Three iterations, each tested:
+    narrate ("I'll update") -> read and stop (two reads, silence) ->
+    act (two patches, reported). The repeat guard is still a floor; the
+    rule is what moved the model.
+
 [ ] accord.founder_door_does_not_log — FOUND 27 Oct. THE INVERTED
     PILE. ChatDrawer.tsx routes by user: the founder's message goes to
     /api/executive/founder -> Gov /api/chat -> the butler, and the comment
