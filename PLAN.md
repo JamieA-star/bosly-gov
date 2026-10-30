@@ -371,7 +371,7 @@ THE BUILD, IN ORDER
     act (two patches, reported). The repeat guard is still a floor; the
     rule is what moved the model.
 
-[ ] accord.founder_door_does_not_log — FOUND 27 Oct. THE INVERTED
+[x] accord.founder_door_does_not_log — DONE 30 Oct. THE INVERTED
     PILE. ChatDrawer.tsx routes by user: the founder's message goes to
     /api/executive/founder -> Gov /api/chat -> the butler, and the comment
     is explicit that it never touches /api/chat or the deterministic
@@ -401,6 +401,19 @@ THE BUILD, IN ORDER
     STILL OPEN: the butler saying "I don't know" (as it did on the PDF
     question) is not the silence guard and sets no flag — that needs a
     tool the butler calls, not a field.
+
+    DONE 30 Oct, PROVEN LIVE. The founder route now posts EVERY message
+    to /api/unanswered with kind=founder_question — not only the
+    empties. The founder's answered questions are the roadmap: "how do
+    I invoice a client for multiple days" was answered and is a feature
+    request. Gov's route takes a whitelisted kind (founder_question |
+    unanswered, else unanswered). Proven end to end with a real
+    question: thing-1793369187578-739a, "How do I invoice a client for
+    multiple days?", userId:cmunzvouy0002gihgnhgz164o, in the pile.
+    Source -> bundle -> process, all verified before asking — four
+    patchers and three deploys today reported success and changed
+    nothing, so the bundle grep is now part of the move. Still open:
+    the "I don't know" case needs a tool the butler calls, not a flag.
 
 
 [ ] gov.jarvis_shape — FOUND 26 Oct. THE DESTINATION, named so the
