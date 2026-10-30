@@ -257,7 +257,7 @@ THE BUILD, IN ORDER
     that stops it. Do not rewrite the prompt in this item — the rewrite is
     its own session, against this shape.
 
-[ ] gov.one_pile — FOUND 27 Oct. THE CONSOLIDATION. There are three
+[x] gov.one_pile — DONE 30 Oct. THE CONSOLIDATION. There are three
     piles: PLAN.md (decided work), things.db (ideas, clients, leads,
     drafts), and the governor's unknown-intents.jsonl (questions the
     butler could not answer — 39 total, 32 in the last 7 days, read by
@@ -275,6 +275,15 @@ THE BUILD, IN ORDER
     file; a silent write failure is today's family of bugs. The fold is
     not done until one real unanswered question lands as a thing and a
     check watches kind="unanswered".
+
+    DONE 30 Oct. The jsonl moved inside the repo (bosly-gov/data/,
+    gitignored for the cuids, backup covers it); the 39 backfilled into
+    the pile, idempotent by a backfill:<sha1> tag; the founder route
+    logs every message as founder_question; gov.unanswered_in_the_pile
+    (fast, 31 checks) fails if the pile falls behind the jsonl. The
+    butler could not read the file before the move — read_file refuses
+    paths outside the repos — and read-and-stopped when asked to write
+    the backfill itself: it composes from a shape, not a description.
 
 [x] gov.plan_as_boundary — DONE 29 Oct. THE NEXT BUILD, and the thing
     that makes the butler useful without being steered. The plan is the
