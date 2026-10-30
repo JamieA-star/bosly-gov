@@ -726,6 +726,11 @@ class BoslyHandler(BaseHTTPRequestHandler):
             return
         user_id = str(data.get("userId", "")).strip()
         message = str(data.get("message", "")).strip()
+        # Two kinds only: the clients' unanswered questions, and the
+        # founder's own questions (the product roadmap). Anything else
+        # falls back to "unanswered" — this is not a general write door.
+        _kind = str(data.get("kind", "")).strip()
+        kind = _kind if _kind in ("unanswered", "founder_question") else "unanswered"
         if not user_id or not message:
             self._send_json({"ok": False, "error": "userId, message required"}, status=HTTPStatus.BAD_REQUEST)
             return
@@ -735,7 +740,7 @@ class BoslyHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": False, "error": f"things store unavailable: {e}"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
             return
         r = save_thing(
-            kind="unanswered",
+            kind=kind,
             title=message[:120],
             body=message,
             status="active",
