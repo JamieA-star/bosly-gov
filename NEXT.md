@@ -18,7 +18,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   RULES, THE SKILLS (procedures moved to files read on demand, not
   carried every turn). Not to be done casually — its own session.
 
-- [ ] gov.one_pile — THE CONSOLIDATION. Three piles exist: PLAN.md,
+- [x] gov.one_pile — DONE 30 Oct. THE CONSOLIDATION. Three piles exist: PLAN.md,
   things.db, and governor's unknown-intents.jsonl (39 rows, unread).
   tasks-store.json is dead and should be removed. Fold unknown-intents
   into things.db via save_thing(kind="unanswered"), backfill the 39
@@ -30,7 +30,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   (respecting START HERE / dependency notes), and propose it in one
   paragraph, then wait for a yes. Does not auto-run.
 
-- [ ] gov.the_loop_is_not_a_count — The tool-loop ceiling (now 20
+- [x] gov.the_loop_is_not_a_count — DONE 31 Oct. The tool-loop ceiling (now 20
   iterations) is the wrong shape; raising the number again without
   evidence is not the fix. Needs: (1) surface tool_events to the
   drawer instead of discarding them, (2) guard on repeated identical
