@@ -21,7 +21,28 @@ for line in open(NEXT, encoding="utf-8"):
         open_ids.add(m.group(1))
 
 stale = sorted(done & open_ids)
-if stale:
-    print(f"FAIL: NEXT.md lists {len(stale)} done item(s) as open: {stale}")
+
+# Reverse direction: an item PLAN.md still marks open ([ ] or [~]) but that
+# is not mentioned anywhere in NEXT.md at all. This reads both files whole
+# from disk (not the 40KB slice a chat read_file call gets), so it is
+# reliable for PLAN.md's full size.
+plan_open = set()
+open_pattern = re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
+for line in open(PLAN, encoding="utf-8"):
+    m = open_pattern.match(line)
+    if m and m.group(1) in (" ", "~"):
+        plan_open.add(m.group(2))
+
+next_text = open(NEXT, encoding="utf-8").read()
+missing = sorted(
+    pid for pid in plan_open
+    if not re.search(r"\b" + re.escape(pid) + r"\b", next_text)
+)
+
+if stale or missing:
+    if stale:
+        print(f"FAIL: NEXT.md lists {len(stale)} done item(s) as open: {stale}")
+    if missing:
+        print(f"FAIL: NEXT.md omits {len(missing)} item(s) still open in PLAN.md: {missing}")
     sys.exit(1)
-print(f"OK: {len(done)} done, none stale in NEXT.md")
+print(f"OK: {len(done)} done, none stale in NEXT.md; {len(plan_open)} open in PLAN.md, none missing from NEXT.md")
