@@ -236,6 +236,21 @@ THE BUILD, IN ORDER
     convention that each item's status lives in the item. Do not rely on
     append for status.
 
+[ ] accord.the_tool_line_does_not_render — FOUND 31 Oct. The loop's
+    last line: show tool_events in the surfaces. Five wires were fixed
+    (route key, drawer field, drawer renderer, UI renderer call, the
+    chatArea container) and the server is proven correct — curl gives
+    mode: tools, tool_calls: [read_file]. The tool line still does not
+    appear, and the console stays silent. Two causes were found but not
+    closed: the transcript 400 (a bot row written empty; fixed with a
+    guard) and the possibility that the console being read is not the
+    UI page's console, or that the browser is on an old app.js despite
+    ?v=17 (Network -> Response is the check, not done). NOT DONE. The
+    honest next step: open http://localhost:3102/gov/, its own
+    DevTools, Network -> app.js?v=17 -> Response (confirm the file),
+    Console -> ask, read [sendChatMessage res]. Do not patch another
+    renderer until the browser's copy is confirmed.
+
 [ ] gov.prompt_is_a_description — FOUND 27 Oct. THE RATCHET. The
     prompt has grown by one script per failure: the plan-item rule, the
     draft rule, and a full "working the week's list" procedure three
