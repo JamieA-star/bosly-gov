@@ -685,6 +685,8 @@ class BoslyHandler(BaseHTTPRequestHandler):
         role = str(data.get("role", "")).strip()
         text = str(data.get("text", "")).strip()
         if not room or not role or not text:
+            logging.warning("transcript 400: body=%r room=%r role=%r text_len=%d",
+                            data, room, role, len(text))
             self._send_json({"ok": False, "error": "room, role, text required"}, status=HTTPStatus.BAD_REQUEST)
             return
         entry = {
