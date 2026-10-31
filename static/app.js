@@ -271,10 +271,12 @@
     messageHistory.push(msg);
     persistChat();
     // Append to the shared transcript — both rooms write here.
-    fetch("/gov/api/transcript", {
+    // Only when there is text: a bot row is created empty and filled
+    // later, and an empty write is a 400.
+    if (msg.text) fetch("/gov/api/transcript", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ room: "ui", role, text: msg.text }),
+      body: JSON.stringify({ room: "ui", role: msg.role, text: msg.text }),
     }).catch(() => {});
     chatArea.appendChild(createMessageEl(msg, messageHistory.length - 1));
     scrollToBottom();
@@ -387,10 +389,12 @@
   }
 
   function onToolCall(payload) {
+    console.log("[onToolCall]", payload);
   // Render a small inline line showing that a tool was used.
   // Understated: visibility, not noise.
   try {
     const box =
+      document.getElementById("chatArea") ||
       document.getElementById("chatMessages") ||
       document.getElementById("chatLog") ||
       document.getElementById("messages") ||
@@ -406,7 +410,8 @@
     box.appendChild(el);
     box.scrollTop = box.scrollHeight;
   } catch (e) {
-    // Never let UI rendering break the stream
+    // Never let UI rendering break the stream — but say so.
+    console.error("onToolCall failed:", e);
   }
 }
 
@@ -605,6 +610,13 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
 
     try {
       const res = await sendChatMessage(text);
+      console.log("[sendChatMessage res]", res);
+      // The POST response carries tool_calls in JSON; the SSE path
+      // called onToolCall, the POST path never did. Render them here
+      // with the same renderer — the wire that was missing.
+      for (const tc of (Array.isArray(res?.tool_calls) ? res.tool_calls : [])) {
+        onToolCall(tc);
+      }
       const context = parseContextFromResponse(res);
       const answer = safeText(res.reply || res.text || res.answer || "Done.");
       hideThinking();
