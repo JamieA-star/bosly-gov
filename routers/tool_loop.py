@@ -33,6 +33,7 @@ Run the self-test (no API call, no tokens spent):
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -220,6 +221,7 @@ def run_with_tools(
 
     _any_text = False
     calls: list = []
+    seen: set = set()
     for iteration in range(max_iterations):
         try:
             response = _call_api(system_prompt, messages)
@@ -294,6 +296,26 @@ def run_with_tools(
             name = block.get("name", "")
             args = block.get("input") or {}
             tool_use_id = block.get("id", "")
+
+            # The repeat guard: the same tool with the same arguments
+            # twice is a loop, not progress. Stop and name it.
+            _key = (name, hashlib.sha1(
+                json.dumps(args, sort_keys=True, default=str).encode()
+            ).hexdigest()[:16])
+            if _key in seen:
+                logging.warning("tool loop: repeated call %s; stopping", name)
+                yield {
+                    "type": "token",
+                    "cannot_help": True,
+                    "text": (
+                        f"I called {name} twice with the same arguments and "
+                        "stopped to avoid a loop. The tool calls are above; "
+                        "tell me to try again or ask differently."
+                    ),
+                }
+                yield {"type": "done", "result": {"ok": True, "iterations": iteration + 1, "stop_reason": "repeat"}}
+                return
+            seen.add(_key)
 
             result = dispatch(name, args)
             result_for_model = _truncate_for_model(result)
@@ -459,16 +481,46 @@ def _selftest() -> int:
         detail=f"text: {(silent_tokens[0].get('text') if silent_tokens else '')[:120]}",
     )
 
+    # ---- Repeat guard: the same tool and args twice stops the loop ----
+    repeated = [
+        {"stop_reason": "tool_use", "content": [
+            {"type": "tool_use", "id": "t1", "name": "read_file", "input": {"path": "PLAN.md"}}]},
+        {"stop_reason": "tool_use", "content": [
+            {"type": "tool_use", "id": "t2", "name": "read_file", "input": {"path": "PLAN.md"}}]},
+    ]
+
+    def fake_repeated(system_prompt, messages, timeout=LLM_TIMEOUT):
+        return repeated.pop(0)
+
+    globals()["_call_api"] = fake_repeated
+    try:
+        rep_events = list(run_with_tools("read twice"))
+    finally:
+        globals()["_call_api"] = real_call
+
+    rep_tokens = [e for e in rep_events if e.get("type") == "token"]
+    check(
+        "repeat guard stops a repeated call",
+        bool(rep_tokens) and "twice" in (rep_tokens[-1].get("text") or "")
+        and "read_file" in (rep_tokens[-1].get("text") or ""),
+        detail=f"tokens: {[t.get('text','')[:60] for t in rep_tokens]}",
+    )
+
     # ---- Second test: max_iterations stops a runaway loop ----
+    _n = {"i": 0}
+
     def fake_runaway(system_prompt, messages, timeout=LLM_TIMEOUT):
+        # A different call each round: no repeat, so only max_iterations
+        # can stop it. The repeat guard is proven by its own test.
+        _n["i"] += 1
         return {
             "stop_reason": "tool_use",
             "content": [
                 {
                     "type": "tool_use",
-                    "id": "tool_x",
+                    "id": f"tool_x{_n['i']}",
                     "name": "read_file",
-                    "input": {"path": "PLAN.md"},
+                    "input": {"path": f"PLAN.md#{_n['i']}"},
                 },
             ],
         }
