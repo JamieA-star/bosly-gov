@@ -10,7 +10,7 @@ NEXT = "/home/bosly_accord/bosly-gov/NEXT.md"
 
 done = set()
 for line in open(PLAN, encoding="utf-8"):
-    m = re.match(r"^\[x\]\s+([\w.\-]+)", line)
+    m = re.match(r"^\[x\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)", line)
     if m:
         done.add(m.group(1))
 
