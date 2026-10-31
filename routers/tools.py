@@ -482,6 +482,116 @@ def read_thing(thing_id: str) -> Dict[str, Any]:
         return {"ok": False, "error": f"read_thing raised: {e}"}
 
 
+def plan_write(ids=None, target: str = "/home/bosly_accord/bosly-gov/NEXT.md",
+               dry_run: bool = False, confirm: bool = False) -> Dict[str, Any]:
+    """Append PLAN.md rows for the given ids to NEXT.md, under its open items.
+
+    Never writes by default. Pass dry_run=True to preview the exact lines
+    (nothing is written); pass confirm=True to write what the preview
+    showed. Both together, or neither, is refused. Idempotent: an id
+    already named in the target is skipped.
+    """
+    import re as _re
+    from pathlib import Path as _P
+
+    if dry_run and confirm:
+        return {"ok": False, "error": "pass dry_run or confirm, not both"}
+    if not dry_run and not confirm:
+        return {"ok": False,
+                "error": "refused: pass dry_run=True to preview, or confirm=True to write"}
+    if not ids or not isinstance(ids, list):
+        return {"ok": False, "error": "ids must be a non-empty list"}
+
+    plan = _P("/home/bosly_accord/bosly-gov/PLAN.md")
+    tgt = _P(target)
+    if not plan.exists():
+        return {"ok": False, "error": "PLAN.md not found"}
+    if not tgt.exists():
+        return {"ok": False, "error": f"target not found: {target}"}
+
+    pat = _re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
+    by_id = {}
+    for line in plan.read_text(encoding="utf-8").splitlines():
+        m = pat.match(line)
+        if m:
+            by_id[m.group(2)] = line.rstrip()
+
+    tgt_text = tgt.read_text(encoding="utf-8")
+    lines, skipped = [], []
+    for pid in ids:
+        if _re.search(r"\b" + _re.escape(pid) + r"\b", tgt_text):
+            skipped.append(pid)
+            continue
+        src = by_id.get(pid)
+        if src is None:
+            return {"ok": False, "error": f"id not found in PLAN.md: {pid}"}
+        lines.append("- " + src.strip())
+
+    if not lines:
+        return {"ok": True, "appended": 0, "skipped": skipped,
+                "note": "nothing to append: every id is already in the target"}
+
+    if dry_run:
+        return {"ok": True, "dry_run": True, "would_append": len(lines),
+                "skipped": skipped, "target": str(tgt),
+                "position": "before the '## Note' heading, after the last open bullet",
+                "lines": lines}
+
+    marker = "\n## Note\n"
+    if marker not in tgt_text:
+        return {"ok": False, "error": "target has no '## Note' heading to insert before"}
+    block = "\n".join(lines) + "\n" if lines else ""
+    tgt.write_text(tgt_text.replace(marker, "\n" + block + marker, 1), encoding="utf-8")
+    return {"ok": True, "written": True, "appended": len(lines),
+            "skipped": skipped, "target": str(tgt)}
+
+
+def plan_query(status: str = "open", missing_from: str = "") -> Dict[str, Any]:
+    """Rows from PLAN.md: id, marker, first line, and whether a file mentions it.
+
+    The butler cannot compose from a 383KB file — it reads and stops. This
+    derives the rows in code, so the model acts on a list, not a file.
+    status: 'open' ([ ] or [~]), 'done' ([x]), or 'all'.
+    missing_from: a path; each row gains 'mentioned': bool.
+    """
+    import re as _re
+    from pathlib import Path as _P
+
+    plan = _P("/home/bosly_accord/bosly-gov/PLAN.md")
+    if not plan.exists():
+        return {"ok": False, "error": "PLAN.md not found"}
+    want = (status or "open").strip().lower()
+    if want not in ("open", "done", "all"):
+        return {"ok": False, "error": f"status {status!r} not in open|done|all"}
+    text_other = ""
+    if missing_from:
+        f = _P(missing_from)
+        if not f.exists():
+            return {"ok": False, "error": f"missing_from not found: {missing_from}"}
+        text_other = f.read_text(encoding="utf-8")
+
+    pat = _re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
+    rows = []
+    for line in plan.read_text(encoding="utf-8").splitlines():
+        m = pat.match(line)
+        if not m:
+            continue
+        marker, pid = m.group(1), m.group(2)
+        is_open = marker in (" ", "~")
+        if want == "open" and not is_open:
+            continue
+        if want == "done" and marker != "x":
+            continue
+        row = {"id": pid, "marker": marker, "open": is_open,
+               "line": line.strip()[:200]}
+        if text_other:
+            row["mentioned"] = bool(
+                _re.search(r"\b" + _re.escape(pid) + r"\b", text_other)
+            )
+        rows.append(row)
+    return {"ok": True, "result": {"count": len(rows), "rows": rows}}
+
+
 def find_things(kind: str = "", status: str = "",
                 query: str = "", limit: int = 50) -> Dict[str, Any]:
     if _find_things_impl is None:
@@ -1349,6 +1459,45 @@ TOOLS = [
             },
         },
         "fn": find_things,
+    },
+    {
+        "name": "plan_query",
+        "description": (
+            "Rows from PLAN.md — do not read PLAN.md to answer 'what is "
+            "open', 'what is missing from NEXT.md', or 'what is done'. "
+            "status: open (default), done, or all. Pass missing_from='<path>' "
+            "to add 'mentioned': whether that file names each id. Use this "
+            "instead of composing from the file."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["open", "done", "all"]},
+                "missing_from": {"type": "string"},
+            },
+        },
+        "fn": plan_query,
+    },
+    {
+        "name": "plan_write",
+        "description": (
+            "Append PLAN.md rows for given ids to NEXT.md. NEVER writes by "
+            "default: call with dry_run=True to get the exact lines to show "
+            "the founder; only after the founder says yes, call again with "
+            "confirm=True. Both or neither is refused. Idempotent: ids "
+            "already in NEXT.md are skipped."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "ids": {"type": "array", "items": {"type": "string"}},
+                "target": {"type": "string"},
+                "dry_run": {"type": "boolean"},
+                "confirm": {"type": "boolean"},
+            },
+            "required": ["ids"],
+        },
+        "fn": plan_write,
     },
     {
         "name": "link_things",
