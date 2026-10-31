@@ -341,7 +341,7 @@ THE BUILD, IN ORDER
     the RUNNING process is wrong, even when the code on disk is right —
     which is the gap this item named. Fast stays 30; slow is 2.
 
-[ ] gov.the_loop_is_not_a_count — FOUND 27 Oct. Asked "did I fix the
+[x] gov.the_loop_is_not_a_count — DONE 31 Oct. Asked "did I fix the
     invoice PDF cut-off?", the founder butler hit the tool-loop ceiling
     at MAX_ITERATIONS=5. Raised to 20: it ran 20 and stopped again. So
     5 was too few for investigation and 20 was still a loop, not
@@ -379,6 +379,20 @@ THE BUILD, IN ORDER
     narrate ("I'll update") -> read and stop (two reads, silence) ->
     act (two patches, reported). The repeat guard is still a floor; the
     rule is what moved the model.
+
+    DONE 31 Oct. THE FLOOR: a repeat guard tracks (name, sha1(args))
+    and stops on the same tool with the same arguments twice, naming
+    the tool ("I called read_file twice with the same arguments").
+    THE DIAGNOSTIC: the silence message now names what was called ("I
+    called 2 tool(s) (read_file, read_file) and produced no answer") —
+    the evidence the log already had, in the message the founder sees.
+    THE PROOF: two self-tests, 11/11 — the repeat guard on a repeated
+    call, the ceiling on distinct calls. The runaway test had to change:
+    with a repeat guard, the same call stops before the ceiling, so the
+    old test no longer proved what it said. It failed, and that was the
+    test working. NOT DONE: the drawer still discards tool_events; the
+    repeat guard catches repeats, the read-and-stop (two different
+    reads, no write) is caught by the message, not the guard.
 
 [x] accord.founder_door_does_not_log — DONE 30 Oct. THE INVERTED
     PILE. ChatDrawer.tsx routes by user: the founder's message goes to
