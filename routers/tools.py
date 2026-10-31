@@ -483,13 +483,17 @@ def read_thing(thing_id: str) -> Dict[str, Any]:
 
 
 def plan_write(ids=None, target: str = "/home/bosly_accord/bosly-gov/NEXT.md",
-               dry_run: bool = False, confirm: bool = False) -> Dict[str, Any]:
-    """Append PLAN.md rows for the given ids to NEXT.md, under its open items.
+               dry_run: bool = False, confirm: bool = False,
+               missing_only: bool = False) -> Dict[str, Any]:
+    """Append PLAN.md rows to NEXT.md, under its open items.
 
     Never writes by default. Pass dry_run=True to preview the exact lines
     (nothing is written); pass confirm=True to write what the preview
     showed. Both together, or neither, is refused. Idempotent: an id
     already named in the target is skipped.
+
+    missing_only=True selects every open item the target does not name —
+    the model passes no list, so it cannot carry the wrong one.
     """
     import re as _re
     from pathlib import Path as _P
@@ -499,8 +503,16 @@ def plan_write(ids=None, target: str = "/home/bosly_accord/bosly-gov/NEXT.md",
     if not dry_run and not confirm:
         return {"ok": False,
                 "error": "refused: pass dry_run=True to preview, or confirm=True to write"}
+    if missing_only:
+        _pq = plan_query(status="open", missing_from=target)
+        if not _pq.get("ok"):
+            return _pq
+        ids = [r["id"] for r in _pq["result"]["rows"] if not r.get("mentioned")]
+        if not ids:
+            return {"ok": True, "appended": 0, "skipped": [],
+                    "note": "nothing missing: the target already names every open item"}
     if not ids or not isinstance(ids, list):
-        return {"ok": False, "error": "ids must be a non-empty list"}
+        return {"ok": False, "error": "ids must be a non-empty list (or missing_only=True)"}
 
     plan = _P("/home/bosly_accord/bosly-gov/PLAN.md")
     tgt = _P(target)
