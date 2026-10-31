@@ -12,6 +12,13 @@ PLAN.md is 383KB total, so later sections are not covered here.
   names, so a status update lands 7,000 lines from the item it's
   about. Needs an anchored-update capability or a settled convention.
 
+- [ ] accord.the_tool_line_does_not_render — FOUND 31 Oct. The loop's
+  last line: show tool_events in the surfaces. Five wires were fixed and
+  the server is proven correct (curl shows mode: tools, tool_calls:
+  [read_file]), but the tool line still does not appear in the UI and
+  the console stays silent — the browser's loaded copy (app.js?v=17)
+  has not yet been confirmed in DevTools. NOT DONE.
+
 - [ ] gov.prompt_is_a_description — THE RATCHET. The prompt
   (tools_prompt.txt) has grown by one script per failure and is now
   sediment. Fix is structural: THE WORLD, THE TOOLS, THE STANDING
