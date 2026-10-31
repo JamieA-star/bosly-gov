@@ -257,10 +257,21 @@ def run_with_tools(
                     iteration + 1,
                     [(c.get("name"), c.get("ok"), (c.get("error") or "")[:80]) for c in calls],
                 )
+                # The failure message carries the evidence: name what was
+                # called, so "no answer" says what was read and not
+                # written. A generic message hides the read-and-stop.
+                _names = [c.get("name") for c in calls if c.get("name")]
+                if _names:
+                    _detail = (
+                        f"I called {len(_names)} tool(s) ({', '.join(_names)}) "
+                        "and produced no answer. "
+                    )
+                else:
+                    _detail = "I ran the tools but produced no answer. "
                 yield {
                     "type": "token",
                     "cannot_help": True,
-                    "text": _SILENCE_TEXT,
+                    "text": _detail + "The tool calls are above; tell me to try again or ask differently.",
                 }
             yield {
                 "type": "done",
@@ -436,6 +447,16 @@ def _selftest() -> int:
         "silence guard sets cannot_help",
         bool(silent_tokens) and silent_tokens[0].get("cannot_help") is True,
         detail=f"tokens: {silent_tokens}",
+    )
+    # The message must carry the evidence. The silent round calls no
+    # tools, so it says so; a round that read files must name them.
+    check(
+        "silence guard message names what was called",
+        bool(silent_tokens) and (
+            "called" in (silent_tokens[0].get("text") or "")
+            or "ran the tools" in (silent_tokens[0].get("text") or "")
+        ),
+        detail=f"text: {(silent_tokens[0].get('text') if silent_tokens else '')[:120]}",
     )
 
     # ---- Second test: max_iterations stops a runaway loop ----
