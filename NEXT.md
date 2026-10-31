@@ -112,6 +112,72 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] [LIVE] gov.prompt_caching — FOUND 23 Oct. Entry is cut off by the
   40KB read limit; re-read PLAN.md further in to see the full item.
 
+- [ ] [LIVE] gov.butler_rough_edges — FOUND 23 Oct. The list, named,
+- [ ] [LIVE] ops.jarvis — THE VISION. One voice across everything.
+- [~] ops.social_strategy — DECIDED 17 Oct. No more Meta posting.
+- [ ] [LIVE] ops.findability — Done once, then left alone.
+- [ ] [LIVE] ops.consultancy — Bosly Limited's consultancy arm.
+- [ ] [LIVE] accord.user_docs_prose_pass — Apply the new
+- [ ] [LIVE] accord.social_render_pipeline — The real social media
+- [ ] [LIVE] ops.send_email_test_address — FOUND 19 Oct. The full
+- [ ] [LIVE] gov.config_patch_preserve_keys — FOUND 20 Oct. Three
+- [ ] [LIVE] gov.prompt_identity_wins — FOUND 19 Oct. The model
+- [ ] [LIVE] gov.project_chat_context_ignored — FOUND 19 Oct. The
+- [ ] [LIVE] ops.capsule — THE CAPSULE HABIT. DEFINED 19 Oct.
+- [ ] [LIVE] gov.custodian_executive_map — THE FURNITURE.
+- [~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
+- [~] gov.evolve_loop_feedback — IN PROGRESS, digest built. The
+- [~] accord.learned_answer_cache — FOUND 22 Oct. THE LADDER BUILT
+- [ ] [LIVE] gov.pattern_signal — FOUND 22 Oct. Bosly reads patterns
+- [ ] [LIVE] gov.evolve_loop_feed — FOUND 23 Oct. The questions and
+- [~] ops.deploy_smoke_test_covers_routes — FOUND 22 Oct. The deploy
+- [ ] [LIVE] accord.feedback_message_link — ChatDrawer.sendFeedback(msgIdx, text)
+- [ ] [LIVE] accord.problem_report_flow — The old chatbot let a user
+- [~] accord.waiting_well_page — A public resource for the UK
+- [ ] [LIVE] ops.monitor_route_roster — bosly-monitor's route roster
+- [ ] [LIVE] ops.architecture — The principles the build decisions
+- [ ] [LIVE] ops.external_services_degrade_honestly — FOUND 19 Oct.
+- [ ] [LIVE] accord.lead_machinery — FOUND 19 Oct, forgotten. A
+- [ ] [LIVE] ops.scout_persona_filter — FOUND 29 Oct. The LinkedIn tip:
+- [ ] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
+- [ ] [LIVE] gov.executive_orientation_and_reporting — DEFINED 19 Oct.
+- [ ] [LIVE] ops.bosly_executive — THE CHIEF OF STAFF. The
+- [ ] [LIVE] ops.bosly_receptionist — THE AI RECEPTIONIST. The
+- [ ] [LIVE] ops.training_set — THE FRAME. The plan, the memory,
+- [ ] [LIVE] ops.hardware_plan — The box. And the constraint that
+- [ ] [LIVE] accord.invoice_mobile_layout — The line-item row in
+- [ ] [LIVE] ops.consultancy_design — The front door looks correct,
+- [ ] [LIVE] ops.consultancy_sales_sequence — How a lead becomes a
+- [ ] [LIVE] ops.consultancy_contract_terms — The foundation of the
+- [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert
+- [ ] [LIVE] accord.plan_column_layer2 — UPDATED 1 Oct. The reads
+- [~] accord.cross_pill_propagation — PARTIAL 2 Oct. Half (b) is done. Writes in one pill do
+- [~] accord.invoice_aggregates_client_appointments — READ SIDE TESTED 10 Oct,
+- [ ] [LIVE] accord.invoice_sender_picker — The send dialog has a
+- [ ] [LIVE] accord.wellness_amount_check — Client-side anomaly check. ORIGINALLY: the browser computes per-client averages from decrypted data and surfaces anomalies locally. This is a workflow engine pattern. No LLM needed. Still valid as designed — the browser does the computation.
+- [ ] [LIVE] accord.email_relay_encryption — Option D for the email relay.
+- [ ] [LIVE] ops.gate_private_hostnames — DONE 19 Oct. The Custodian
+- [ ] [LIVE] ops.gate_private_hostnames — DONE 19 Oct. The Custodian
+- [ ] [LIVE] ops.security_posture — What Gov already covers, what the
+- [ ] [LIVE] accord.seo_ai_discoverability — Make Bosly discoverable
+- [ ] [LIVE] accord.middleware_public_routes — The middleware's
+- [~] keep.price_history_missing — FOUND 16 Oct, DESIGN GAP.
+- [~] keep.price_cron_missing — FOUND 16 Oct. Bosly Keep has no
+- [~] keep.snapshot_backfill — FOUND 16 Oct. PortfolioSnapshot has a
+- [~] keep.pricepoint_empty — FOUND 16 Oct. The PricePoint table
+- [~] keep.udmy_404 — FOUND 16 Oct. Yahoo returns HTTP 404 for UDMY
+- [~] keep.trade_idempotency — FOUND 16 Oct. /api/trades has no
+- [~] accord.password_recovery_gap — PARTIAL FIX 24 Sept. The
+- [ ] [LIVE] ops.ico_registration — Register with the ICO.
+- [ ] [LIVE] gov.accord_compliance — A check that verifies the
+- [ ] [LIVE] ops.legal_compliance_payment — Legal basics for when
+- [ ] [LIVE] ops.search_visibility_basics — Connect the site to
+- [ ] [LIVE] ops.journey_test_outbox_check — The retired bosly-journey-test
+- [ ] [LIVE] accord.connection_providers — UPDATE 3 Oct:
+- [ ] [LIVE] accord.password_reset_ui — A signed-out user who has
+- [ ] [LIVE] accord.legacy_js_audit — there is a substantial body of
+- [ ] [LIVE] gov.weekly_health_report — A single email, every Sunday
+
 ## Note
 
 Several [x]-marked items (gov.silence_guard, accord.calendar_period,
