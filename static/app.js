@@ -491,8 +491,9 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
     const t = safeText(text).trim();
     let m = t.match(/^\/fix\s+(.+)$/i);
     if (m) return { file: safeText(m[1]).trim() };
-    m = t.match(/^fix\s+(.+)$/i);
-    if (m) return { file: safeText(m[1]).trim() };
+    // Bare "fix ..." is not a command: it is ordinary English, and
+    // "fix the invoice bug" must reach the butler, not the fix handler.
+    // Only /fix <path> is a command.
     m = t.match(/apply\s+this\s+fix\s+to\s+([^\s]+)$/i);
     if (m) return { file: safeText(m[1]).trim() };
     return null;
