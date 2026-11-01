@@ -211,6 +211,22 @@ def run_with_tools(
     system_prompt = system_prompt or _read_prompt()
     messages: List[Dict[str, Any]] = [{"role": "user", "content": user_message}]
 
+    # The learned-answer cache, before the model. A hit means no model
+    # call: the loop answers and returns. Deterministic — the model is
+    # never given the chance to skip it. A cache failure is a miss, not
+    # a dead butler: the try/except is the whole point.
+    try:
+        from routers.tools import answer_cache as _answer_cache
+        _cached = _answer_cache(user_message)
+        if _cached.get("ok"):
+            _hit = (_cached.get("result") or {}).get("hit")
+            if _hit:
+                yield {"type": "token", "text": _hit}
+                yield {"type": "done", "result": {"ok": True, "iterations": 0, "stop_reason": "cache"}}
+                return
+    except Exception as _ce:
+        logging.warning("answer_cache check failed: %s", _ce)
+
     # The live probe's trigger: deterministic, no API call, no tokens.
     # No real message is this string. It lets gov.the_check_proves_the_
     # file_not_the_process prove the RUNNING process, not the file.

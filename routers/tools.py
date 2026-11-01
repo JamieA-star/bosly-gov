@@ -558,6 +558,40 @@ def plan_write(ids=None, target: str = "/home/bosly_accord/bosly-gov/NEXT.md",
             "skipped": skipped, "target": str(tgt)}
 
 
+def answer_cache(question: str) -> Dict[str, Any]:
+    """Check the learned-answer cache before calling the model.
+
+    Returns {hit: {answer} | null, shared: {shape} | null}. A hit means
+    the answer is already known: use it and say so — do not call the
+    model. A shared shape is a template, not an answer: use it as
+    context but still answer. The app owns the normaliser and the
+    sensitivity guard; this only asks.
+    """
+    import json as _json
+    import urllib.request as _u
+    from urllib.parse import quote as _quote
+
+    token = (os.environ.get("FOUNDER_SERVICE_TOKEN") or "").strip()
+    if not token:
+        return {"ok": False, "error": "FOUNDER_SERVICE_TOKEN not set"}
+    url = "http://localhost:3100/api/executive/cache?q=" + _quote(question)
+    req = _u.Request(url, headers={"Authorization": f"Bearer {token}"})
+    try:
+        with _u.urlopen(req, timeout=10) as r:
+            body = r.read().decode("utf-8", "replace")
+        d = _json.loads(body)
+    except Exception as e:
+        return {"ok": False, "error": f"answer_cache failed: {type(e).__name__}: {e}"}
+    if not d.get("ok"):
+        return {"ok": False, "error": d.get("error", "cache refused")}
+    hit = d.get("hit")
+    return {"ok": True, "result": {
+        "hit": (hit or {}).get("answer") if isinstance(hit, dict) else None,
+        "shared": (d.get("shared") or {}).get("shape") if isinstance(d.get("shared"), dict) else None,
+        "question": question,
+    }}
+
+
 def plan_query(status: str = "open", missing_from: str = "") -> Dict[str, Any]:
     """Rows from PLAN.md: id, marker, first line, and whether a file mentions it.
 
@@ -1471,6 +1505,22 @@ TOOLS = [
             },
         },
         "fn": find_things,
+    },
+    {
+        "name": "answer_cache",
+        "description": (
+            "Check the learned-answer cache BEFORE calling the model. "
+            "Returns {hit} — a known answer, use it and say so; or "
+            "{shared} — a template shape, use as context but still answer. "
+            "A hit means no model call. Every model call costs the founder; "
+            "check the cache first."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {"question": {"type": "string"}},
+            "required": ["question"],
+        },
+        "fn": answer_cache,
     },
     {
         "name": "plan_query",

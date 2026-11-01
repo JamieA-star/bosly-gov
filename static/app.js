@@ -622,6 +622,19 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
       const answer = safeText(res.reply || res.text || res.answer || "Done.");
       hideThinking();
       updateMessageText(liveMessage.id, answer, { context });
+      // Store the question and answer in the learned-answer cache, so the
+      // next identical question is answered without a model call. The
+      // drawer already does this; the UI did not, so the cache never
+      // filled from the UI. The POST's own guard refuses anything that
+      // looks sensitive.
+      if (answer && answer !== "Done.") {
+        fetch("/gov/api/executive/cache", {
+          credentials: "include",
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: text, answer }),
+        }).catch(() => {});
+      }
       // The bot's reply appends to the shared transcript.
       fetch("/gov/api/transcript", {
         method: "POST",
