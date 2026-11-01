@@ -67,11 +67,25 @@ def main() -> int:
     bad_headings = sorted(headings - real)
     print(f"  notes headings not in TOOLS: {len(bad_headings)}" + (f" {bad_headings}" if bad_headings else ""))
 
+    # Skills: every file under skills/ is named in the prompt, the prompt's
+    # procedure is NOT carried (it lives in the skill), and read_skill is a
+    # real tool so the butler can load it.
+    from pathlib import Path as _P
+    skills_dir = _P("/home/bosly_accord/bosly-gov/skills")
+    skill_files = sorted(p.stem for p in skills_dir.glob("*.md")) if skills_dir.exists() else []
+    unnamed = [n for n in skill_files if n not in prompt]
+    print(f"  skills on disk: {len(skill_files)}, unnamed in the prompt: {len(unnamed)}" + (f" {unnamed}" if unnamed else ""))
+    carried = "WORKING THE WEEK'S LIST" in prompt
+    print(f"  week-list procedure carried in the prompt: {'YES (should be no)' if carried else 'no (it is a skill)'}")
+    has_reader = "read_skill" in real
+    print(f"  read_skill is a real tool: {has_reader}")
+
     # The old stale literal must be gone.
     stale = "EIGHT TOOLS" in prompt
     print(f"  stale 'EIGHT TOOLS' literal: {'PRESENT' if stale else 'gone'}")
 
-    ok = not missing and not phantom and not bad_headings and not stale
+    ok = (not missing and not phantom and not bad_headings and not stale
+          and not unnamed and not carried and has_reader)
     print("")
     print("SUMMARY: " + ("PASS" if ok else "FAIL"))
     return 0 if ok else 1

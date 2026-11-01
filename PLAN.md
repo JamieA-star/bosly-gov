@@ -278,7 +278,7 @@ THE BUILD, IN ORDER
     Console -> ask, read [sendChatMessage res]. Do not patch another
     renderer until the browser's copy is confirmed.
 
-[~] gov.prompt_is_a_description — IN PROGRESS 1 Nov. THE RATCHET. The
+[x] gov.prompt_is_a_description — DONE 1 Nov. THE RATCHET. The
     prompt has grown by one script per failure: the plan-item rule, the
     draft rule, and a full "working the week's list" procedure three
     routes deep (tools_prompt.txt 120-260). Each script is true. Together
@@ -315,6 +315,17 @@ THE BUILD, IN ORDER
     a procedure carried every turn, not a file read on demand. The item
     is not done until a new capability means DESCRIBING a store or a
     tool, not adding a rule.
+    DONE 1 Nov. Part (1) THE WORLD: a prose section now describes
+    the plan, the pile, memory, the transcript, and the three
+    repos — what each is for, not how to use it. Part (4) THE
+    SKILLS: 'working the week's list' moved out of the prompt into
+    skills/working-the-week-list.md, read on demand by the new
+    read_skill tool; the prompt names the skill but does not carry
+    it. gov.prompt_matches_tools now also asserts every skill file
+    is named in the prompt, the procedure is NOT carried, and
+    read_skill is a real tool. The four parts are all done; a new
+    capability now means describing a store or a tool, not adding
+    a rule.
 
 [x] gov.one_pile — DONE 30 Oct. THE CONSOLIDATION. There are three
     piles: PLAN.md (decided work), things.db (ideas, clients, leads,

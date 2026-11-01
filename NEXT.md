@@ -34,7 +34,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   the console stays silent — the browser's loaded copy (app.js?v=17)
   has not yet been confirmed in DevTools. NOT DONE.
 
-- [~] gov.prompt_is_a_description — IN PROGRESS 1 Nov. THE RATCHET. THE TOOLS half is DONE (generated from TOOLS, checked); THE WORLD and THE SKILLS halves are open. The prompt
+- [x] gov.prompt_is_a_description — IN PROGRESS 1 Nov. THE RATCHET. THE TOOLS half is DONE (generated from TOOLS, checked); THE WORLD and THE SKILLS halves are open. The prompt
   (tools_prompt.txt) has grown by one script per failure and is now
   sediment. Fix is structural: THE WORLD, THE TOOLS, THE STANDING
   RULES, THE SKILLS (procedures moved to files read on demand, not

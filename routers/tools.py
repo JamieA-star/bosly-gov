@@ -1378,6 +1378,31 @@ def read_audit(from_date: str = "", to_date: str = "") -> Dict[str, Any]:
     return {"ok": True, "result": {"headers": headers, "capsules": capsules}}
 
 
+SKILLS_DIR = Path("/home/bosly_accord/bosly-gov/skills")
+
+
+def read_skill(name: str = "") -> Dict[str, Any]:
+    """Read a skill file by name (no extension). Allow-listed to SKILLS_DIR.
+
+    A skill is a procedure the butler reads when a job starts, instead of
+    text it carries every turn. The name is a file stem under skills/ —
+    never a path, never traversal. A missing skill says what exists.
+    """
+    stem = (name or "").strip()
+    if not stem or "/" in stem or ".." in stem:
+        return {"ok": False, "error": "skill name must be a bare file stem"}
+    if not SKILLS_DIR.exists():
+        return {"ok": False, "error": "no skills directory"}
+    path = SKILLS_DIR / (stem + ".md")
+    if not path.exists():
+        have = sorted(p.stem for p in SKILLS_DIR.glob("*.md"))
+        return {"ok": False, "error": f"no such skill: {stem}", "available": have}
+    try:
+        return {"ok": True, "result": {"name": stem, "text": path.read_text(encoding="utf-8")}}
+    except Exception as e:
+        return {"ok": False, "error": f"read failed: {e}"}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1858,6 +1883,24 @@ TOOLS = [
         },
         "fn": read_audit,
     },
+    {
+        "name": "read_skill",
+        "description": (
+            "Read a skill file by name. Skills are procedures read on "
+            "demand when a job starts — for example 'working-the-week-list' "
+            "when the founder says work this week's list. Call this before "
+            "starting a named procedure; do not guess the steps."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "the skill file stem, e.g. working-the-week-list"},
+            },
+            "required": ["name"],
+        },
+        "fn": read_skill,
+    },
+
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}
