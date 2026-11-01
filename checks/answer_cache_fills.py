@@ -63,6 +63,28 @@ def count_entries() -> int:
     return n
 
 
+def stored_question(mark: str) -> bool:
+    """True if this exact question is in any cache file.
+
+    The directory count was inflated: shared.json has entries too, so a
+    store that promoted a shape added one to the user file and one to
+    shared, and the delta read +2 for a single POST. Assert the question
+    itself — precise, and it cannot be inflated by a promotion or by a
+    probe left over from an earlier run.
+    """
+    if not CACHE_DIR.exists():
+        return False
+    for f in CACHE_DIR.glob("*.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for e in (d.get("entries") or []):
+            if isinstance(e, dict) and e.get("question") == mark:
+                return True
+    return False
+
+
 def main() -> int:
     print("")
     print("Invariant: a question asked through the UI fills the cache")
@@ -104,16 +126,17 @@ def main() -> int:
     print(f"  entries after:  {after}")
 
     stored = bool(body.get("stored"))
-    ok = status == 200 and stored and after > before
+    found = stored_question(MARK)
+    ok = status == 200 and stored and found
     if ok:
-        print("  PASS: the UI's POST stored; the entry count went up")
+        print("  PASS: the UI's POST stored; the question is in the cache")
         print("")
         print("SUMMARY: PASS")
         print("")
         return 0
 
     label = "NOTE" if REPORT_ONLY else "FAIL"
-    print(f"  {label}: status={status}, stored={stored}, delta={after - before}")
+    print(f"  {label}: status={status}, stored={stored}, found={found}, delta={after - before}")
     print("")
     print("SUMMARY: " + ("REPORT-ONLY" if REPORT_ONLY else "FAIL"))
     print("")
