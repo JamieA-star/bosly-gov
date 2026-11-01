@@ -84,6 +84,101 @@ TOOL_RESULT_LIMIT = 40_000  # bytes sent back to the model per tool result
 LLM_TIMEOUT = 120           # seconds per API call
 
 PROMPT_FILE = Path("/home/bosly_accord/bosly-gov/tools_prompt.txt")
+TOOLS_NOTES_FILE = Path("/home/bosly_accord/bosly-gov/tools_prompt.tools.md")
+
+# ecosystem_state reads a 383KB plan and the pile; the tool list is a list
+# comprehension. Cache only what is expensive, keyed on the mtimes of the
+# files that change it. The tool list regenerates every read so it cannot
+# drift as Bosly grows — that drift is the bug this fixes ("EIGHT TOOLS",
+# 13 listed, 23 in TOOLS).
+_ECO_CACHE = {"key": None, "text": ""}
+_REPO_PATHS = {
+    "Accord": "/home/bosly_accord/bosly-1.0",
+    "Keep":   "/home/bosly_accord/bosly-keep",
+    "Gov":    "/home/bosly_accord/bosly-gov",
+}
+
+
+def _mtimes_key():
+    key = []
+    for f in ("PLAN.md", "things.db"):
+        pth = Path("/home/bosly_accord/bosly-gov") / f
+        try:
+            key.append((f, pth.stat().st_mtime_ns))
+        except OSError:
+            key.append((f, 0))
+    return tuple(key)
+
+
+def _ecosystem_section() -> str:
+    key = _mtimes_key()
+    if _ECO_CACHE["key"] == key and _ECO_CACHE["text"]:
+        return _ECO_CACHE["text"]
+    try:
+        from routers.tools import ecosystem_state as _eco
+        r = _eco(section="all")
+        res = r.get("result", {}) if r.get("ok") else {}
+        plan = res.get("plan", {}) or {}
+        things = res.get("things", {}) or {}
+        lines = ["=== THE ECOSYSTEM (current) ==="]
+        ip = plan.get("in_progress") or []
+        lines.append(f"Plan: {plan.get('count', 0)} open, {len(ip)} in progress.")
+        for item in ip[:8]:
+            title = item.get("title") or item.get("id") or "?"
+            lines.append(f"  [~] {title}")
+        if isinstance(things, dict):
+            bits = ", ".join(f"{k} {v}" if not isinstance(v, dict) else k for k, v in things.items())
+            if bits:
+                lines.append(f"Things: {bits}.")
+        text = "\n".join(lines)
+    except Exception as e:
+        text = f"=== THE ECOSYSTEM ===\n(unavailable: {e})"
+    _ECO_CACHE["key"], _ECO_CACHE["text"] = key, text
+    return text
+
+
+def _repos_section() -> str:
+    import subprocess
+    lines = ["=== THE REPOS ==="]
+    for name, path in _REPO_PATHS.items():
+        head = ""
+        try:
+            head = subprocess.run(
+                ["git", "-C", path, "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, timeout=2,
+            ).stdout.strip()
+        except Exception:
+            head = ""
+        lines.append(f"  {name}: {path}" + (f" at {head}" if head else ""))
+    return "\n".join(lines)
+
+
+def _tools_section() -> str:
+    try:
+        from routers.tools import TOOLS
+    except Exception as e:
+        return f"=== THE TOOLS ===\n(unavailable: {e})"
+    notes = ""
+    try:
+        notes = TOOLS_NOTES_FILE.read_text(encoding="utf-8")
+    except OSError:
+        notes = ""
+    # Split the .md into {tool_name: body}, keyed on "## name".
+    import re as _re
+    blocks = _re.split(r"^## ", notes, flags=_re.MULTILINE)
+    by_tool = {}
+    for b in blocks[1:]:
+        name, _, body = b.partition("\n")
+        by_tool[name.strip()] = body.strip()
+    out = [f"=== THE TOOLS ({len(TOOLS)}) ==="]
+    for t in TOOLS:
+        name = t["name"]
+        desc = (t.get("description") or "").strip().replace("\n", " ")
+        out.append(f"\n{name} — {desc}")
+        extra = by_tool.get(name)
+        if extra:
+            out.append(extra)
+    return "\n".join(out)
 
 # The tool schemas, in the shape the Anthropic API expects.
 # routers/tools.py already has them; we strip the Python fn.
@@ -121,6 +216,19 @@ def _read_prompt() -> str:
             text,
             count=1,
             flags=_re.MULTILINE,
+        )
+        # The standing rules are hand-written; the tool list, the ecosystem,
+        # and the repos are generated every read (ecosystem and repos are
+        # mtime-cached, the tool list is not — it must never go stale).
+        text = (
+            text.rstrip()
+            + "\n\n"
+            + _tools_section()
+            + "\n\n"
+            + _ecosystem_section()
+            + "\n\n"
+            + _repos_section()
+            + "\n"
         )
         return text
     return (
