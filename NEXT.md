@@ -7,6 +7,14 @@ PLAN.md is 383KB total, so later sections are not covered here.
 
 ## FOUND — 26 Oct onward
 
+- [ ] accord.ui_cache_store_needs_cors — FOUND 1 Nov. The UI (Gov,
+  3102) POSTs to /gov/api/executive/cache and Gov has no such route —
+  404. The cache route is Accord's, on 3100 (app/api/executive/cache/
+  route.ts); the drawer (Accord's own chat) stores fine. Fix: CORS on
+  Accord's cache route (origin 3102, credentials, OPTIONS) or a Gov
+  proxy. Until then the cache fills from the drawer and not the UI.
+  Caught by gov.answer_cache_fills.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
