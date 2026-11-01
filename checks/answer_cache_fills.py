@@ -19,14 +19,13 @@ from __future__ import annotations
 
 import json
 import os
-import random
 import sys
 import time
 import urllib.error
 import urllib.request
 from pathlib import Path
 
-REPORT_ONLY = True
+REPORT_ONLY = False
 
 # The route is Accord's, on 3100 — not Gov's. The founder bearer
 # token is what the butler uses to reach Accord's routes without a
@@ -35,12 +34,18 @@ ROUTE_URL = "http://localhost:3100/api/executive/cache"
 TOKEN = (os.environ.get("FOUNDER_SERVICE_TOKEN") or "").strip()
 CACHE_DIR = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/answer-cache")
 # Digit-free and value-free by design: the route's looksSensitive()
-# refuses any question containing a digit. A per-run marker keeps
-# each run uncached, so the count movement is a real store, not an
-# already_cached no-op. No digits, ever.
-WORDS = ("alpha", "bravo", "charlie", "delta", "echo", "foxtrot",
-         "golf", "hotel", "india", "juliet", "kilo", "lima")
-MARK = f"what is the answer cache probe {random.choice(WORDS)}"
+# refuses any question containing a digit, and its already_cached guard
+# refuses a repeat, so a fixed or small-vocabulary marker fails on the
+# second or nth run. Encode the clock in letters: unique for decades,
+# no digits, no real word, no collision with a client question.
+def _letters(n: int) -> str:
+    out = []
+    while n:
+        n, r = divmod(n, 26)
+        out.append(chr(ord("a") + r))
+    return "".join(reversed(out)) or "a"
+
+MARK = "what is the answer cache probe " + _letters(int(time.time() * 1000))
 
 
 def count_entries() -> int:
