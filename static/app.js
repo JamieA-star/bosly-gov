@@ -628,7 +628,10 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
       // filled from the UI. The POST's own guard refuses anything that
       // looks sensitive.
       if (answer && answer !== "Done.") {
-        fetch("/gov/api/executive/cache", {
+        // The cache route is Accord's, on 3100. The UI is served by Gov
+      // on 3102, so this is a cross-origin POST with credentials —
+      // the route now answers the preflight and names the origin.
+      fetch("http://localhost:3100/api/executive/cache", {
           credentials: "include",
           method: "POST",
           headers: { "Content-Type": "application/json" },

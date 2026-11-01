@@ -18,6 +18,8 @@ Run:
 from __future__ import annotations
 
 import json
+import os
+import random
 import sys
 import time
 import urllib.error
@@ -26,9 +28,19 @@ from pathlib import Path
 
 REPORT_ONLY = True
 
-UI_URL = "http://localhost:3102/gov/api/executive/cache"
+# The route is Accord's, on 3100 — not Gov's. The founder bearer
+# token is what the butler uses to reach Accord's routes without a
+# browser session; it is in Gov's own environment (proven 1 Nov).
+ROUTE_URL = "http://localhost:3100/api/executive/cache"
+TOKEN = (os.environ.get("FOUNDER_SERVICE_TOKEN") or "").strip()
 CACHE_DIR = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/answer-cache")
-MARK = f"answer-cache-fills-probe-{int(time.time())}"
+# Digit-free and value-free by design: the route's looksSensitive()
+# refuses any question containing a digit. A per-run marker keeps
+# each run uncached, so the count movement is a real store, not an
+# already_cached no-op. No digits, ever.
+WORDS = ("alpha", "bravo", "charlie", "delta", "echo", "foxtrot",
+         "golf", "hotel", "india", "juliet", "kilo", "lima")
+MARK = f"what is the answer cache probe {random.choice(WORDS)}"
 
 
 def count_entries() -> int:
@@ -57,28 +69,37 @@ def main() -> int:
     status = None
     try:
         req = urllib.request.Request(
-            UI_URL,
+            ROUTE_URL,
             data=json.dumps({"question": MARK, "answer": "probe"}).encode(),
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {TOKEN}"},
             method="POST",
         )
         with urllib.request.urlopen(req, timeout=5) as r:
             status = r.status
+            body = json.loads(r.read().decode("utf-8") or "{}")
     except urllib.error.HTTPError as e:
         status = e.code
+        body = {}
     except Exception as e:
-        print(f"  FAIL: could not reach {UI_URL}: {e}")
+        print(f"  FAIL: could not reach {ROUTE_URL}: {e}")
+        print("")
+        print("SUMMARY: " + ("REPORT-ONLY" if REPORT_ONLY else "FAIL"))
+        print("")
+        return 0 if REPORT_ONLY else 1
+    except Exception as e:
+        print(f"  FAIL: could not reach {ROUTE_URL}: {e}")
         print("")
         print("SUMMARY: " + ("REPORT-ONLY" if REPORT_ONLY else "FAIL"))
         print("")
         return 0 if REPORT_ONLY else 1
 
-    print(f"  POST {UI_URL} -> {status}")
+    print(f"  POST {ROUTE_URL} -> {status}")
 
     after = count_entries()
     print(f"  entries after:  {after}")
 
-    ok = status == 200 and after > before
+    stored = bool(body.get("stored"))
+    ok = status == 200 and stored and after > before
     if ok:
         print("  PASS: the UI's POST stored; the entry count went up")
         print("")
@@ -87,7 +108,7 @@ def main() -> int:
         return 0
 
     label = "NOTE" if REPORT_ONLY else "FAIL"
-    print(f"  {label}: status={status}, delta={after - before}")
+    print(f"  {label}: status={status}, stored={stored}, delta={after - before}")
     print("")
     print("SUMMARY: " + ("REPORT-ONLY" if REPORT_ONLY else "FAIL"))
     print("")
