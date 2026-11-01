@@ -15,6 +15,13 @@ PLAN.md is 383KB total, so later sections are not covered here.
   proxy. Until then the cache fills from the drawer and not the UI.
   Caught by gov.answer_cache_fills.
 
+- [ ] accord.secret_unset_blocks_founder_token — FOUND 1 Nov. If
+  BOSLY_AUTH_SECRET is unset, middleware redirects to /signin before the
+  founder-token bypass runs, so the founder cannot reach a non-public
+  route even with a valid token. isFounder fixed the route half; the
+  middleware half is open. Check: founder token, secret unset, no
+  redirect.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

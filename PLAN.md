@@ -240,6 +240,17 @@ THE BUILD, IN ORDER
     only; the UI stores to 3100; gov.answer_cache_fills proves
     the store on every fast run.
 
+[ ] accord.secret_unset_blocks_founder_token — FOUND 1 Nov. If
+    BOSLY_AUTH_SECRET is unset, middleware.ts redirects every non-public
+    route to /signin BEFORE the founder-token bypass below it runs. So on
+    a box with the secret missing, the founder cannot reach any
+    non-public route even with a valid FOUNDER_SERVICE_TOKEN, and
+    requireAccord's isFounder bypass never runs because middleware
+    redirects first. The founder gate has two halves; isFounder fixed the
+    route half (committed 1 Nov), the middleware half is still open. THE
+    CHECK: a founder-token request to a non-public route on a box with
+    the secret unset must not redirect.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
