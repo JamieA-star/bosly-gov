@@ -7,7 +7,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
 
 ## FOUND — 26 Oct onward
 
-- [ ] accord.ui_cache_store_needs_cors — FOUND 1 Nov. The UI (Gov,
+- [x] accord.ui_cache_store_needs_cors — DONE 1 Nov. The UI (Gov,
   3102) POSTs to /gov/api/executive/cache and Gov has no such route —
   404. The cache route is Accord's, on 3100 (app/api/executive/cache/
   route.ts); the drawer (Accord's own chat) stores fine. Fix: CORS on

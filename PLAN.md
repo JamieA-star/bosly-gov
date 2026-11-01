@@ -224,7 +224,7 @@ THE BUILD, IN ORDER
     stale when the tick landed, and the butler flagged the contradiction
     rather than silently closing it — see gov.plan_updates_have_no_anchor.
 
-[ ] accord.ui_cache_store_needs_cors — FOUND 1 Nov. The learned-answer
+[x] accord.ui_cache_store_needs_cors — DONE 1 Nov. The learned-answer
     cache is stored by the drawer (Accord's chat, 3100) and checked by
     Gov's loop before the model, so a hit means no model call. The UI
     (served by Gov on 3102) stores nothing: its POST goes to
@@ -235,6 +235,10 @@ THE BUILD, IN ORDER
     token. Until then the reduction works for the app's chat and not
     the UI's. THE CHECK: gov.answer_cache_fills — ask a question, assert
     the entry count went up; it would have caught this in one run.
+    DONE 1 Nov: the route pins origin 3102 and sets credentials;
+    middleware lets the OPTIONS preflight through for this path
+    only; the UI stores to 3100; gov.answer_cache_fills proves
+    the store on every fast run.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
