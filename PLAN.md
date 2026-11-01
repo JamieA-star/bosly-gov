@@ -224,6 +224,18 @@ THE BUILD, IN ORDER
     stale when the tick landed, and the butler flagged the contradiction
     rather than silently closing it — see gov.plan_updates_have_no_anchor.
 
+[ ] accord.ui_cache_store_needs_cors — FOUND 1 Nov. The learned-answer
+    cache is stored by the drawer (Accord's chat, 3100) and checked by
+    Gov's loop before the model, so a hit means no model call. The UI
+    (served by Gov on 3102) stores nothing: its POST goes to
+    /gov/api/executive/cache, and Gov has no such route — 404. The route
+    is Accord's, on 3100. THE FIX: CORS on Accord's cache route
+    (Access-Control-Allow-Origin for 3102, credentials true, an OPTIONS
+    branch), or a Gov proxy that forwards to 3100 with the founder
+    token. Until then the reduction works for the app's chat and not
+    the UI's. THE CHECK: gov.answer_cache_fills — ask a question, assert
+    the entry count went up; it would have caught this in one run.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
