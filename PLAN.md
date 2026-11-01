@@ -278,7 +278,7 @@ THE BUILD, IN ORDER
     Console -> ask, read [sendChatMessage res]. Do not patch another
     renderer until the browser's copy is confirmed.
 
-[ ] gov.prompt_is_a_description — FOUND 27 Oct. THE RATCHET. The
+[~] gov.prompt_is_a_description — IN PROGRESS 1 Nov. THE RATCHET. The
     prompt has grown by one script per failure: the plan-item rule, the
     draft rule, and a full "working the week's list" procedure three
     routes deep (tools_prompt.txt 120-260). Each script is true. Together
@@ -298,6 +298,23 @@ THE BUILD, IN ORDER
     done, every session makes the pile heavier; this item is the ratchet
     that stops it. Do not rewrite the prompt in this item — the rewrite is
     its own session, against this shape.
+    PROGRESS 1 Nov. Part (2) THE TOOLS is done: the tool list is generated
+    from routers/tools.py TOOLS on every _read_prompt() call, so it
+    cannot go stale. Before: the prompt said "EIGHT TOOLS", listed
+    thirteen, and TOOLS held twenty-three — ten tools were invisible,
+    which is the stall. tools_prompt.txt is now the standing rules only
+    (parts 3 and the head of 1); tools_prompt.tools.md is the per-tool
+    operational prose, keyed by name and lifted verbatim. The ecosystem
+    summary (part 1, partial) and the repos are composed from
+    ecosystem_state and git, mtime-cached on PLAN.md and things.db. The
+    check gov.prompt_matches_tools proves the prompt and TOOLS agree in
+    both directions and that no notes heading names a phantom tool.
+    STILL OPEN: part (1) THE WORLD as a described section (what exists
+    and what it is for — plan, the pile, memory, transcript, the three
+    repos), and part (4) THE SKILLS — "working the week's list" is still
+    a procedure carried every turn, not a file read on demand. The item
+    is not done until a new capability means DESCRIBING a store or a
+    tool, not adding a rule.
 
 [x] gov.one_pile — DONE 30 Oct. THE CONSOLIDATION. There are three
     piles: PLAN.md (decided work), things.db (ideas, clients, leads,
