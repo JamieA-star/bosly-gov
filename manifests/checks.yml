@@ -102,6 +102,9 @@ projects:
         - id: gov.executive_proxy_live
           severity: high
           command: python3 checks/executive_proxy_live.py
+        - id: gov.founder_token_in_process
+          severity: high
+          command: python3 checks/founder_token_in_process.py
         - id: gov.prompt_matches_tools
           severity: high
           command: python3 checks/prompt_matches_tools.py
