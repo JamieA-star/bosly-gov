@@ -251,6 +251,21 @@ THE BUILD, IN ORDER
     CHECK: a founder-token request to a non-public route on a box with
     the secret unset must not redirect.
 
+[ ] accord.founder_surface_is_one_gate — FOUND 2 Nov. The founder
+    has been refused from the founder's own system repeatedly because the
+    entitlement lived in many gates: requireAccord's tier (fixed 1 Nov),
+    hasProduct/productsFor (the Executive), the client pills via
+    /api/auth/me's tier, chat via getUserTier, email-connection, and
+    data-health's own hasAccordAccess. Each was patched where the founder
+    was last refused; a survey found a gate nobody would have hit for
+    weeks. THE RULE: effectiveTier(user) in lib/managed.ts returns
+    "accord" for the founder; hasProduct returns true and productsFor
+    returns FOUNDER_PRODUCTS. Every gate calls the helper; none re-reads
+    the tier. THE CHECK: accord.founder_has_full_access asserts the
+    wiring, and /api/auth/me must return subscriptionTier "accord" and
+    isFounder true — the live proof. A new gate must call effectiveTier,
+    not derive the rule again, or the series continues.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

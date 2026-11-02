@@ -22,6 +22,13 @@ PLAN.md is 383KB total, so later sections are not covered here.
   middleware half is open. Check: founder token, secret unset, no
   redirect.
 
+- [ ] accord.founder_surface_is_one_gate — FOUND 2 Nov. The founder
+  was refused by three gates; a survey found a fourth nobody would hit
+  for weeks. The rule is effectiveTier in lib/managed.ts ("accord" for
+  the founder) plus hasProduct/productsFor; every gate calls it. The
+  live proof is /api/auth/me returning subscriptionTier "accord" and
+  isFounder true.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
