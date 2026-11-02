@@ -34,6 +34,26 @@ PLAN.md is 383KB total, so later sections are not covered here.
   made pm2 respawn. Deploy must leave exactly one process per app, each
   owning its port.
 
+- [ ] gov.butler_documents_itself — FOUND 2 Nov. The butler does not
+  document its own work; the chat does it at session end. One tool,
+  session_summary: memory + plan tick + capsule, one call. Check: a
+  plan change has a memory entry and capsule line the same day.
+
+- [ ] gov.ingest_summary — FOUND 2 Nov. A door for summaries written
+  elsewhere: paste, and the butler classifies and files each part,
+  reports what it filed, refuses duplicates by id. Check: paste twice,
+  second adds nothing.
+
+- [ ] gov.corrections_become_checks — FOUND 2 Nov. The founder is the
+  tester; a correction must write memory and, where possible, a check
+  that would have caught it. record_correction. Check: a correction
+  produces memory + a check, or says why not.
+
+- [ ] ops.one_butler_capabilities_as_products — FOUND 2 Nov. One
+  butler engine; a product is a capability set plus a must-never-do
+  spec. Build the capability once, prove it on the founder, configure
+  it per client.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
@@ -114,6 +134,14 @@ PLAN.md is 383KB total, so later sections are not covered here.
   only, send_email still gated on confirmed=true. NOT YET: the door,
   the trigger, the delivery test. Deliberately sequenced AFTER the
   Executive's loose ends and the consultancy page.
+  SCOPE 2 Nov: the loop grows from "work this week's list" to BUILD. A
+  build runs overnight in an isolated workspace, holds its steps on
+  disk (the model cannot carry state), checks each step, and has THREE
+  endings: done, stuck, or NEEDS THE FOUNDER — stop and email the
+  question and the options, then wait. The stop-and-ask is the new
+  piece and it is what makes unattended safe. A budget (steps, cost,
+  time) and a report (what was built, what was tested, what it needs).
+  The autonomy tiers already named in this file are its rules.
 
 - [ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct, SUPERSEDED by
   ops.plan_to_january_v2 (23 Oct, not in this 40KB slice). Kept for

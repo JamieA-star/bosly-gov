@@ -571,7 +571,7 @@ def _selftest() -> int:
                     "type": "tool_use",
                     "id": "tool_1",
                     "name": "read_file",
-                    "input": {"path": "PLAN.md"},
+                    "input": {"path": "NEXT.md"},
                 },
             ],
         },

@@ -277,6 +277,46 @@ THE BUILD, IN ORDER
     3101, and nothing else. Named here because it made the founder
     token look missing three times in one session.
 
+[ ] gov.butler_documents_itself — FOUND 2 Nov. The butler answers
+    and acts, but it does not document its own work. A session that
+    decided something leaves a decision in the conversation and nowhere
+    else. The founder has been the documenter — the capsule at the end of
+    a session is written by the chat, not by the butler. When the founder
+    talks to the butler more, and the chat less, that stops working.
+    THE FIX: a standing rule (write before you finish the turn, do not
+    wait to be asked) and ONE tool, session_summary, that writes the
+    memory entry, ticks or adds the plan item, and appends the capsule
+    line — three acts, one call, because three calls is three things to
+    forget. Same rule as the rest: move the state into the tool. THE
+    CHECK: a session that changed the plan has a memory entry and a
+    capsule line dated the same day; the tier says so if the plan moved
+    and memory did not.
+
+[ ] gov.ingest_summary — FOUND 2 Nov. The founder works in a chat
+    session as well as with the butler, and the chat writes summaries
+    the butler never sees. The transition needs a door: paste a summary
+    into the butler and have it PROCESS it, not swallow it — read each
+    part, decide what it is (decision, finding, client, lesson), write
+    it to the right store with save_memory / save_thing / plan_write,
+    and REPORT what was filed and where. Refuses duplicates by id, the
+    way plan_write(missing_only) does: the tool selects, so the model
+    carries no list. THE CHECK: paste a known summary, assert the right
+    entries appear with the right ids, run it twice, assert nothing is
+    added the second time — processed, not stored.
+
+[ ] gov.corrections_become_checks — FOUND 2 Nov. The founder is the
+    tester. When the butler builds or fixes something and it is wrong,
+    the founder says so. That correction is the learning event, and it
+    works only if it is captured: what was wrong, why, and — where
+    possible — a check that would have caught it. A wrong build that is
+    not recorded is a wrong build that happens again. THE FIX: one tool,
+    record_correction, that writes a memory entry typed as a correction,
+    writes the cause if known, and adds or changes the check. THE CHECK:
+    a correction produces a memory entry and, where possible, a check —
+    or says why there is not one. This is what makes the butler learn
+    from being wrong the way the founder described: it becomes more
+    trustworthy every time it is corrected.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
@@ -2568,6 +2608,18 @@ that has actually happened.
     and it will — this entry is the reference. The Executive acts.
     The Custodian checks. The tools grow; the shape does not
     change. It serves the founder, then it sells.
+
+[ ] ops.one_butler_capabilities_as_products — FOUND 2 Nov. THE
+    PRINCIPLE. Bosly is one butler engine, not five products. A product
+    is a SET OF CAPABILITIES plus a must-never-do spec: the salon gets
+    answering and booking, the consultant gets leads and drafts, the
+    founder gets everything plus the build tools. A capability is built
+    ONCE and configured per product; the packaging is the market. This
+    is the sentence that makes the salon, the consultant and the founder
+    the same machine, and it belongs with the architecture principles.
+    Consequence: never build a client's feature as a separate thing from
+    the founder's — build the capability, prove it on the founder, then
+    configure it.
 
 [~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
 
