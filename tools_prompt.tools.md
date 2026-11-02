@@ -100,3 +100,12 @@ save_thing.
 Call ecosystem_state(section="all") for the whole picture, or one
 section if you only need that. The accord section is honest about being
 unavailable; it does not fail silently.
+
+## env_keys
+
+List the KEY NAMES configured in an env file, never the values. project
+is "accord" or "gov". Use this when the founder asks what is configured,
+or when you need to know whether a service has a key set — but it tells
+you only that the key exists, not whether the value is present. The
+.env file itself stays refused by read_file. If you need a value, ask
+the founder; do not try to read around this.

@@ -1403,6 +1403,38 @@ def read_skill(name: str = "") -> Dict[str, Any]:
         return {"ok": False, "error": f"read failed: {e}"}
 
 
+ENV_FILES = {
+    "accord": "/home/bosly_accord/bosly-1.0/.env.production",
+    "gov": "/home/bosly_accord/bosly-gov/.env",
+}
+
+
+def env_keys(project: str = "accord") -> Dict[str, Any]:
+    """The KEY NAMES in an env file. Never the values.
+
+    The butler needs to know what is configured without seeing secrets.
+    This returns the left side of each KEY=value line, sorted, and a
+    count — no values, no 'present'/'empty' distinction (that would leak
+    whether a secret is set). The .env itself stays refused by read_file.
+    """
+    path = ENV_FILES.get(project)
+    if not path:
+        return {"ok": False, "error": f"unknown project {project!r}", "known": sorted(ENV_FILES)}
+    try:
+        keys = []
+        for line in open(path, encoding="utf-8"):
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key = line.split("=", 1)[0].strip()
+            if key and key.replace("_", "").isalnum():
+                keys.append(key)
+    except OSError as e:
+        return {"ok": False, "error": f"could not read {project} env: {e}"}
+    keys = sorted(set(keys))
+    return {"ok": True, "result": {"project": project, "count": len(keys), "keys": keys}}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1899,6 +1931,25 @@ TOOLS = [
             "required": ["name"],
         },
         "fn": read_skill,
+    },
+
+    {
+        "name": "env_keys",
+        "description": (
+            "List the KEY NAMES configured in an env file, never the "
+            "values. project is 'accord' or 'gov'. Use this to know what "
+            "is configured without seeing secrets; it does not say whether "
+            "a value is set, only that the key exists. The .env file itself "
+            "is refused by read_file."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "project": {"type": "string", "enum": ["accord", "gov"]},
+            },
+            "required": [],
+        },
+        "fn": env_keys,
     },
 
 ]
