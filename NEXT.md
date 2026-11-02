@@ -39,7 +39,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   names, so a status update lands 7,000 lines from the item it's
   about. Needs an anchored-update capability or a settled convention.
 
-- [ ] accord.the_tool_line_does_not_render — FOUND 31 Oct. The loop's
+- [x] accord.the_tool_line_does_not_render — FOUND 31 Oct. The loop's
   last line: show tool_events in the surfaces. Five wires were fixed and
   the server is proven correct (curl shows mode: tools, tool_calls:
   [read_file]), but the tool line still does not appear in the UI and

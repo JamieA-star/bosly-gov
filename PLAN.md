@@ -289,7 +289,7 @@ THE BUILD, IN ORDER
     convention that each item's status lives in the item. Do not rely on
     append for status.
 
-[ ] accord.the_tool_line_does_not_render — FOUND 31 Oct. The loop's
+[x] accord.the_tool_line_does_not_render — FOUND 31 Oct. The loop's
     last line: show tool_events in the surfaces. Five wires were fixed
     (route key, drawer field, drawer renderer, UI renderer call, the
     chatArea container) and the server is proven correct — curl gives
@@ -303,6 +303,10 @@ THE BUILD, IN ORDER
     DevTools, Network -> app.js?v=17 -> Response (confirm the file),
     Console -> ask, read [sendChatMessage res]. Do not patch another
     renderer until the browser's copy is confirmed.
+    DONE 2 Nov: the tool line renders. Confirmed in the browser on
+    app.js?v=20 — the ☆ above the reply is the tool indicator
+    drawing. The server was always correct and the five patched
+    wires did land; the display was never broken, only unconfirmed.
 
 [x] gov.prompt_is_a_description — DONE 1 Nov. THE RATCHET. The
     prompt has grown by one script per failure: the plan-item rule, the
