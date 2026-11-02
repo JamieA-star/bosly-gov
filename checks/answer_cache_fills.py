@@ -31,7 +31,6 @@ REPORT_ONLY = False
 # token is what the butler uses to reach Accord's routes without a
 # browser session; it is in Gov's own environment (proven 1 Nov).
 ROUTE_URL = "http://localhost:3100/api/executive/cache"
-TOKEN = (os.environ.get("FOUNDER_SERVICE_TOKEN") or "").strip()
 CACHE_DIR = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/answer-cache")
 # Digit-free and value-free by design: the route's looksSensitive()
 # refuses any question containing a digit, and its already_cached guard
@@ -46,6 +45,30 @@ def _letters(n: int) -> str:
     return "".join(reversed(out)) or "a"
 
 MARK = "what is the answer cache probe " + _letters(int(time.time() * 1000))
+
+
+def _founder_token() -> str:
+    """The founder token, from Gov's env if it has it, else from the file.
+
+    Gov's process env has lost FOUNDER_SERVICE_TOKEN across restarts more
+    than once; the check must not share that fragility. The file Accord
+    reads is the source of truth. Never printed, never logged.
+    """
+    t = (os.environ.get("FOUNDER_SERVICE_TOKEN") or "").strip()
+    if t:
+        return t
+    try:
+        for line in open("/home/bosly_accord/bosly-1.0/.env.production", encoding="utf-8"):
+            line = line.strip()
+            if line.startswith("FOUNDER_SERVICE_TOKEN="):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    except OSError:
+        pass
+    return ""
+
+
+# Resolve after the definition: this file runs top to bottom.
+TOKEN = _founder_token()
 
 
 def count_entries() -> int:
@@ -103,7 +126,18 @@ def main() -> int:
         )
         with urllib.request.urlopen(req, timeout=5) as r:
             status = r.status
-            body = json.loads(r.read().decode("utf-8") or "{}")
+            raw = r.read().decode("utf-8", errors="replace")
+            try:
+                body = json.loads(raw or "{}")
+            except Exception:
+                head = raw[:60].replace("\n", " ")
+                print(f"  FAIL: expected JSON, got {head!r}")
+                print("  (an HTML sign-in page means the token did not reach "
+                      "the route — check _founder_token and Accord's env)")
+                print("")
+                print("SUMMARY: " + ("REPORT-ONLY" if REPORT_ONLY else "FAIL"))
+                print("")
+                return 0 if REPORT_ONLY else 1
     except urllib.error.HTTPError as e:
         status = e.code
         body = {}
