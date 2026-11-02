@@ -378,6 +378,43 @@ def run_with_tools(
             # text. Say so — never nothing. The tool calls are in the
             # events above.
             if not _any_text:
+                # The final turn. The model stopped with tool results in
+                # hand and wrote nothing — the read-and-stop the log has
+                # shown since 31 Oct. Before giving up, ask it once, in
+                # plain words, to compose. The tool results are already
+                # in messages; this adds no tool call, just a nudge. If
+                # it still writes nothing, the cannot_help below is
+                # honest. Bounded: one extra call, only on the failure
+                # path, never on a normal run.
+                try:
+                    nudge = _call_api(
+                        system_prompt,
+                        messages + [{
+                            "role": "user",
+                            "content": (
+                                "You have the tool results above. Reply to the "
+                                "founder now, in plain text, using what you read. "
+                                "Do not call another tool."
+                            ),
+                        }],
+                    )
+                    for block in (nudge.get("content") or []):
+                        if block.get("type") == "text" and block.get("text"):
+                            yield {"type": "token", "text": block["text"]}
+                            _any_text = True
+                    if _any_text:
+                        yield {
+                            "type": "done",
+                            "result": {
+                                "ok": True,
+                                "iterations": iteration + 1,
+                                "stop_reason": "final_turn",
+                            },
+                        }
+                        return
+                except Exception as e:
+                    logging.warning("tool loop: final turn failed: %s", e)
+
                 logging.warning(
                     "tool loop: empty answer after %d rounds; calls: %s",
                     iteration + 1,
@@ -442,6 +479,17 @@ def run_with_tools(
             seen.add(_key)
 
             result = dispatch(name, args)
+            # Every tool call is logged, success and failure. Without this,
+            # "did the tool fire?" is answerable only by the reply, and the
+            # reply can lie. The warnings record failures; this records the
+            # fact. 2 Nov: the shaped test could not prove read_accord ran
+            # because nothing logged a successful call.
+            logging.info(
+                "tool call: %s ok=%s args=%s",
+                name,
+                bool(result.get("ok")),
+                json.dumps(args, default=str)[:120],
+            )
             result_for_model = _truncate_for_model(result)
 
             _tid = ""
@@ -577,6 +625,10 @@ def _selftest() -> int:
     # ---- Silence guard: a round with no text sets cannot_help ----
     silent = [
         {"stop_reason": "end_turn", "content": []},
+        # the final-turn nudge gets its own (still silent) round, so the
+        # guard is proven by the model staying silent twice — not by the
+        # nudge raising on an exhausted script.
+        {"stop_reason": "end_turn", "content": []},
     ]
 
     def fake_silent(system_prompt, messages, timeout=LLM_TIMEOUT):
@@ -658,6 +710,45 @@ def _selftest() -> int:
     errors = [e for e in events if e.get("type") == "error"]
     check("runaway loop is stopped", len(errors) == 1,
           detail=f"errors: {errors}")
+
+    # ---- final-turn test: a tool round, then silence, then compose ----
+    # The stall proven by the log: the model calls a tool, stops with no
+    # text, and the loop used to give up. The fix asks once, in plain
+    # words, before cannot_help. This is that test.
+    final_rounds = [
+        {"stop_reason": "tool_use", "content": [
+            {"type": "tool_use", "id": "f1", "name": "read_file", "input": {"path": "PLAN.md"}}]},
+        {"stop_reason": "end_turn", "content": []},   # silence — the stall
+        {"stop_reason": "end_turn", "content": [
+            {"type": "text", "text": "Here is what the plan says."}]},  # the nudge works
+    ]
+
+    def fake_final(system_prompt, messages, timeout=LLM_TIMEOUT):
+        return final_rounds.pop(0)
+
+    globals()["_call_api"] = fake_final
+    try:
+        final_events = list(run_with_tools("read the plan and tell me"))
+    finally:
+        globals()["_call_api"] = real_call
+
+    final_tokens = [e for e in final_events if e.get("type") == "token"]
+    final_dones = [e for e in final_events if e.get("type") == "done"]
+    check(
+        "final turn composes after a silent round",
+        any("Here is what the plan says." in (t.get("text") or "") for t in final_tokens),
+        detail=f"tokens: {[t.get('text','')[:60] for t in final_tokens]}",
+    )
+    check(
+        "final turn stops with stop_reason final_turn",
+        bool(final_dones) and final_dones[-1].get("result", {}).get("stop_reason") == "final_turn",
+        detail=f"done: {final_dones[-1].get('result') if final_dones else None}",
+    )
+    check(
+        "final turn does not set cannot_help",
+        not any(t.get("cannot_help") for t in final_tokens),
+        detail=f"tokens: {[t.get('cannot_help') for t in final_tokens]}",
+    )
 
     print()
     print(f"SUMMARY: {passed} passed, {failed} failed")
