@@ -29,6 +29,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
   live proof is /api/auth/me returning subscriptionTier "accord" and
   isFounder true.
 
+- [ ] ops.pm2_reaps_its_children — FOUND 2 Nov. Both apps had a
+  9-day-old next-server whose pm2 parent had lost it. Killing Keep's
+  made pm2 respawn. Deploy must leave exactly one process per app, each
+  owning its port.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

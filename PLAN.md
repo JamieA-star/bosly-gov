@@ -266,6 +266,17 @@ THE BUILD, IN ORDER
     isFounder true — the live proof. A new gate must call effectiveTier,
     not derive the rule again, or the series continues.
 
+[ ] ops.pm2_reaps_its_children — FOUND 2 Nov. Two next-server
+    processes were running: Accord's on 3100 and Keep's on 3101, both
+    under pm2's pid 1030. Keep's had been up 9 days and pm2 had lost
+    track of it; killing it made pm2 respawn a fresh one. So pm2 delete
+    and pm2 restart do not reliably reap their children — a stale child
+    keeps running with the old env and the old build, and every check
+    that greps a process name finds it. THE CHECK: after a deploy,
+    exactly two next-server processes, one owning 3100 and one owning
+    3101, and nothing else. Named here because it made the founder
+    token look missing three times in one session.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
