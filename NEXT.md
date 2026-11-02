@@ -54,6 +54,12 @@ PLAN.md is 383KB total, so later sections are not covered here.
   spec. Build the capability once, prove it on the founder, configure
   it per client.
 
+- [ ] gov.plan_file_needs_splitting — FOUND 2 Nov. PLAN.md is
+  400,525 bytes; read_file refuses over 400,000. plan_query still works,
+  but any whole-file read is blind. Split: PLAN.md = index + current
+  quarter + open; PLAN-archive.md = closed items. Check: the live plan
+  stays under the ceiling.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

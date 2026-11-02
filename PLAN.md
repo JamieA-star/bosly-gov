@@ -317,6 +317,21 @@ THE BUILD, IN ORDER
     from being wrong the way the founder described: it becomes more
     trustworthy every time it is corrected.
 
+[ ] gov.plan_file_needs_splitting — FOUND 2 Nov. PLAN.md is
+    400,525 bytes and read_file refuses anything over 400,000. The
+    self-test found it: it read the plan to prove dispatch and got
+    'PLAN.md is 400525 bytes (max 400000)'. plan_query still works — it
+    derives rows in code — but any path that reads the plan WHOLE is
+    now blind: a capsule writer, a human, a future tool. The plan is
+    the archive and the archive is the thing that must stay readable.
+    THE FIX: split. PLAN.md keeps the index, the current quarter and the
+    open items; PLAN-archive.md holds the closed items and their
+    evidence; plan_query reads both. The archive is not deleted — it is
+    moved to where it can be read. Same rule as gov.one_pile: one pile
+    is manageable, and a pile past the ceiling is a backlog nobody
+    reads. THE CHECK: PLAN.md stays under the read_file ceiling, and a
+    closed item is findable in the archive when plan_query asks for it.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
