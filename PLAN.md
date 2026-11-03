@@ -243,7 +243,7 @@ THE BUILD, IN ORDER
     closed item is findable in the archive when plan_query asks for it.
 
 
-[ ] accord.invoices_organised_by_month — FOUND 3 Nov. THE FILING
+[x] accord.invoices_organised_by_month — FOUND 3 Nov. THE FILING
     SYSTEM. The finance invoice list is one flat list capped at 50
     (accord.invoice_list_capped_at_50). It cannot keep growing — six
     September invoices, a full October, and by next spring it is a list
