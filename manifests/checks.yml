@@ -111,6 +111,9 @@ projects:
         - id: gov.founder_token_in_process
           severity: high
           command: python3 checks/founder_token_in_process.py
+        - id: gov.build_loop_stops
+          severity: high
+          command: python3 checks/build_loop_stops.py
         - id: gov.build_state_is_on_disk
           severity: high
           command: python3 checks/build_state_is_on_disk.py
