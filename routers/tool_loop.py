@@ -254,17 +254,46 @@ def _truncate_for_model(result: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+# The model is chosen at the door, not mid-session. Switching models
+# destroys the cache: each has its own, and a switch re-processes the
+# conversation at full price. Classify once, on the founder's words,
+# and stay on that model for the whole loop.
+#
+# Conservative: anything that looks like a decision, a build, or a
+# correction goes to the strong model. The cheap model handles shaped
+# questions — read a tool, format the answer — where the cost is the
+# round-trip, not the judgement.
+_STRONG_HINTS = (
+    "build", "design", "decide", "plan the", "architect", "refactor",
+    "fix", "correct", "should we", "what do you think", "trade-off",
+    "restructure", "migrate", "replace", "the best way", "review",
+)
+_CHEAP_MODEL = os.environ.get("CHEAP_MODEL", "claude-haiku-4-5-20251001")
+_STRONG_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
+
+
+def classify_task(user_message: str) -> str:
+    """The model for this turn. Chosen once, at the door."""
+    low = (user_message or "").lower()
+    if any(h in low for h in _STRONG_HINTS):
+        return _STRONG_MODEL
+    return _CHEAP_MODEL
+
+
 def _call_api(
     system_prompt: str,
     messages: List[Dict[str, Any]],
     timeout: int = LLM_TIMEOUT,
+    model: str | None = None,
 ) -> Dict[str, Any]:
     """One non-streaming call to the Anthropic API with tools declared.
 
-    Returns the parsed JSON response. Raises on transport errors.
+    model is chosen at the door and never changed mid-loop: switching
+    models destroys the prompt cache. The response's usage is attached
+    to the parsed JSON under "_usage" so the loop can log the cost.
     """
     api_key = os.environ.get("CLAUDE_API_KEY", "")
-    model = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
+    model = model or os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
     if not api_key:
         raise RuntimeError("CLAUDE_API_KEY not set")
 
@@ -289,7 +318,13 @@ def _call_api(
         },
     )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+        data = json.loads(resp.read().decode("utf-8"))
+    # The cost model: input, output, and the two cache numbers. Kept
+    # beside the response, not inside it, so the loop's parsing is
+    # unchanged.
+    data["_usage"] = data.get("usage") or {}
+    data["_model"] = model
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -314,6 +349,22 @@ def _context_block() -> str:
     )
 
 
+# The deterministic floor for tool calls. A read-only tool with the same
+# arguments returns its stored result instead of running again: the
+# butler does not re-read the same file or re-query the same plan twice
+# in a session.
+#
+# NEVER cache a write. This list is explicit so the next reader can see
+# what is excluded and why: every one of these changes the world, and a
+# cached write would silently drop the change.
+_WRITE_TOOLS = frozenset({
+    "append_plan_entry", "save_memory", "save_thing", "link_things",
+    "plan_write", "write_file", "patch_file", "draft_email",
+    "send_draft_to_me", "send_email", "roll_transcript", "session_summary",
+})
+_TOOL_CACHE: Dict[tuple, Dict[str, Any]] = {}
+
+
 def run_with_tools(
     user_message: str,
     system_prompt: str | None = None,
@@ -328,6 +379,9 @@ def run_with_tools(
       {"type": "error",     "error": "..."}           on failure
     """
     system_prompt = system_prompt or _read_prompt()
+    # Chosen once, at the door. Never changed mid-loop: switching models
+    # destroys the prompt cache.
+    model = classify_task(user_message)
     # The static system prompt is the cache prefix. Everything that
     # changes — the date, the ecosystem, the repos — rides on the first
     # user message, after the breakpoint, where it is small.
@@ -365,7 +419,7 @@ def run_with_tools(
     seen: set = set()
     for iteration in range(max_iterations):
         try:
-            response = _call_api(system_prompt, messages)
+            response = _call_api(system_prompt, messages, model=model)
         except urllib.error.HTTPError as e:
             body = ""
             try:
@@ -495,16 +549,32 @@ def run_with_tools(
                 return
             seen.add(_key)
 
-            result = dispatch(name, args)
+            _cache_key = (name, __import__("hashlib").sha1(
+                json.dumps(args, sort_keys=True, default=str).encode()
+            ).hexdigest()[:16])
+            if name not in _WRITE_TOOLS and _cache_key in _TOOL_CACHE:
+                result = _TOOL_CACHE[_cache_key]
+                logging.info("tool call: %s cached=True", name)
+            else:
+                result = dispatch(name, args)
+                if name not in _WRITE_TOOLS and result.get("ok"):
+                    _TOOL_CACHE[_cache_key] = result
             # Every tool call is logged, success and failure. Without this,
             # "did the tool fire?" is answerable only by the reply, and the
             # reply can lie. The warnings record failures; this records the
             # fact. 2 Nov: the shaped test could not prove read_accord ran
             # because nothing logged a successful call.
+            _u = (locals().get("response") or {}).get("_usage") or {}
+            _m = (locals().get("response") or {}).get("_model") or model
             logging.info(
-                "tool call: %s ok=%s args=%s",
+                "tool call: %s ok=%s model=%s in=%s out=%s cache_read=%s cache_write=%s args=%s",
                 name,
                 bool(result.get("ok")),
+                _m,
+                _u.get("input_tokens", "?"),
+                _u.get("output_tokens", "?"),
+                _u.get("cache_read_input_tokens", "?"),
+                _u.get("cache_creation_input_tokens", "?"),
                 json.dumps(args, default=str)[:120],
             )
             result_for_model = _truncate_for_model(result)
@@ -600,7 +670,7 @@ def _selftest() -> int:
         },
     ]
 
-    def fake_call_api(system_prompt, messages, timeout=LLM_TIMEOUT):
+    def fake_call_api(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
         return rounds.pop(0)
 
     real_call = globals()["_call_api"]
@@ -648,7 +718,7 @@ def _selftest() -> int:
         {"stop_reason": "end_turn", "content": []},
     ]
 
-    def fake_silent(system_prompt, messages, timeout=LLM_TIMEOUT):
+    def fake_silent(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
         return silent.pop(0)
 
     globals()["_call_api"] = fake_silent
@@ -682,7 +752,7 @@ def _selftest() -> int:
             {"type": "tool_use", "id": "t2", "name": "read_file", "input": {"path": "PLAN.md"}}]},
     ]
 
-    def fake_repeated(system_prompt, messages, timeout=LLM_TIMEOUT):
+    def fake_repeated(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
         return repeated.pop(0)
 
     globals()["_call_api"] = fake_repeated
@@ -702,7 +772,7 @@ def _selftest() -> int:
     # ---- Second test: max_iterations stops a runaway loop ----
     _n = {"i": 0}
 
-    def fake_runaway(system_prompt, messages, timeout=LLM_TIMEOUT):
+    def fake_runaway(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
         # A different call each round: no repeat, so only max_iterations
         # can stop it. The repeat guard is proven by its own test.
         _n["i"] += 1
@@ -740,7 +810,7 @@ def _selftest() -> int:
             {"type": "text", "text": "Here is what the plan says."}]},  # the nudge works
     ]
 
-    def fake_final(system_prompt, messages, timeout=LLM_TIMEOUT):
+    def fake_final(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
         return final_rounds.pop(0)
 
     globals()["_call_api"] = fake_final
