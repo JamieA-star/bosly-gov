@@ -120,12 +120,26 @@ def _ecosystem_section() -> str:
         res = r.get("result", {}) if r.get("ok") else {}
         plan = res.get("plan", {}) or {}
         things = res.get("things", {}) or {}
+        # One source: plan_query. The ecosystem's own count disagreed
+        # with the tool — 14 vs 29 active — so the context block and the
+        # tool told the founder two numbers. The tool is the truth now;
+        # the summary quotes it.
+        from routers.tools import plan_query as _pq
+        active = _pq(status="active", brief=True).get("result", {}) or {}
+        parked = _pq(status="parked", brief=True).get("result", {}) or {}
+        a_rows = active.get("rows") or []
         lines = ["=== THE ECOSYSTEM (current) ==="]
+        lines.append(
+            f"Plan: {active.get('count', 0)} active, "
+            f"{parked.get('count', 0)} parked. "
+            "Active is the to-do list; parked is LIVE or GATED."
+        )
+        for row in a_rows[:8]:
+            lines.append(f"  [ ] {row.get('id')} — {row.get('first', '')}")
         ip = plan.get("in_progress") or []
-        lines.append(f"Plan: {plan.get('count', 0)} open, {len(ip)} in progress.")
-        for item in ip[:8]:
-            title = item.get("title") or item.get("id") or "?"
-            lines.append(f"  [~] {title}")
+        if ip:
+            lines.append(f"  In progress ({len(ip)}): " + ", ".join(
+                (item.get("title") or item.get("id") or "?") for item in ip[:8]))
         if isinstance(things, dict):
             bits = ", ".join(f"{k} {v}" if not isinstance(v, dict) else k for k, v in things.items())
             if bits:
@@ -413,12 +427,20 @@ def run_with_tools(
     try:
         from routers.tools import answer_cache as _answer_cache
         _cached = _answer_cache(user_message)
-        if _cached.get("ok"):
-            _hit = (_cached.get("result") or {}).get("hit")
-            if _hit:
-                yield {"type": "token", "text": _hit}
-                yield {"type": "done", "result": {"ok": True, "iterations": 0, "stop_reason": "cache"}}
-                return
+        # ONE shape, ONE read. answer_cache returns {ok, result: {hit: {answer}}}.
+        # The old code logged a top-level "hit" (always absent, so always
+        # False) and read result.hit for the hit path — two keys, one of
+        # them wrong. Read the payload once and use it for both.
+        _hit_payload = (_cached.get("result") or {}).get("hit") if _cached.get("ok") else None
+        _hit_answer = (_hit_payload or {}).get("answer") if isinstance(_hit_payload, dict) else _hit_payload
+        logging.info(
+            "answer_cache hit=%s question=%s",
+            bool(_hit_answer), (user_message or "")[:80],
+        )
+        if _hit_answer:
+            yield {"type": "token", "text": str(_hit_answer)}
+            yield {"type": "done", "result": {"ok": True, "iterations": 0, "stop_reason": "cache"}}
+            return
     except Exception as _ce:
         logging.warning("answer_cache check failed: %s", _ce)
 
