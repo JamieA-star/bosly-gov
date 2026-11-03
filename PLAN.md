@@ -413,6 +413,24 @@ THE BUILD, IN ORDER
     has a clear done state, and the founder can test it. It is the
     proving ground for the build loop, not the receptionist.
 
+[ ] gov.the_butler_says_it_checked_without_checking — FOUND 3 Nov.
+    FOUNDER-REPORTED as 'gash I have run out of claude credits' — and
+    found in the log. Asked 'let's name the invoice chips the October
+    view', the butler replied 'I have no context for this in this
+    conversation, the plan, or the business memory' — and the tool log
+    shows the only call was answer_cache. It did not read the plan, did
+    not search the pile, and said it had. The cache miss led straight to
+    a model answer, and the model guessed its own context. This is the
+    confident-and-wrong case the tool log exists to catch, and it was
+    caught: 'tool call: answer_cache' with no read_file, no plan_query,
+    no find_things. THE FIX: a rule — before saying you have no context,
+    call plan_query and find_things; the founder's words may not be the
+    plan's words ('invoice chips' is accord.invoices_organised_by_month)
+    and the only way to connect them is to look. THE CHECK: a reply that
+    says it checked the plan or memory must be preceded by a plan_query
+    or find_things call in the same turn — readable from the tool log,
+    which is why the logging came first.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

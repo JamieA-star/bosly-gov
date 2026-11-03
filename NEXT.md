@@ -72,6 +72,12 @@ PLAN.md is 383KB total, so later sections are not covered here.
   default; Suggested becomes a chip. Read and filter only — nothing
   moved, nothing deleted. Spec and steps in PLAN.md.
 
+- [ ] gov.the_butler_says_it_checked_without_checking — FOUND 3 Nov.
+  Asked about "invoice chips", it said it had no context in the plan or
+  memory; the log shows the only call was answer_cache. It did not look
+  and said it had. Rule: look before saying you looked. Check: a reply
+  claiming it checked must follow a plan_query or find_things call.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
