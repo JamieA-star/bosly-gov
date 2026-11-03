@@ -630,8 +630,10 @@ def plan_query(status: str = "open", missing_from: str = "", brief: bool = False
     _sources = []
     if want in ("done", "all") and PLAN_ARCHIVE.exists():
         _sources.append(PLAN_ARCHIVE.read_text(encoding="utf-8").splitlines())
-    if want != "done":
-        _sources.append(plan.read_text(encoding="utf-8").splitlines())
+    # done also lives in the live plan: an item ticked after the split.
+    # Read it for every status; the archive has no open items, so the
+    # extra source adds only done rows.
+    _sources.append(plan.read_text(encoding="utf-8").splitlines())
     for line in [ln for _src in _sources for ln in _src]:
         m = pat.match(line)
         if not m:

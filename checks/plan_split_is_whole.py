@@ -36,11 +36,15 @@ def main() -> int:
     done_n = plan_query(status="done").get("result", {}).get("count")
     print(f"  open: {open_n}, done: {done_n}")
 
-    # The archive must contain the done items and the live plan none.
+    # done may be in either file: the archive holds the split's done
+    # items, and an item ticked after the split lives in the live plan.
+    # plan_query reads both, so the count is the sum, and the check
+    # asserts the count, not which file a done item is in.
     live_x = sum(1 for ln in plan.read_text(encoding="utf-8").splitlines() if ln.startswith("[x]"))
     arch_x = sum(1 for ln in archive.read_text(encoding="utf-8").splitlines() if ln.startswith("[x]"))
-    print(f"  [x] in the live plan: {live_x}, in the archive: {arch_x}")
-    ok = ok and live_x == 0 and arch_x > 0 and done_n == arch_x
+    total_x = live_x + arch_x
+    print(f"  [x] in the live plan: {live_x}, in the archive: {arch_x}, total: {total_x}")
+    ok = ok and arch_x > 0 and done_n == total_x
     ok = ok and isinstance(open_n, int) and open_n > 0
 
     print("")
