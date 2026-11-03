@@ -225,6 +225,7 @@
   }
 
   function renderSaved() {
+    if (!savedArea) return;
     savedArea.innerHTML = "";
     if (!savedItems.length) {
       const empty = document.createElement("div");
@@ -658,9 +659,11 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
     currentTab = tab;
     const isChat = tab === "chat";
     chatArea.classList.toggle("hidden", !isChat);
-    savedArea.classList.toggle("hidden", isChat);
-    chatTabBtn.classList.toggle("active", isChat);
-    savedTabBtn.classList.toggle("active", !isChat);
+    // The UI is a drawer: no saved pane, no tab switch. Guard each
+    // element so the boot continues to the form wiring below.
+    if (savedArea) savedArea.classList.toggle("hidden", isChat);
+    if (chatTabBtn) chatTabBtn.classList.toggle("active", isChat);
+    if (savedTabBtn) savedTabBtn.classList.toggle("active", !isChat);
     if (!isChat) renderSaved();
     if (isChat) scrollToBottom();
   }
@@ -689,8 +692,8 @@ async function streamChatMessage(message, onContext, onToken, onDone) {
   function bind() {
     chatForm.addEventListener("submit", onSubmit);
     chatInput.addEventListener("keydown", onInputKeydown);
-    chatTabBtn.addEventListener("click", () => switchTab("chat"));
-    savedTabBtn.addEventListener("click", () => switchTab("saved"));
+    if (chatTabBtn) chatTabBtn.addEventListener("click", () => switchTab("chat"));
+    if (savedTabBtn) savedTabBtn.addEventListener("click", () => switchTab("saved"));
     if (govApproveBtn) govApproveBtn.addEventListener("click", approvePendingFix);
     if (govDenyBtn) govDenyBtn.addEventListener("click", denyPendingFix);
   }

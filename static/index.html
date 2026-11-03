@@ -265,56 +265,13 @@
         <div id="statusDot" class="status-dot" aria-hidden="true"></div>
         <h1 class="title">UI butler</h1>
       </div>
-      <div id="projectTabs" class="project-tabs"></div>
-      <div class="tabs">
-        <button id="chatTabBtn" class="btn active" type="button">Chat</button>
-        <button id="savedTabBtn" class="btn" type="button">Saved</button>
-      </div>
       <div id="statusText" class="status-text" aria-live="polite">Connecting</div>
     </header>
 
     <section class="panel">
-      <div id="reportPanel" class="report-modal hidden">
-        <div class="report-modal-content">
-          <div class="report-header">
-            <span id="reportTitle" class="report-title"></span>
-            <div class="report-actions">
-              <button id="reportEditBtn" class="btn" type="button">Edit</button>
-              <button id="reportNewBtn" class="btn" type="button">New Year</button>
-              <button id="reportCloseBtn" class="btn" type="button">Close</button>
-            </div>
-          </div>
-          <div id="reportView" class="report-view"></div>
-          <div id="reportEdit" class="report-edit hidden">
-            <textarea id="reportEditor" class="report-editor"></textarea>
-            <div class="report-edit-actions">
-              <button id="reportSaveBtn" class="btn approve" type="button">Save</button>
-              <button id="reportCancelBtn" class="btn" type="button">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="govStatus" class="gov-status"></div>
 
-      <div id="govConsentCard" class="consent-card" style="display:none;">
-        <h3>Approval required</h3>
-        <div id="govConsentSummary" class="consent-summary"></div>
-        <pre id="govConsentDiff" class="consent-diff"></pre>
-        <div class="consent-actions">
-          <button id="govApproveBtn" class="btn approve" type="button">Approve & Apply</button>
-          <button id="govDenyBtn" class="btn deny" type="button">Deny</button>
-          <button id="govResumeBtn" class="btn" type="button">Refresh</button>
-        </div>
-      </div>
-
-      <div id="govTimeline" class="gov-timeline"></div>
-
-      <div id="govMetricsBar" class="metrics-bar"></div>
-      <div id="govContextFilesPanel" class="context-panel"></div>
-      <div id="govSimilarPanel" class="similar-panel"></div>
 
       <div id="chatArea" class="chat-area" role="log" aria-live="polite" aria-relevant="additions"></div>
-      <div id="savedArea" class="saved-area hidden"></div>
     </section>
 
     <footer class="input-wrap">
@@ -324,8 +281,6 @@
       </form>
     </footer>
   </div>
-
-  <script src="/gov/project.js?v=4"></script>
-  <script src="/gov/app.js?v=20"></script>
+  <script src="/gov/app.js?v=23"></script>
 </body>
 </html>
