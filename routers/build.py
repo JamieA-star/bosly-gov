@@ -110,6 +110,12 @@ def tick_step(name: str, index: int, evidence: str = "") -> Dict[str, Any]:
     steps = _read(d / "steps.json", {"steps": []}).get("steps", [])
     if index < 0 or index >= len(steps):
         return {"ok": False, "error": f"step {index} out of range"}
+    # refuse a tick with no evidence: a tick is a proof, not a claim.
+    # And refuse a tick on a step already done: a step ticks once.
+    if not (evidence or "").strip():
+        return {"ok": False, "error": "evidence is required: a tick is a proof, not a claim"}
+    if any(d.get("index") == index for d in state.get("done", [])):
+        return {"ok": False, "error": f"step {index} is already ticked"}
     entry = {"index": index, "title": steps[index].get("title", ""),
              "evidence": (evidence or "")[:1000], "at": _now()}
     state.setdefault("done", []).append(entry)
@@ -133,6 +139,28 @@ def park_for_founder(name: str, question: str, options: List[str]) -> Dict[str, 
         question=question.strip(),
         options=[o.strip() for o in (options or []) if o.strip()],
     )
+
+
+def set_steps(name: str, steps: List[Dict[str, str]]) -> Dict[str, Any]:
+    """Replace a build's steps, before it has ticked any.
+
+    A build that has done nothing can be re-scoped: the first step was
+    too big, or the spec was read wrong. Once a step is ticked, the
+    steps are frozen — re-scoping a running build loses its evidence.
+    """
+    d = _dir(name)
+    state = _read(d / "state.json", None)
+    if state is None:
+        return {"ok": False, "error": f"no build {name!r}"}
+    if state.get("done"):
+        return {"ok": False, "error": "steps are frozen once a step is ticked"}
+    _write(d / "steps.json", {"steps": steps})
+    state["status"] = "running"
+    state["question"] = None
+    state["options"] = []
+    state["current"] = 0
+    _write(d / "state.json", state)
+    return {"ok": True, "result": {"name": name, "steps": len(steps)}}
 
 
 def build_answer(name: str, answer: str) -> Dict[str, Any]:

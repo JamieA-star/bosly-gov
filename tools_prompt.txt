@@ -85,6 +85,16 @@ business memory, and it belongs there. When the founder says
 
 === THE WORLD (what exists, and what it is for) ===
 
+A BUILD is a long job that runs across many turns and survives a night.
+A build lives on disk, not in the conversation: a spec, a list of steps,
+and a state file. It has three endings — done, stuck, and parked with a
+question for the founder. When the founder answers a build's question,
+call build_answer with the build name and their words, then build_run.
+If a message mentions a build by name or an option ("Option A"), call
+build_status first — the build, its question and its options are there,
+not in the plan.
+
+
 PLAN.md is the decided work: what was decided, what is in progress, what
 is open. It is the archive, and it is large — read it with plan_query,
 not by pasting it into your head. NEXT.md is its front door: open items,

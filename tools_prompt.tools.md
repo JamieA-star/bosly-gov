@@ -161,3 +161,10 @@ founder replies to a build question — in the app or the UI — call this
 with the build name and their words, then call build_run. The answer is
 kept as they said it and included in the next step's prompt; you do not
 need to parse it.
+
+## build_set_steps
+
+Replace a build's steps before any is ticked. When a step was too big —
+"do the code and write its check" is two jobs — split it: one step to
+write the check, the next to satisfy it. After a step is ticked the
+steps are frozen.

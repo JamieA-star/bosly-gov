@@ -1541,6 +1541,15 @@ def code_search(symbol: str) -> Dict[str, Any]:
     return _cm.search(symbol)
 
 
+def build_set_steps(name: str, steps: List[Dict[str, str]]) -> Dict[str, Any]:
+    """Replace a build's steps before any is ticked."""
+    from routers import build as _b
+    try:
+        return _b.set_steps(name, steps)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 def build_answer(name: str, answer: str) -> Dict[str, Any]:
     """Apply the founder's answer to a parked build and resume it."""
     from routers import build as _b
@@ -2211,6 +2220,24 @@ TOOLS = [
             "answer": {"type": "string"},
         }, "required": ["name", "answer"]},
         "fn": build_answer,
+    },
+
+    {
+        "name": "build_set_steps",
+        "description": (
+            "Replace a build's steps before any is ticked — when the first "
+            "step was too big, or the spec was read wrong. Once a step is "
+            "ticked the steps are frozen: re-scoping a running build loses "
+            "its evidence. Use this after build_answer when the answer is "
+            "'split the step'."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "name": {"type": "string"},
+            "steps": {"type": "array", "items": {"type": "object", "properties": {
+                "title": {"type": "string"}, "check": {"type": "string"},
+                "check_id": {"type": "string"}}}},
+        }, "required": ["name", "steps"]},
+        "fn": build_set_steps,
     },
 
 ]

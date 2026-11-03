@@ -85,7 +85,19 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str
         return {"ok": True, "result": {"state": state, "stopped": state.get("status")}}
 
     attempts = 0
+    calls = 0
+    BUDGET_CALLS = int(state.get("budget_calls") or 12)
     while state.get("current", 0) < len(steps) and state.get("current", 0) < max_steps:
+        if calls >= BUDGET_CALLS:
+            build.park_for_founder(
+                name,
+                f"the build used its {BUDGET_CALLS} model calls before finishing "
+                f"step {state.get('current', 0) + 1}. It stopped rather than "
+                "spending more. Say 'continue the build' to give it another budget.",
+                ["continue with another budget", "leave it parked"],
+            )
+            logging.info("build %s: budget spent after %d calls", name, calls)
+            break
         i = state["current"]
         step = steps[i]
         answers = state.get("answers") or []
@@ -99,6 +111,7 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str
         )
         logging.info("build %s: step %d/%d — %s", name, i + 1, len(steps), step.get("title"))
 
+        calls += 1
         answer = _ask_model(prompt)
         text = answer["text"]
 
@@ -113,6 +126,16 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str
         if check_id:
             from routers.tools import run_check
             rc = run_check(check_id)
+            if not rc.get("ok") and "unknown check" in str(rc.get("error", "")):
+                attempts += 1
+                if attempts >= max_attempts:
+                    build.park_for_founder(
+                        name,
+                        f"step {i + 1} ({step.get('title')}) did not create its check {check_id}",
+                        ["write the check", "skip this step"],
+                    )
+                    break
+                continue
             passed = bool(rc.get("ok")) and rc.get("exit_code", 0) == 0
         else:
             # No registered check: trust nothing. A step with no check is
@@ -125,17 +148,30 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str
             break
 
         if passed:
-            build.tick_step(name, i, evidence=str(rc.get("stdout", ""))[:800])
+            ev = (str(rc.get("stdout", "")) + str(rc.get("stderr", ""))).strip()
+            ticked = build.tick_step(name, i, evidence=ev)
+            if not ticked.get("ok"):
+                # A pass with no evidence is not a proof. Park it.
+                build.park_for_founder(
+                    name,
+                    f"step {i + 1} passed its check but produced no evidence: {ticked.get('error')}",
+                    ["tighten the check so it prints a proof", "skip this step"],
+                )
+                break
             attempts = 0
+            # reload after the tick — the next loop must see the new current
             state = build.load_build(name)["result"]["state"]
             continue
 
         attempts += 1
         if attempts >= max_attempts:
+            ev = (str(rc.get("stdout", "")) + "\n" + str(rc.get("stderr", ""))).strip()
+            if not ev:
+                ev = ("the check ran and failed with no output. The model said: "
+                      + (text or "(nothing)")[:400])
             build.mark_stuck(
                 name,
-                f"step {i + 1} failed its check {attempts} times: "
-                + str(rc.get("stdout", ""))[:300],
+                f"step {i + 1} failed its check {attempts} times: {ev[:600]}",
             )
             logging.info("build %s: stuck on step %d", name, i + 1)
             break
