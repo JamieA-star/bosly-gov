@@ -1570,6 +1570,18 @@ def build_quote(steps: List[Dict[str, str]], turns_per_step: int = 5) -> Dict[st
         return {"ok": False, "error": str(e)}
 
 
+def credit_view(build_pence: float = 2.6) -> Dict[str, Any]:
+    """Dollars in, dollars spent, and how many builds that leaves."""
+    from routers import usage as _u
+    return _u.credit_view(build_pence)
+
+
+def set_credit(usd: float) -> Dict[str, Any]:
+    """Record the credit balance the founder bought, in dollars."""
+    from routers import usage as _u
+    return _u.set_credit(usd)
+
+
 def usage_today() -> Dict[str, Any]:
     """What today's calls have cost, by model and by build."""
     from datetime import datetime, timezone
@@ -2307,6 +2319,30 @@ TOOLS = [
         }, "required": []},
         "fn": cost_trend,
     },
+    {
+        "name": "credit_view",
+        "description": (
+            "Dollars in, dollars spent, and how many builds the balance "
+            "leaves at the current quote. Read it when the founder asks "
+            "what the credit will buy, or before proposing a build."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "build_pence": {"type": "number", "default": 2.6},
+        }, "required": []},
+        "fn": credit_view,
+    },
+    {
+        "name": "set_credit",
+        "description": (
+            "Record the credit balance the founder bought, in dollars. "
+            "Call it when they top up, so credit_view knows the balance."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "usd": {"type": "number"},
+        }, "required": ["usd"]},
+        "fn": set_credit,
+    },
+# TOOLS-END — insert new entries above this line
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}

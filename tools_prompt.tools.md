@@ -188,3 +188,15 @@ founder asks what the conversation or a build is costing.
 Average pence per turn, this week against last. Rising means something
 got more expensive — a model, a lost cache, a dropped batch. Read it
 before proposing a build.
+
+## credit_view
+
+Dollars in, dollars spent, and how many builds the balance leaves at
+the current quote. Read it when the founder asks what the credit will
+buy, or before proposing a build. The founder's credit is in dollars;
+the tracker prices in dollars and shows pence for convenience.
+
+## set_credit
+
+Record the credit balance the founder bought, in dollars. Call it when
+they top up, so credit_view knows the balance.

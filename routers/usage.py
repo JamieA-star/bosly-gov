@@ -116,6 +116,50 @@ def total(since: Optional[str] = None) -> Dict[str, Any]:
     }
 
 
+CREDIT_FILE = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/credit-usd.json")
+
+
+def set_credit(usd: float) -> Dict[str, Any]:
+    """Record the credit balance the founder bought, in dollars."""
+    try:
+        CREDIT_FILE.write_text(json.dumps({
+            "usd": round(float(usd), 2),
+            "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }, indent=2), encoding="utf-8")
+        return {"ok": True, "result": {"usd": round(float(usd), 2)}}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def credit_view(build_pence: float = 2.6) -> Dict[str, Any]:
+    """Dollars in, dollars spent, and how many builds that leaves.
+
+    The number the founder actually wants: not 'GBP 0.42' but 'USD 9.58
+    left, and that is N builds at the current quote'.
+    """
+    try:
+        c = json.loads(CREDIT_FILE.read_text(encoding="utf-8"))
+        bought = float(c.get("usd", 0))
+    except Exception:
+        bought = 0.0
+    spent_pence = total()["result"]["pence"]
+    spent_usd = round(spent_pence / 100 / GBP_PER_USD, 2)
+    left = round(bought - spent_usd, 2)
+    per_build_usd = round(build_pence / 100 / GBP_PER_USD, 3)
+    builds = int(left / per_build_usd) if per_build_usd > 0 and left > 0 else 0
+    return {
+        "ok": True,
+        "result": {
+            "bought_usd": bought,
+            "spent_usd": spent_usd,
+            "left_usd": left,
+            "at_build_usd": per_build_usd,
+            "builds_left_estimate": builds,
+            "gbp_per_usd": GBP_PER_USD,
+        },
+    }
+
+
 def trend(days: int = 14) -> Dict[str, Any]:
     """Average pence per turn, this week against last."""
     from datetime import timedelta
@@ -182,6 +226,7 @@ def quote(steps: List[Dict[str, Any]], turns_per_step: int = 0) -> Dict[str, Any
             "turns_estimate": mech_turns + dec_turns,
             "pence": pence,
             "gbp": round(pence / 100, 2),
+            "usd": round(pence / 100 / GBP_PER_USD, 3),
             "note": (
                 f"{len(mech)} mechanical steps on Haiku 5.5 batch "
                 f"({mech_turns} turns at {mech_p}p), "
