@@ -1541,6 +1541,37 @@ def code_search(symbol: str) -> Dict[str, Any]:
     return _cm.search(symbol)
 
 
+def build_start(name: str, spec: str, steps: List[Dict[str, str]]) -> Dict[str, Any]:
+    """Create a build: a spec, and steps each with their own check.
+
+    steps is a list of {title, check, check_id}. check_id names a check
+    in manifests/checks.yml — the loop runs THAT check, never the
+    model's claim. A step with no check_id will park when it is reached.
+    """
+    from routers import build as _b
+    try:
+        return _b.new_build(name, spec, steps)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def build_status(name: str = "") -> Dict[str, Any]:
+    """Every build and where it stands, or one build in full."""
+    from routers import build as _b
+    if name:
+        return _b.load_build(name)
+    return _b.list_builds()
+
+
+def build_run(name: str, max_attempts: int = 2) -> Dict[str, Any]:
+    """Run a build to its next ending: done, stuck, or needs the founder."""
+    from routers import build_loop as _bl
+    try:
+        return _bl.run_build(name, max_attempts=max_attempts)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -2112,6 +2143,50 @@ TOOLS = [
             "symbol": {"type": "string"},
         }, "required": ["symbol"]},
         "fn": code_search,
+    },
+
+    {
+        "name": "build_start",
+        "description": (
+            "Create a build from a spec and a list of steps. Each step is "
+            "{title, check, check_id}: check_id names a registered check, "
+            "and the loop runs that check as the step's proof. Use this "
+            "when the founder and you have agreed a spec and the steps."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "name": {"type": "string"},
+            "spec": {"type": "string"},
+            "steps": {"type": "array", "items": {"type": "object", "properties": {
+                "title": {"type": "string"}, "check": {"type": "string"},
+                "check_id": {"type": "string"}}}},
+        }, "required": ["name", "spec", "steps"]},
+        "fn": build_start,
+    },
+    {
+        "name": "build_status",
+        "description": (
+            "Every build and where it stands, or one build in full: its "
+            "spec, steps, state and any question it is waiting on. Read "
+            "this before running a build, and after a night."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "name": {"type": "string"},
+        }, "required": []},
+        "fn": build_status,
+    },
+    {
+        "name": "build_run",
+        "description": (
+            "Run a build to its next ending: done, stuck, or needs the "
+            "founder. It does one step per turn, runs the step's check, "
+            "ticks on pass, retries once on fail, and parks on a question "
+            "the spec does not answer."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "name": {"type": "string"},
+            "max_attempts": {"type": "integer", "default": 2},
+        }, "required": ["name"]},
+        "fn": build_run,
     },
 
 ]

@@ -357,6 +357,19 @@ THE BUILD, IN ORDER
     in the active count.
 
 
+[ ] gov.build_loop — FOUND 3 Nov. THE BUILDER. A build lives on
+    disk: a spec, a list of steps, and a state file that says where it
+    got to and what it needs. run_build does one step per turn through
+    run_with_tools, runs the step's check from the manifest, ticks on
+    pass with the check's output as evidence, retries once on fail,
+    marks it stuck on a second fail, and parks with a question when the
+    model replies NEEDS_FOUNDER. Three tools (build_start,
+    build_status, build_run) let the butler start and see a build.
+    THE STOP-AND-ASK is what makes unattended work safe, and it is
+    tested without a model call. THE NEXT STEP: the invoice chips as the
+    first build — its spec is in accord.invoices_organised_by_month and
+    its steps need check_ids. Then the night job.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

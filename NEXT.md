@@ -107,6 +107,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
   as open, so an archive reads as a backlog. Active / Parked split in
   the headline; LIVE and GATED never in the active count.
 
+- [ ] gov.build_loop — FOUND 3 Nov. The builder: state on disk, one
+  step per turn through run_with_tools, the step's check from the
+  manifest, and the stop-and-ask. Three tools. Next: the invoice chips
+  as the first build; then the night job.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

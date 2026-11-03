@@ -134,3 +134,22 @@ Start with no arguments to see the index.
 Where a function, class or export is defined, across the three repos.
 One call, no file read. Use it to answer "where is X" before reading
 anything.
+
+## build_start
+
+Create a build from a spec and a list of steps. Each step is
+{title, check, check_id}. The check_id names a registered check, and the
+loop runs that check as the step's proof — not your claim that it
+worked. A step with no check_id will park when it is reached.
+
+## build_status
+
+Every build and where it stands, or one build in full. Read it before
+running a build and after a night.
+
+## build_run
+
+Run a build to its next ending: done, stuck, or needs the founder. One
+step per turn. The check is the manifest's; pass ticks, fail retries
+once, a second fail marks it stuck. If you need a decision the spec does
+not answer, reply NEEDS_FOUNDER: <question> and OPTIONS: <a> | <b>.
