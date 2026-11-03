@@ -357,7 +357,7 @@ THE BUILD, IN ORDER
     in the active count.
 
 
-[ ] gov.build_loop — FOUND 3 Nov. THE BUILDER. A build lives on
+[x] gov.build_loop — DONE 4 Nov. THE BUILDER. A build lives on
     disk: a spec, a list of steps, and a state file that says where it
     got to and what it needs. run_build does one step per turn through
     run_with_tools, runs the step's check from the manifest, ticks on
@@ -369,6 +369,13 @@ THE BUILD, IN ORDER
     tested without a model call. THE NEXT STEP: the invoice chips as the
     first build — its spec is in accord.invoices_organised_by_month and
     its steps need check_ids. Then the night job.
+    DONE 4 Nov: state on disk, one step per turn, the
+    check from the manifest, the stop-and-ask, the
+    answer path, and three controls learned the hard way —
+    a tick needs evidence, a step ticks once, a build has
+    a twelve-call budget. Two steps of the invoice chips
+    are proven live. The deploy step is named and not
+    built; the chip row is the next step.
 
 [ ] gov.a_build_deploys_itself_last — FOUND 4 Nov. A build changes
     SOURCE, and its checks run against the source and the database — so
