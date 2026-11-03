@@ -282,7 +282,7 @@ _STRONG_HINTS = (
     "fix", "correct", "should we", "what do you think", "trade-off",
     "restructure", "migrate", "replace", "the best way", "review",
 )
-_CHEAP_MODEL = os.environ.get("CHEAP_MODEL", "claude-haiku-4-5-20251001")
+_CHEAP_MODEL = os.environ.get("CHEAP_MODEL", "claude-haiku-5-5")
 _STRONG_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
 
 
@@ -292,6 +292,78 @@ def classify_task(user_message: str) -> str:
     if any(h in low for h in _STRONG_HINTS):
         return _STRONG_MODEL
     return _CHEAP_MODEL
+
+
+BATCH_URL = "https://api.anthropic.com/v1/messages/batches"
+
+
+def _call_api_batch(
+    system_prompt: str,
+    messages: List[Dict[str, Any]],
+    model: str | None = None,
+    max_wait: int = 3600,
+) -> Dict[str, Any]:
+    """One call through the batch API: half the rate, for work that waits.
+
+    The night build has nothing waiting on a turn, so each turn is a
+    batch of one. Submit, poll, read. On any failure, fall back to the
+    synchronous call — a batch failure must not stop a build.
+    """
+    import time
+    import uuid
+    api_key = os.environ.get("CLAUDE_API_KEY", "")
+    model = model or os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
+    if not api_key:
+        raise RuntimeError("CLAUDE_API_KEY not set")
+
+    custom_id = "turn-" + uuid.uuid4().hex[:8]
+    req = {
+        "custom_id": custom_id,
+        "params": {
+            "model": model,
+            "max_tokens": 4000,
+            "system": [{"type": "text", "text": system_prompt,
+                        "cache_control": {"type": "ephemeral"}}],
+            "messages": messages,
+            "tools": API_TOOLS,
+        },
+    }
+    body = json.dumps({"requests": [req]}).encode("utf-8")
+    r = urllib.request.Request(
+        BATCH_URL, data=body,
+        headers={"Content-Type": "application/json", "x-api-key": api_key,
+                 "anthropic-version": ANTHROPIC_VERSION},
+    )
+    with urllib.request.urlopen(r, timeout=60) as resp:
+        batch = json.loads(resp.read().decode("utf-8"))
+    batch_id = batch.get("id")
+    if not batch_id:
+        raise RuntimeError("no batch id returned")
+
+    deadline = time.time() + max_wait
+    while time.time() < deadline:
+        time.sleep(10)
+        poll = urllib.request.Request(
+            f"{BATCH_URL}/{batch_id}",
+            headers={"x-api-key": api_key, "anthropic-version": ANTHROPIC_VERSION},
+        )
+        with urllib.request.urlopen(poll, timeout=60) as resp:
+            state = json.loads(resp.read().decode("utf-8"))
+        if state.get("processing_status") == "ended":
+            results_url = f"{BATCH_URL}/{batch_id}/results"
+            with urllib.request.urlopen(
+                urllib.request.Request(results_url, headers={
+                    "x-api-key": api_key, "anthropic-version": ANTHROPIC_VERSION}),
+                timeout=60,
+            ) as resp:
+                line = resp.read().decode("utf-8").strip().splitlines()[0]
+            out = json.loads(line)
+            data = (out.get("result") or {}).get("message") or {}
+            data["_usage"] = data.get("usage") or {}
+            data["_model"] = model
+            data["_batch"] = True
+            return data
+    raise TimeoutError("batch did not finish within the wait")
 
 
 def _call_api(
@@ -399,6 +471,8 @@ def run_with_tools(
     user_message: str,
     system_prompt: str | None = None,
     max_iterations: int = MAX_ITERATIONS,
+    model: str | None = None,
+    use_batch: bool = False,
 ) -> Generator[Dict[str, Any], None, None]:
     """Run the tool loop. Yields events the SSE handler understands:
 
@@ -411,7 +485,7 @@ def run_with_tools(
     system_prompt = system_prompt or _read_prompt()
     # Chosen once, at the door. Never changed mid-loop: switching models
     # destroys the prompt cache.
-    model = classify_task(user_message)
+    model = model or classify_task(user_message)
     # The static system prompt is the cache prefix. Everything that
     # changes — the date, the ecosystem, the repos — rides on the first
     # user message, after the breakpoint, where it is small.
@@ -457,7 +531,14 @@ def run_with_tools(
     seen: set = set()
     for iteration in range(max_iterations):
         try:
-            response = _call_api(system_prompt, messages, model=model)
+            if use_batch:
+                try:
+                    response = _call_api_batch(system_prompt, messages, model=model)
+                except Exception as _be:
+                    logging.warning("batch failed, falling back to sync: %s", _be)
+                    response = _call_api(system_prompt, messages, model=model)
+            else:
+                response = _call_api(system_prompt, messages, model=model)
         except urllib.error.HTTPError as e:
             body = ""
             try:

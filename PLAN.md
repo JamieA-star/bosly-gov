@@ -389,6 +389,18 @@ THE BUILD, IN ORDER
     deploy step, and a build that ticks all its other steps without one
     is not done.
 
+[ ] gov.build_runs_on_haiku_batch — FOUND 4 Nov. The £20 build
+    ran on Haiku 4.5 and Sonnet, synchronously, with no batch. Haiku 5.5
+    is a tenth of 4.5's price, and the batch API is half again —
+    $0.05/M input in batch against Sonnet's $3/M sync. A build is dozens
+    of turns; nothing waits on an overnight turn. Two changes: the step
+    decides the model (mechanical steps to Haiku 5.5, decisions to
+    Sonnet), and the night loop submits each turn as a batch request.
+    The tokenizer counts ~30% more tokens, so the saving is ~75-85%,
+    not 90% — still the difference between £15 and pennies. THE CHECK:
+    a build's tool-call log shows model=claude-haiku-5-5 for mechanical
+    steps, and the night job's cost is half the synchronous equivalent.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

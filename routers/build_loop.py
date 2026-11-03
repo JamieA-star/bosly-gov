@@ -45,11 +45,30 @@ and stop. Do not guess a decision.
 """
 
 
-def _ask_model(step_prompt: str) -> Dict[str, Any]:
+_DECISION_HINTS = ("decide", "choose", "design", "should", "which",
+                   "trade-off", "architect", "restructure", "review")
+
+
+def _step_model(step: Dict[str, Any]) -> str:
+    """Haiku for a mechanical step, Sonnet for a decision.
+
+    A build runs dozens of steps and most are mechanical — write this
+    file, run this check, read this error. Only the steps that DECIDE
+    need the strong model. The step's own title and check say which.
+    """
+    import os
+    text = f"{step.get('title', '')} {step.get('check', '')}".lower()
+    if any(h in text for h in _DECISION_HINTS):
+        return os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
+    return os.environ.get("CHEAP_MODEL", "claude-haiku-5-5")
+
+
+def _ask_model(step_prompt: str, model: str | None = None,
+               use_batch: bool = False) -> Dict[str, Any]:
     """One step through the butler's own loop. Returns text and tool calls."""
     text_parts: List[str] = []
     tool_calls: List[Dict[str, Any]] = []
-    for ev in run_with_tools(step_prompt):
+    for ev in run_with_tools(step_prompt, model=model, use_batch=use_batch):
         et = ev.get("type")
         if et == "token":
             text_parts.append(str(ev.get("text", "")))
@@ -68,7 +87,7 @@ def _parse_question(text: str) -> Optional[Dict[str, Any]]:
     return {"question": question, "options": options}
 
 
-def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str, Any]:
+def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: bool = False) -> Dict[str, Any]:
     """Run a build until it is done, stuck, or needs the founder.
 
     Returns the final state. The caller (a tool, or the night job) reads
@@ -112,7 +131,7 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str
         logging.info("build %s: step %d/%d — %s", name, i + 1, len(steps), step.get("title"))
 
         calls += 1
-        answer = _ask_model(prompt)
+        answer = _ask_model(prompt, model=_step_model(step), use_batch=use_batch)
         text = answer["text"]
 
         q = _parse_question(text)

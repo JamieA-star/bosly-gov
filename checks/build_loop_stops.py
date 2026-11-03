@@ -37,7 +37,7 @@ def main() -> int:
     ])
 
     # Stub the model: it asks a question, as a real build would.
-    def fake_ask(prompt):
+    def fake_ask(prompt, model=None, use_batch=False):
         return {"text": "NEEDS_FOUNDER: Which format?\nOPTIONS: JSON | Markdown", "tool_calls": []}
     build_loop._ask_model = fake_ask
 

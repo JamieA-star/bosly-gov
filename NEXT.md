@@ -117,6 +117,10 @@ PLAN.md is 383KB total, so later sections are not covered here.
   smoke test parks rather than retries. Proven four times on the first
   build: right on disk, old on the server.
 
+- [ ] gov.build_runs_on_haiku_batch — FOUND 4 Nov. Mechanical steps
+  to Haiku 5.5, decisions to Sonnet; the night loop batches each turn.
+  $0.05/M input in batch against $3/M sync — pennies, not pounds.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

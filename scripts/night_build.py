@@ -26,7 +26,7 @@ def main() -> int:
         print(f"{BUILD}: {state.get('status')}; nothing to do")
         return 0
 
-    r = run_build(BUILD)
+    r = run_build(BUILD, use_batch=True)
     st = r.get("result", {}).get("state", {})
     status = st.get("status")
 
