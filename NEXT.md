@@ -78,19 +78,19 @@ PLAN.md is 383KB total, so later sections are not covered here.
   and said it had. Rule: look before saying you looked. Check: a reply
   claiming it checked must follow a plan_query or find_things call.
 
-- [ ] gov.prompt_cache_is_not_invalidated_by_the_date — FOUND 3 Nov.
+- [x] gov.prompt_cache_is_not_invalidated_by_the_date — FOUND 3 Nov.
   The date in the system prompt makes every call a cache miss. Move it
   to the user message; order tools -> system -> conversation -> date.
   Check: the first 10KB of the prompt is identical across reads.
 
-- [ ] gov.model_is_chosen_at_the_door — FOUND 3 Nov. Choose the model
+- [x] gov.model_is_chosen_at_the_door — FOUND 3 Nov. Choose the model
   when the request arrives, never mid-session. Shaped questions cheap;
   builds strong; overnight strong + batch. Logged per tool call.
 
-- [ ] gov.tool_results_are_cached — FOUND 3 Nov. Same tool, same args,
+- [x] gov.tool_results_are_cached — FOUND 3 Nov. Same tool, same args,
   returns the stored result. The deterministic floor for tool calls.
 
-- [ ] gov.code_map_is_generated — FOUND 3 Nov. A map of the codebase,
+- [x] gov.code_map_is_generated — FOUND 3 Nov. A map of the codebase,
   generated from the code, read before read_file. Anti-staleness: a
   version hash, a fresh check that fails the tier, and a tokens-saved
   count so the founder does not have to watch the cost.

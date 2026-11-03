@@ -431,7 +431,7 @@ THE BUILD, IN ORDER
     or find_things call in the same turn — readable from the tool log,
     which is why the logging came first.
 
-[ ] gov.prompt_cache_is_not_invalidated_by_the_date — FOUND 3 Nov.
+[x] gov.prompt_cache_is_not_invalidated_by_the_date — FOUND 3 Nov.
     THE COST BUG. _read_prompt() rewrites "Today is <date>" inside the
     system prompt on every read. A prompt cache is a PREFIX MATCH: one
     changed character invalidates every token behind it. So every call
@@ -443,8 +443,11 @@ THE BUILD, IN ORDER
     date, so the stable prefix is cacheable and the variable part is
     last. THE CHECK: the composed prompt's first 10KB is identical
     across two reads on the same day.
+    DONE 3 Nov: the system prompt is the static prefix; the date,
+    ecosystem and repos ride on the first user message.
+    gov.prompt_prefix_is_stable proves it.
 
-[ ] gov.model_is_chosen_at_the_door — FOUND 3 Nov. Model routing, done
+[x] gov.model_is_chosen_at_the_door — FOUND 3 Nov. Model routing, done
     the way it works. Switching models mid-session destroys the cache:
     each model has its own, and a switch re-processes the conversation
     at full price. So the model is chosen when the request arrives and
@@ -455,15 +458,20 @@ THE BUILD, IN ORDER
     the door, and the model logged on every tool call line so the cost
     is visible. THE CHECK: a shaped question logs model=cheap; a build
     logs model=strong; no mid-session switch.
+    DONE 3 Nov: classify_task, chosen once at the door; the model
+    and the four token counts on every tool call.
+    gov.model_and_cost proves it.
 
-[ ] gov.tool_results_are_cached — FOUND 3 Nov. The deterministic floor
+[x] gov.tool_results_are_cached — FOUND 3 Nov. The deterministic floor
     for tools. A tool that succeeded with the same arguments returns its
     stored result instead of running again: the butler does not re-read
     the same file or re-query the same plan twice in a session. Same
     idea as answer_cache, applied to tool calls. THE CHECK: a second
     identical call returns from cache and logs stop_reason=cache.
+    DONE 3 Nov: the read-only cache with the write list excluded;
+    gov.model_and_cost asserts the exclusion.
 
-[ ] gov.code_map_is_generated — FOUND 3 Nov. THE CODE MAP. The butler
+[x] gov.code_map_is_generated — FOUND 3 Nov. THE CODE MAP. The butler
     does not need a language; it needs a map of the codebase that does
     not cost 50,000 tokens a turn. Generated from the code, never
     written by the model: Python's ast for Gov, exports/interfaces for
@@ -478,8 +486,10 @@ THE BUILD, IN ORDER
     fast tier, not a note. (3) gov.code_map_saves_tokens measures it:
     map calls vs file reads, tokens saved — the number is the reminder,
     so the founder does not have to notice the cost rising.
+    DONE 3 Nov: routers/code_map.py, code_map and code_search;
+    gov.code_map_is_fresh fails the tier on a stale map.
 
-[ ] gov.overnight_build_uses_batch — FOUND 3 Nov. The build loop runs
+[ ] gov.overnight_build_uses_batch — BLOCKED 3 Nov (needs the build loop). The build loop runs
     at night; nothing is waiting on the response. Route each turn
     through the provider's batch API for 50% off, stacking with the
     cache. THE CATCH: batch cannot do multi-turn tool use inside one
@@ -487,7 +497,7 @@ THE BUILD, IN ORDER
     batched, not the whole build. THE CHECK: a batch build completes and
     its cost is logged at half the synchronous equivalent.
 
-[ ] gov.scenario_compilation — FOUND 3 Nov. THE LONG GAME. When a build
+[ ] gov.scenario_compilation — BLOCKED 3 Nov (needs the batch and the build loop). THE LONG GAME. When a build
     pattern repeats — a Keep fix, a chip row — the butler writes the
     PROCEDURE, not the code: the steps and the checks that proved it.
     The second time, it runs the procedure deterministically; the model
