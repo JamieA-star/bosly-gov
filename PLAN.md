@@ -305,7 +305,7 @@ THE BUILD, IN ORDER
     proving ground for the build loop, not the receptionist.
 
 
-[ ] gov.the_butler_says_it_checked_without_checking — FOUND 3 Nov.
+[x] gov.the_butler_says_it_checked_without_checking — FOUND 3 Nov.
     FOUNDER-REPORTED as 'gash I have run out of claude credits' — and
     found in the log. Asked 'let's name the invoice chips the October
     view', the butler replied 'I have no context for this in this
@@ -389,7 +389,7 @@ THE BUILD, IN ORDER
     deploy step, and a build that ticks all its other steps without one
     is not done.
 
-[ ] gov.build_runs_on_haiku_batch — FOUND 4 Nov. The £20 build
+[x] gov.build_runs_on_haiku_batch — FOUND 4 Nov. The £20 build
     ran on Haiku 4.5 and Sonnet, synchronously, with no batch. Haiku 5.5
     is a tenth of 4.5's price, and the batch API is half again —
     $0.05/M input in batch against Sonnet's $3/M sync. A build is dozens
@@ -400,6 +400,27 @@ THE BUILD, IN ORDER
     not 90% — still the difference between £15 and pennies. THE CHECK:
     a build's tool-call log shows model=claude-haiku-5-5 for mechanical
     steps, and the night job's cost is half the synchronous equivalent.
+
+[x] gov.the_cost_chain — DONE 4 Nov. THE COST CHAIN, five links and
+    five checks. TRACK: every model call writes a line to usage.jsonl —
+    model, tokens, batch flag, build label — priced from one table.
+    QUOTE: build_quote prices a build from its steps before it runs, the
+    rates come from the table (no constants to drift), and turns-per-step
+    calibrates from real builds. AGREE: the founder sees the arithmetic,
+    reduces the decisions if it is too high, and agreeing sets
+    budget_pence. ENFORCE: the loop parks when the spend reaches the
+    agreed figure. GUARD: gov.cost_trend_is_not_rising fails if the
+    average pence per turn rose week-on-week; gov.cost_model_is_not_stale
+    fails if a model in the log has no rate, if the quote stops reading
+    the table, or if the monthly reconciliation against the provider's
+    cost_report drifts over 5%.
+    THE MULTIPLIERS: Haiku 5.5 instead of 4.5 (a tenth), batch for the
+    night turns (half again), the cache (a tenth on the prefix), and
+    routing — mechanical steps to the cheap model, only decisions to the
+    strong one. The £20 that vanished ran with none of them.
+    PROVEN: a three-step build quotes at about 2.6p and is created with
+    that figure as its budget. A check prices the code, so a model id
+    that moves to a dearer one fails the tier before a founder spends.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the

@@ -72,7 +72,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   default; Suggested becomes a chip. Read and filter only — nothing
   moved, nothing deleted. Spec and steps in PLAN.md.
 
-- [ ] gov.the_butler_says_it_checked_without_checking — FOUND 3 Nov.
+- [x] gov.the_butler_says_it_checked_without_checking — FOUND 3 Nov.
   Asked about "invoice chips", it said it had no context in the plan or
   memory; the log shows the only call was answer_cache. It did not look
   and said it had. Rule: look before saying you looked. Check: a reply
@@ -117,9 +117,14 @@ PLAN.md is 383KB total, so later sections are not covered here.
   smoke test parks rather than retries. Proven four times on the first
   build: right on disk, old on the server.
 
-- [ ] gov.build_runs_on_haiku_batch — FOUND 4 Nov. Mechanical steps
+- [x] gov.build_runs_on_haiku_batch — FOUND 4 Nov. Mechanical steps
   to Haiku 5.5, decisions to Sonnet; the night loop batches each turn.
   $0.05/M input in batch against $3/M sync — pennies, not pounds.
+
+- [x] gov.the_cost_chain — DONE 4 Nov. Tracked (usage.jsonl), quoted
+  before a build, agreed as budget_pence, enforced by the loop, and
+  guarded by the trend, stale and reconciliation checks. Haiku 5.5,
+  batch, cache, per-step routing: a three-step build quotes at ~2.6p.
 
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
