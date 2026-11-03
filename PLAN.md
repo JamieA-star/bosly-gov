@@ -422,6 +422,33 @@ THE BUILD, IN ORDER
     that figure as its budget. A check prices the code, so a model id
     that moves to a dearer one fails the tier before a founder spends.
 
+[ ] gov.sonnet_turns_are_decisions — FOUND 4 Nov. The first build
+    cost £2.98: Haiku 5.5 ran 155 turns for 26p, Sonnet ran 21 turns for
+    272p — 91% of the bill on 12% of the calls. Some of those needed the
+    strong model; some were shaped answers or arithmetic. THE CHECK:
+    read usage.jsonl, and for each Sonnet turn look at its label for a
+    decision hint (decide, design, should, trade-off, review). A turn
+    with no hint is a NOTE, not a fail — the label is only 60 chars —
+    but if most Sonnet turns are not decisions, the classifier is too
+    generous, and that is the money. THE FIX may be a narrower
+    _STRONG_HINTS, or a per-tool model choice.
+
+[ ] gov.a_finished_step_ticks_itself — FOUND 4 Nov. The build patched
+    FinancePill.tsx itself and could not record the proof: build_run is
+    the only thing that ticks, and it ticks only after its own check.
+    build_tick now exists, but the build did not reach for it. THE FIX:
+    a line in THE WORLD — when you finish a step outside the loop, call
+    build_tick with the check's output — and a check that a build which
+    patches a file also ticks, or says why.
+
+[ ] gov.build_quote_learns_from_real_builds — FOUND 4 Nov. The quote
+    calibrates turns-per-step from builds in the log, and the first
+    build was not attributed (every turn said 'conversation'). The label
+    is threaded now; the next build's turns will say 'invoice-chips',
+    and real_turns_per_step will read them. THE CHECK: after a second
+    attributed build, the quote's turns-per-step differs from the
+    default 5 — it learned.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

@@ -126,6 +126,16 @@ PLAN.md is 383KB total, so later sections are not covered here.
   guarded by the trend, stale and reconciliation checks. Haiku 5.5,
   batch, cache, per-step routing: a three-step build quotes at ~2.6p.
 
+- [ ] gov.sonnet_turns_are_decisions — FOUND 4 Nov. Sonnet was 91% of
+  the first build's cost on 12% of the calls. Flag a Sonnet turn whose
+  label has no decision hint.
+
+- [ ] gov.a_finished_step_ticks_itself — FOUND 4 Nov. The build patched
+  and could not tick; build_tick exists but THE WORLD does not name it.
+
+- [ ] gov.build_quote_learns_from_real_builds — FOUND 4 Nov. The label
+  is threaded; the next build calibrates the quote.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
