@@ -60,6 +60,12 @@ PLAN.md is 383KB total, so later sections are not covered here.
   quarter + open; PLAN-archive.md = closed items. Check: the live plan
   stays under the ceiling.
 
+- [ ] accord.invoice_number_lexicographic_collision — FOUND 3 Nov.
+  invoiceNumber is TEXT and was ordered desc: INV-099 > INV-100, so the
+  next number repeated INV-100 and the unique constraint refused every
+  create past 100. Fixed to numeric max. Check: INV-009/010/099/100 ->
+  INV-101.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

@@ -332,6 +332,20 @@ THE BUILD, IN ORDER
     reads. THE CHECK: PLAN.md stays under the read_file ceiling, and a
     closed item is findable in the archive when plan_query asks for it.
 
+[ ] accord.invoice_number_lexicographic_collision — FOUND 3 Nov.
+    FOUNDER-REPORTED, then found in the code. nextInvoiceNumber read the
+    last invoice with orderBy: { invoiceNumber: "desc" } — a TEXT column,
+    so the sort is lexicographic: "INV-099" sorts after "INV-100", the
+    function computed INV-100 again, and the unique constraint refused
+    the create. Every press after the sequence crossed 100 returned
+    'invalid Prisma.invoice.create()'. The plain POST had the same bug and
+    would have hit it on the next press. Fixed: read the recent rows and
+    take the true numeric max; the unique constraint stays the backstop.
+    THE CHECK: with INV-009, INV-010, INV-099, INV-100 present, the next
+    number is INV-101 — a pure function check, no database needed. This
+    is the class of bug a check catches before a founder presses a
+    button.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
