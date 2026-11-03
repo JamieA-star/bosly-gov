@@ -47,16 +47,16 @@ def main() -> int:
     missing = sorted(n for n in real if not re.search(rf"^\s*{re.escape(n)}\s+—", prompt, re.MULTILINE))
     print(f"  missing from the prompt: {len(missing)}" + (f" {missing}" if missing else ""))
 
-    # Any name the tool list section mentions that TOOLS does not have.
-    m = re.search(r"=== THE TOOLS \(\d+\) ===(.*?)(?:\n=== |\Z)", prompt, re.DOTALL)
-    listed = set()
-    if m:
-        for line in m.group(1).splitlines():
-            mm = re.match(r"^\s*([a-z_][a-z0-9_]+)\s+—", line)
-            if mm:
-                listed.add(mm.group(1))
-    phantom = sorted(listed - real)
-    print(f"  in the prompt but not in TOOLS: {len(phantom)}" + (f" {phantom}" if phantom else ""))
+    # The tool list is GENERATED from TOOLS in order. There is no way
+    # for the prompt to name a phantom tool, and parsing prose to look
+    # for one found the word 'line' in a wrapped sentence. This
+    # assertion was written for the hand-maintained prompt; it has no
+    # subject now. phantom removed — the missing-direction check and the
+    # declared count cover the real failure.
+    m = re.search(r"=== THE TOOLS \((\d+)\) ===", prompt)
+    declared = int(m.group(1)) if m else -1
+    phantom = [] if declared == len(real) else [f"declared {declared} != {len(real)}"]
+    print(f"  prompt declares {declared} tools, TOOLS has {len(real)}")
 
     # Headings in the notes file must be real tools.
     try:
