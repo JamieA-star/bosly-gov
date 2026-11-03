@@ -1561,7 +1561,31 @@ def build_answer(name: str, answer: str) -> Dict[str, Any]:
         return {"ok": False, "error": str(e)}
 
 
-def build_start(name: str, spec: str, steps: List[Dict[str, str]]) -> Dict[str, Any]:
+def build_quote(steps: List[Dict[str, str]], turns_per_step: int = 5) -> Dict[str, Any]:
+    """Price a build from its steps, before it runs. No API call."""
+    from routers import usage as _u
+    try:
+        return _u.quote(steps, turns_per_step=turns_per_step)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def usage_today() -> Dict[str, Any]:
+    """What today's calls have cost, by model and by build."""
+    from datetime import datetime, timezone
+    from routers import usage as _u
+    since = datetime.now(timezone.utc).strftime("%Y-%m-%dT00:00:00Z")
+    return _u.total(since)
+
+
+def cost_trend(days: int = 14) -> Dict[str, Any]:
+    """Average pence per turn, this week against last."""
+    from routers import usage as _u
+    return _u.trend(days)
+
+
+def build_start(name: str, spec: str, steps: List[Dict[str, str]],
+                budget_pence: float = 0) -> Dict[str, Any]:
     """Create a build: a spec, and steps each with their own check.
 
     steps is a list of {title, check, check_id}. check_id names a check
@@ -1570,7 +1594,7 @@ def build_start(name: str, spec: str, steps: List[Dict[str, str]]) -> Dict[str, 
     """
     from routers import build as _b
     try:
-        return _b.new_build(name, spec, steps)
+        return _b.new_build(name, spec, steps, budget_pence=budget_pence)
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
@@ -2179,6 +2203,8 @@ TOOLS = [
             "steps": {"type": "array", "items": {"type": "object", "properties": {
                 "title": {"type": "string"}, "check": {"type": "string"},
                 "check_id": {"type": "string"}}}},
+            "budget_pence": {"type": "number", "default": 0,
+                             "description": "the agreed budget from build_quote"},
         }, "required": ["name", "spec", "steps"]},
         "fn": build_start,
     },
@@ -2242,6 +2268,45 @@ TOOLS = [
         "fn": build_set_steps,
     },
 
+    {
+        "name": "build_quote",
+        "description": (
+            "Price a build from its steps, before it runs — no API call. "
+            "Returns mechanical and decision steps, turns, and cost in "
+            "pence and pounds. Show the founder the quote; if they agree, "
+            "set the budget with build_start(budget_pence=...). If it is "
+            "too high, reduce the decisions or the steps before starting."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "steps": {"type": "array", "items": {"type": "object", "properties": {
+                "title": {"type": "string"}, "check": {"type": "string"},
+                "check_id": {"type": "string"}}}},
+            "turns_per_step": {"type": "integer", "default": 5},
+        }, "required": ["steps"]},
+        "fn": build_quote,
+    },
+    {
+        "name": "usage_today",
+        "description": (
+            "What today's model calls have cost, by model and by build. "
+            "Read it when the founder asks what the conversation or a "
+            "build is costing."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+        "fn": usage_today,
+    },
+    {
+        "name": "cost_trend",
+        "description": (
+            "Average pence per turn this week against last. Rising means "
+            "something got more expensive — a model, a lost cache, a "
+            "dropped batch. Read it before proposing a build."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "days": {"type": "integer", "default": 14},
+        }, "required": []},
+        "fn": cost_trend,
+    },
 ]
 
 TOOL_BY_NAME = {t["name"]: t for t in TOOLS}

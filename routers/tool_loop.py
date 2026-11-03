@@ -362,6 +362,11 @@ def _call_api_batch(
             data["_usage"] = data.get("usage") or {}
             data["_model"] = model
             data["_batch"] = True
+            try:
+                from routers import usage as _usage
+                _usage.record(model, data["_usage"], batch=True, label="batch turn")
+            except Exception:
+                pass
             return data
     raise TimeoutError("batch did not finish within the wait")
 
@@ -426,6 +431,14 @@ def _call_api(
     # unchanged.
     data["_usage"] = data.get("usage") or {}
     data["_model"] = model
+    # Every call is costed and written down. A tracking failure is not a
+    # dead butler — record() never raises.
+    try:
+        from routers import usage as _usage
+        _usage.record(model, data["_usage"], batch=False,
+                      label=(messages[-1].get("content", "")[:60] if messages else ""))
+    except Exception:
+        pass
     return data
 
 

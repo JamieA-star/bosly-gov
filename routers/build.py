@@ -45,7 +45,8 @@ def _read(path: Path, default: Any) -> Any:
         return default
 
 
-def new_build(name: str, spec: str, steps: List[Dict[str, str]]) -> Dict[str, Any]:
+def new_build(name: str, spec: str, steps: List[Dict[str, str]],
+              budget_pence: float = 0) -> Dict[str, Any]:
     """Create a build. steps: [{title, check}] — each step has its own check.
 
     Refuses if the build exists: a build is created once and resumed,
@@ -66,6 +67,7 @@ def new_build(name: str, spec: str, steps: List[Dict[str, str]]) -> Dict[str, An
         "question": None,
         "options": [],
         "report": None,
+        "budget_pence": float(budget_pence or 0),
     })
     return {"ok": True, "result": {"name": name, "steps": len(steps)}}
 

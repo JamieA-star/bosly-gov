@@ -106,6 +106,8 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
     attempts = 0
     calls = 0
     BUDGET_CALLS = int(state.get("budget_calls") or 12)
+    BUDGET_PENCE = float(state.get("budget_pence") or 0)
+    spent_pence = 0.0
     while state.get("current", 0) < len(steps) and state.get("current", 0) < max_steps:
         if calls >= BUDGET_CALLS:
             build.park_for_founder(
@@ -132,6 +134,27 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
 
         calls += 1
         answer = _ask_model(prompt, model=_step_model(step), use_batch=use_batch)
+        # The agreed budget is in pence. The cost of the call is on the
+        # usage record, priced from the table.
+        try:
+            from routers import usage as _u
+            spent_pence = _u.total()[ "result" ]["pence"] if False else spent_pence
+            _recs = _u._read()
+            if _recs:
+                spent_pence = sum(r.get("pence", 0) for r in _recs
+                                  if r.get("build") == name)
+        except Exception:
+            pass
+        if BUDGET_PENCE and spent_pence >= BUDGET_PENCE:
+            build.park_for_founder(
+                name,
+                f"the build has spent its agreed budget of {BUDGET_PENCE:.2f}p "
+                f"(spent {spent_pence:.2f}p) at step {state.get('current', 0) + 1}. "
+                "It stopped rather than spending more.",
+                ["agree a larger budget", "leave it parked"],
+            )
+            logging.info("build %s: budget %.2fp spent", name, BUDGET_PENCE)
+            break
         text = answer["text"]
 
         q = _parse_question(text)

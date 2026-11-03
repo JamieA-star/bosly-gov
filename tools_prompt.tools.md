@@ -168,3 +168,23 @@ Replace a build's steps before any is ticked. When a step was too big —
 "do the code and write its check" is two jobs — split it: one step to
 write the check, the next to satisfy it. After a step is ticked the
 steps are frozen.
+
+## build_quote
+
+Price a build from its steps before it runs — no API call. It returns
+mechanical and decision steps, turns, and cost in pence and pounds.
+Show the founder the quote. If they agree, set the budget with
+build_start(budget_pence=...). If it is too high, reduce the decisions
+or the steps before starting. The quote is the arithmetic; the budget
+is the agreement.
+
+## usage_today
+
+What today's calls have cost, by model and by build. Read it when the
+founder asks what the conversation or a build is costing.
+
+## cost_trend
+
+Average pence per turn, this week against last. Rising means something
+got more expensive — a model, a lost cache, a dropped batch. Read it
+before proposing a build.

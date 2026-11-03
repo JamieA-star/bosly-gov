@@ -129,6 +129,9 @@ projects:
         - id: gov.code_map_is_fresh
           severity: high
           command: python3 checks/code_map_is_fresh.py
+        - id: gov.cost_trend_is_not_rising
+          severity: high
+          command: python3 checks/cost_trend_is_not_rising.py
         - id: gov.model_and_cost
           severity: high
           command: python3 checks/model_and_cost.py
