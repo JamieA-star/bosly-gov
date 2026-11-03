@@ -1499,6 +1499,24 @@ def session_summary(
     return report
 
 
+def code_map(module: str = "", repo: str = "") -> Dict[str, Any]:
+    """A slice of the generated code map. Cheap; read before read_file.
+
+    No filter returns the module index. A module name returns the modules
+    whose file matches. A repo returns that repo's modules. The map is
+    generated from the code and regenerated when the tree changes, so it
+    cannot be stale.
+    """
+    from routers import code_map as _cm
+    return _cm.query(module=module, repo=repo)
+
+
+def code_search(symbol: str) -> Dict[str, Any]:
+    """Where a function, class or export is defined. One call, no file read."""
+    from routers import code_map as _cm
+    return _cm.search(symbol)
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -2040,6 +2058,34 @@ TOOLS = [
             "required": [],
         },
         "fn": session_summary,
+    },
+
+    {
+        "name": "code_map",
+        "description": (
+            "A slice of the generated code map — the module index, one "
+            "module's functions and exports, or one repo's modules. Read "
+            "this before read_file on anything you have not seen: it is a "
+            "few hundred tokens, the file is thousands. Generated from the "
+            "code, so it cannot go stale."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "module": {"type": "string", "description": "a file-path fragment, e.g. tool_loop"},
+            "repo": {"type": "string", "enum": ["bosly-1.0", "bosly-keep", "bosly-gov"]},
+        }, "required": []},
+        "fn": code_map,
+    },
+    {
+        "name": "code_search",
+        "description": (
+            "Where a function, class or export is defined, across the three "
+            "repos. One call, no file read. Use it to answer 'where is X' "
+            "before reading anything."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "symbol": {"type": "string"},
+        }, "required": ["symbol"]},
+        "fn": code_search,
     },
 
 ]

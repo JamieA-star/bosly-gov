@@ -120,3 +120,17 @@ you finish a turn that decided something, changed the plan, or found a
 lesson. It does not decide what to file — you do, from the conversation.
 A memory entry whose id already exists is skipped; an item already [x]
 is skipped. So calling twice writes once.
+
+## code_map
+
+The map of the codebase: the module index, one module's functions and
+exports, or one repo's modules. Read this BEFORE read_file on anything
+you have not seen — it is a few hundred tokens where the file is
+thousands, and it is generated from the code, so it cannot go stale.
+Start with no arguments to see the index.
+
+## code_search
+
+Where a function, class or export is defined, across the three repos.
+One call, no file read. Use it to answer "where is X" before reading
+anything.

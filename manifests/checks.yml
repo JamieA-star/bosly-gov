@@ -111,6 +111,9 @@ projects:
         - id: gov.founder_token_in_process
           severity: high
           command: python3 checks/founder_token_in_process.py
+        - id: gov.code_map_is_fresh
+          severity: high
+          command: python3 checks/code_map_is_fresh.py
         - id: gov.model_and_cost
           severity: high
           command: python3 checks/model_and_cost.py
