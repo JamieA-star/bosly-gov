@@ -297,13 +297,29 @@ def _call_api(
     if not api_key:
         raise RuntimeError("CLAUDE_API_KEY not set")
 
+    # Prompt caching is not automatic: the request must name the
+    # breakpoints. The system prompt and the tool list are the stable
+    # prefix — they get cache_control, the conversation does not. Cached
+    # input is a tenth of the price and the prefix is 12,000 tokens, so
+    # this one block is the largest cost saving in the system.
+    system_blocks = [{
+        "type": "text",
+        "text": system_prompt,
+        "cache_control": {"type": "ephemeral"},
+    }]
+    cached_tools = [dict(t) for t in API_TOOLS]
+    if cached_tools:
+        # The breakpoint goes on the LAST tool, so the whole tool block
+        # is the cached prefix.
+        cached_tools[-1] = dict(cached_tools[-1])
+        cached_tools[-1]["cache_control"] = {"type": "ephemeral"}
     payload = json.dumps(
         {
             "model": model,
             "max_tokens": 4000,
-            "system": system_prompt,
+            "system": system_blocks,
             "messages": messages,
-            "tools": API_TOOLS,
+            "tools": cached_tools,
             "stream": False,
         }
     ).encode("utf-8")
