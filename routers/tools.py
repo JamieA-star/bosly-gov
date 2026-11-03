@@ -49,6 +49,7 @@ REPOS = {
 }
 
 PLAN = Path("/home/bosly_accord/bosly-gov/PLAN.md")
+PLAN_ARCHIVE = Path("/home/bosly_accord/bosly-gov/PLAN-archive.md")
 PLAN_FIRST_LINE = "BOSLY GOV — PLAN"
 MANIFEST = Path("/home/bosly_accord/bosly-gov/manifests/checks.yml")
 
@@ -623,7 +624,15 @@ def plan_query(status: str = "open", missing_from: str = "", brief: bool = False
 
     pat = _re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
     rows = []
-    for line in plan.read_text(encoding="utf-8").splitlines():
+    # One source for open/active/parked; the archive for done/all. The
+    # done items moved to PLAN-archive.md on 3 Nov and nothing else sees
+    # them — so plan_query must, or 'done' returns 0.
+    _sources = []
+    if want in ("done", "all") and PLAN_ARCHIVE.exists():
+        _sources.append(PLAN_ARCHIVE.read_text(encoding="utf-8").splitlines())
+    if want != "done":
+        _sources.append(plan.read_text(encoding="utf-8").splitlines())
+    for line in [ln for _src in _sources for ln in _src]:
         m = pat.match(line)
         if not m:
             continue
