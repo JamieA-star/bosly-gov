@@ -112,6 +112,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
   manifest, and the stop-and-ask. Three tools. Next: the invoice chips
   as the first build; then the night job.
 
+- [ ] gov.a_build_deploys_itself_last — FOUND 4 Nov. The last step of
+  a build is the deploy, with the smoke test as its check; a failed
+  smoke test parks rather than retries. Proven four times on the first
+  build: right on disk, old on the server.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

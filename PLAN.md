@@ -370,6 +370,18 @@ THE BUILD, IN ORDER
     first build — its spec is in accord.invoices_organised_by_month and
     its steps need check_ids. Then the night job.
 
+[ ] gov.a_build_deploys_itself_last — FOUND 4 Nov. A build changes
+    SOURCE, and its checks run against the source and the database — so
+    a build can tick every step and never be live. Proven four times on
+    the first build: the months route was correct on disk, the running
+    server was the old build, and every route test returned 13 rows for
+    every month until deploy-safe.sh ran. THE FIX: the last step of a
+    build is DEPLOY, with a check_id (the smoke test), and it parks on a
+    failed smoke test rather than retrying a restart. A build that skips
+    the deploy step does not finish. THE CHECK: a build's last step is a
+    deploy step, and a build that ticks all its other steps without one
+    is not done.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
