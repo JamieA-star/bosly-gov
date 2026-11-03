@@ -114,6 +114,9 @@ projects:
         - id: gov.founder_token_in_process
           severity: high
           command: python3 checks/founder_token_in_process.py
+        - id: gov.question_is_about_current_step
+          severity: high
+          command: python3 checks/question_is_about_current_step.py
         - id: gov.build_tick_has_evidence
           severity: high
           command: python3 checks/build_tick_has_evidence.py
@@ -174,6 +177,12 @@ projects:
         - id: accord.invoice_months_list
           severity: medium
           command: python3 checks/invoices_months_list.py
+        - id: accord.invoice_chips_render
+          severity: medium
+          command: python3 checks/invoices_chip_row.py
+        - id: accord.invoice_default_month
+          severity: medium
+          command: python3 checks/invoices_default_month.py
       slow:
         - id: gov.waiting_well
           severity: medium
