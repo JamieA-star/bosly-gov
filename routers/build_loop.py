@@ -31,6 +31,9 @@ THE SPEC (read it; it is the whole brief):
 THIS STEP: {title}
 ITS CHECK: {check}
 
+THE FOUNDER'S ANSWERS (decisions already made; follow them):
+{answers}
+
 Do this one step with the tools. When the step is done, stop — do not
 start the next step, do not plan the rest of the build. If you need a
 decision the spec does not answer, reply with exactly:
@@ -85,9 +88,14 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20) -> Dict[str
     while state.get("current", 0) < len(steps) and state.get("current", 0) < max_steps:
         i = state["current"]
         step = steps[i]
+        answers = state.get("answers") or []
+        answer_text = "\n".join(
+            f"- {a.get('question')} -> {a.get('answer')}" for a in answers
+        ) or "(none yet)"
         prompt = _STEP_PROMPT.format(
             n=i + 1, total=len(steps), spec=spec[:6000],
             title=step.get("title", ""), check=step.get("check", ""),
+            answers=answer_text,
         )
         logging.info("build %s: step %d/%d — %s", name, i + 1, len(steps), step.get("title"))
 

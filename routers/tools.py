@@ -1541,6 +1541,15 @@ def code_search(symbol: str) -> Dict[str, Any]:
     return _cm.search(symbol)
 
 
+def build_answer(name: str, answer: str) -> Dict[str, Any]:
+    """Apply the founder's answer to a parked build and resume it."""
+    from routers import build as _b
+    try:
+        return _b.build_answer(name, answer)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 def build_start(name: str, spec: str, steps: List[Dict[str, str]]) -> Dict[str, Any]:
     """Create a build: a spec, and steps each with their own check.
 
@@ -2187,6 +2196,21 @@ TOOLS = [
             "max_attempts": {"type": "integer", "default": 2},
         }, "required": ["name"]},
         "fn": build_run,
+    },
+
+    {
+        "name": "build_answer",
+        "description": (
+            "Apply the founder's answer to a parked build and resume it. "
+            "The answer is kept as the founder's own words and included "
+            "in the next step's prompt, so the model reads the decision "
+            "rather than parsing it. After this, call build_run."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "name": {"type": "string"},
+            "answer": {"type": "string"},
+        }, "required": ["name", "answer"]},
+        "fn": build_answer,
     },
 
 ]

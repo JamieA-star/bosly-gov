@@ -135,6 +135,31 @@ def park_for_founder(name: str, question: str, options: List[str]) -> Dict[str, 
     )
 
 
+def build_answer(name: str, answer: str) -> Dict[str, Any]:
+    """Apply the founder's answer to a parked build and resume it.
+
+    The answer is kept as the founder's own words: the next step's
+    prompt includes it, so the model reads the decision rather than
+    parsing it. No clever matching — the founder answered, and the
+    build continues from where it stopped.
+    """
+    if not (answer or "").strip():
+        return {"ok": False, "error": "answer required"}
+    d = _dir(name)
+    state = _read(d / "state.json", None)
+    if state is None:
+        return {"ok": False, "error": f"no build {name!r}"}
+    if state.get("status") != "needs_founder":
+        return {"ok": False, "error": f"build {name!r} is not parked (status {state.get('status')})"}
+    answers = state.setdefault("answers", [])
+    answers.append({"question": state.get("question"), "answer": answer.strip(), "at": _now()})
+    state["question"] = None
+    state["options"] = []
+    state["status"] = "running"
+    _write(d / "state.json", state)
+    return {"ok": True, "result": {"name": name, "status": "running", "answers": len(answers)}}
+
+
 def mark_stuck(name: str, reason: str) -> Dict[str, Any]:
     """The second ending: a step failed twice. Stop; do not thrash."""
     return _set_state(name, status="stuck", question=(reason or "").strip())

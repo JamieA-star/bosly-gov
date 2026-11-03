@@ -153,3 +153,11 @@ Run a build to its next ending: done, stuck, or needs the founder. One
 step per turn. The check is the manifest's; pass ticks, fail retries
 once, a second fail marks it stuck. If you need a decision the spec does
 not answer, reply NEEDS_FOUNDER: <question> and OPTIONS: <a> | <b>.
+
+## build_answer
+
+Apply the founder's answer to a parked build and resume it. When the
+founder replies to a build question — in the app or the UI — call this
+with the build name and their words, then call build_run. The answer is
+kept as they said it and included in the next step's prompt; you do not
+need to parse it.
