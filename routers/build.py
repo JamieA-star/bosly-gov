@@ -122,6 +122,10 @@ def tick_step(name: str, index: int, evidence: str = "") -> Dict[str, Any]:
              "evidence": (evidence or "")[:1000], "at": _now()}
     state.setdefault("done", []).append(entry)
     state["current"] = index + 1
+    # A step that ticks has nothing left to ask; a stale question is
+    # worse than none.
+    state["question"] = None
+    state["options"] = []
     state["status"] = "done" if index + 1 >= len(steps) else "running"
     _write(d / "state.json", state)
     return {"ok": True, "result": {"current": state["current"], "status": state["status"]}}
@@ -135,11 +139,14 @@ def park_for_founder(name: str, question: str, options: List[str]) -> Dict[str, 
     """
     if not (question or "").strip():
         return {"ok": False, "error": "question required"}
+    d = _dir(name)
+    state = _read(d / "state.json", {})
     return _set_state(
         name,
         status="needs_founder",
         question=question.strip(),
         options=[o.strip() for o in (options or []) if o.strip()],
+        step_at_park=state.get("current", 0),
     )
 
 

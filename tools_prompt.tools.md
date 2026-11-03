@@ -200,3 +200,18 @@ the tracker prices in dollars and shows pence for convenience.
 
 Record the credit balance the founder bought, in dollars. Call it when
 they top up, so credit_view knows the balance.
+
+## read_file
+
+Read a file. **offset and limit read a line range** — use them with a
+line number from grep_file to read the block around it. A whole-file
+read of a large file is truncated at 40,000 characters before you see
+it; a range read is not. To patch around line N, read offset=N-30,
+limit=60.
+
+## build_tick
+
+Tick a build step with its evidence, when you have done the work
+outside build_run. The evidence is the check's own output, not your
+claim. Use it after a patch the loop did not make — otherwise the build
+state says parked on a question it already solved.

@@ -255,7 +255,8 @@ def _resolve_safe(rel_path: str) -> Path | None:
     return resolved
 
 
-def read_file(path: str, max_bytes: int = 400_000) -> Dict[str, Any]:
+def read_file(path: str, max_bytes: int = 400_000,
+              offset: int = 0, limit: int = 0) -> Dict[str, Any]:
     """Read a file under one of the three repos.
 
     Guards: must resolve inside a repo; no .env/.key/.pem; no .git,
@@ -280,6 +281,25 @@ def read_file(path: str, max_bytes: int = 400_000) -> Dict[str, Any]:
         text = resolved.read_text(encoding="utf-8", errors="replace")
     except Exception as e:
         return {"ok": False, "error": f"could not read {resolved}: {e}"}
+
+    # A line range: read the block around a line grep_file found. A
+    # range is small, so it fits under TOOL_RESULT_LIMIT and the model
+    # sees it whole — which a 73KB file does not.
+    if offset or limit:
+        lines = text.splitlines()
+        start = max(0, int(offset))
+        end = start + int(limit) if limit else len(lines)
+        return {
+            "ok": True,
+            "result": {
+                "path": str(resolved),
+                "size_bytes": size,
+                "offset": start,
+                "limit": limit,
+                "lines_total": len(lines),
+                "content": "\n".join(lines[start:end]),
+            },
+        }
 
     return {
         "ok": True,
@@ -387,6 +407,39 @@ def _load_checks() -> Dict[str, Dict[str, str]]:
     return out
 
 
+def grep_file(path: str, pattern: str = "", limit: int = 40) -> Dict[str, Any]:
+    """Find a string in a file and return the line numbers.
+
+    read_file caps at 40KB; a real component can be 76KB and the code
+    the butler needs is in the half it cannot see. grep_file returns
+    the line numbers, so the butler can read around them with
+    read_file(path, offset=..., limit=...).
+    """
+    import re as _re
+    from pathlib import Path as _P
+    pth = _P(path)
+    if not str(pth).startswith("/"):
+        pth = REPOS["bosly-gov"] / pth
+    try:
+        text = pth.read_text(encoding="utf-8", errors="replace")
+    except Exception as e:
+        return {"ok": False, "error": f"could not read {path}: {e}"}
+    if not (pattern or "").strip():
+        return {"ok": False, "error": "pattern required"}
+    rx = _re.compile(pattern)
+    # Cap hard: a grep is a locator, not a read. 200 lines of code in a
+    # tool result is 40K tokens the loop then carries every round.
+    GREP_MAX_LINES = 25
+    hits = []
+    for i, line in enumerate(text.splitlines(), 1):
+        if rx.search(line):
+            hits.append({"line": i, "text": line.strip()[:120]})
+            if len(hits) >= min(limit, GREP_MAX_LINES):
+                break
+    return {"ok": True, "result": {"path": str(pth), "pattern": pattern,
+                                   "hits": hits, "lines": len(text.splitlines())}}
+
+
 def run_check(check_id: str, timeout: int = 120) -> Dict[str, Any]:
     """Run a check registered in manifests/checks.yml.
 
@@ -418,8 +471,14 @@ def run_check(check_id: str, timeout: int = 120) -> Dict[str, Any]:
     except Exception as e:
         return {"ok": False, "error": f"could not run {check_id}: {e}"}
 
+    # ok must mean PASS, and the code and output must be readable at the
+    # top level: the build loop ticks on the check's result, and a
+    # nested exit_code made every check look like a pass.
     return {
-        "ok": True,
+        "ok": proc.returncode == 0,
+        "exit_code": proc.returncode,
+        "stdout": (proc.stdout or "")[:4000],
+        "stderr": (proc.stderr or "")[:2000],
         "result": {
             "check_id": check_id,
             "exit_code": proc.returncode,
@@ -1561,6 +1620,20 @@ def build_answer(name: str, answer: str) -> Dict[str, Any]:
         return {"ok": False, "error": str(e)}
 
 
+def build_tick(name: str, index: int, evidence: str) -> Dict[str, Any]:
+    """Tick a build step with its evidence, outside build_run.
+
+    A build that patches the file itself — not through the loop — still
+    has to record the proof. evidence is required: a tick is a proof,
+    not a claim.
+    """
+    from routers import build as _b
+    try:
+        return _b.tick_step(name, index, evidence=evidence)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 def build_quote(steps: List[Dict[str, str]], turns_per_step: int = 5) -> Dict[str, Any]:
     """Price a build from its steps, before it runs. No API call."""
     from routers import usage as _u
@@ -2341,6 +2414,37 @@ TOOLS = [
             "usd": {"type": "number"},
         }, "required": ["usd"]},
         "fn": set_credit,
+    },
+
+    {
+        "name": "grep_file",
+        "description": (
+            "Find a string in a file and return the line numbers. Use it "
+            "when a file is too large for read_file, or when you need to "
+            "find where something renders before editing it."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "path": {"type": "string"},
+            "pattern": {"type": "string"},
+            "limit": {"type": "integer", "default": 40},
+        }, "required": ["path", "pattern"]},
+        "fn": grep_file,
+    },
+
+    {
+        "name": "build_tick",
+        "description": (
+            "Tick a build step with its evidence, when you have done the "
+            "work outside build_run. evidence is required — the check's "
+            "own output, not your claim. Use it after a patch the loop "
+            "did not make."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "name": {"type": "string"},
+            "index": {"type": "integer"},
+            "evidence": {"type": "string"},
+        }, "required": ["name", "index", "evidence"]},
+        "fn": build_tick,
     },
 # TOOLS-END — insert new entries above this line
 ]

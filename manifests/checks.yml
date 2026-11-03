@@ -177,12 +177,18 @@ projects:
         - id: accord.invoice_months_list
           severity: medium
           command: python3 checks/invoices_months_list.py
+        - id: accord.invoice_suggestions_chip
+          severity: medium
+          command: python3 checks/invoices_suggestions_chip.py
         - id: accord.invoice_chips_render
           severity: medium
           command: python3 checks/invoices_chip_row.py
         - id: accord.invoice_default_month
           severity: medium
           command: python3 checks/invoices_default_month.py
+        - id: accord.invoice_cap_per_month
+          severity: medium
+          command: python3 checks/invoices_cap_per_month.py
       slow:
         - id: gov.waiting_well
           severity: medium

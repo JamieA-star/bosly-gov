@@ -26,7 +26,10 @@ def main() -> int:
         print(f"{BUILD}: {state.get('status')}; nothing to do")
         return 0
 
-    r = run_build(BUILD, use_batch=True)
+    # Sync by default: a batch of one request sits in a queue, and a
+    # step that waits an hour is a night that builds nothing. Batch is
+    # for a large job, not a single turn.
+    r = run_build(BUILD, use_batch=False)
     st = r.get("result", {}).get("state", {})
     status = st.get("status")
 
