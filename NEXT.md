@@ -66,6 +66,12 @@ PLAN.md is 383KB total, so later sections are not covered here.
   create past 100. Fixed to numeric max. Check: INV-009/010/099/100 ->
   INV-101.
 
+- [ ] accord.invoices_organised_by_month — FOUND 3 Nov. THE FILING
+  SYSTEM, and THE FIRST BUTLER BUILD. A month chip row above the invoice
+  list (filters on issueDate, server-side); the current month by
+  default; Suggested becomes a chip. Read and filter only — nothing
+  moved, nothing deleted. Spec and steps in PLAN.md.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

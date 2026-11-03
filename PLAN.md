@@ -346,6 +346,67 @@ THE BUILD, IN ORDER
     is the class of bug a check catches before a founder presses a
     button.
 
+[ ] accord.invoices_organised_by_month — FOUND 3 Nov. THE FILING
+    SYSTEM. The finance invoice list is one flat list capped at 50
+    (accord.invoice_list_capped_at_50). It cannot keep growing — six
+    September invoices, a full October, and by next spring it is a list
+    nobody reads. The founder's ask: a month/year row above the list so
+    the current month is what you see, and the archive is one click
+    away. NOT a filing system that moves invoices — a FILTER that groups
+    them. issueDate is a plain column, so this is a server-side query,
+    not a client-side scan of encrypted data. No migration, no new
+    store, nothing to break.
+
+    THE SPEC — small enough for a first butler build, real enough to
+    matter:
+    (1) Replace the Suggested invoices block (FinancePill.tsx ~1409)
+        with ONE ROW of chips: the months that have invoices, newest
+        first, plus "Suggested (n)" and "All". No taller than the block
+        it replaces.
+    (2) Selecting a month filters the list. The default on open is the
+        CURRENT month, so Finance opens on October, not everything.
+    (3) The API: GET /api/invoices?month=YYYY-MM filters on issueDate
+        server-side; the 50-cap becomes per-month, so a month's list is
+        complete. No month means All (paged or a higher cap).
+    (4) Suggested invoices becomes a chip, not a block — the same feed,
+        one click away, not always on screen.
+    (5) Nothing is moved, copied or deleted. The archive is the same
+        rows, filtered.
+
+    THE STEPS (the butler builds these one at a time, each with its
+    check):
+      1. API: ?month= on /api/invoices, filtered on issueDate, with a
+         count-returning test. Check: a month's query returns only that
+         month's rows.
+      2. API: the month list — GET /api/invoices/months returns the
+         distinct YYYY-MM present with counts. Check: matches the rows.
+      3. UI: the chip row replacing the suggested block; renders from
+         the months endpoint. Check: the row renders in the same height
+         and the current month is selected.
+      4. UI: selection filters the list; default is the current month.
+         Check: opening Finance shows the current month; clicking All
+         shows everything.
+      5. UI: Suggested becomes a chip that opens the suggestion list as
+         before. Check: the suggestions are still reachable.
+      6. The 50-cap is per-month, and All says so if it is capped.
+         Check: a month with more than 50 returns its complete count.
+
+    MUST NEVER: touch the invoice data, change a number, move a row,
+    delete anything, or alter the encryption. Read and filter only.
+
+    STOP AND ASK: if the chips need a new store, if the API shape needs
+    to change, if the suggested feed turns out to be used elsewhere, or
+    if anything needs the invoice data moved. The founder decides; the
+    build waits.
+
+    THE BUILD IS DONE WHEN: Finance opens on the current month; the
+    chips filter; the archive is reachable; the suggestions are still
+    there; the invoice data is untouched; and the checks above pass.
+
+    THIS IS THE FIRST BUTLER BUILD. It is small, real, self-contained,
+    has a clear done state, and the founder can test it. It is the
+    proving ground for the build loop, not the receptionist.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
