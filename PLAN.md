@@ -277,7 +277,7 @@ THE BUILD, IN ORDER
     3101, and nothing else. Named here because it made the founder
     token look missing three times in one session.
 
-[ ] gov.butler_documents_itself — FOUND 2 Nov. The butler answers
+[x] gov.butler_documents_itself — DONE 3 Nov. The butler answers
     and acts, but it does not document its own work. A session that
     decided something leaves a decision in the conversation and nowhere
     else. The founder has been the documenter — the capsule at the end of
@@ -291,6 +291,12 @@ THE BUILD, IN ORDER
     CHECK: a session that changed the plan has a memory entry and a
     capsule line dated the same day; the tier says so if the plan moved
     and memory did not.
+    DONE 3 Nov: session_summary, dry-run by default, one call
+    files memory + plan ticks + a capsule line through a
+    shared filing core; idempotent; the standing rule says
+    write before you finish; gov.session_summary_files
+    proves the mechanism. ingest_summary is the same core
+    with a different door — next.
 
 [ ] gov.ingest_summary — FOUND 2 Nov. The founder works in a chat
     session as well as with the butler, and the chat writes summaries

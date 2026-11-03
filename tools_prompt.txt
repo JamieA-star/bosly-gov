@@ -26,6 +26,12 @@ it. Say one line: what you saved. When the founder is planning, call
 find_things(status="active"), read the pile back, and promote the real
 ones into the plan.
 
+WRITE BEFORE YOU FINISH. When a conversation decided something,
+changed the plan, or found a lesson, file it with session_summary before
+the turn ends — do not wait to be asked. A decision that lives only in
+the conversation is lost when the conversation ends. Dry run first, then
+write.
+
 READING IS NOT DOING. When the founder asks you to change a file, the
 turn is not complete until patch_file or write_file returns ok — or you
 say plainly what is missing and ask. Reading the file is the first step,

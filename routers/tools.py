@@ -1435,6 +1435,70 @@ def env_keys(project: str = "accord") -> Dict[str, Any]:
     return {"ok": True, "result": {"project": project, "count": len(keys), "keys": keys}}
 
 
+def session_summary(
+    memory: Optional[List[Dict[str, Any]]] = None,
+    plan_ticks: Optional[List[Dict[str, Any]]] = None,
+    capsule_line: str = "",
+    dry_run: bool = True,
+) -> Dict[str, Any]:
+    """File what a session produced: memory entries, plan ticks, a capsule line.
+
+    dry_run defaults to True: show what would be filed and write nothing.
+    Call again with dry_run=False to write. The tool does not decide what
+    to file — the model has read the conversation and says what each
+    thing is. Filing is not judging.
+
+    Every write is idempotent: a memory entry whose id exists is skipped,
+    an item already [x] is skipped, so calling twice writes once.
+    """
+    from routers import filing
+
+    memory = memory or []
+    plan_ticks = plan_ticks or []
+    report: Dict[str, Any] = {
+        "ok": True,
+        "dry_run": dry_run,
+        "memory": [],
+        "plan_ticks": [],
+        "capsule": None,
+    }
+
+    for m in memory:
+        r = filing.file_memory(
+            entry_id=m.get("id", ""),
+            item_type=m.get("item_type", ""),
+            content=m.get("content", ""),
+            project_slug=m.get("project_slug", "bosly-gov"),
+            dry_run=dry_run,
+        )
+        report["memory"].append(r)
+        if not r.get("ok"):
+            report["ok"] = False
+
+    for t in plan_ticks:
+        r = filing.file_plan_tick(
+            item_id=t.get("id", ""),
+            note=t.get("note", ""),
+            dry_run=dry_run,
+        )
+        report["plan_ticks"].append(r)
+        if not r.get("ok"):
+            report["ok"] = False
+
+    if capsule_line:
+        report["capsule"] = filing.file_capsule(capsule_line, dry_run=dry_run)
+        if not report["capsule"].get("ok"):
+            report["ok"] = False
+
+    report["summary"] = (
+        f"{len(report['memory'])} memory, "
+        f"{len(report['plan_ticks'])} plan ticks, "
+        f"{'capsule written' if report['capsule'] and not dry_run else 'capsule pending'}"
+        + (" — dry run, nothing written" if dry_run else "")
+    )
+    return report
+
+
 TOOLS = [
     {
         "name": "append_plan_entry",
@@ -1950,6 +2014,32 @@ TOOLS = [
             "required": [],
         },
         "fn": env_keys,
+    },
+
+    {
+        "name": "session_summary",
+        "description": (
+            "File what a session produced: memory entries, plan ticks, "
+            "a capsule line. dry_run defaults to True — show what would "
+            "be filed and write nothing; call again with dry_run=False "
+            "to write. Idempotent: a memory id that exists is skipped, an "
+            "item already [x] is skipped. You decide what each thing is; "
+            "this writes it."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "memory": {"type": "array", "items": {"type": "object", "properties": {
+                    "id": {"type": "string"}, "item_type": {"type": "string"},
+                    "content": {"type": "string"}, "project_slug": {"type": "string"}}}},
+                "plan_ticks": {"type": "array", "items": {"type": "object", "properties": {
+                    "id": {"type": "string"}, "note": {"type": "string"}}}},
+                "capsule_line": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": True},
+            },
+            "required": [],
+        },
+        "fn": session_summary,
     },
 
 ]

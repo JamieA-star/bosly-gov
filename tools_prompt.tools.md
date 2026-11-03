@@ -109,3 +109,14 @@ or when you need to know whether a service has a key set — but it tells
 you only that the key exists, not whether the value is present. The
 .env file itself stays refused by read_file. If you need a value, ask
 the founder; do not try to read around this.
+
+## session_summary
+
+File what a session produced — a memory entry, a plan tick, a capsule
+line — in one call, so the three acts that used to be three remembered
+things become one. Dry run by default: it shows what it would file and
+writes nothing; call it again with dry_run=False to write. Use it before
+you finish a turn that decided something, changed the plan, or found a
+lesson. It does not decide what to file — you do, from the conversation.
+A memory entry whose id already exists is skipped; an item already [x]
+is skipped. So calling twice writes once.

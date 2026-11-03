@@ -34,7 +34,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   made pm2 respawn. Deploy must leave exactly one process per app, each
   owning its port.
 
-- [ ] gov.butler_documents_itself — FOUND 2 Nov. The butler does not
+- [x] gov.butler_documents_itself — FOUND 2 Nov. The butler does not
   document its own work; the chat does it at session end. One tool,
   session_summary: memory + plan tick + capsule, one call. Check: a
   plan change has a memory entry and capsule line the same day.

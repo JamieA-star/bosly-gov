@@ -102,6 +102,9 @@ projects:
         - id: gov.executive_proxy_live
           severity: high
           command: python3 checks/executive_proxy_live.py
+        - id: gov.session_summary_files
+          severity: high
+          command: python3 checks/session_summary_files.py
         - id: gov.one_process_per_port
           severity: medium
           command: python3 checks/one_process_per_port.py
