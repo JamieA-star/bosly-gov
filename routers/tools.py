@@ -592,13 +592,18 @@ def answer_cache(question: str) -> Dict[str, Any]:
     }}
 
 
-def plan_query(status: str = "open", missing_from: str = "") -> Dict[str, Any]:
+def plan_query(status: str = "open", missing_from: str = "", brief: bool = False) -> Dict[str, Any]:
     """Rows from PLAN.md: id, marker, first line, and whether a file mentions it.
 
     The butler cannot compose from a 383KB file — it reads and stops. This
     derives the rows in code, so the model acts on a list, not a file.
     status: 'open' ([ ] or [~]), 'done' ([x]), or 'all'.
     missing_from: a path; each row gains 'mentioned': bool.
+    brief: True returns id, marker and the first 80 characters only — a
+    small, quotable payload. Use it when the founder asks what is on the
+    plan and you would otherwise summarise 88 full rows into 54 tokens,
+    which cannot be faithful. The count is always returned verbatim, so
+    the number you say is the number the tool counted.
     """
     import re as _re
     from pathlib import Path as _P
@@ -607,8 +612,8 @@ def plan_query(status: str = "open", missing_from: str = "") -> Dict[str, Any]:
     if not plan.exists():
         return {"ok": False, "error": "PLAN.md not found"}
     want = (status or "open").strip().lower()
-    if want not in ("open", "done", "all"):
-        return {"ok": False, "error": f"status {status!r} not in open|done|all"}
+    if want not in ("open", "done", "all", "active", "parked"):
+        return {"ok": False, "error": f"status {status!r} not in open|active|parked|done|all", "note": "open = every [ ] or [~]; active = open and not LIVE or GATED; parked = LIVE or GATED; done = [x]."}
     text_other = ""
     if missing_from:
         f = _P(missing_from)
@@ -624,12 +629,22 @@ def plan_query(status: str = "open", missing_from: str = "") -> Dict[str, Any]:
             continue
         marker, pid = m.group(1), m.group(2)
         is_open = marker in (" ", "~")
+        is_live = "[LIVE]" in line
+        is_gated = "[GATED]" in line
+        if want == "active" and (not is_open or is_live or is_gated):
+            continue
+        if want == "parked" and not (is_live or is_gated):
+            continue
         if want == "open" and not is_open:
             continue
         if want == "done" and marker != "x":
             continue
-        row = {"id": pid, "marker": marker, "open": is_open,
-               "line": line.strip()[:200]}
+        if brief:
+            row = {"id": pid, "marker": marker, "open": is_open,
+                   "first": line.strip()[:80]}
+        else:
+            row = {"id": pid, "marker": marker, "open": is_open,
+                   "line": line.strip()[:200]}
         if text_other:
             row["mentioned"] = bool(
                 _re.search(r"\b" + _re.escape(pid) + r"\b", text_other)
@@ -1664,11 +1679,13 @@ TOOLS = [
     {
         "name": "plan_query",
         "description": (
-            "Rows from PLAN.md — do not read PLAN.md to answer 'what is "
-            "open', 'what is missing from NEXT.md', or 'what is done'. "
-            "status: open (default), done, or all. Pass missing_from='<path>' "
-            "to add 'mentioned': whether that file names each id. Use this "
-            "instead of composing from the file."
+            "Rows from PLAN.md: id, marker, the first line, and whether an "
+            "item is open, live or gated. status: 'active' = open and not "
+            "LIVE or GATED — the real to-do list, use this when the founder "
+            "asks what is on the plan; 'open' = every [ ] or [~] including "
+            "parked; 'parked' = LIVE or GATED; 'done' = [x]; 'all'. The "
+            "result carries a count — quote it, never estimate. brief=True "
+            "returns id + first 80 chars, small enough to quote in full."
         ),
         "input_schema": {
             "type": "object",
