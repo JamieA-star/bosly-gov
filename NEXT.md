@@ -15,21 +15,21 @@ PLAN.md is 383KB total, so later sections are not covered here.
   proxy. Until then the cache fills from the drawer and not the UI.
   Caught by gov.answer_cache_fills.
 
-- [ ] accord.secret_unset_blocks_founder_token — FOUND 1 Nov. If
+- [x] accord.secret_unset_blocks_founder_token — FOUND 1 Nov. If
   BOSLY_AUTH_SECRET is unset, middleware redirects to /signin before the
   founder-token bypass runs, so the founder cannot reach a non-public
   route even with a valid token. isFounder fixed the route half; the
   middleware half is open. Check: founder token, secret unset, no
   redirect.
 
-- [ ] accord.founder_surface_is_one_gate — FOUND 2 Nov. The founder
+- [x] accord.founder_surface_is_one_gate — FOUND 2 Nov. The founder
   was refused by three gates; a survey found a fourth nobody would hit
   for weeks. The rule is effectiveTier in lib/managed.ts ("accord" for
   the founder) plus hasProduct/productsFor; every gate calls it. The
   live proof is /api/auth/me returning subscriptionTier "accord" and
   isFounder true.
 
-- [ ] ops.pm2_reaps_its_children — FOUND 2 Nov. Both apps had a
+- [x] ops.pm2_reaps_its_children — FOUND 2 Nov. Both apps had a
   9-day-old next-server whose pm2 parent had lost it. Killing Keep's
   made pm2 respawn. Deploy must leave exactly one process per app, each
   owning its port.
@@ -60,7 +60,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   quarter + open; PLAN-archive.md = closed items. Check: the live plan
   stays under the ceiling.
 
-- [ ] accord.invoice_number_lexicographic_collision — FOUND 3 Nov.
+- [x] accord.invoice_number_lexicographic_collision — FOUND 3 Nov.
   invoiceNumber is TEXT and was ordered desc: INV-099 > INV-100, so the
   next number repeated INV-100 and the unique constraint refused every
   create past 100. Fixed to numeric max. Check: INV-009/010/099/100 ->
@@ -101,6 +101,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.scenario_compilation — FOUND 3 Nov. When a build repeats,
   store the procedure. The model plans the first; the procedure runs
   the second.
+
+- [ ] gov.plan_has_a_status_view — FOUND 3 Nov. 103 items is not 103
+  to-dos: 58 LIVE, 10 GATED, 4 BLOCKED. The front door counts them all
+  as open, so an archive reads as a backlog. Active / Parked split in
+  the headline; LIVE and GATED never in the active count.
 
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it

@@ -240,7 +240,7 @@ THE BUILD, IN ORDER
     only; the UI stores to 3100; gov.answer_cache_fills proves
     the store on every fast run.
 
-[ ] accord.secret_unset_blocks_founder_token — FOUND 1 Nov. If
+[x] accord.secret_unset_blocks_founder_token — FOUND 1 Nov. If
     BOSLY_AUTH_SECRET is unset, middleware.ts redirects every non-public
     route to /signin BEFORE the founder-token bypass below it runs. So on
     a box with the secret missing, the founder cannot reach any
@@ -251,7 +251,7 @@ THE BUILD, IN ORDER
     CHECK: a founder-token request to a non-public route on a box with
     the secret unset must not redirect.
 
-[ ] accord.founder_surface_is_one_gate — FOUND 2 Nov. The founder
+[x] accord.founder_surface_is_one_gate — FOUND 2 Nov. The founder
     has been refused from the founder's own system repeatedly because the
     entitlement lived in many gates: requireAccord's tier (fixed 1 Nov),
     hasProduct/productsFor (the Executive), the client pills via
@@ -266,7 +266,7 @@ THE BUILD, IN ORDER
     isFounder true — the live proof. A new gate must call effectiveTier,
     not derive the rule again, or the series continues.
 
-[ ] ops.pm2_reaps_its_children — FOUND 2 Nov. Two next-server
+[x] ops.pm2_reaps_its_children — FOUND 2 Nov. Two next-server
     processes were running: Accord's on 3100 and Keep's on 3101, both
     under pm2's pid 1030. Keep's had been up 9 days and pm2 had lost
     track of it; killing it made pm2 respawn a fresh one. So pm2 delete
@@ -338,7 +338,7 @@ THE BUILD, IN ORDER
     reads. THE CHECK: PLAN.md stays under the read_file ceiling, and a
     closed item is findable in the archive when plan_query asks for it.
 
-[ ] accord.invoice_number_lexicographic_collision — FOUND 3 Nov.
+[x] accord.invoice_number_lexicographic_collision — FOUND 3 Nov.
     FOUNDER-REPORTED, then found in the code. nextInvoiceNumber read the
     last invoice with orderBy: { invoiceNumber: "desc" } — a TEXT column,
     so the sort is lexicographic: "INV-099" sorts after "INV-100", the
@@ -504,6 +504,20 @@ THE BUILD, IN ORDER
     plans the first build and the procedure handles the second. This is
     how the founder's style of building becomes cheap. Deferred until
     the build loop exists; named now so it is not lost.
+
+[ ] gov.plan_has_a_status_view — FOUND 3 Nov. The founder felt
+    anxiety at "86 open items". The number is real but it is not the
+    to-do list: of 103 items, 58 are LIVE (decided and parked), 10
+    GATED, 4 BLOCKED — the genuinely active list is about 16 open and
+    15 in progress, and several of those are already done and unticked.
+    The anxiety comes from a display bug: the front door and the
+    orientation count everything as "open", so an archive reads as a
+    backlog. THE FIX: the headline reads "Active: N open, M in
+    progress; Parked: X live, Y gated, Z blocked." LIVE and GATED are
+    never in the headline count. A plan that is honest about what is
+    parked is a plan the founder can look at without dread. THE CHECK:
+    the orientation output and NEXT.md never show LIVE or GATED items
+    in the active count.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
@@ -3029,7 +3043,7 @@ that has actually happened.
     down, the tier fails on executive_proxy_live — correct, but the
     cron log will show it.
 
-[~] accord.learned_answer_cache — FOUND 22 Oct. THE LADDER BUILT
+[x] accord.learned_answer_cache — FOUND 22 Oct. THE LADDER BUILT
     22-23 Oct: A (per-user cache), B (the extractor), C (the shared
     question shape), D (the template rule, the fill form, the hard
     rule). The feed is named (gov.evolve_loop_feed). THE GOAL:
