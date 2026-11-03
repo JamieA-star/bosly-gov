@@ -64,11 +64,11 @@ def _step_model(step: Dict[str, Any]) -> str:
 
 
 def _ask_model(step_prompt: str, model: str | None = None,
-               use_batch: bool = False) -> Dict[str, Any]:
+               use_batch: bool = False, build: str = "") -> Dict[str, Any]:
     """One step through the butler's own loop. Returns text and tool calls."""
     text_parts: List[str] = []
     tool_calls: List[Dict[str, Any]] = []
-    for ev in run_with_tools(step_prompt, model=model, use_batch=use_batch):
+    for ev in run_with_tools(step_prompt, model=model, use_batch=use_batch, build=build):
         et = ev.get("type")
         if et == "token":
             text_parts.append(str(ev.get("text", "")))
@@ -133,7 +133,7 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
         logging.info("build %s: step %d/%d — %s", name, i + 1, len(steps), step.get("title"))
 
         calls += 1
-        answer = _ask_model(prompt, model=_step_model(step), use_batch=use_batch)
+        answer = _ask_model(prompt, model=_step_model(step), use_batch=use_batch, build=name)
         # The agreed budget is in pence. The cost of the call is on the
         # usage record, priced from the table.
         try:

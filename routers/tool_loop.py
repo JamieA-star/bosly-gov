@@ -802,7 +802,7 @@ def _selftest() -> int:
         },
     ]
 
-    def fake_call_api(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
+    def fake_call_api(system_prompt, messages, timeout=LLM_TIMEOUT, model=None, build=""):
         return rounds.pop(0)
 
     real_call = globals()["_call_api"]
@@ -850,7 +850,7 @@ def _selftest() -> int:
         {"stop_reason": "end_turn", "content": []},
     ]
 
-    def fake_silent(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
+    def fake_silent(system_prompt, messages, timeout=LLM_TIMEOUT, model=None, build=""):
         return silent.pop(0)
 
     globals()["_call_api"] = fake_silent
@@ -884,7 +884,7 @@ def _selftest() -> int:
             {"type": "tool_use", "id": "t2", "name": "read_file", "input": {"path": "PLAN.md"}}]},
     ]
 
-    def fake_repeated(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
+    def fake_repeated(system_prompt, messages, timeout=LLM_TIMEOUT, model=None, build=""):
         return repeated.pop(0)
 
     globals()["_call_api"] = fake_repeated
@@ -904,7 +904,7 @@ def _selftest() -> int:
     # ---- Second test: max_iterations stops a runaway loop ----
     _n = {"i": 0}
 
-    def fake_runaway(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
+    def fake_runaway(system_prompt, messages, timeout=LLM_TIMEOUT, model=None, build=""):
         # A different call each round: no repeat, so only max_iterations
         # can stop it. The repeat guard is proven by its own test.
         _n["i"] += 1
@@ -942,7 +942,7 @@ def _selftest() -> int:
             {"type": "text", "text": "Here is what the plan says."}]},  # the nudge works
     ]
 
-    def fake_final(system_prompt, messages, timeout=LLM_TIMEOUT, model=None):
+    def fake_final(system_prompt, messages, timeout=LLM_TIMEOUT, model=None, build=""):
         return final_rounds.pop(0)
 
     globals()["_call_api"] = fake_final
