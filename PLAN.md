@@ -431,6 +431,70 @@ THE BUILD, IN ORDER
     or find_things call in the same turn — readable from the tool log,
     which is why the logging came first.
 
+[ ] gov.prompt_cache_is_not_invalidated_by_the_date — FOUND 3 Nov.
+    THE COST BUG. _read_prompt() rewrites "Today is <date>" inside the
+    system prompt on every read. A prompt cache is a PREFIX MATCH: one
+    changed character invalidates every token behind it. So every call
+    is a cache miss, and the 15KB system prompt is re-billed at full
+    input price on every round. This is the 47% the provider's email
+    was about, and it is one line. THE FIX: the system prompt becomes
+    static; the date moves to the first user message, after the cache
+    breakpoints. Order the prompt tools -> system -> conversation ->
+    date, so the stable prefix is cacheable and the variable part is
+    last. THE CHECK: the composed prompt's first 10KB is identical
+    across two reads on the same day.
+
+[ ] gov.model_is_chosen_at_the_door — FOUND 3 Nov. Model routing, done
+    the way it works. Switching models mid-session destroys the cache:
+    each model has its own, and a switch re-processes the conversation
+    at full price. So the model is chosen when the request arrives and
+    not changed: shaped questions (read a tool, format the answer) go to
+    the cheap model; decisions and builds go to the strong one;
+    overnight builds are strong + batch. THE MECHANISM: a model
+    parameter on _call_api, set by a cheap classify_task() heuristic at
+    the door, and the model logged on every tool call line so the cost
+    is visible. THE CHECK: a shaped question logs model=cheap; a build
+    logs model=strong; no mid-session switch.
+
+[ ] gov.tool_results_are_cached — FOUND 3 Nov. The deterministic floor
+    for tools. A tool that succeeded with the same arguments returns its
+    stored result instead of running again: the butler does not re-read
+    the same file or re-query the same plan twice in a session. Same
+    idea as answer_cache, applied to tool calls. THE CHECK: a second
+    identical call returns from cache and logs stop_reason=cache.
+
+[ ] gov.code_map_is_generated — FOUND 3 Nov. THE CODE MAP. The butler
+    does not need a language; it needs a map of the codebase that does
+    not cost 50,000 tokens a turn. Generated from the code, never
+    written by the model: Python's ast for Gov, exports/interfaces for
+    the TypeScript repos. Two tools, code_map(module) and
+    code_search(symbol); the map is read before read_file on anything
+    unseen. THE ANTI-STALENESS RULES, because a stale map is worse than
+    no map: (1) a single code_map_version hash — every file's path,
+    mtime and size — is the cache key; the generator runs on the hash,
+    not on a schedule the founder has to remember. (2) gov.code_map_is_
+    fresh compares the map to the files: every file present, every
+    export current, or excluded with a reason; a mismatch FAILS the
+    fast tier, not a note. (3) gov.code_map_saves_tokens measures it:
+    map calls vs file reads, tokens saved — the number is the reminder,
+    so the founder does not have to notice the cost rising.
+
+[ ] gov.overnight_build_uses_batch — FOUND 3 Nov. The build loop runs
+    at night; nothing is waiting on the response. Route each turn
+    through the provider's batch API for 50% off, stacking with the
+    cache. THE CATCH: batch cannot do multi-turn tool use inside one
+    entry, so the loop still runs turn by turn — it is each turn that is
+    batched, not the whole build. THE CHECK: a batch build completes and
+    its cost is logged at half the synchronous equivalent.
+
+[ ] gov.scenario_compilation — FOUND 3 Nov. THE LONG GAME. When a build
+    pattern repeats — a Keep fix, a chip row — the butler writes the
+    PROCEDURE, not the code: the steps and the checks that proved it.
+    The second time, it runs the procedure deterministically; the model
+    plans the first build and the procedure handles the second. This is
+    how the founder's style of building becomes cheap. Deferred until
+    the build loop exists; named now so it is not lost.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

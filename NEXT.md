@@ -78,6 +78,30 @@ PLAN.md is 383KB total, so later sections are not covered here.
   and said it had. Rule: look before saying you looked. Check: a reply
   claiming it checked must follow a plan_query or find_things call.
 
+- [ ] gov.prompt_cache_is_not_invalidated_by_the_date — FOUND 3 Nov.
+  The date in the system prompt makes every call a cache miss. Move it
+  to the user message; order tools -> system -> conversation -> date.
+  Check: the first 10KB of the prompt is identical across reads.
+
+- [ ] gov.model_is_chosen_at_the_door — FOUND 3 Nov. Choose the model
+  when the request arrives, never mid-session. Shaped questions cheap;
+  builds strong; overnight strong + batch. Logged per tool call.
+
+- [ ] gov.tool_results_are_cached — FOUND 3 Nov. Same tool, same args,
+  returns the stored result. The deterministic floor for tool calls.
+
+- [ ] gov.code_map_is_generated — FOUND 3 Nov. A map of the codebase,
+  generated from the code, read before read_file. Anti-staleness: a
+  version hash, a fresh check that fails the tier, and a tokens-saved
+  count so the founder does not have to watch the cost.
+
+- [ ] gov.overnight_build_uses_batch — FOUND 3 Nov. The night build's
+  turns go through the batch API for 50% off. Turn by turn, batched.
+
+- [ ] gov.scenario_compilation — FOUND 3 Nov. When a build repeats,
+  store the procedure. The model plans the first; the procedure runs
+  the second.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
