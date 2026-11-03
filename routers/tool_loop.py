@@ -204,33 +204,26 @@ def _read_prompt() -> str:
     Europe/London on every read, so the butler always knows the day
     without the file mutating and without a restart.
     """
+    # The system prompt is the STATIC PREFIX — the standing rules and the
+    # tool list, and nothing that changes. A prompt cache is a prefix
+    # match: the date, the ecosystem and the repos used to live here, and
+    # each changed on a schedule (daily, per plan write, per commit), so
+    # every call re-billed the whole 15KB. They now go in the first user
+    # message (see run_with_tools), where the variable part belongs. The
+    # static_prefix is what gets cached; everything after it is small.
     if PROMPT_FILE.exists():
         text = PROMPT_FILE.read_text(encoding="utf-8")
-        from datetime import datetime
-        from zoneinfo import ZoneInfo
+        # Drop the date line from the file if present; it is no longer
+        # substituted here. The date comes from the user message now.
         import re as _re
-        today = datetime.now(ZoneInfo("Europe/London")).strftime("%A %d %B %Y")
-        text = _re.sub(
-            r"^Today is .*$",
-            f"Today is {today} (Europe/London).",
-            text,
-            count=1,
-            flags=_re.MULTILINE,
-        )
-        # The standing rules are hand-written; the tool list, the ecosystem,
-        # and the repos are generated every read (ecosystem and repos are
-        # mtime-cached, the tool list is not — it must never go stale).
-        text = (
+        text = _re.sub(r"^Today is .*$\n?", "", text, count=1, flags=_re.MULTILINE)
+        static_prefix = (
             text.rstrip()
             + "\n\n"
             + _tools_section()
-            + "\n\n"
-            + _ecosystem_section()
-            + "\n\n"
-            + _repos_section()
             + "\n"
         )
-        return text
+        return static_prefix
     return (
         "You are Bosly Custodian. You have four tools: "
         "append_plan_entry, save_memory, read_file, run_check. "
@@ -303,6 +296,24 @@ def _call_api(
 # The loop
 # ---------------------------------------------------------------------------
 
+def _context_block() -> str:
+    """The current state: date, ecosystem, repos. Goes in the first user
+    message, after the static system prompt, so the cache holds.
+
+    This is the variable part of every turn. Small, and bounded by the
+    mtime caches inside _ecosystem_section and _repos_section.
+    """
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    today = datetime.now(ZoneInfo("Europe/London")).strftime("%A %d %B %Y")
+    return (
+        f"Today is {today} (Europe/London).\n\n"
+        + _ecosystem_section()
+        + "\n\n"
+        + _repos_section()
+    )
+
+
 def run_with_tools(
     user_message: str,
     system_prompt: str | None = None,
@@ -317,7 +328,13 @@ def run_with_tools(
       {"type": "error",     "error": "..."}           on failure
     """
     system_prompt = system_prompt or _read_prompt()
-    messages: List[Dict[str, Any]] = [{"role": "user", "content": user_message}]
+    # The static system prompt is the cache prefix. Everything that
+    # changes — the date, the ecosystem, the repos — rides on the first
+    # user message, after the breakpoint, where it is small.
+    messages: List[Dict[str, Any]] = [{
+        "role": "user",
+        "content": _context_block() + "\n\n" + user_message,
+    }]
 
     # The learned-answer cache, before the model. A hit means no model
     # call: the loop answers and returns. Deterministic — the model is
