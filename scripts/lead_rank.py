@@ -44,6 +44,12 @@ DEFAULT_WEIGHTS = {
     "has_address": 1,
     "google_good_reviews": 2,
     "google_few_reviews": -1,
+    # The gap the founder sells. Booking is the receptionist's pitch;
+    # an old build is the refresh. These outrank the generic audit score.
+    "gap_booking": 3,
+    "gap_contact_page": 2,
+    "gap_old_build": 2,
+    "audit_high": 1,
 }
 DEFAULT_BOOKABLE = [
     "hairdresser", "barber", "beauty", "therapist", "dentist",
@@ -112,9 +118,27 @@ def score_row(row: Dict[str, str], weights: Dict[str, int],
         score += weights.get("route_contact_page", 1)
         bits.append("route:page")
 
-    # Audit: a high audit_score means more gaps, i.e. more to sell.
-    # Only count it when there is a website and a real audit.
-    if route in ("email", "contact_page", "call") and row.get("has_website") == "yes":
+    # THE GAP, specifically — not a total score. A business with no
+    # booking is the receptionist's pitch; an old build is the refresh;
+    # no contact page is "reachable but not bookable". Each scores on its
+    # own, so a row with one clear gap outranks a row with a vague total.
+    if row.get("has_website") == "yes":
+        gap_type = ""
+        if (row.get("audit_booking") or "").lower() == "no":
+            score += weights.get("gap_booking", 3)
+            bits.append("GAP: no booking")
+            gap_type = "no booking"
+        if (row.get("audit_contact_page") or "").lower() == "no":
+            score += weights.get("gap_contact_page", 2)
+            bits.append("GAP: no contact page")
+            gap_type = gap_type or "no contact page"
+        cy = _to_int(row.get("audit_copyright"), 0)
+        if cy and cy < 2024:
+            score += weights.get("gap_old_build", 2)
+            bits.append(f"GAP: old build {cy}")
+            gap_type = gap_type or f"old build {cy}"
+        row["gap_type"] = gap_type
+        # The generic audit score is a bonus, not the only signal.
         a = _to_int(row.get("audit_score"), 0)
         if a >= 5:
             score += weights.get("audit_high", 1)

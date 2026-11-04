@@ -215,3 +215,13 @@ Tick a build step with its evidence, when you have done the work
 outside build_run. The evidence is the check's own output, not your
 claim. Use it after a patch the loop did not make — otherwise the build
 state says parked on a question it already solved.
+
+## read_leads
+
+The ranked shortlist. **email_safe_only=true returns only rows that are
+lawful to cold email: a Companies House match at medium or high
+confidence, and an email address.** A sole trader is an individual
+subscriber under PECR and needs consent; the CH match is the evidence
+that this row is not one. Every row carries a `gap_type` — "no
+booking", "no contact page", "old build YYYY" — so the email names the
+gap.

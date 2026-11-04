@@ -1097,7 +1097,8 @@ def send_email(
 LEADS_CSV = Path("/mnt/bosly/bosly-data/.data/governor/lead-scout-ranked.csv")
 
 
-def read_leads(only_call_list: bool = False, limit: int = 15) -> Dict[str, Any]:
+def read_leads(only_call_list: bool = False, limit: int = 15,
+               email_safe_only: bool = False) -> Dict[str, Any]:
     """Read the ranked lead shortlist.
 
     Guards: fixed path; only_call_list is a bool; limit is 1-50.
@@ -1122,6 +1123,15 @@ def read_leads(only_call_list: bool = False, limit: int = 15) -> Dict[str, Any]:
 
     if only_call_list:
         rows = [r for r in rows if (r.get("call_list") or "") == "yes"]
+
+    # Lawful cold email: a corporate subscriber (a Companies House match
+    # at medium or high confidence) with an email address. A sole trader
+    # is an individual subscriber under PECR and needs consent; the CH
+    # match is the evidence that this row is not one.
+    if email_safe_only:
+        rows = [r for r in rows
+                if (r.get("match_confidence") or "").lower() in ("medium", "high")
+                and (r.get("contact_route") or "") == "email"]
     rows = rows[:limit]
 
     return {
@@ -2020,6 +2030,10 @@ TOOLS = [
         "input_schema": {
             "type": "object",
             "properties": {
+                "email_safe_only": {
+                    "type": "boolean", "default": False,
+                    "description": "only rows that are lawful to cold email: a Companies House match at medium/high confidence AND an email address",
+                },
                 "only_call_list": {
                     "type": "boolean",
                     "description": "true to return only the call-list rows",
