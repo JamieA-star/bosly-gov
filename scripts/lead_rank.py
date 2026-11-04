@@ -219,7 +219,6 @@ def rank_rows(rows: List[Dict[str, str]], cfg: Dict[str, Any]) -> List[Dict[str,
         )
     bookable = fit.get("bookable_trades") or DEFAULT_BOOKABLE
     thresholds = fit.get("google_thresholds") or DEFAULT_THRESHOLDS
-    pick = int(fit.get("pick", 15))
     call_n = int(fit.get("call_list", 10))
 
     scored = []
@@ -234,6 +233,7 @@ def rank_rows(rows: List[Dict[str, str]], cfg: Dict[str, Any]) -> List[Dict[str,
         return (-s, -_to_int(r.get("google_reviews"), 0), (r.get("name") or "").lower())
 
     scored.sort(key=_sort_key)
+    pick = int(fit.get("pick", 0)) or len(scored)
     top = scored[:pick]
 
     out = []

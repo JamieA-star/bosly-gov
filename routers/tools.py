@@ -1129,18 +1129,30 @@ def read_leads(only_call_list: bool = False, limit: int = 15,
     # is an individual subscriber under PECR and needs consent; the CH
     # match is the evidence that this row is not one.
     if email_safe_only:
-        # Corporate subscriber evidence: a Companies House match at
-        # medium/high confidence, OR a Companies House name on the row
-        # (a company on the register is corporate; the name is the
-        # record). A sole trader has neither.
-        def _corporate(r):
-            # strict: confidence only. A CH name with low confidence is
-            # a fuzzy hit, not evidence of corporate status — the
-            # Richardson's/Alamode case.
-            return (r.get("match_confidence") or "").lower() in ("medium", "high")
+        # The ranked file, now uncapped: it carries gap_type, service
+        # and the four-email dates, which the raw scout CSV does not.
         rows = [r for r in rows
-                if _corporate(r)
+                if (r.get("match_confidence") or "").lower() in ("medium", "high")
                 and (r.get("contact_route") or "") == "email"]
+        # The full CSV has not been through the ranker, so map the gap to
+        # a service here, and date the four-email sequence from today.
+        try:
+            import sys as _sys2
+            _sys2.path.insert(0, "/home/bosly_accord/bosly-gov")
+            from scripts.lead_rank import service_for as _svc
+            from datetime import date as _d, timedelta as _td
+            _t = _d.today()
+            for r in rows:
+                r["service"] = _svc(r.get("gap_type", ""))
+                r.setdefault("email_1_due", _t.isoformat())
+                r.setdefault("email_2_due", (_t + _td(days=3)).isoformat())
+                r.setdefault("email_3_due", (_t + _td(days=7)).isoformat())
+                r.setdefault("email_4_due", (_t + _td(days=14)).isoformat())
+                r.setdefault("follow_up_due", r["email_1_due"])
+                r.setdefault("contacted_at", "")
+                r.setdefault("reply", "")
+        except Exception:
+            pass
     rows = rows[:limit]
 
     return {
@@ -1637,6 +1649,24 @@ def build_answer(name: str, answer: str) -> Dict[str, Any]:
         return _b.build_answer(name, answer)
     except Exception as e:
         return {"ok": False, "error": str(e)}
+
+
+def follow_up_queue(limit: int = 20) -> Dict[str, Any]:
+    """The lawful email rows due a follow-up today or earlier.
+
+    The scout finds and hands over; the butler holds the sequence. This
+    is the queue: rows with a trusted Companies House match, an email
+    route, and a follow_up_due on or before today, sorted by the date.
+    """
+    from datetime import date as _d
+    # 50 is the guard's ceiling; the filter runs before the slice,
+    # so this is the first 50 lawful rows, not the first 50 raw rows.
+    r = read_leads(email_safe_only=True, limit=50)
+    rows = (r.get("result") or {}).get("rows", [])
+    today = _d.today().isoformat()
+    due = [x for x in rows if (x.get("follow_up_due") or "9999") <= today]
+    due.sort(key=lambda x: x.get("follow_up_due") or "")
+    return {"ok": True, "result": {"today": today, "due": len(due), "rows": due[:limit]}}
 
 
 def build_tick(name: str, index: int, evidence: str) -> Dict[str, Any]:
@@ -2468,6 +2498,19 @@ TOOLS = [
             "evidence": {"type": "string"},
         }, "required": ["name", "index", "evidence"]},
         "fn": build_tick,
+    },
+
+    {
+        "name": "follow_up_queue",
+        "description": (
+            "The lawful email rows due a follow-up today or earlier, "
+            "sorted by the date. Read it at the start of a session and "
+            "tell the founder who to write to today."
+        ),
+        "input_schema": {"type": "object", "properties": {
+            "limit": {"type": "integer", "default": 20},
+        }, "required": []},
+        "fn": follow_up_queue,
     },
 # TOOLS-END — insert new entries above this line
 ]
