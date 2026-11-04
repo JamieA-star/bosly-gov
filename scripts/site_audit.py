@@ -97,14 +97,37 @@ def _host_of(url: str) -> str:
 
 def audit_html(url: str, html: str) -> Dict[str, Any]:
     """Assess a page's HTML. Returns the audit dict."""
+    # A page carries addresses that are not the business's: a Wix or
+    # Sentry artefact, an image filename, a platform token. They are not
+    # places to write to — but their presence IS the gap: a template
+    # site with no address of its own.
+    PLATFORM_NOISE = ("sentry", "wixpress", "wix.com", "wixsite",
+                      "sentry.io", "sentry-next", "googleapis", "cloudflare")
+    IMG_SUFFIX = (".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico")
+
+    def _real_email(addr: str) -> bool:
+        a = (addr or "").lower()
+        if not a or "@" not in a:
+            return False
+        if any(n in a for n in PLATFORM_NOISE):
+            return False
+        if a.endswith(IMG_SUFFIX):
+            return False
+        return True
+
     low = html.lower()
 
     has_viewport = 'name="viewport"' in low or "name='viewport'" in low
     has_https = url.lower().startswith("https://")
 
-    # Email: mailto: links and bare addresses
-    emails = set(EMAIL_RE.findall(html))
+    # Email: mailto: links and bare addresses — real ones only.
+    all_emails = set(EMAIL_RE.findall(html))
+    emails = {e for e in all_emails if _real_email(e)}
+    noise_emails = all_emails - emails
     has_email = ("mailto:" in low) or bool(emails)
+    # The gap is "no address a person can write to": either none at all,
+    # or only platform artefacts. Both are the same finding.
+    platform_site = (not has_email) or (bool(noise_emails) and not bool(emails))
 
     # Booking: known hosts, or a link with "book" in it
     booking_hits = []
@@ -149,6 +172,10 @@ def audit_html(url: str, html: str) -> Dict[str, Any]:
         score += 1
     if not has_contact_page:
         score += 1
+    if platform_site:
+        # A template site carrying platform addresses and no real one:
+        # no way to write to the business. That is the gap.
+        score += 2
     if copyright_year and copyright_year < 2023:
         score += 2
 
@@ -158,6 +185,7 @@ def audit_html(url: str, html: str) -> Dict[str, Any]:
         "has_viewport": has_viewport,
         "has_email": has_email,
         "email_found": sorted(emails)[:3],
+        "platform_site": platform_site,
         "has_booking": has_booking,
         "booking_links": booking_hits[:3],
         "has_contact_page": has_contact_page,

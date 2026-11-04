@@ -1129,8 +1129,17 @@ def read_leads(only_call_list: bool = False, limit: int = 15,
     # is an individual subscriber under PECR and needs consent; the CH
     # match is the evidence that this row is not one.
     if email_safe_only:
+        # Corporate subscriber evidence: a Companies House match at
+        # medium/high confidence, OR a Companies House name on the row
+        # (a company on the register is corporate; the name is the
+        # record). A sole trader has neither.
+        def _corporate(r):
+            # strict: confidence only. A CH name with low confidence is
+            # a fuzzy hit, not evidence of corporate status — the
+            # Richardson's/Alamode case.
+            return (r.get("match_confidence") or "").lower() in ("medium", "high")
         rows = [r for r in rows
-                if (r.get("match_confidence") or "").lower() in ("medium", "high")
+                if _corporate(r)
                 and (r.get("contact_route") or "") == "email"]
     rows = rows[:limit]
 

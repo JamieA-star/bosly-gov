@@ -223,6 +223,26 @@ def extract_rows(elements, gap: dict) -> list:
 
 
 
+def add_ch_match(rows: list) -> list:
+    """Match each business to Companies House. A match is corporate
+    evidence; no match is evidence of not-corporate. The ranker decides
+    what to trust."""
+    try:
+        from scripts.ch_match import match as _match
+    except Exception:
+        return rows
+    out = []
+    for r in rows:
+        try:
+            m = _match(r.get("name") or r.get("business") or "", r.get("postcode") or "")
+        except Exception:
+            m = {}
+        if m:
+            r.update(m)
+        out.append(r)
+    return out
+
+
 def add_contact_route(rows: list, do_audit: bool = True) -> list:
     """For each row, decide how to contact the business.
 
@@ -259,6 +279,7 @@ def add_contact_route(rows: list, do_audit: bool = True) -> list:
                         "audit_viewport": "yes" if a.get("has_viewport") else "no",
                         "audit_https": "yes" if a.get("has_https") else "no",
                         "audit_copyright": str(a.get("copyright_year", "")),
+                        "platform_site": "yes" if a.get("platform_site") else "no",
                     }
                     if a.get("email_found"):
                         route = "email"
@@ -287,7 +308,11 @@ def write_csv(rows: list, out: Path, area: str = "") -> None:
               "postcode", "phone", "osm_id", "has_website", "website_url",
               "contact_route", "audit_score", "audit_email", "audit_booking",
               "audit_contact_page", "audit_viewport", "audit_https",
-              "audit_copyright", "area"]
+              "audit_copyright", "area",
+              "ch_name", "ch_number", "ch_status", "ch_incorporated",
+              "match_confidence", "platform_site", "gap_type", "service",
+              "email_1_due", "email_2_due", "email_3_due", "email_4_due",
+              "contacted_at", "reply", "follow_up_due"]
     with out.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
@@ -420,6 +445,10 @@ def main() -> int:
         print(f"  capped at {cap}")
     print("  deciding contact route (auditing websites)...")
     rows = add_contact_route(rows, do_audit=True)
+    print("  matching to Companies House...")
+    rows = add_ch_match(rows)
+    n_ch = sum(1 for r in rows if r.get("ch_name"))
+    print(f"  Companies House matches: {n_ch}/{len(rows)}")
     n_email = sum(1 for r in rows if r.get("contact_route") == "email")
     n_page = sum(1 for r in rows if r.get("contact_route") == "contact_page")
     n_call = sum(1 for r in rows if r.get("contact_route") == "call")

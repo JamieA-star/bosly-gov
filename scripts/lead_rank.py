@@ -46,9 +46,11 @@ DEFAULT_WEIGHTS = {
     "google_few_reviews": -1,
     # The gap the founder sells. Booking is the receptionist's pitch;
     # an old build is the refresh. These outrank the generic audit score.
+    "gap_no_website": 5,
     "gap_booking": 3,
     "gap_contact_page": 2,
     "gap_old_build": 2,
+    "gap_no_real_email": 3,
     "audit_high": 1,
 }
 DEFAULT_BOOKABLE = [
@@ -56,6 +58,27 @@ DEFAULT_BOOKABLE = [
     "garage", "plumber", "electrician", "physio", "tutor",
     "veterinary", "cafe", "restaurant",
 ]
+# The gap is what to sell. A row says the service, so the email
+# names it rather than describing a problem.
+SERVICE_FOR = {
+    "no website": "website",
+    "no real email": "website + contact page",
+    "no booking": "booking system",
+    "no contact page": "contact page + form",
+    "old build 2011": "website refresh",
+}
+
+
+def service_for(gap_type: str) -> str:
+    g = (gap_type or "").lower()
+    for key, svc in SERVICE_FOR.items():
+        if key in g:
+            return svc
+    if g.startswith("old build"):
+        return "website refresh"
+    return "website review"
+
+
 DEFAULT_THRESHOLDS = {"good_reviews_min": 20, "good_rating_min": 4.0, "few_reviews_max": 5}
 
 
@@ -118,13 +141,21 @@ def score_row(row: Dict[str, str], weights: Dict[str, int],
         score += weights.get("route_contact_page", 1)
         bits.append("route:page")
 
-    # THE GAP, specifically — not a total score. A business with no
-    # booking is the receptionist's pitch; an old build is the refresh;
-    # no contact page is "reachable but not bookable". Each scores on its
-    # own, so a row with one clear gap outranks a row with a vague total.
+    # THE GAP, specifically — and only where it is a gap. "No booking"
+    # is a gap for a salon or a clinic; for a garden centre or a shop it
+    # is normal, and scoring it would put a retail business on a list it
+    # does not belong on.
+    cat = (row.get("category") or "").lower()
+    is_bookable = any(b in cat for b in bookable)
+    # No website at all is the clearest gap — the whole pitch is "you
+    # have no site". It scores highest, and it is a free signal.
+    if (row.get("has_website") or "").lower() == "no":
+        score += weights.get("gap_no_website", 5)
+        bits.append("GAP: no website")
+        row["gap_type"] = "no website"
     if row.get("has_website") == "yes":
         gap_type = ""
-        if (row.get("audit_booking") or "").lower() == "no":
+        if is_bookable and (row.get("audit_booking") or "").lower() == "no":
             score += weights.get("gap_booking", 3)
             bits.append("GAP: no booking")
             gap_type = "no booking"
@@ -132,6 +163,11 @@ def score_row(row: Dict[str, str], weights: Dict[str, int],
             score += weights.get("gap_contact_page", 2)
             bits.append("GAP: no contact page")
             gap_type = gap_type or "no contact page"
+        if (row.get("platform_site") or "").lower() == "yes" \
+           and not (row.get("audit_email") or "").strip():
+            score += weights.get("gap_no_real_email", 3)
+            bits.append("GAP: no real email")
+            gap_type = gap_type or "no real email"
         cy = _to_int(row.get("audit_copyright"), 0)
         if cy and cy < 2024:
             score += weights.get("gap_old_build", 2)
@@ -155,6 +191,18 @@ def score_row(row: Dict[str, str], weights: Dict[str, int],
         bits.append("google-few")
 
     return score, "; ".join(bits)
+
+
+def is_corporate(row: Dict[str, str]) -> bool:
+    """A medium/high Companies House match is corporate evidence. A low
+    match is a guess, and a sole trader is an individual subscriber
+    under PECR — cold email needs consent, which we do not have."""
+    return (row.get("match_confidence") or "").lower() in ("medium", "high")
+
+
+def sole_trader_block(row: Dict[str, str]) -> bool:
+    """True when the row must not go on the email list."""
+    return (row.get("contact_route") or "") == "email" and not is_corporate(row)
 
 
 def rank_rows(rows: List[Dict[str, str]], cfg: Dict[str, Any]) -> List[Dict[str, str]]:
@@ -191,6 +239,18 @@ def rank_rows(rows: List[Dict[str, str]], cfg: Dict[str, Any]) -> List[Dict[str,
     out = []
     for i, (s, bits, r) in enumerate(top, start=1):
         r2 = dict(r)
+        r2["service"] = service_for(r.get("gap_type", ""))
+        # The handover: the follow-up plan, so the butler holds the
+        # sequence rather than the scout. Four emails over 14 days.
+        from datetime import date, timedelta
+        _today = date.today()
+        r2["email_1_due"] = _today.isoformat()
+        r2["email_2_due"] = (_today + timedelta(days=3)).isoformat()
+        r2["email_3_due"] = (_today + timedelta(days=7)).isoformat()
+        r2["email_4_due"] = (_today + timedelta(days=14)).isoformat()
+        r2["contacted_at"] = ""
+        r2["reply"] = ""
+        r2["follow_up_due"] = r2["email_1_due"]
         r2["rank"] = str(i)
         r2["fit_score"] = str(s)
         r2["fit_breakdown"] = bits
