@@ -136,6 +136,13 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.build_quote_learns_from_real_builds — FOUND 4 Nov. The label
   is threaded; the next build calibrates the quote.
 
+- [ ] ops.scout_google_after_rank — FOUND 4 Nov. Google reviews on the
+  top N after the ranker, because the cost is the N. The list works
+  without it.
+
+- [ ] ops.the_first_email — FOUND 4 Nov. 24 lawful rows, a service
+  each. Capelli Hair Design first. The reply is the proof.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
@@ -276,7 +283,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] [LIVE] ops.external_services_degrade_honestly — FOUND 19 Oct.
 - [ ] [LIVE] accord.lead_machinery — FOUND 19 Oct, forgotten. A
 - [ ] [LIVE] ops.scout_persona_filter — FOUND 29 Oct. The LinkedIn tip:
-- [ ] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
+- [x] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
 - [ ] [LIVE] gov.executive_orientation_and_reporting — DEFINED 19 Oct.
 - [ ] [LIVE] ops.bosly_executive — THE CHIEF OF STAFF. The
 - [ ] [LIVE] ops.bosly_receptionist — THE AI RECEPTIONIST. The

@@ -449,6 +449,23 @@ THE BUILD, IN ORDER
     attributed build, the quote's turns-per-step differs from the
     default 5 — it learned.
 
+[ ] ops.scout_google_after_rank — FOUND 4 Nov. The Google pass waits
+    for a paid key. It runs AFTER the ranker on the top N, so reviews
+    are a quality signal and the cost is the N — not a lookup per
+    business. The ranker already scores google_rating and
+    google_reviews; the enrichment script (scripts/google_enrich.py)
+    fills them. THE ORDER: scout -> rank -> enrich top N -> rank again.
+    The list is lawful and gap-scored without it; Google is who to
+    approach first.
+
+[ ] ops.the_first_email — FOUND 4 Nov. The scout has 24 lawful email
+    rows in Northumberland, each with a service and a follow_up_due.
+    The first is Capelli Hair Design, no booking, a booking system to
+    sell. THE TEST: send it with draft_email and send_draft_to_me, and
+    the reply is the proof the whole chain works. Four emails over 14
+    days — day 1, 3, 7, 14 — and the butler's follow_up_queue holds the
+    cadence.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
@@ -2553,7 +2570,7 @@ Then add more.
     NOT NOW: the loop is first. This waits for the butler to run it.
 
 
-[ ] [LIVE] ops.lead_workflow — THE WEEKLY LEAD LOOP. DEFINED 19 Oct.
+[x] [LIVE] ops.lead_workflow — DONE 4 Nov. THE WEEKLY LEAD LOOP.
 
     WHAT THIS IS, IN ONE LINE: a digital butler. A personal PA for
     the founder's life and work — the thing that holds the threads,
@@ -2639,6 +2656,19 @@ Then add more.
     has a natural gate where the founder stays in control. Build
     this, and the Executive is a working PA. The rest — calls,
     admin, the voice — is more of the same with different tools.
+
+    DONE 4 Nov. The scout now finds, audits, matches to Companies House,
+    scores the gap, maps it to a service, blocks the sole traders, and
+    hands the butler a four-email sequence. In Northumberland: 7,659
+    elements, 1,616 with a gap, 247 matched, 24 lawful email rows, each
+    with a service and a follow_up_due. The gap is the signal — no
+    website (5), no booking (bookable trades only), no real email (3),
+    no contact page (2), old build (2) — and a sentry/wixpress address
+    is noise in email_found and a gap in the score. The 15-cap is gone;
+    a cap on a work queue is a cap on income. follow_up_queue returns
+    who is due today. THE GOOGLE PASS waits for a key
+    (ops.scout_google_after_rank); THE FIRST EMAIL is Capelli Hair
+    Design (ops.the_first_email).
 
 
 [ ] [LIVE] gov.executive_orientation_and_reporting — DEFINED 19 Oct.
