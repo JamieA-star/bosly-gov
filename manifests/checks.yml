@@ -123,6 +123,9 @@ projects:
         - id: gov.a_patched_build_ticks
           severity: high
           command: python3 checks/a_patched_build_ticks.py
+        - id: gov.a_build_starts_from_the_base_spec
+          severity: high
+          command: python3 checks/a_build_starts_from_the_base_spec.py
         - id: gov.build_has_a_spec
           severity: high
           command: python3 checks/build_has_a_spec.py
