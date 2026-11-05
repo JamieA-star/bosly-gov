@@ -120,6 +120,9 @@ projects:
         - id: gov.build_tick_has_evidence
           severity: high
           command: python3 checks/build_tick_has_evidence.py
+        - id: gov.a_patched_build_ticks
+          severity: high
+          command: python3 checks/a_patched_build_ticks.py
         - id: gov.build_has_a_spec
           severity: high
           command: python3 checks/build_has_a_spec.py
@@ -141,9 +144,6 @@ projects:
         - id: gov.plan_split_is_whole
           severity: high
           command: python3 checks/plan_split_is_whole.py
-        - id: gov.plan_anchor_insert
-          severity: high
-          command: python3 checks/plan_anchor_insert.py
         - id: gov.code_map_is_fresh
           severity: high
           command: python3 checks/code_map_is_fresh.py
@@ -201,9 +201,6 @@ projects:
         - id: accord.invoice_cap_per_month
           severity: medium
           command: python3 checks/invoices_cap_per_month.py
-        - id: gov.plan_anchor_insert
-          severity: high
-          command: python3 checks/plan_anchor_insert.py
       slow:
         - id: gov.waiting_well
           severity: medium

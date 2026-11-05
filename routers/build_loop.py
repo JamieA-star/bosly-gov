@@ -144,11 +144,13 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
         # usage record, priced from the table.
         try:
             from routers import usage as _u
-            spent_pence = _u.total()[ "result" ]["pence"] if False else spent_pence
             _recs = _u._read()
-            if _recs:
-                spent_pence = sum(r.get("pence", 0) for r in _recs
-                                  if r.get("build") == name)
+            _created = state.get("created", "")
+            # Spend since the build was created or reset, not all time.
+            spent_since = sum(r.get("pence", 0) for r in _recs
+                              if r.get("build") == name
+                              and (not _created or r.get("ts", "") >= _created))
+            spent_pence = spent_since
         except Exception:
             pass
         if BUDGET_PENCE and spent_pence >= BUDGET_PENCE:

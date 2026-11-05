@@ -225,3 +225,10 @@ subscriber under PECR and needs consent; the CH match is the evidence
 that this row is not one. Every row carries a `gap_type` — "no
 booking", "no contact page", "old build YYYY" — so the email names the
 gap.
+
+## build_tick
+
+Tick a build step with its evidence, when you have finished the work
+outside build_run — a patch you made yourself, a check you wrote and
+registered. The evidence is the check's own output, not your claim. A
+step that is finished and not ticked leaves the build looking parked.
