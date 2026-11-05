@@ -45,6 +45,22 @@ def _read(path: Path, default: Any) -> Any:
         return default
 
 
+def _load_base_spec() -> List[str]:
+    """The standing decisions every build inherits, one per line.
+
+    Read once per call. A missing base is an error the caller handles;
+    an empty list here would silently un-gate every build."""
+    p = Path(__file__).resolve().parent.parent / "specs" / "base.md"
+    if not p.exists():
+        raise FileNotFoundError(f"base spec missing: {p}")
+    out = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        s = line.strip()
+        if s.startswith("- "):
+            out.append(s[2:].strip())
+    return out
+
+
 def write_spec(name: str, goal: str, decisions: List[str],
                permissions: List[str], escape_hatch: str) -> Dict[str, Any]:
     """Write a build's spec before it starts. An overnight build cannot
@@ -61,9 +77,13 @@ def write_spec(name: str, goal: str, decisions: List[str],
         return {"ok": False, "error": "escape_hatch required: what to do when stuck"}
     d = _dir(name)
     d.mkdir(parents=True, exist_ok=True)
+    _base = _load_base_spec()
     text = (
         f"# Build spec — {name}\n\n"
         f"## The goal\n{goal.strip()}\n\n"
+        "## The standing decisions (inherited from the base)\n"
+        + "\n".join(f"- {x}" for x in _base)
+        + "\n\n"
         "## The decisions (the questions the build would ask)\n"
         + "\n".join(f"- {x.strip()}" for x in decisions if str(x).strip())
         + "\n\n## The permissions (what it may do without asking)\n"
@@ -134,7 +154,8 @@ def load_build(name: str) -> Dict[str, Any]:
         "ok": True,
         "result": {
             "name": name,
-            "spec": (d / "spec.md").read_text(encoding="utf-8"),
+            "spec": ((d / "spec.md").read_text(encoding="utf-8")
+                     if (d / "spec.md").exists() else ""),
             "steps": _read(d / "steps.json", {"steps": []}).get("steps", []),
             "state": _read(d / "state.json", {}),
         },
