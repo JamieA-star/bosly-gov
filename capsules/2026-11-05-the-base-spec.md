@@ -67,6 +67,28 @@ The base spec's own check runs in 36ms.
 A gate belongs after the terminal return, and a patcher reads the file
 before it writes.
 
+## The second build, same night
+
+The new_build build was created and run after the base spec closed. It
+was one step, on an 80p budget, and it ticked on the check's own output:
+new_build now refuses a build with no spec, or a spec without the five
+standing decisions, naming write_spec. build_start keeps its signature;
+its contract becomes write_spec first.
+
+Its own lesson was paid immediately. The recreate deleted the build
+directory — and the spec with it — so new_build wrote the stub "ignored".
+The fix was write_spec, then new_build, then confirm the base before the
+run. A spec lives in the build directory; write_spec is the only writer,
+and a recreate is no exception.
+
+Two more handover claims did not survive the source: pathlib where the
+module imports Path, and build_quote, which does not exist. budget_rule
+does. A budget with no quote behind it is a number with no basis —
+gov.build_quote_is_missing is open for it.
+
+The tier closed 59 passed, 1 failed: the red is accord.invariants. Memory
+243, 0 malformed. Commits 60906bc and cae809b.
+
 ## What's next
 
 1. gov.new_build_bypasses_the_base — new_build writes a spec without the

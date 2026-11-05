@@ -548,12 +548,19 @@ THE BUILD, IN ORDER
     CHECK: a build that parked has a decision in its spec that names
     the question it asked.
 
-[ ] gov.new_build_bypasses_the_base — FOUND 5 Nov. build.new_build
+[x] gov.new_build_bypasses_the_base — DONE 5 Nov. build.new_build
     writes a spec directly, not through write_spec, so any build or probe
     created with it has no base and parks on the gate. build_loop_stops was
     patched around it; the next probe will not be. THE FIX: new_build
     delegates to write_spec, or refuses without a base. THE CHECK:
     gov.a_new_build_carries_the_base.
+    DONE 5 Nov. new_build refuses a build with no spec, or a spec without
+    the five standing decisions, naming write_spec. build_start keeps its
+    signature — its contract becomes write_spec first. The two probes call
+    write_spec before new_build, and build_state_is_on_disk still asserts
+    the restart rule, not the base rule. Built by the builder itself: one
+    step, 80p budget, ticked on the check's output. Evidence: 60906bc,
+    tier 59/1, red accord.invariants.
 
 [ ] gov.the_batch_is_a_policy_not_a_flag — FOUND 5 Nov. The night job sets
     use_batch=True for every build, so a three-step build batches and the
@@ -561,6 +568,13 @@ THE BUILD, IN ORDER
     routers/build.py — len(steps) > 10 — called by both run_build and
     night_build. Parked until a build is long enough to need it. THE CHECK:
     gov.a_long_build_batches.
+
+[ ] gov.build_quote_is_missing — FOUND 5 Nov. The handover says
+    build_quote prices a build from its steps before it runs. The source has
+    budget_rule only; a build's budget is a number with no quote behind it.
+    The 5 Nov new_build build was given 80p by hand. THE FIX: a quote
+    function that prices steps before the build runs, and a budget derived
+    from it. THE CHECK: gov.a_build_has_a_quote.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
