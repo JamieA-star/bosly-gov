@@ -466,6 +466,22 @@ THE BUILD, IN ORDER
     days — day 1, 3, 7, 14 — and the butler's follow_up_queue holds the
     cadence.
 
+[x] gov.the_build_runs_cheap — DONE 5 Nov. THE COST OF A BUILD.
+    The invoice build cost £2.98, and the usage log showed why: 21
+    Sonnet turns, 20 of them tool-result continuations of a handful of
+    decisions, each re-billing the whole history at 18p by the end.
+    Four fixes. The build's STEP TITLE decides the model now — "add
+    ?month= to the route" is Haiku, "decide the schema" is Sonnet — so
+    the mechanical steps, which are most of a build, run at 0.17p a
+    turn. The night job runs use_batch=True, and the batch waits 10
+    minutes before falling back to sync — a batch of one queued for an
+    hour is a night that builds nothing. A build turn on Haiku 5.5 in
+    batch is about 0.01p. And write_spec records the goal, the
+    decisions, the permissions and the escape hatch BEFORE the build
+    starts, so an overnight build does not ask a question nobody will
+    read until morning. THE CHECK: gov.build_has_a_spec, and the
+    step-title rule is proven by the next build's usage log.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

@@ -302,6 +302,7 @@ def _call_api_batch(
     messages: List[Dict[str, Any]],
     model: str | None = None,
     max_wait: int = 600,
+    build: str = "",
 ) -> Dict[str, Any]:
     """One call through the batch API: half the rate, for work that waits.
 
@@ -364,7 +365,7 @@ def _call_api_batch(
             data["_batch"] = True
             try:
                 from routers import usage as _usage
-                _usage.record(model, data["_usage"], batch=True, label="batch turn")
+                _usage.record(model, data["_usage"], batch=True, label="batch turn", build=build)
             except Exception:
                 pass
             return data
@@ -376,6 +377,7 @@ def _call_api(
     messages: List[Dict[str, Any]],
     timeout: int = LLM_TIMEOUT,
     model: str | None = None,
+    build: str = "",
 ) -> Dict[str, Any]:
     """One non-streaming call to the Anthropic API with tools declared.
 
@@ -436,7 +438,8 @@ def _call_api(
     try:
         from routers import usage as _usage
         _usage.record(model, data["_usage"], batch=False,
-                      label=(messages[-1].get("content", "")[:60] if messages else ""))
+                      label=(messages[-1].get("content", "")[:60] if messages else ""),
+                      build=build)
     except Exception:
         pass
     return data
@@ -486,6 +489,7 @@ def run_with_tools(
     max_iterations: int = MAX_ITERATIONS,
     model: str | None = None,
     use_batch: bool = False,
+    build: str = "",
 ) -> Generator[Dict[str, Any], None, None]:
     """Run the tool loop. Yields events the SSE handler understands:
 
@@ -546,12 +550,12 @@ def run_with_tools(
         try:
             if use_batch:
                 try:
-                    response = _call_api_batch(system_prompt, messages, model=model)
+                    response = _call_api_batch(system_prompt, messages, model=model, build=build)
                 except Exception as _be:
                     logging.warning("batch failed, falling back to sync: %s", _be)
-                    response = _call_api(system_prompt, messages, model=model)
+                    response = _call_api(system_prompt, messages, model=model, build=build)
             else:
-                response = _call_api(system_prompt, messages, model=model)
+                response = _call_api(system_prompt, messages, model=model, build=build)
         except urllib.error.HTTPError as e:
             body = ""
             try:

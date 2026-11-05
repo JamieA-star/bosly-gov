@@ -83,6 +83,17 @@ def has_spec(name: str) -> bool:
         return False
 
 
+def budget_rule(quote_pence: float) -> float:
+    """Twice the quote, rounded up to the next penny.
+
+    The quote is the estimate. A build that spends twice it has lost
+    its way, and the loop should park and say so. Not three times —
+    that is a third of the budget spent on 'just in case'.
+    """
+    import math
+    return max(1.0, math.ceil(quote_pence * 2 * 100) / 100)
+
+
 def new_build(name: str, spec: str, steps: List[Dict[str, str]],
               budget_pence: float = 0) -> Dict[str, Any]:
     """Create a build. steps: [{title, check}] — each step has its own check.
@@ -94,7 +105,11 @@ def new_build(name: str, spec: str, steps: List[Dict[str, str]],
     if d.exists() and (d / "state.json").exists():
         return {"ok": False, "error": f"build {name!r} already exists"}
     d.mkdir(parents=True, exist_ok=True)
-    (d / "spec.md").write_text(spec.strip() + "\n", encoding="utf-8")
+    # keep the spec: write_spec runs before new_build, and an empty
+    # spec here would overwrite the real one.
+    sp = d / "spec.md"
+    if not sp.exists() or len(sp.read_text(encoding="utf-8").strip()) < 40:
+        sp.write_text(spec.strip() + "\n", encoding="utf-8")
     _write(d / "steps.json", {"steps": steps})
     _write(d / "state.json", {
         "name": name,

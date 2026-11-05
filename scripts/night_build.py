@@ -16,7 +16,27 @@ from routers.tools import send_draft_to_me
 BUILD = "invoice-chips"
 
 
+def active_build() -> str:
+    """The build to run: the newest one whose state is running or new."""
+    from routers import build as _b
+    best = None
+    try:
+        from pathlib import Path
+        for d in _b.BUILDS.iterdir():
+            sf = d / "state.json"
+            if not sf.exists():
+                continue
+            st = _b._read(sf, {})
+            if st.get("status") in ("new", "running"):
+                if best is None or st.get("created", "") > best[1]:
+                    best = (st.get("name", d.name), st.get("created", ""))
+    except Exception:
+        pass
+    return best[0] if best else BUILD
+
+
 def main() -> int:
+    BUILD = active_build()
     loaded = _build.load_build(BUILD)
     if not loaded.get("ok"):
         print(f"no build {BUILD!r}; nothing to do")

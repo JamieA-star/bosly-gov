@@ -143,6 +143,10 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] ops.the_first_email — FOUND 4 Nov. 24 lawful rows, a service
   each. Capelli Hair Design first. The reply is the proof.
 
+- [x] gov.the_build_runs_cheap — DONE 5 Nov. The step title decides
+  the model, the night runs in batch, and a spec is written before the
+  build so it does not ask. The next build's usage log proves it.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
