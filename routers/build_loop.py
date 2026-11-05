@@ -106,9 +106,13 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
     steps = loaded["result"]["steps"]
     state = loaded["result"]["state"]
 
+    if state.get("status") in ("done", "needs_founder", "stuck"):
+        return {"ok": True, "result": {"state": state, "stopped": state.get("status")}}
+
     # A build started before the base spec existed has a spec with no
     # standing decisions. Park it — a migration guard, not an invariant:
     # anything written by write_spec from now on carries the base.
+    # After the terminal-status return: a finished build is not re-parked.
     try:
         from routers.build import _load_base_spec
         _base = _load_base_spec()
@@ -130,9 +134,6 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
         )
         return {"ok": True, "result": {"state": build.load_build(name)["result"]["state"],
                                        "stopped": "needs_founder"}}
-
-    if state.get("status") in ("done", "needs_founder", "stuck"):
-        return {"ok": True, "result": {"state": state, "stopped": state.get("status")}}
 
     attempts = 0
     calls = 0
