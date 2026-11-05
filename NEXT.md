@@ -154,6 +154,10 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [x] gov.the_base_spec_is_shared — DONE 5 Nov. specs/base.md holds
   the decisions true of every build; a build's spec appends to it.
 
+- [ ] gov.the_learning_loop — design first. How does a parked build's
+  answer reach specs/base.md? Three options open: offered, staging,
+  automatic. Recommendation: staging — automatic capture, human merge.
+
 - [ ] gov.a_build_that_asks_teaches_the_next_one — FOUND 5 Nov. A
   parked build's question, answer and decision go into the base spec.
 

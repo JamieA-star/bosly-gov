@@ -509,6 +509,38 @@ THE BUILD, IN ORDER
     The part the wording did not cover — new_build bypasses write_spec —
     is gov.new_build_bypasses_the_base, opened below.
 
+[ ] gov.the_learning_loop — FOUND 5 Nov. DESIGN FIRST, THEN BUILD.
+    The base spec is fixed at five decisions. When a build learns a sixth —
+    a question it had to park on — nothing puts the answer in the base.
+    A parked build's question, answer and decision should reach specs/base.md,
+    so the next build starts from it. gov.a_build_that_asks_teaches_the_next_one
+    is the check; this item is the mechanism. NOT a build until the open
+    question below is answered — an overnight build cannot ask, and a spec
+    with a question left open is not a spec.
+
+    THE OPEN QUESTION: how does an answer reach the base?
+      A. OFFERED. The founder answers in the app; the answer is offered as a
+         base-spec addition — a prompt, a one-click promote. Nothing is
+         automatic. The founder stays the author of the foundation.
+      B. STAGING. The answer is written to specs/base.staging.md; the founder
+         promotes staging into base.md. The write is automatic, the merge is
+         not. One file to review, no prompt.
+      C. AUTOMATIC. The answer goes straight into base.md. Cheapest; wrong
+         most often — a narrow answer becomes a universal decision. This is
+         the one-pile lesson: a thing added everywhere because it was added
+         once.
+    THE TRADE-OFF: A and B keep the founder as the author of the foundation
+    and cost a step. C removes the step and makes the base untrustworthy. The
+    recommendation is B — automatic capture, human merge. One file to read.
+
+    THE CHECK (once the design is fixed): a build that parked and was answered
+    has, after the merge step, a decision in base.md that names the question
+    it asked. The check asserts the merge, not the capture.
+
+    THE BUILD, once the design is fixed: build_answer writes the answer to
+    staging; a promote tool merges staging into base.md; write_spec already
+    composes the base, so no other change is needed. Four files at most.
+
 [ ] gov.a_build_that_asks_teaches_the_next_one — FOUND 5 Nov. A build
     that parks on a question adds a decision to its own spec — but only
     if a human writes it. The question, the answer and the decision
