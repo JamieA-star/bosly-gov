@@ -106,6 +106,31 @@ def run_build(name: str, max_attempts: int = 2, max_steps: int = 20, use_batch: 
     steps = loaded["result"]["steps"]
     state = loaded["result"]["state"]
 
+    # A build started before the base spec existed has a spec with no
+    # standing decisions. Park it — a migration guard, not an invariant:
+    # anything written by write_spec from now on carries the base.
+    try:
+        from routers.build import _load_base_spec
+        _base = _load_base_spec()
+    except FileNotFoundError as e:
+        build.park_for_founder(
+            name,
+            f"the base spec is missing: {e}. Every build needs it.",
+            ["restore specs/base.md", "leave it parked"],
+        )
+        return {"ok": True, "result": {"state": build.load_build(name)["result"]["state"],
+                                       "stopped": "needs_founder"}}
+    _missing = [line for line in _base if line not in spec]
+    if _missing:
+        build.park_for_founder(
+            name,
+            f"the spec predates the base: {len(_missing)} of {len(_base)} "
+            "standing decisions are missing. Re-run write_spec or add them by hand.",
+            ["rewrite the spec from the base", "leave it parked"],
+        )
+        return {"ok": True, "result": {"state": build.load_build(name)["result"]["state"],
+                                       "stopped": "needs_founder"}}
+
     if state.get("status") in ("done", "needs_founder", "stuck"):
         return {"ok": True, "result": {"state": state, "stopped": state.get("status")}}
 
