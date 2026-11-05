@@ -482,6 +482,32 @@ THE BUILD, IN ORDER
     read until morning. THE CHECK: gov.build_has_a_spec, and the
     step-title rule is proven by the next build's usage log.
 
+[ ] gov.batch_is_for_many_turns — FOUND 5 Nov. Batch is 50% off and
+    designed for ASYNCHRONOUS WORK — large evaluations, bulk content,
+    thousands of requests. A build turn is ONE request, and a batch of
+    one is a queue of one: it waits, and the sync fallback is the
+    actual path. THE PROTOCOL: a build whose step count is above a
+    threshold (10) uses batch, because the night has many turns; a
+    short build runs sync. The step-title rule and the cache are the
+    real cost levers; batch is a bonus when the night is long. THE
+    CHECK: the loop chooses sync for a three-step build and batch for a
+    long one, and the choice is recorded.
+
+[ ] gov.the_base_spec_is_shared — FOUND 5 Nov. Three builds taught
+    three lessons: register the check you write; keep the check you
+    write; one job per step is three steps. Each lesson lives in one
+    build's spec, and no other build reads it. specs/base.md holds the
+    decisions true of every build, and a build's spec appends to it,
+    not replaces it. THE CHECK: gov.a_build_starts_from_the_base_spec —
+    every spec contains the base's decisions.
+
+[ ] gov.a_build_that_asks_teaches_the_next_one — FOUND 5 Nov. A build
+    that parks on a question adds a decision to its own spec — but only
+    if a human writes it. The question, the answer and the decision
+    belong in the base spec, so the next build starts from it. THE
+    CHECK: a build that parked has a decision in its spec that names
+    the question it asked.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,

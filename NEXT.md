@@ -147,6 +147,16 @@ PLAN.md is 383KB total, so later sections are not covered here.
   the model, the night runs in batch, and a spec is written before the
   build so it does not ask. The next build's usage log proves it.
 
+- [ ] gov.batch_is_for_many_turns — FOUND 5 Nov. Batch is for
+  asynchronous bulk, not a batch of one. Short builds sync; long builds
+  batch. The step-title rule and the cache are the levers.
+
+- [ ] gov.the_base_spec_is_shared — FOUND 5 Nov. specs/base.md holds
+  the decisions true of every build; a build's spec appends to it.
+
+- [ ] gov.a_build_that_asks_teaches_the_next_one — FOUND 5 Nov. A
+  parked build's question, answer and decision go into the base spec.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
