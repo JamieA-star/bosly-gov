@@ -301,7 +301,7 @@ def _call_api_batch(
     system_prompt: str,
     messages: List[Dict[str, Any]],
     model: str | None = None,
-    max_wait: int = 3600,
+    max_wait: int = 600,
 ) -> Dict[str, Any]:
     """One call through the batch API: half the rate, for work that waits.
 

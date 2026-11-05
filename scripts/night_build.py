@@ -29,7 +29,9 @@ def main() -> int:
     # Sync by default: a batch of one request sits in a queue, and a
     # step that waits an hour is a night that builds nothing. Batch is
     # for a large job, not a single turn.
-    r = run_build(BUILD, use_batch=False)
+    # The night build has nothing waiting on a turn: batch is half the
+    # rate. A short max_wait and the sync fallback handle a slow queue.
+    r = run_build(BUILD, use_batch=True)
     st = r.get("result", {}).get("state", {})
     status = st.get("status")
 

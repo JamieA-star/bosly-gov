@@ -52,12 +52,18 @@ _DECISION_HINTS = ("decide", "choose", "design", "should", "which",
 def _step_model(step: Dict[str, Any]) -> str:
     """Haiku for a mechanical step, Sonnet for a decision.
 
+    In a build, the mechanical steps outnumber the decisions, and every
+    tool continuation inherits the step's model — so a Sonnet step
+    bills every turn of its history at Sonnet rates. The build runs on
+    Haiku by default; a step whose TITLE names a decision goes to
+    Sonnet. build_uses_haiku.
+
     A build runs dozens of steps and most are mechanical — write this
     file, run this check, read this error. Only the steps that DECIDE
     need the strong model. The step's own title and check say which.
     """
     import os
-    text = f"{step.get('title', '')} {step.get('check', '')}".lower()
+    text = (step.get('title', '') or '').lower()
     if any(h in text for h in _DECISION_HINTS):
         return os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
     return os.environ.get("CHEAP_MODEL", "claude-haiku-5-5")
