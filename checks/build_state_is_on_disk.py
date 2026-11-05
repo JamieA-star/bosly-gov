@@ -33,6 +33,10 @@ def main() -> int:
         print("SUMMARY: FAIL")
         return 1
 
+    # new_build refuses a spec without the base: write_spec first.
+    build.write_spec(NAME, goal="probe: state is on disk",
+                     decisions=["probe decision"], permissions=["probe permission"],
+                     escape_hatch="park")
     r = build.new_build(NAME, "test", [{"title": "a", "check": "x"}, {"title": "b", "check": "y"}])
     created = r.get("ok")
     print(f"  created: {created}")

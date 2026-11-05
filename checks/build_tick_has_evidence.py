@@ -23,6 +23,10 @@ def main() -> int:
     shutil.rmtree(DIR, ignore_errors=True)
 
     from routers import build
+    # new_build refuses a spec without the base: write_spec first.
+    build.write_spec(NAME, goal="probe: a tick has evidence",
+                     decisions=["probe decision"], permissions=["probe permission"],
+                     escape_hatch="park")
     build.new_build(NAME, "t", [{"title": "a", "check": "x"}])
 
     r = build.tick_step(NAME, 0, evidence="")

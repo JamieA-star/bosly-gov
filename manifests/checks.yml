@@ -126,6 +126,9 @@ projects:
         - id: gov.a_build_starts_from_the_base_spec
           severity: high
           command: python3 checks/a_build_starts_from_the_base_spec.py
+        - id: gov.a_new_build_carries_the_base
+          severity: high
+          command: python3 checks/a_new_build_carries_the_base.py
         - id: gov.build_has_a_spec
           severity: high
           command: python3 checks/build_has_a_spec.py

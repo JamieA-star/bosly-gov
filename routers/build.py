@@ -114,6 +114,26 @@ def budget_rule(quote_pence: float) -> float:
     return max(1.0, math.ceil(quote_pence * 2 * 100) / 100)
 
 
+def base_gap(name: str) -> Optional[str]:
+    """The one rule for a base-carrying spec. None when the spec for
+    `name` exists and carries every standing decision in specs/base.md;
+    otherwise the refusal, naming the fix. The door (new_build) calls it;
+    the loop's gate reads the same _load_base_spec."""
+    try:
+        base = _load_base_spec()
+    except FileNotFoundError as e:
+        return f"base spec missing: {e}"
+    sp = _dir(name) / "spec.md"
+    spec = sp.read_text(encoding="utf-8") if sp.exists() else ""
+    if not spec.strip():
+        return "no base spec — call write_spec first"
+    missing = [line for line in base if line not in spec]
+    if missing:
+        return (f"no base spec — call write_spec first "
+                f"({len(missing)} of {len(base)} standing decisions missing)")
+    return None
+
+
 def new_build(name: str, spec: str, steps: List[Dict[str, str]],
               budget_pence: float = 0) -> Dict[str, Any]:
     """Create a build. steps: [{title, check}] — each step has its own check.
@@ -124,12 +144,13 @@ def new_build(name: str, spec: str, steps: List[Dict[str, str]],
     d = _dir(name)
     if d.exists() and (d / "state.json").exists():
         return {"ok": False, "error": f"build {name!r} already exists"}
+    # The door: a build is created only on a base-carrying spec that
+    # write_spec wrote. new_build no longer writes a spec; the `spec`
+    # argument is ignored and kept only for the signature.
+    gap = base_gap(name)
+    if gap:
+        return {"ok": False, "error": gap}
     d.mkdir(parents=True, exist_ok=True)
-    # keep the spec: write_spec runs before new_build, and an empty
-    # spec here would overwrite the real one.
-    sp = d / "spec.md"
-    if not sp.exists() or len(sp.read_text(encoding="utf-8").strip()) < 40:
-        sp.write_text(spec.strip() + "\n", encoding="utf-8")
     _write(d / "steps.json", {"steps": steps})
     _write(d / "state.json", {
         "name": name,

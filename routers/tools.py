@@ -1777,6 +1777,10 @@ def build_start(name: str, spec: str, steps: List[Dict[str, str]],
     steps is a list of {title, check, check_id}. check_id names a check
     in manifests/checks.yml — the loop runs THAT check, never the
     model's claim. A step with no check_id will park when it is reached.
+
+    The contract: write_spec first. new_build does not write a spec; it
+    refuses unless a base-carrying spec already exists for this name, with
+    "no base spec — call write_spec first". The spec argument is ignored.
     """
     from routers import build as _b
     try:
