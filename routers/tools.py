@@ -68,7 +68,7 @@ FOUNDER_EMAIL = "jr-arnott@outlook.com"
 # Tool 1 — append_plan_entry
 # ---------------------------------------------------------------------------
 
-def append_plan_entry(entry: str) -> Dict[str, Any]:
+def append_plan_entry(entry: str, item_id: str = "") -> Dict[str, Any]:
     """Append a new entry to PLAN.md, after the last non-empty line.
 
     Guard 1: PLAN.md must start with PLAN_FIRST_LINE.
@@ -94,6 +94,32 @@ def append_plan_entry(entry: str) -> Dict[str, Any]:
             "ok": False,
             "error": f"PLAN.md does not start with {PLAN_FIRST_LINE!r} — refusing to append",
         }
+
+    # A note anchored to an item is not a new entry: it needs no marker.
+    # The item_id branch runs first, and the marker check only applies
+    # when there is no item_id. branch runs before the marker check.
+    if item_id:
+        import re as _re2
+        lines = text.splitlines(keepends=True)
+        start = None
+        for i, ln in enumerate(lines):
+            stripped = ln.lstrip()
+            if stripped.startswith(("[ ] ", "[~] ", "[x] ")):
+                rest = stripped[4:]
+                if rest.startswith(item_id + " ") or rest.startswith(item_id + " \u2014"):
+                    start = i
+                    break
+        if start is None:
+            near = [ln.split("] ", 1)[1].split(" ")[0]
+                    for ln in lines
+                    if ln.lstrip().startswith(("[ ] ", "[~] ", "[x] "))][:8]
+            return {"ok": False, "error": f"item {item_id!r} not found", "near": near}
+        end = start + 1
+        while end < len(lines) and not lines[end].lstrip().startswith(("[ ] ", "[~] ", "[x] ", "[")):
+            end += 1
+        lines.insert(end, "    " + entry.strip() + "\n")
+        PLAN.write_text("".join(lines), encoding="utf-8")
+        return {"ok": True, "result": {"inserted_after": item_id, "at_line": end + 1}}
 
     # Must contain at least one well-formed marker line:
     #   [ ] name — description
@@ -121,6 +147,32 @@ def append_plan_entry(entry: str) -> Dict[str, Any]:
 
     # Append: ensure exactly one blank line between existing content and entry
     new_text = text.rstrip() + "\n\n" + entry.rstrip() + "\n"
+    # insert after the item: the note lands with the item it names.
+    if item_id:
+        import re as _re2
+        lines = text.splitlines(keepends=True)
+        start = None
+        for i, ln in enumerate(lines):
+            stripped = ln.lstrip()
+            if stripped.startswith(("[ ] ", "[~] ", "[x] ")):
+                rest = stripped[4:]
+                if rest.startswith(item_id + " ") or rest.startswith(item_id + " —"):
+                    start = i
+                    break
+        if start is None:
+            # refuse, and name the ids near the search
+            near = [ln.split("] ", 1)[1].split(" ")[0]
+                    for ln in lines
+                    if ln.lstrip().startswith(("[ ] ", "[~] ", "[x] "))][:8]
+            return {"ok": False, "error": f"item {item_id!r} not found",
+                    "near": near}
+        end = start + 1
+        while end < len(lines) and not lines[end].lstrip().startswith(("[ ] ", "[~] ", "[x] ", "[")):
+            end += 1
+        lines.insert(end, "    " + entry.strip() + "\n")
+        PLAN.write_text("".join(lines), encoding="utf-8")
+        return {"ok": True, "result": {"inserted_after": item_id, "at_line": end + 1}}
+
     PLAN.write_text(new_text, encoding="utf-8")
 
     # Return a small record of what happened, not the whole file.

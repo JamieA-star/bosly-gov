@@ -132,9 +132,18 @@ projects:
         - id: gov.plan_query_counts
           severity: high
           command: python3 checks/plan_query_counts.py
+        - id: gov.plan_note_lands_on_the_item
+          severity: high
+          command: python3 checks/plan_note_lands_on_the_item.py
+        - id: gov.plan_note_refuses_unknown_id
+          severity: medium
+          command: python3 checks/plan_note_refuses_unknown_id.py
         - id: gov.plan_split_is_whole
           severity: high
           command: python3 checks/plan_split_is_whole.py
+        - id: gov.plan_anchor_insert
+          severity: high
+          command: python3 checks/plan_anchor_insert.py
         - id: gov.code_map_is_fresh
           severity: high
           command: python3 checks/code_map_is_fresh.py
@@ -192,6 +201,9 @@ projects:
         - id: accord.invoice_cap_per_month
           severity: medium
           command: python3 checks/invoices_cap_per_month.py
+        - id: gov.plan_anchor_insert
+          severity: high
+          command: python3 checks/plan_anchor_insert.py
       slow:
         - id: gov.waiting_well
           severity: medium
