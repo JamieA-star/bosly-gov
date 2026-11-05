@@ -45,6 +45,44 @@ def _read(path: Path, default: Any) -> Any:
         return default
 
 
+def write_spec(name: str, goal: str, decisions: List[str],
+               permissions: List[str], escape_hatch: str) -> Dict[str, Any]:
+    """Write a build's spec before it starts. An overnight build cannot
+    ask a question, so the answers are written down first: the goal, the
+    decisions it would otherwise ask about, the permissions it has, and
+    the escape hatch when it is truly stuck."""
+    if not (goal or "").strip():
+        return {"ok": False, "error": "goal required"}
+    if not decisions:
+        return {"ok": False, "error": "decisions required: what would it ask?"}
+    if not permissions:
+        return {"ok": False, "error": "permissions required: what may it do alone?"}
+    if not (escape_hatch or "").strip():
+        return {"ok": False, "error": "escape_hatch required: what to do when stuck"}
+    d = _dir(name)
+    d.mkdir(parents=True, exist_ok=True)
+    text = (
+        f"# Build spec — {name}\n\n"
+        f"## The goal\n{goal.strip()}\n\n"
+        "## The decisions (the questions the build would ask)\n"
+        + "\n".join(f"- {x.strip()}" for x in decisions if str(x).strip())
+        + "\n\n## The permissions (what it may do without asking)\n"
+        + "\n".join(f"- {x.strip()}" for x in permissions if str(x).strip())
+        + f"\n\n## The escape hatch\n{escape_hatch.strip()}\n"
+    )
+    (d / "spec.md").write_text(text, encoding="utf-8")
+    return {"ok": True, "result": {"name": name, "bytes": len(text)}}
+
+
+def has_spec(name: str) -> bool:
+    try:
+        d = _dir(name)
+        p = d / "spec.md"
+        return p.exists() and len(p.read_text(encoding="utf-8")) > 80
+    except Exception:
+        return False
+
+
 def new_build(name: str, spec: str, steps: List[Dict[str, str]],
               budget_pence: float = 0) -> Dict[str, Any]:
     """Create a build. steps: [{title, check}] — each step has its own check.
