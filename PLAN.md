@@ -493,13 +493,21 @@ THE BUILD, IN ORDER
     CHECK: the loop chooses sync for a three-step build and batch for a
     long one, and the choice is recorded.
 
-[ ] gov.the_base_spec_is_shared — FOUND 5 Nov. Three builds taught
+[x] gov.the_base_spec_is_shared — DONE 5 Nov. Three builds taught
     three lessons: register the check you write; keep the check you
     write; one job per step is three steps. Each lesson lives in one
     build's spec, and no other build reads it. specs/base.md holds the
     decisions true of every build, and a build's spec appends to it,
     not replaces it. THE CHECK: gov.a_build_starts_from_the_base_spec —
     every spec contains the base's decisions.
+    DONE 5 Nov. write_spec composes one spec: goal, the five standing
+    decisions, the build's own, permissions, escape hatch. load_build
+    returns "" instead of raising on a missing spec. A runnable build
+    whose spec predates the base parks (after the terminal-status
+    return, so a finished build is not re-parked). The check passes in
+    the tier. Evidence: e7c58b0..98b5794, tier 58/1, red accord.invariants.
+    The part the wording did not cover — new_build bypasses write_spec —
+    is gov.new_build_bypasses_the_base, opened below.
 
 [ ] gov.a_build_that_asks_teaches_the_next_one — FOUND 5 Nov. A build
     that parks on a question adds a decision to its own spec — but only
@@ -507,6 +515,20 @@ THE BUILD, IN ORDER
     belong in the base spec, so the next build starts from it. THE
     CHECK: a build that parked has a decision in its spec that names
     the question it asked.
+
+[ ] gov.new_build_bypasses_the_base — FOUND 5 Nov. build.new_build
+    writes a spec directly, not through write_spec, so any build or probe
+    created with it has no base and parks on the gate. build_loop_stops was
+    patched around it; the next probe will not be. THE FIX: new_build
+    delegates to write_spec, or refuses without a base. THE CHECK:
+    gov.a_new_build_carries_the_base.
+
+[ ] gov.the_batch_is_a_policy_not_a_flag — FOUND 5 Nov. The night job sets
+    use_batch=True for every build, so a three-step build batches and the
+    loop's threshold is decoration. THE FIX: should_batch(steps) in
+    routers/build.py — len(steps) > 10 — called by both run_build and
+    night_build. Parked until a build is long enough to need it. THE CHECK:
+    gov.a_long_build_batches.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the

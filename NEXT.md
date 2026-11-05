@@ -151,11 +151,17 @@ PLAN.md is 383KB total, so later sections are not covered here.
   asynchronous bulk, not a batch of one. Short builds sync; long builds
   batch. The step-title rule and the cache are the levers.
 
-- [ ] gov.the_base_spec_is_shared — FOUND 5 Nov. specs/base.md holds
+- [x] gov.the_base_spec_is_shared — DONE 5 Nov. specs/base.md holds
   the decisions true of every build; a build's spec appends to it.
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — FOUND 5 Nov. A
   parked build's question, answer and decision go into the base spec.
+
+- [ ] gov.new_build_bypasses_the_base — new_build writes a spec without
+  the base. Delegate to write_spec. The check names it.
+
+- [ ] gov.the_batch_is_a_policy_not_a_flag — should_batch(steps) shared
+  by run_build and the night job. Parked until a build is long.
 
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
