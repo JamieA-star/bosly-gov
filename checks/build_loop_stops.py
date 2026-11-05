@@ -35,6 +35,26 @@ def main() -> int:
     build.new_build(NAME, "test spec", [
         {"title": "a step that asks", "check": "x", "check_id": ""},
     ])
+    # The probe's spec must carry the base, or the loop's gate parks it
+    # before the stub model is reached — and this check is about the
+    # question, not about the base.
+    build.write_spec(
+        NAME,
+        goal="probe: a build stops on a question",
+        decisions=["ask when the format is unknown"],
+        permissions=["stub the model"],
+        escape_hatch="park",
+    )
+    # The probe's spec must carry the base, or the loop's gate parks it
+    # before the stub model is reached — and this check is about the
+    # question, not about the base.
+    build.write_spec(
+        NAME,
+        goal="probe: a build stops on a question",
+        decisions=["ask when the format is unknown"],
+        permissions=["stub the model"],
+        escape_hatch="park",
+    )
 
     # Stub the model: it asks a question, as a real build would.
     def fake_ask(prompt, model=None, use_batch=False, build=""):
