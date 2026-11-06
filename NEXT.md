@@ -317,7 +317,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] [LIVE] ops.training_set — THE FRAME. The plan, the memory,
 - [ ] [LIVE] ops.hardware_plan — The box. And the constraint that
 - [ ] [LIVE] accord.invoice_mobile_layout — The line-item row in
-- [ ] [LIVE] ops.consultancy_design — The front door looks correct,
+- [x] [LIVE] ops.consultancy_design — The front door looks correct,
 - [ ] [LIVE] ops.consultancy_sales_sequence — How a lead becomes a
 - [ ] [LIVE] ops.consultancy_contract_terms — The foundation of the
 - [ ] [LIVE] ops.monitor_alert_fallback — bosly-monitor's only alert

@@ -3149,7 +3149,7 @@ Then add more.
     shape at least.
 
 
-[ ] [LIVE] ops.consultancy_design — The front door looks correct,
+[x] [LIVE] ops.consultancy_design — DONE 6 Nov. The front door looks correct,
     not striking. The structure and copy are settled; the gap is
     visual — proportion, rhythm, weight, motion. A page worth hiring
     from, not just a working page.
@@ -3171,6 +3171,17 @@ Then add more.
 
     Raised 10 Oct.
 
+
+    DONE 6 Nov. The page was rebuilt for hierarchy, not decoration. The
+    message first — "I help UK small businesses stop losing time and
+    money to admin", the 32% / 1-in-4 proof line, one CTA. One image
+    band, 32vh, scroll on mobile and fixed on desktop. About rewritten:
+    the environmental science degree leading, the value stated, Bosly as
+    evidence, the ADHD label gone. Three cards, one purple, a hover
+    border and a half-pixel lift. The form sits on its own image and now
+    emails contact@bosly.app with replyTo set to the enquirer — Reply
+    goes to the business owner. The site was in Accord, the SMTP was
+    already configured, and no browser-Claude subscription was needed.
 
 [ ] [LIVE] ops.consultancy_sales_sequence — How a lead becomes a
     client. Five stages, and the order matters. The instinct is to
