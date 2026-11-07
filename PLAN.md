@@ -509,7 +509,7 @@ THE BUILD, IN ORDER
     returns "" instead of raising on a missing spec. A runnable build
     whose spec predates the base parks (after the terminal-status
     return, so a finished build is not re-parked). The check passes in
-    the tier. Evidence: e7c58b0..98b5794, tier 58/1, red accord.invariants.
+    the tier. Evidence: e7c58b0..98b5794, tier 58/1 at the time; the red was accord.invariants, closed 7 Nov.
     The part the wording did not cover — new_build bypasses write_spec —
     is gov.new_build_bypasses_the_base, opened below.
 
@@ -564,7 +564,7 @@ THE BUILD, IN ORDER
     write_spec before new_build, and build_state_is_on_disk still asserts
     the restart rule, not the base rule. Built by the builder itself: one
     step, 80p budget, ticked on the check's output. Evidence: 60906bc,
-    tier 59/1, red accord.invariants.
+    tier 59/1 at the time; accord.invariants closed 7 Nov.
 
 [ ] gov.the_batch_is_a_policy_not_a_flag — FOUND 5 Nov. The night job sets
     use_batch=True for every build, so a three-step build batches and the
@@ -608,6 +608,17 @@ THE BUILD, IN ORDER
     agreement gains the step — print the imports and the anchored lines
     before writing — and the rule that a check's red is a message, not a
     stack. REVIEW, not code.
+
+[x] gov.accord_invariants_was_nobodys_item — FOUND 4 Nov, OPENED AND CLOSED 7 Nov.
+    The invoice month-filter test failed for three days and had no plan item:
+    it appeared only as the red in other items' evidence. THE BUG: the test
+    read .env.production with require("fs"); under ESM require threw, catch {}
+    returned "", and the test reported "no invoices for the founder" — a data
+    problem — when it could not read the config. Two days went to the route,
+    the middleware and the matcher. THE FIX: readFileSync imported, one readEnv
+    that logs its failure, the matcher reverted (the token bypass is the fix).
+    Evidence: Accord 4f99a24, tier 65/0. THE LESSON: a red with no item is a
+    red with no owner — open it, or it outlives the session that found it.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the

@@ -177,6 +177,10 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [x] gov.a_patcher_reads_before_it_writes — six misses in one session.
   The agreement gains the step: print imports and anchors before writing.
 
+- [x] gov.accord_invariants_was_nobodys_item — DONE 7 Nov. The red had no
+  plan item for three days. The cause was a swallowed require("fs") under
+  ESM, not the route. Tier 65/0.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's
