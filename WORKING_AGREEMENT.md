@@ -242,3 +242,11 @@ When a check is added, a memory entry written, or a plan item ticked,
 ask: does Gov now know something it didn't know before? If yes, the
 loop is working. If the same class of bug appears again and Gov's
 Copilot doesn't catch it, the loop is failing — not the Copilot.
+
+## The step a patcher owes (7 Nov)
+
+A patcher that inserts code prints the target's imports and the anchored lines before it writes. If it can't show them, it doesn't write.
+
+A check's red is a message, not a stack. A check that raises on its expected-red path hides its own red.
+
+Both were paid for on 5–7 November: six patchers written from remembered code, every one caught by an abort or a red check; and a check that raised KeyError instead of printing write_spec's refusal.

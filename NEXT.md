@@ -174,7 +174,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   proven. Still on the data disk: clear the external drive and point
   BACKUP_DIR at it. The check names it.
 
-- [ ] gov.a_patcher_reads_before_it_writes — six misses in one session.
+- [x] gov.a_patcher_reads_before_it_writes — six misses in one session.
   The agreement gains the step: print imports and anchors before writing.
 
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends

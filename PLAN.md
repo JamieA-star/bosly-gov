@@ -594,7 +594,7 @@ THE BUILD, IN ORDER
     it, and sync the corpus off-box. THE CHECK: the same restore check, plus
     a second path — the newest archive exists on the external drive.
 
-[ ] gov.a_patcher_reads_before_it_writes — FOUND 7 Nov. Six patchers in
+[x] gov.a_patcher_reads_before_it_writes — DONE 7 Nov. Six patchers in
     one session were written from remembered code: pathlib twice, a gate
     block, a write_spec anchor, a check's line 43, a remove_probe anchor.
     Every one was caught by an abort or a red check. The lesson exists in
@@ -603,6 +603,11 @@ THE BUILD, IN ORDER
     patcher prints the target's imports and the anchored lines before it
     writes. THE CHECK: review, not code — a patcher without the print is a
     patcher that may not write.
+    DONE 7 Nov. The fix is the working agreement, not a check: a lint on
+    28 untracked patchers would fail on history and get muted. The
+    agreement gains the step — print the imports and the anchored lines
+    before writing — and the rule that a check's red is a message, not a
+    stack. REVIEW, not code.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
