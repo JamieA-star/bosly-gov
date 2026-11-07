@@ -170,8 +170,9 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.a_spec_without_a_state_is_not_a_build — a spec.md with no
   state.json is not a build. The door refuses, or write_spec creates it.
 
-- [ ] gov.the_corpus_is_outside_git — the training set and the ICO record
-  has no deliberate backup. Test the restore. The check names it.
+- [~] gov.the_corpus_is_outside_git — backup fresh, cron logs, restore
+  proven. Still on the data disk: clear the external drive and point
+  BACKUP_DIR at it. The check names it.
 
 - [ ] gov.a_patcher_reads_before_it_writes — six misses in one session.
   The agreement gains the step: print imports and anchors before writing.

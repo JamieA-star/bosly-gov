@@ -582,14 +582,17 @@ THE BUILD, IN ORDER
     THE CHECK: gov.a_spec_without_a_state_is_not_a_build — a directory with
     spec.md and no state.json is not a build.
 
-[ ] gov.the_corpus_is_outside_git — FOUND 7 Nov. memory.json is the
-    training set and the ICO record: every lesson, every decision, every
-    build's lesson. It lives in /mnt/bosly/ and is protected only by
-    backup_full.sh and per-patch .bak files. The thing that would hurt most
-    to lose has the least deliberate protection. THE FIX: a documented
-    backup and restore path for the corpus, tested, not assumed. THE CHECK:
-    a restore from the latest backup produces the same item count and the
-    schema passes.
+[~] gov.the_corpus_is_outside_git — FOUND 7 Nov. PART DONE 7 Nov: the
+    backup is fresh, the cron is restored with a log, and the restore is
+    proven — gov.the_corpus_can_be_restored (245 items, clean ids, matches
+    live). THE FAILURE: the backup stopped on 4 Nov when pg_dump lost SELECT
+    on ProductToggle; the script failed loudly and nothing heard it. Grants
+    fixed, ALTER DEFAULT PRIVILEGES set, cron logs.
+    STILL OPEN: the backup sits on the same physical disk as the data — one
+    disk, one failure domain. The founder has an external drive; it needs
+    clearing first. THE FIX: clear the drive, mount it, point BACKUP_DIR at
+    it, and sync the corpus off-box. THE CHECK: the same restore check, plus
+    a second path — the newest archive exists on the external drive.
 
 [ ] gov.a_patcher_reads_before_it_writes — FOUND 7 Nov. Six patchers in
     one session were written from remembered code: pathlib twice, a gate

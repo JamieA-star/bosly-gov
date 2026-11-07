@@ -83,6 +83,29 @@ The corpus is the system. A build writes to it, the spec reads from it, and
 the rule keeps it citeable. The cap keeps it honest. And a patcher reads the
 file before it writes — six misses is not a lesson, it is a step.
 
+## The backup was dead, and nothing heard it
+
+The session's second half was protection, and it found a real failure. The
+nightly full backup stopped on 4 November: `pg_dump` lost `SELECT` on
+`ProductToggle`, a table created without a grant. The script's own guard
+caught it — it exits 1 on a dump under 1 KB — and the cron entry that ran
+it was gone, and the output went nowhere. Three days of no backup, and the
+only evidence was a file listing that stopped on the 4th.
+
+The grants are fixed (`GRANT SELECT ON ALL TABLES`, and `ALTER DEFAULT
+PRIVILEGES` so the next table doesn't break it). The cron is restored and
+now logs to `backups/backup.log`. `restore_corpus.py` restores the corpus
+from an archive, refuses a smaller backup, keeps a `.bak` first, and has a
+`--to` path that never touches live — proven against the 7 November
+archive: 245 items, clean ids, matches live. And
+`gov.the_corpus_can_be_restored` goes red when the newest archive is over
+48 hours old, which is the check that would have caught 4 November.
+
+What remains is not code. The backup is on the same physical disk as the
+data — one volume, one failure domain. The founder has an external drive;
+it needs clearing before it can hold the corpus and the full backup. That
+is the item, and it is marked in progress with that shape.
+
 ## What's next
 
 1. `gov.a_spec_without_a_state_is_not_a_build` — the door refuses, or
