@@ -18,11 +18,14 @@ Run:
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
 KNOWLEDGE_ROOT = Path("/mnt/bosly/bosly-data/copilot-knowledge")
 REQUIRED_FIELDS = ["id", "project_slug", "item_type", "content"]
+ID_PATTERN = re.compile(r"^(pattern|decision|fact|incident|session|build)-\d{8}-[a-z0-9][a-z0-9-]*$")
+TYPES = ("pattern", "decision", "fact", "incident")
 
 
 def check_file(path: Path) -> tuple[int, int, list[str]]:
@@ -43,6 +46,9 @@ def check_file(path: Path) -> tuple[int, int, list[str]]:
         missing = [f for f in REQUIRED_FIELDS if f not in item]
         if missing:
             malformed.append(f"{path.name}[{i}]: missing {', '.join(missing)}")
+        elif not ID_PATTERN.match(str(item.get("id", ""))):
+            malformed.append(f"{path.name}[{i}]: id {item.get('id')!r} is not "
+                             f"{{type}}-{{YYYYMMDD}}-{{slug}}")
 
     return (len(data), len(malformed), malformed)
 
@@ -80,6 +86,19 @@ def main() -> int:
         for e in all_errors:
             print(f"  {e}")
         print("")
+
+    # Synthetic: a hash id must be rejected. A check that only passes
+    # because the memory happens to be clean is a snapshot, not a check.
+    fake = Path("/tmp/__memory_schema_probe.json")
+    fake.write_text(json.dumps([{"id": "e04324e52ccbddd36a06728f",
+                                  "project_slug": "probe", "item_type": "decision",
+                                  "content": "x"}]), encoding="utf-8")
+    _, fake_bad, _ = check_file(fake)
+    fake.unlink()
+    if fake_bad == 0:
+        print("FAIL: a hash id was accepted; the id rule is not enforced")
+        return 1
+    print("PASS: a hash id is rejected")
 
     print(f"SUMMARY: {len(memory_files)} files, {total_items} items, {total_malformed} malformed")
     print("")
