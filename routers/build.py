@@ -257,6 +257,14 @@ def load_build(name: str) -> Dict[str, Any]:
     """The spec, the steps and the state, in one read."""
     d = _dir(name)
     if not (d / "state.json").exists():
+        # A directory with a spec and no state is a different thing from a
+        # name that does not exist. Say which: a spec without a state is
+        # not a build, and the fix is new_build.
+        if (d / "spec.md").exists():
+            return {"ok": False,
+                    "error": f"no build {name!r} \u2014 a spec exists but no "
+                             f"state.json; a spec without a state is not a "
+                             f"build. Call new_build."}
         return {"ok": False, "error": f"no build {name!r}"}
     return {
         "ok": True,

@@ -126,6 +126,9 @@ projects:
         - id: gov.a_build_starts_from_the_base_spec
           severity: high
           command: python3 checks/a_build_starts_from_the_base_spec.py
+        - id: gov.a_spec_without_a_state_is_not_a_build
+          severity: high
+          command: python3 checks/a_spec_without_a_state_is_not_a_build.py
         - id: gov.the_corpus_can_be_restored
           severity: high
           command: python3 checks/the_corpus_can_be_restored.py
