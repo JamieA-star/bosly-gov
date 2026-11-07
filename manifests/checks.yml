@@ -126,6 +126,9 @@ projects:
         - id: gov.a_build_starts_from_the_base_spec
           severity: high
           command: python3 checks/a_build_starts_from_the_base_spec.py
+        - id: gov.the_corpus_can_be_restored
+          severity: high
+          command: python3 checks/the_corpus_can_be_restored.py
         - id: gov.the_spec_inherits_universal_decisions
           severity: high
           command: python3 checks/the_spec_inherits_universal_decisions.py
