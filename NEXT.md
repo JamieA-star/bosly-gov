@@ -167,9 +167,6 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — should_batch(steps) shared
   by run_build and the night job. Parked until a build is long.
 
-- [ ] gov.build_quote_is_missing — a budget with no quote behind it.
-  Price the steps before the build runs. The check names it.
-
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

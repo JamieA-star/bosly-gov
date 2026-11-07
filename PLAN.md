@@ -324,7 +324,7 @@ THE BUILD, IN ORDER
     which is why the logging came first.
 
 
-[ ] gov.overnight_build_uses_batch — BLOCKED 3 Nov (needs the build loop). The build loop runs
+[ ] gov.overnight_build_uses_batch — SUPERSEDED 7 Nov by gov.the_batch_is_a_policy_not_a_flag. Kept for its catch: batch cannot do multi-turn tool use inside one entry; each turn is batched, not the whole build. Do not build this as a separate item. The build loop runs
     at night; nothing is waiting on the response. Route each turn
     through the provider's batch API for 50% off, stacking with the
     cache. THE CATCH: batch cannot do multi-turn tool use inside one
@@ -448,6 +448,10 @@ THE BUILD, IN ORDER
     and real_turns_per_step will read them. THE CHECK: after a second
     attributed build, the quote's turns-per-step differs from the
     default 5 — it learned.
+    NOTE 7 Nov: the quote exists — build_quote in routers/tools.py:1738,
+    backed by usage.quote with real_turns_per_step. An item opened 5 Nov
+    saying it was missing was wrong (a grep of one file) and is closed.
+    What is open is the learning: the next attributed build proves it.
 
 [ ] ops.scout_google_after_rank — FOUND 4 Nov. The Google pass waits
     for a paid key. It runs AFTER the ranker on the top N, so reviews
@@ -568,13 +572,6 @@ THE BUILD, IN ORDER
     routers/build.py — len(steps) > 10 — called by both run_build and
     night_build. Parked until a build is long enough to need it. THE CHECK:
     gov.a_long_build_batches.
-
-[ ] gov.build_quote_is_missing — FOUND 5 Nov. The handover says
-    build_quote prices a build from its steps before it runs. The source has
-    budget_rule only; a build's budget is a number with no quote behind it.
-    The 5 Nov new_build build was given 80p by hand. THE FIX: a quote
-    function that prices steps before the build runs, and a budget derived
-    from it. THE CHECK: gov.a_build_has_a_quote.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
