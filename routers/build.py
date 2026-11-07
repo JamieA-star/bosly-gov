@@ -62,6 +62,31 @@ def _load_base_spec() -> List[str]:
 
 MEMORY = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/memory.json")
 
+UNIVERSAL_CAP = 12
+
+
+def _load_universal_decisions() -> List[str]:
+    """The decisions marked true of every build, newest first, capped.
+
+    A decision is universal when the founder sets metadata_json.universal
+    on it. A build writes its lesson; the founder decides whether it is
+    true beyond that build. The cap keeps the spec from becoming a corpus
+    dump: past UNIVERSAL_CAP, a decision must be promoted to the base or
+    retired."""
+    if not MEMORY.exists():
+        return []
+    try:
+        data = json.loads(MEMORY.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    marked = [e for e in data
+              if e.get("item_type") == "decision"
+              and (e.get("metadata_json") or {}).get("universal") is True
+              and (e.get("content") or "").strip()]
+    marked.sort(key=lambda e: e.get("created_at", ""), reverse=True)
+    return [e["content"].strip() for e in marked[:UNIVERSAL_CAP]]
+
+
 LESSON_STEP = {
     "title": "Write the lesson",
     "check": "the corpus has a build entry for this build",
@@ -122,13 +147,20 @@ def write_spec(name: str, goal: str, decisions: List[str],
     d = _dir(name)
     d.mkdir(parents=True, exist_ok=True)
     _base = _load_base_spec()
+    _universal = _load_universal_decisions()
     text = (
         f"# Build spec — {name}\n\n"
         f"## The goal\n{goal.strip()}\n\n"
         "## The standing decisions (inherited from the base)\n"
         + "\n".join(f"- {x}" for x in _base)
         + "\n\n"
-        "## The decisions (the questions the build would ask)\n"
+        + (
+            ("## The decisions that are true of every build\n"
+             + "\n".join(f"- {x}" for x in _universal)
+             + "\n\n")
+            if _universal else ""
+        )
+        + "## The decisions (the questions the build would ask)\n"
         + "\n".join(f"- {x.strip()}" for x in decisions if str(x).strip())
         + "\n\n## The permissions (what it may do without asking)\n"
         + "\n".join(f"- {x.strip()}" for x in permissions if str(x).strip())
