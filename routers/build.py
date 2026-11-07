@@ -60,6 +60,44 @@ def _load_base_spec() -> List[str]:
             out.append(s[2:].strip())
     return out
 
+MEMORY = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/memory.json")
+
+
+def record_lesson(name: str, content: str, item_type: str = "build") -> Dict[str, Any]:
+    """A build's lesson, written to the corpus in the same shape the founder keeps.
+
+    The id is dated and names the build, so the entry is citeable from the
+    build's spec, a commit, or the next session's handover. The content is
+    the generalisation, not the story — a lesson true beyond this build.
+    """
+    if not (content or "").strip():
+        return {"ok": False, "error": "content required: a lesson is a generalisation, not silence"}
+    if item_type not in ("build", "pattern", "decision", "fact", "incident"):
+        return {"ok": False, "error": f"unknown item_type {item_type!r}"}
+    stem = (name or "").strip().strip("-_").replace("_", "-").lower()
+    if not stem or not stem.replace("-", "").isalnum():
+        return {"ok": False, "error": "build name must be a bare alnum stem with - or _"}
+    now = _now()
+    day = now[:10].replace("-", "")
+    entry_id = f"{item_type}-{day}-{stem}"
+    try:
+        data = json.loads(MEMORY.read_text(encoding="utf-8")) if MEMORY.exists() else []
+    except Exception as e:
+        return {"ok": False, "error": f"memory unreadable: {e}"}
+    if any(e.get("id") == entry_id for e in data):
+        return {"ok": False, "error": f"entry {entry_id!r} already exists"}
+    data.append({
+        "id": entry_id,
+        "project_slug": "bosly-gov",
+        "item_type": item_type,
+        "content": content.strip(),
+        "metadata_json": {"build": name},
+        "created_at": now,
+        "updated_at": now,
+    })
+    MEMORY.parent.mkdir(parents=True, exist_ok=True)
+    MEMORY.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    return {"ok": True, "result": {"id": entry_id, "total": len(data)}}
 
 def write_spec(name: str, goal: str, decisions: List[str],
                permissions: List[str], escape_hatch: str) -> Dict[str, Any]:
