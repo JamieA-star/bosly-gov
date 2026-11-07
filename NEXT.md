@@ -167,6 +167,15 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — should_batch(steps) shared
   by run_build and the night job. Parked until a build is long.
 
+- [ ] gov.a_spec_without_a_state_is_not_a_build — a spec.md with no
+  state.json is not a build. The door refuses, or write_spec creates it.
+
+- [ ] gov.the_corpus_is_outside_git — the training set and the ICO record
+  has no deliberate backup. Test the restore. The check names it.
+
+- [ ] gov.a_patcher_reads_before_it_writes — six misses in one session.
+  The agreement gains the step: print imports and anchors before writing.
+
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry only appends
   to the end of PLAN.md; it cannot attach an update to the item it
   names, so a status update lands 7,000 lines from the item it's

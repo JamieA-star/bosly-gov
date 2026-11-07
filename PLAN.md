@@ -573,6 +573,34 @@ THE BUILD, IN ORDER
     night_build. Parked until a build is long enough to need it. THE CHECK:
     gov.a_long_build_batches.
 
+[ ] gov.a_spec_without_a_state_is_not_a_build — FOUND 7 Nov. write_spec
+    creates a build directory and a spec.md, but no state.json. A spec can
+    exist for a thing that is not a build; load_build returns no result and
+    a check that reads it crashes. Found when the universal-decisions check
+    raised KeyError instead of reporting red. THE FIX: the door refuses a
+    spec without a state, or write_spec creates the state with status "new".
+    THE CHECK: gov.a_spec_without_a_state_is_not_a_build — a directory with
+    spec.md and no state.json is not a build.
+
+[ ] gov.the_corpus_is_outside_git — FOUND 7 Nov. memory.json is the
+    training set and the ICO record: every lesson, every decision, every
+    build's lesson. It lives in /mnt/bosly/ and is protected only by
+    backup_full.sh and per-patch .bak files. The thing that would hurt most
+    to lose has the least deliberate protection. THE FIX: a documented
+    backup and restore path for the corpus, tested, not assumed. THE CHECK:
+    a restore from the latest backup produces the same item count and the
+    schema passes.
+
+[ ] gov.a_patcher_reads_before_it_writes — FOUND 7 Nov. Six patchers in
+    one session were written from remembered code: pathlib twice, a gate
+    block, a write_spec anchor, a check's line 43, a remove_probe anchor.
+    Every one was caught by an abort or a red check. The lesson exists in
+    memory (pattern-20261105-a-patcher-reads-the-file-before-it-writes) and
+    was not followed. THE FIX: the working agreement gains the step — every
+    patcher prints the target's imports and the anchored lines before it
+    writes. THE CHECK: review, not code — a patcher without the print is a
+    patcher that may not write.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
