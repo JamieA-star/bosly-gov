@@ -62,6 +62,12 @@ def _load_base_spec() -> List[str]:
 
 MEMORY = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/memory.json")
 
+LESSON_STEP = {
+    "title": "Write the lesson",
+    "check": "the corpus has a build entry for this build",
+    "check_id": "gov.a_build_writes_its_lesson",
+}
+
 
 def record_lesson(name: str, content: str, item_type: str = "build") -> Dict[str, Any]:
     """A build's lesson, written to the corpus in the same shape the founder keeps.
@@ -127,6 +133,10 @@ def write_spec(name: str, goal: str, decisions: List[str],
         + "\n\n## The permissions (what it may do without asking)\n"
         + "\n".join(f"- {x.strip()}" for x in permissions if str(x).strip())
         + f"\n\n## The escape hatch\n{escape_hatch.strip()}\n"
+        + "\n## The lesson\n"
+        + "After the last step ticks, call record_lesson(name, the generalisation, \"build\").\n"
+        + "What is true beyond this build? Not the story. If it taught nothing, say so \u2014\n"
+        + "an honest empty lesson is better than a fake one.\n"
     )
     (d / "spec.md").write_text(text, encoding="utf-8")
     return {"ok": True, "result": {"name": name, "bytes": len(text)}}
@@ -188,6 +198,13 @@ def new_build(name: str, spec: str, steps: List[Dict[str, str]],
     gap = base_gap(name)
     if gap:
         return {"ok": False, "error": gap}
+    # The lesson is not a choice: every build ends by writing what it
+    # learned to the corpus. If the caller's last step already names the
+    # lesson check, keep it; otherwise append it. A caller who passes the
+    # lesson check with a different check_id is overridden, not obeyed.
+    steps = list(steps or [])
+    if not steps or steps[-1].get("check_id") != LESSON_STEP["check_id"]:
+        steps = steps + [dict(LESSON_STEP)]
     d.mkdir(parents=True, exist_ok=True)
     _write(d / "steps.json", {"steps": steps})
     _write(d / "state.json", {
