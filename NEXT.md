@@ -240,11 +240,11 @@ PLAN.md is 383KB total, so later sections are not covered here.
   user's values are empty/false. Fix is open: wire the writes or
   retire the fields.
 
-- [ ] gov.activity_event_write_dead — ActivityEvent has a model and a
+- [x] gov.activity_event_write_dead — ActivityEvent has a model and a
   route, zero rows ever written. ActivityLog only records
   chat_interaction. No record of non-chat actions for any user.
 
-- [ ] gov.no_general_activity_record — The umbrella finding over the
+- [x] gov.no_general_activity_record — The umbrella finding over the
   two items above: the app has no way to answer "are they using the
   app?". Do not build until the wire-vs-retire call on onboarding
   state is made.
