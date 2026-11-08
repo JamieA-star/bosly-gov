@@ -22,10 +22,14 @@ def main() -> int:
                             [{"title": "the one step", "check": "x",
                               "check_id": "gov.memory_schema"}])
         steps = build.load_build(NAME)["result"]["steps"]
-        last = steps[-1] if steps else {}
-        good = (bool(r.get("ok")) and len(steps) == 2
-                and last.get("check_id") == "gov.a_build_writes_its_lesson")
-        print(f"  the lesson step is appended: {good}  ({[s.get('title') for s in steps]})")
+        ids = [s.get("check_id") for s in steps]
+        # The door appends the fixed tail: deploy, then the lesson. Assert the
+        # shape, not a count, so adding a step at the door does not silently
+        # break this check -- and removing one does not silently pass it.
+        good = (bool(r.get("ok"))
+                and ids[-2:] == ["gov.deploy_smoke_passes",
+                                 "gov.a_build_writes_its_lesson"])
+        print(f"  steps end [deploy, lesson]: {good}  ({ids})")
         ok = ok and good
     finally:
         shutil.rmtree(D, ignore_errors=True)

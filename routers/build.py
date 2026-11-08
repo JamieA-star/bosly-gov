@@ -93,6 +93,12 @@ LESSON_STEP = {
     "check_id": "gov.a_build_writes_its_lesson",
 }
 
+DEPLOY_STEP = {
+    "title": "Deploy",
+    "check": "the smoke test passes after deploy",
+    "check_id": "gov.deploy_smoke_passes",
+}
+
 
 def record_lesson(name: str, content: str, item_type: str = "build") -> Dict[str, Any]:
     """A build's lesson, written to the corpus in the same shape the founder keeps.
@@ -230,13 +236,16 @@ def new_build(name: str, spec: str, steps: List[Dict[str, str]],
     gap = base_gap(name)
     if gap:
         return {"ok": False, "error": gap}
-    # The lesson is not a choice: every build ends by writing what it
-    # learned to the corpus. If the caller's last step already names the
-    # lesson check, keep it; otherwise append it. A caller who passes the
-    # lesson check with a different check_id is overridden, not obeyed.
+    # The last two steps are fixed: deploy, then write the lesson. A build
+    # that never deploys is not live; a lesson is written only for a build
+    # that deployed. Strip any trailing copies a caller passed, then append
+    # both in order — a caller cannot put the lesson before the deploy, and
+    # cannot omit either.
     steps = list(steps or [])
-    if not steps or steps[-1].get("check_id") != LESSON_STEP["check_id"]:
-        steps = steps + [dict(LESSON_STEP)]
+    tail_ids = {DEPLOY_STEP["check_id"], LESSON_STEP["check_id"]}
+    while steps and steps[-1].get("check_id") in tail_ids:
+        steps.pop()
+    steps = steps + [dict(DEPLOY_STEP), dict(LESSON_STEP)]
     d.mkdir(parents=True, exist_ok=True)
     _write(d / "steps.json", {"steps": steps})
     _write(d / "state.json", {

@@ -141,6 +141,12 @@ projects:
         - id: gov.a_build_writes_its_lesson
           severity: high
           command: python3 checks/a_build_writes_its_lesson.py
+        - id: gov.a_build_deploys_itself_last
+          severity: high
+          command: python3 checks/a_build_deploys_itself_last.py
+        - id: gov.deploy_smoke_passes
+          severity: high
+          command: python3 checks/deploy_smoke_passes.py
         - id: gov.a_new_build_carries_the_base
           severity: high
           command: python3 checks/a_new_build_carries_the_base.py
