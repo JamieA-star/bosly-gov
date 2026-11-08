@@ -720,24 +720,27 @@ THE BUILD, IN ORDER
     and the app cannot say whether they explored or stalled, because the
     field that would show it has never been written. Fix is open: wire the
     writes, or retire the fields and the reads that trust them.
+    PART DONE 8 Nov: decision is wire. The client tracks pill usage in localStorage only; no server route receives a step, so onboardingStep/onboardingComplete stay unwritten. STILL OPEN: add a server write path that sets them at the step-complete moment (analytics/track already accepts onboarding_step_completed as an event — the user field is separate).
 
 
-[ ] gov.activity_event_write_dead — FOUND 26 Oct. ActivityEvent has a
+[x] gov.activity_event_write_dead — FOUND 26 Oct. ActivityEvent has a
     model and a route (app/api/activity/log/route.ts) and zero rows ever.
     ActivityLog, meanwhile, records exactly one action: chat_interaction
     (41 rows), so it is a chat counter, not a general activity log. The
     app has no record of non-chat actions — calendar, contacts, onboarding
     — for any user. A check that "if an activity route exists, it writes"
     would catch this class.
+    CLOSED 8 Nov: retired. The route never awaited and returned {logged:true} on failure; logActivity had zero callers. Both files deleted (backed up in scratch/accord-retired-20261108/), tsc clean. ActivityEvent model remains, marked unused — drop in the next migration.
 
 
-[ ] gov.no_general_activity_record — FOUND 26 Oct. The three write-dead
+[x] gov.no_general_activity_record — FOUND 26 Oct. The three write-dead
     findings above share a shape: the app's own record of what a user did
     is absent. Not a defect in one route, a gap in the system: "are they
     using the app?" has no system that can answer it. This item exists so
     the question is not lost; it may resolve into the two above, or into
     a small purpose-built record. Do not build until the wire-vs-retire
     call on onboarding_state is made.
+    CLOSED 8 Nov: resolved. The general recorder exists — app/api/analytics/track/route.ts, with a real vocabulary (page_view, invoice_created, contact_created, onboarding_step_completed, …) and a rate limit. The gap was that activity/log was mistaken for it. ActivityEvent retires; analytics/track is the record.
 
 
 [ ] [LIVE] accord.vault_managed_split — BUILT 21 Oct. The data
