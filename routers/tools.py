@@ -633,7 +633,7 @@ def plan_write(ids=None, target: str = "/home/bosly_accord/bosly-gov/NEXT.md",
     if not tgt.exists():
         return {"ok": False, "error": f"target not found: {target}"}
 
-    pat = _re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
+    pat = _re.compile(r"^\[([ x~])\]\s+(?:\[(LIVE|GATED|BLOCKED|DECISION)\]\s+)?([\w.\-]+)")
     by_id = {}
     for line in plan.read_text(encoding="utf-8").splitlines():
         m = pat.match(line)
@@ -733,7 +733,7 @@ def plan_query(status: str = "open", missing_from: str = "", brief: bool = False
             return {"ok": False, "error": f"missing_from not found: {missing_from}"}
         text_other = f.read_text(encoding="utf-8")
 
-    pat = _re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
+    pat = _re.compile(r"^\[([ x~])\]\s+(?:\[(LIVE|GATED|BLOCKED|DECISION)\]\s+)?([\w.\-]+)")
     rows = []
     # One source for open/active/parked; the archive for done/all. The
     # done items moved to PLAN-archive.md on 3 Nov and nothing else sees
@@ -749,10 +749,10 @@ def plan_query(status: str = "open", missing_from: str = "", brief: bool = False
         m = pat.match(line)
         if not m:
             continue
-        marker, pid = m.group(1), m.group(2)
+        marker, tag, pid = m.group(1), m.group(2), m.group(3)
         is_open = marker in (" ", "~")
-        is_live = "[LIVE]" in line
-        is_gated = "[GATED]" in line
+        is_live = tag == "LIVE"
+        is_gated = tag == "GATED"
         if want == "active" and (not is_open or is_live or is_gated):
             continue
         if want == "parked" and not (is_live or is_gated):

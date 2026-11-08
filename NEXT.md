@@ -98,7 +98,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.overnight_build_uses_batch — FOUND 3 Nov. The night build's
   turns go through the batch API for 50% off. Turn by turn, batched.
 
-- [ ] gov.scenario_compilation — FOUND 3 Nov. When a build repeats,
+- [x] gov.scenario_compilation — FOUND 3 Nov. When a build repeats,
   store the procedure. The model plans the first; the procedure runs
   the second.
 
@@ -112,7 +112,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   manifest, and the stop-and-ask. Three tools. Next: the invoice chips
   as the first build; then the night job.
 
-- [ ] gov.a_build_deploys_itself_last — FOUND 4 Nov. The last step of
+- [x] gov.a_build_deploys_itself_last — FOUND 4 Nov. The last step of
   a build is the deploy, with the smoke test as its check; a failed
   smoke test parks rather than retries. Proven four times on the first
   build: right on disk, old on the server.
@@ -167,7 +167,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — should_batch(steps) shared
   by run_build and the night job. Parked until a build is long.
 
-- [ ] gov.a_spec_without_a_state_is_not_a_build — a spec.md with no
+- [x] gov.a_spec_without_a_state_is_not_a_build — a spec.md with no
   state.json is not a build. The door refuses, or write_spec creates it.
 
 - [~] gov.the_corpus_is_outside_git — backup fresh, cron logs, restore

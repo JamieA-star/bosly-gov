@@ -515,38 +515,38 @@ verbatim. The live plan is PLAN.md. plan_query reads both.
     finance route (encrypted client-side, the honest boundary).
 
 
-[x] Step 1 — Create bosly-1.0/tests/invariants/ (flat, no
+[x] step-1 — Create bosly-1.0/tests/invariants/ (flat, no
     subdirectories).
 
 
-[x] Step 2 — Write env-public-vars.ts. Scan client code for
+[x] step-2 — Write env-public-vars.ts. Scan client code for
     process.env.NEXT_PUBLIC_* references, compare against
     .env.production and .env.example, fail if any referenced
     variable is missing from either.
 
 
-[x] Step 3 — Write bosly-1.0/scripts/test-fast.ts. Find all
+[x] step-3 — Write bosly-1.0/scripts/test-fast.ts. Find all
     tests/invariants/*.ts, run via npx tsx, aggregate results,
     exit non-zero on fail.
 
 
-[x] Step 4 — Create bosly-gov-v4/manifests/checks.yml. One file
+[x] step-4 — Create bosly-gov-v4/manifests/checks.yml. One file
     listing both projects' fast-tier checks. Accord calls
     test-fast.ts, Keep calls run-tests.sh.
 
 
-[x] Step 5 — Create bosly-gov-v4/runners/run_checks.py. Reads the
+[x] step-5 — Create bosly-gov-v4/runners/run_checks.py. Reads the
     manifest, runs each check, writes JSON reports to
     /mnt/bosly/bosly-data/reports/YYYY-MM-DD/, prints a summary.
 
 
-[x] Step 6 — Test all of it manually. Prove the pipeline works.
+[x] step-6 — Test all of it manually. Prove the pipeline works.
 
 
-[x] Step 7 — Add one cron entry: nightly at 5:00am.
+[x] step-7 — Add one cron entry: nightly at 5:00am.
 
 
-[x] Step 8 — Add email-on-failure. Gov reads SMTP creds from
+[x] step-8 — Add email-on-failure. Gov reads SMTP creds from
     .env.production, sends via Python's smtplib.
 
 ================================================================
@@ -1071,46 +1071,6 @@ that has actually happened.
     uses, not at the path someone guessed.
 
 
-[x] ops.backups — DONE 20 Oct. Four backup holes found, all closed.
-
-    WHAT WAS FOUND:
-      - The Postgres dump of the Accord database had been EMPTY for
-        at least five days. Every bosly-db-*.gz was 20 bytes — a
-        gzipped nothing. Cause: sudo -u postgres needs a password
-        cron cannot give, and '2>/dev/null || true' turned the
-        failure into a success.
-      - The data tarball was 370 MB per day, 98% of it node_modules
-        (1.1 GB of npm packages), backed up seven times.
-      - The governor state (things.db, memory, lead CSVs, capsules)
-        had no backup at all.
-      - The state backup's cron line was misspelled three times
-        (backup_stat.py), each time silently.
-
-    WHAT WAS FIXED:
-      - Postgres: a bosly_accord role with peer auth and grants on
-        the bosly database, default privileges for future tables.
-        pg_dump -d bosly now works without sudo, under cron. The
-        dump is 126 KB. No '|| true'; a dump under 1 KB exits
-        non-zero.
-      - The data tarball excludes node_modules, _snapshots, test
-        output, and logs: 370 MB -> 8.1 MB.
-      - scripts/backup_state.py discovers the governor state by
-        rule, not by list — a new memory.json, chat.json, .db, or
-        capsule is covered without editing the script. Every file
-        checked non-empty; every .db gets PRAGMA quick_check. 14-case
-        self-test. Keeps 14 days.
-      - Both scripts live in the repo; the cron points at them.
-      - Backup dir: 4.1 GB -> 74 MB.
-
-    THE LESSON: '2>/dev/null || true' is how a backup dies silently.
-    A backup that has never been restored is a hope, not a backup.
-    Every backup step must fail loudly, and every backup must be
-    checked for size and integrity — not just for having run.
-
-    STILL TO DO:
-      - Test a restore. The dump opens, the things.db opens, but
-        nothing has been restored into a scratch database. That is
-        the next session's first job.
 
 
 [x] ops.backups — DONE 20 Oct. Four backup holes found, all closed.
@@ -2040,61 +2000,6 @@ that has actually happened.
     whatever-it-does.
 
 
-[x] session-20261011-orphan-cleanup — DONE 11 Oct. A day that began
-    with SEO for the new pages and became 75 routes removed from the
-    codebase. Kept as a capsule: the method is reusable.
-
-    THE ARC:
-
-    1. The SEO (morning). The sitemap and llms.txt did not mention
-       /consulting or the five waiting-well routes. Both landing
-       pages had no title or description. Fixed — the sitemap now
-       lists them, llms.txt describes the consultancy and Waiting
-       Well for AI crawlers, and both pages carry a title, a
-       description, and Open Graph tags.
-
-    2. The orientation (midday). ops.consultancy sat below the top
-       five and was invisible; moved the whole entry to the top of
-       the live list. Then added an IN PROGRESS section — the [~]
-       items were not shown at all, so the work in flight was
-       invisible. The orientation now shows in-progress first, then
-       live, then gated.
-
-    3. The orphan cleanup (afternoon). gov.orphaned_routes found 75
-       routes with no caller. Worked down cluster by cluster: grep
-       for callers, archive if none. Nine clusters, 75 routes, ten
-       commits. Zero remain. The check is registered in the fast
-       tier (16 checks now) and fails on a new orphan.
-
-    THE FINDINGS:
-
-      Four causes of an orphan, all a rebuild leaving the old API
-      behind. Verb-in-path became REST (contacts/create to POST
-      /api/contacts). Features were rebuilt (inbox actions,
-      onboarding, briefings). The workflow engine absorbed routes
-      into inline functions (bosly/relationships, wellness-check).
-      And one route — api/config — became an orphan as a consequence
-      of archiving its own callers, which the check caught at once.
-
-      One check bug: lib/public-routes.ts counted as a caller,
-      because the scan read lib/ for route paths and a policy entry
-      looked like a call. It hid three orphans.
-
-      One new list: DELIBERATE_NO_CALLER. Six finance routes — gifts,
-      mtd, overview, pension, status, tax-position — have no caller
-      but are future features, built and waiting. Not dead.
-
-    THE METHOD, for the next time: one cluster at a time. grep for
-    callers. Archive if clean. tsc. Check the count. Commit. 75
-    routes removed, nothing broken, tsc clean throughout.
-
-    FOR THE NEXT SESSION: accord.typecheck_clean and
-    accord.doc_consistency_audit are both likely superseded — one by
-    gov.tsconfig_excludes, the other by gov.claim_invariants. Read
-    them first; if superseded, tick with a cross-reference.
-
-    LESSONS (memory): pattern-20261011-an-orphan-route-is-dead-
-    whatever-it-does.
 
 
 [x] session-20261010-consultancy-front-door — DONE 10 Oct. The second
@@ -3189,11 +3094,6 @@ that has actually happened.
     the /usr/local/bin/bosly-* audit on 17 Sept.
 
 
-[x] ops.scripts_dir_audit (Accord) — DONE 21 Sept. scripts/ had
-    25 files across multiple eras. Three live (test-fast.ts,
-    migrate.sh, postbuild.sh). Retired 16 to legacy/scripts/.
-    Deleted __pycache__/ and three 1-byte .bak files. Same
-    pattern as the /usr/local/bin/bosly-* audit on 17 Sept.
 
 
 [x] ops.crlf_line_endings — DONE 23 Sept. 57 files had CRLF line endings and/or UTF-8 BOMs. All normalised to LF, no BOMs. Most importantly: deploy.sh and restore-bosly.sh had CRLF, so their shebangs were '#!/bin/bash\r' — the kernel reads that as 'bash\r' and refuses to run them. Same class as the bosly-monitor shebang bug. Verified: zero CRLF, zero BOMs, typecheck clean. Some shell scripts in the repo

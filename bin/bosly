@@ -156,22 +156,16 @@ echo ""
 
 # Top open plan items
 echo "----------------------------------------------------------------"
-echo "TOP OPEN PLAN ITEMS"
+echo "TODO — what to do next"
 echo "----------------------------------------------------------------"
 echo ""
-if [ -f "$PLAN" ]; then
-  echo "IN PROGRESS:"
-  grep -n "^\[~\]" "$PLAN" | head -8 | sed 's/^/  /'
-  echo ""
-  echo "LIVE:"
-  grep -n "^\[ \] \[LIVE\]" "$PLAN" | head -5 | sed 's/^/  /'
-  echo ""
-  echo "GATED:"
-  grep -n "^\[ \] \[GATED\]" "$PLAN" | head -5 | sed 's/^/  /'
+if [ -f "$GOV_DIR/TODO.md" ]; then
+  head -40 "$GOV_DIR/TODO.md" | tail -n +2
 else
-  echo "(PLAN.md not found)"
+  echo "(TODO.md not found — run: python3 scripts/gen_todo.py)"
 fi
 echo ""
+echo "Full TODO: $GOV_DIR/TODO.md"
 echo "Full plan: $PLAN"
 echo ""
 

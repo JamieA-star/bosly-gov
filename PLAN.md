@@ -331,15 +331,17 @@ THE BUILD, IN ORDER
     entry, so the loop still runs turn by turn — it is each turn that is
     batched, not the whole build. THE CHECK: a batch build completes and
     its cost is logged at half the synchronous equivalent.
+    STILL OPEN 8 Nov: superseded in design by gov.the_batch_is_a_policy_not_a_flag; neither is proven — no overnight build has run.
 
 
-[ ] gov.scenario_compilation — BLOCKED 3 Nov (needs the batch and the build loop). THE LONG GAME. When a build
+[x] gov.scenario_compilation — BLOCKED 3 Nov (needs the batch and the build loop). THE LONG GAME. When a build
     pattern repeats — a Keep fix, a chip row — the butler writes the
     PROCEDURE, not the code: the steps and the checks that proved it.
     The second time, it runs the procedure deterministically; the model
     plans the first build and the procedure handles the second. This is
     how the founder's style of building becomes cheap. Deferred until
     the build loop exists; named now so it is not lost.
+    CLOSED 8 Nov: parked — blocked on the batch and the build loop; re-open when both exist
 
 
 [ ] gov.plan_has_a_status_view — FOUND 3 Nov. The founder felt
@@ -377,7 +379,7 @@ THE BUILD, IN ORDER
     are proven live. The deploy step is named and not
     built; the chip row is the next step.
 
-[ ] gov.a_build_deploys_itself_last — FOUND 4 Nov. A build changes
+[x] gov.a_build_deploys_itself_last — FOUND 4 Nov. A build changes
     SOURCE, and its checks run against the source and the database — so
     a build can tick every step and never be live. Proven four times on
     the first build: the months route was correct on disk, the running
@@ -388,6 +390,7 @@ THE BUILD, IN ORDER
     the deploy step does not finish. THE CHECK: a build's last step is a
     deploy step, and a build that ticks all its other steps without one
     is not done.
+    CLOSED 8 Nov: done. Evidence: Gov 0220214, tier 67/0
 
 [x] gov.build_runs_on_haiku_batch — FOUND 4 Nov. The £20 build
     ran on Haiku 4.5 and Sonnet, synchronously, with no batch. Haiku 5.5
@@ -573,7 +576,7 @@ THE BUILD, IN ORDER
     night_build. Parked until a build is long enough to need it. THE CHECK:
     gov.a_long_build_batches.
 
-[ ] gov.a_spec_without_a_state_is_not_a_build — FOUND 7 Nov. write_spec
+[x] gov.a_spec_without_a_state_is_not_a_build — FOUND 7 Nov. write_spec
     creates a build directory and a spec.md, but no state.json. A spec can
     exist for a thing that is not a build; load_build returns no result and
     a check that reads it crashes. Found when the universal-decisions check
@@ -581,6 +584,7 @@ THE BUILD, IN ORDER
     spec without a state, or write_spec creates the state with status "new".
     THE CHECK: gov.a_spec_without_a_state_is_not_a_build — a directory with
     spec.md and no state.json is not a build.
+    CLOSED 8 Nov: done. Evidence: tier 67/0, check verified non-vacuous
 
 [~] gov.the_corpus_is_outside_git — FOUND 7 Nov. PART DONE 7 Nov: the
     backup is fresh, the cron is restored with a log, and the restore is
@@ -593,6 +597,7 @@ THE BUILD, IN ORDER
     clearing first. THE FIX: clear the drive, mount it, point BACKUP_DIR at
     it, and sync the corpus off-box. THE CHECK: the same restore check, plus
     a second path — the newest archive exists on the external drive.
+    PART DONE 8 Nov: backup restored, cron logged; STILL OPEN: off-box sync to the external drive
 
 [x] gov.a_patcher_reads_before_it_writes — DONE 7 Nov. Six patchers in
     one session were written from remembered code: pathlib twice, a gate
@@ -1496,10 +1501,11 @@ Then add more.
     route-contracts.yml.
 
 
-[~] ops.social_strategy — DECIDED 17 Oct. No more Meta posting.
+[x] ops.social_strategy — DECIDED 17 Oct. No more Meta posting.
     Instagram and Facebook apps deleted from the phone 17 Oct
     after seven hours of doom-scrolling in a single day. The
     decision, recorded here so it does not get relitigated:
+    CLOSED 8 Nov: decided — no more Meta posting
 
     - No posting on Instagram or Facebook. Accounts stay (business
       pages); if needed, post from a browser, never from an app.
@@ -1943,7 +1949,8 @@ Then add more.
     configure it.
 
 
-[~] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
+[x] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
+    CLOSED 8 Nov: done — built 19 Oct
 
     DONE 19 Oct: routers/tools.py (four Custodian tools + guards,
     13-case self-test; ten tools now, see the Executive's build
@@ -2035,6 +2042,7 @@ Then add more.
     --summary. On today's five questions it shows 3 bugs, 1 feature,
     1 question, and names the recurring-appointments feature as the
     open signal — which is what this entry predicted it would do.
+    PART DONE 8 Nov: digest live; STILL OPEN: act on the signal
 
     The tracking store is built (e0383e1): a small JSON file beside the
     log records each question's status, and the digest marks each
@@ -2175,6 +2183,7 @@ Then add more.
     separate, small item: either the script takes a list of routes to
     curl after deploy, or a per-route check is registered in the fast
     tier. Not urgent; named.
+    PART DONE 8 Nov: smoke live for health; STILL OPEN: changed-route coverage
 
 
 [ ] [GATED] gov.evolve_loop_usage - usage-driven evolution.
@@ -2201,7 +2210,7 @@ Then add more.
     and why.
 
 
-[ ] [DECISION] gov.memory_persistence — /mnt/bosly/bosly-data/copilot-knowledge/*/memory.json
+[x] [DECISION] gov.memory_persistence — /mnt/bosly/bosly-data/copilot-knowledge/*/memory.json
     is not tracked by any git repo. Confirmed 27 Sept: bosly-1.0,
     bosly-keep, and bosly-gov do not track any path under
     copilot-knowledge. The memory files are the only place the
@@ -2218,9 +2227,10 @@ Then add more.
     the risk and document the decision here. Raised 27 Sept after
     a session wrote three entries and then discovered the file
     they went into was untracked.
+    CLOSED 8 Nov: decided — memory outside git confirmed; the action is gov.the_corpus_is_outside_git
 
 
-[ ] [DECISION] accord.export_decrypt_on_download — The export route
+[x] [DECISION] accord.export_decrypt_on_download — The export route
     (app/api/settings/export/route.ts) dumps raw table rows. Five
     pills export as ciphertext (Invoicing, Contacts, Calendar,
     Finance, Health); four export as plaintext (Active, Inbox,
@@ -2229,6 +2239,7 @@ Then add more.
     before download so you can read it directly". The design note
     in this plan (see /api/settings/export) says the opposite:
     "Include encryptedData. User owns their export."
+    CLOSED 8 Nov: decided — design contradiction recorded; a new item if a change is wanted
 
     Both positions are defensible. Raw export proves the server
     never held the key. Decrypted-on-download gives the user a file
@@ -2382,13 +2393,14 @@ Then add more.
     Found 28 Sept while checking the chatbot after the engine swap.
 
 
-[~] accord.waiting_well_page — A public resource for the UK
+[x] accord.waiting_well_page — A public resource for the UK
     neurodiverse community, at /waiting-well. Not a lead magnet: a
     filter. It gets people to the right information and the right
     next step, in a system that is overwhelming by design. The second
     unauthenticated public surface, after the standalone /invoice
     tool. Static: holds no user data, so the encryption question does
     not arise.
+    CLOSED 8 Nov: done — live, /waiting-well returns 200
 
     COMPLETE 10 Oct, watching before [x]. All four pills are written,
     sourced, and live. 22 claims carry @claim markers and visible
@@ -2571,13 +2583,14 @@ Then add more.
     page only.
 
 
-[ ] [DECISION] accord.admin_assistant_direction — Bosly should
+[x] [DECISION] accord.admin_assistant_direction — Bosly should
     eventually do the admin, not just hold the data. Today the pills
     store and the chatbot answers counts, dates, and statuses. The
     direction is an assistant that acts: chases invoices, watches
     deadlines, drafts the boring replies, handles the follow-ups.
     This is the concrete form of the Accord's "liberation engine"
     line.
+    CLOSED 8 Nov: decided — vision; realised by the receptionist, not a task
 
     Not built now, and not promised on any user-facing page. But it
     is the thing the Waiting Well page bridges toward, and it is the
@@ -3412,6 +3425,7 @@ Then add more.
     (bosly:invoice-created, bosly:open-invoice-editor), but it is
     applied ad hoc — most writes do not emit and most readers do
     not listen.
+    PART DONE 8 Nov: invoice-created event; STILL OPEN: systematic emit/listen
 
     Two halves:
       (a) PROPAGATION — every create/update/delete emits an event;
@@ -3440,6 +3454,7 @@ Then add more.
     /api/invoices/aggregate creates one invoice and marks its events in
     a single transaction), the Unbilled tab in Finance, and the
     confirmation modal are all in.
+    PART DONE 8 Nov: read side + schema + UI; STILL OPEN: prove the write side
 
     The two safety nets against double-billing are the pre-check
     (every event unbilled, owned, for the stated contact) and the
@@ -3497,11 +3512,13 @@ Then add more.
     back. Raised 30 Sept.
 
 
-[ ] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
+[x] [DECISION] accord.unlogged_invoice_prompt — Chat-driven invoice detection. ORIGINALLY designed as: user asks "have I sent any invoices I haven't logged?", a server route reads the Sent folder and returns metadata only, the browser asks which to log. NEEDS RE-FRAMING: the chatbot is now a workflow engine without an LLM. Two options: (a) a workflow engine recipe that asks the browser to scan the Sent folder client-side; (b) wait for the local model. Lean: (a), since it's a deterministic pattern (read emails, count, ask browser to compare).
+    CLOSED 8 Nov: superseded by the workflow-engine recipe
 
 
 
-[ ] [DECISION] accord.follow_up_prompt — Chat-driven follow-up. ORIGINALLY: user asks "which invoices need chasing?", the browser identifies overdue invoices from decrypted data, prompts to send, builds emails client-side. NEEDS RE-FRAMING: same shape as above. This is a workflow engine recipe, not an LLM feature. The browser does the identification; the workflow engine handles the intent.
+[x] [DECISION] accord.follow_up_prompt — Chat-driven follow-up. ORIGINALLY: user asks "which invoices need chasing?", the browser identifies overdue invoices from decrypted data, prompts to send, builds emails client-side. NEEDS RE-FRAMING: same shape as above. This is a workflow engine recipe, not an LLM feature. The browser does the identification; the workflow engine handles the intent.
+    CLOSED 8 Nov: superseded by the workflow-engine recipe
 
 
 
@@ -3749,12 +3766,13 @@ Then add more.
     audit of other connections.
 
 
-[~] keep.price_history_missing — FOUND 16 Oct, DESIGN GAP.
+[x] keep.price_history_missing — FOUND 16 Oct, DESIGN GAP.
     DEPRIORITISED 18 Oct: Keep is personal and off the critical
     path. This is real work and worth doing, but it does not block
     January, and the interesting-ness of the bug is not a reason to
     work on it before the consultancy. Do it when there is spare
     time, not before.
+    CLOSED 8 Nov: parked — Keep, off the critical path
 
     This is the systemic finding; the four entries below are its
     symptoms.
@@ -3795,32 +3813,36 @@ Then add more.
     frozen at 2026-09-10 14:07, five weeks ago. Fix: a weekday
     22:00 UTC cron line POSTing to the endpoint. Installed 16 Oct.
     Verify tomorrow that Asset.priceUpdatedAt has advanced.
+    PART DONE 8 Nov: route works; STILL OPEN: nothing calls it — no cron line anywhere. Keep is SQLite (file:./dev.db); verify via the app, not psql
 
 
-[~] keep.snapshot_backfill — FOUND 16 Oct. PortfolioSnapshot has a
+[x] keep.snapshot_backfill — FOUND 16 Oct. PortfolioSnapshot has a
     five-week gap (10 Sept → 16 Oct) with no rows. Snapshots are
     point-in-time; the gap cannot be filled with today's prices
     without lying. Backfill requires fetching daily Yahoo closes
     for each held asset across the gap and recomputing the
     portfolio value per day. Real feature, not tonight's work.
+    CLOSED 8 Nov: parked — Keep, off the critical path
 
 
-[~] keep.pricepoint_empty — FOUND 16 Oct. The PricePoint table
+[x] keep.pricepoint_empty — FOUND 16 Oct. The PricePoint table
     exists (schema is present) but has 0 rows. app/api/prices/route.ts
     updates Asset.currentPrice but never inserts PricePoint. There
     is no per-asset price history — only the latest value. Cannot
     answer "what was X worth on date Y". Same class as the missing
     snapshots: a table designed to record history, and it isn't.
+    CLOSED 8 Nov: parked — Keep, off the critical path
 
 
-[~] keep.udmy_404 — FOUND 16 Oct. Yahoo returns HTTP 404 for UDMY
+[x] keep.udmy_404 — FOUND 16 Oct. Yahoo returns HTTP 404 for UDMY
     (Udemy). One of 83 assets has no price. Every portfolio total
     either misvalues the position or omits it. Decide: delisted?
     Acquired? Remove from the screened universe, or hold and mark
     it manually.
+    CLOSED 8 Nov: parked — Keep, off the critical path
 
 
-[~] keep.trade_idempotency — FOUND 16 Oct. /api/trades has no
+[x] keep.trade_idempotency — FOUND 16 Oct. /api/trades has no
     deduplication, and the "Execute Buy" button re-enables before the
     new signals land: fetchSignals() is not awaited and
     setExecuting(null) runs immediately after. A double-click, a
@@ -3831,6 +3853,7 @@ Then add more.
     maxTradesPerDay guard lives in generateSignals() (the read path)
     and is never consulted on write. Paper trading only — no real
     money — but the same bug would misfire in production.
+    CLOSED 8 Nov: parked — Keep, off the critical path
 
     Fix (two parts):
     (a) app/signals/page.tsx — await fetchSignals() before clearing
@@ -3855,6 +3878,7 @@ Then add more.
     email, independent of the phrase. (b) is probably correct but
     needs SMTP-from-server work. See accord.face_id_recovery for
     the related design.
+    PART DONE 8 Nov: browser save prompt; STILL OPEN: recovery without the password
 
 
 [ ] [GATED] accord.face_id_recovery — Build Face ID + PIN recovery as
@@ -3928,7 +3952,7 @@ Then add more.
     Estimate: 2 sessions (schema + client + route).
 
 
-[ ] [DECISION] accord.kyber_status_decision — The immediate doc
+[x] [DECISION] accord.kyber_status_decision — The immediate doc
     problem is fixed. The "quantum-resistant encryption"
     claim was removed from llms.txt and llms-full.txt on
     23 Sept, and from README.md on 26 Sept (was still in the
@@ -3937,6 +3961,7 @@ Then add more.
     README also gained a short paragraph above the list
     explaining that the Accord describes a direction, not a
     current state.
+    CLOSED 8 Nov: decided — doc claim fixed 23-26 Sept
 
     Doc fix half DONE 23-26 Sept. Remaining: the decision
     itself — options (a)/(b)/(c) below.

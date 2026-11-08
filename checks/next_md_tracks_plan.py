@@ -10,7 +10,7 @@ NEXT = "/home/bosly_accord/bosly-gov/NEXT.md"
 
 done = set()
 for line in open(PLAN, encoding="utf-8"):
-    m = re.match(r"^\[x\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)", line)
+    m = re.match(r"^\[x\]\s+(?:\[(?:LIVE|GATED|BLOCKED|DECISION)\]\s+)?([\w.\-]+)", line)
     if m:
         done.add(m.group(1))
 
@@ -27,11 +27,11 @@ stale = sorted(done & open_ids)
 # from disk (not the 40KB slice a chat read_file call gets), so it is
 # reliable for PLAN.md's full size.
 plan_open = set()
-open_pattern = re.compile(r"^\[([ x~])\]\s+(?:\[LIVE\]\s+)?([\w.\-]+)")
+open_pattern = re.compile(r"^\[([ x~])\]\s+(?:\[(LIVE|GATED|BLOCKED|DECISION)\]\s+)?([\w.\-]+)")
 for line in open(PLAN, encoding="utf-8"):
     m = open_pattern.match(line)
-    if m and m.group(1) in (" ", "~"):
-        plan_open.add(m.group(2))
+    if m and m.group(1) in (" ", "~") and m.group(2) not in ("LIVE", "GATED"):
+        plan_open.add(m.group(3))
 
 next_text = open(NEXT, encoding="utf-8").read()
 missing = sorted(
