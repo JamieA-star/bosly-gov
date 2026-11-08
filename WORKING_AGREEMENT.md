@@ -19,6 +19,17 @@ If a convention stops fitting, remove it. This is alive.
 
 ---
 
+## Finishing a step outside the loop
+
+- `build_run` ticks after its check. Nothing else ticks.
+- A step finished by hand — a patch, a manual fix — calls
+  `build_tick(name, index, evidence)` with the command's own output.
+- Evidence is the check's output, not the claim. No evidence, no tick.
+- `gov.a_patched_build_ticks` fails a done build with no ticks, or a
+  parked one with no question.
+
+---
+
 ## Patches
 
 - Python patchers, named `patch_<topic>.py`

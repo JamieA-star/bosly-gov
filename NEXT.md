@@ -130,7 +130,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   the first build's cost on 12% of the calls. Flag a Sonnet turn whose
   label has no decision hint.
 
-- [ ] gov.a_finished_step_ticks_itself — FOUND 4 Nov. The build patched
+- [x] gov.a_finished_step_ticks_itself — FOUND 4 Nov. The build patched
   and could not tick; build_tick exists but THE WORLD does not name it.
 
 - [ ] gov.build_quote_learns_from_real_builds — FOUND 4 Nov. The label

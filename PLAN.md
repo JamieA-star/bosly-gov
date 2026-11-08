@@ -438,13 +438,14 @@ THE BUILD, IN ORDER
     generous, and that is the money. THE FIX may be a narrower
     _STRONG_HINTS, or a per-tool model choice.
 
-[ ] gov.a_finished_step_ticks_itself — FOUND 4 Nov. The build patched
+[x] gov.a_finished_step_ticks_itself — FOUND 4 Nov. The build patched
     FinancePill.tsx itself and could not record the proof: build_run is
     the only thing that ticks, and it ticks only after its own check.
     build_tick now exists, but the build did not reach for it. THE FIX:
     a line in THE WORLD — when you finish a step outside the loop, call
     build_tick with the check's output — and a check that a build which
     patches a file also ticks, or says why.
+    CLOSED 8 Nov: done. build_tick exists (routers/build.py:300) and is exposed as a tool (routers/tools.py:1724, schema :2544, registered :2556) and documented (tools_prompt.tools.md). gov.a_patched_build_ticks asserts a done build has ticks or a parked one has a question; build_tick_has_evidence asserts the evidence rule. The missing piece was the instruction: WORKING_AGREEMENT.md now names build_tick for a step finished outside the loop.
 
 [ ] gov.build_quote_learns_from_real_builds — FOUND 4 Nov. The quote
     calibrates turns-per-step from builds in the log, and the first
