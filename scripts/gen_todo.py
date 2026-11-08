@@ -24,18 +24,20 @@ STATUS = re.compile(r"^(FOUND|DECIDED|BUILT|RECORDED|DONE|PART DONE|IN PROGRESS|
 
 def summary(block):
     if not block: return ""
-    # line 1 after the first em-dash, then continuation lines until a full stop
+    # build the whole text first, then cap once — capping during the walk
+    # cuts mid-clause and drops the ellipsis
     first = block[0]
     m = re.search(r"—\s*(.*)$", first)
     text = (m.group(1) if m else first).strip()
     for cont in block[1:]:
-        if text.endswith((".", "!", "?")) or len(text) > 100:
+        if text.endswith((".", "!", "?")):
             break
         text += " " + cont.strip()
     text = STATUS.sub("", text, count=1).strip()
+    text = re.sub(r"\s{2,}", " ", text)
     sent = re.split(r"(?<=[.!?])\s", text, maxsplit=1)[0]
-    if len(sent) > 120:
-        sent = sent[:120].rsplit(" ", 1)[0] + "…"
+    if len(sent) > 140:
+        sent = sent[:140].rsplit(" ", 1)[0] + "…"
     return sent.rstrip(" .")
 
 def still_open(block):
