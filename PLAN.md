@@ -227,7 +227,7 @@ THE BUILD, IN ORDER
     trustworthy every time it is corrected.
 
 
-[ ] gov.plan_file_needs_splitting — FOUND 2 Nov. PLAN.md is
+[x] gov.plan_file_needs_splitting — FOUND 2 Nov. PLAN.md is
     400,525 bytes and read_file refuses anything over 400,000. The
     self-test found it: it read the plan to prove dispatch and got
     'PLAN.md is 400525 bytes (max 400000)'. plan_query still works — it
@@ -241,6 +241,7 @@ THE BUILD, IN ORDER
     is manageable, and a pile past the ceiling is a backlog nobody
     reads. THE CHECK: PLAN.md stays under the read_file ceiling, and a
     closed item is findable in the archive when plan_query asks for it.
+    CLOSED 8 Nov: done. PLAN.md 207,893 bytes and PLAN-archive.md 220,266 — both under the 400,000 ceiling. plan_query(status='done') finds 170 closed items across the two files, and plan_split_is_whole passes. The 400,525 figure in the text is pre-3-Nov and stale.
 
 
 [x] accord.invoices_organised_by_month — FOUND 3 Nov. THE FILING
@@ -357,6 +358,7 @@ THE BUILD, IN ORDER
     parked is a plan the founder can look at without dread. THE CHECK:
     the orientation output and NEXT.md never show LIVE or GATED items
     in the active count.
+    PART DONE 8 Nov: the orientation half is true — bin/bosly shows TODO.md (active only), and every counter agrees at 27. STILL OPEN: NEXT.md still carries 76 open rows, 58 of them LIVE/GATED, and it is not a leaf — routers/filing.py reads it, plan_write defaults to it, tool_loop.py passes it as a tool input, and next_md_tracks_plan guards it. Retiring it is a five-place change plus a decision (retire or regenerate from gen_todo.py), to be done at the start of a session, not the end.
 
 
 [x] gov.build_loop — DONE 4 Nov. THE BUILDER. A build lives on

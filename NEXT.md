@@ -54,7 +54,7 @@ PLAN.md is 383KB total, so later sections are not covered here.
   spec. Build the capability once, prove it on the founder, configure
   it per client.
 
-- [ ] gov.plan_file_needs_splitting — FOUND 2 Nov. PLAN.md is
+- [x] gov.plan_file_needs_splitting — FOUND 2 Nov. PLAN.md is
   400,525 bytes; read_file refuses over 400,000. plan_query still works,
   but any whole-file read is blind. Split: PLAN.md = index + current
   quarter + open; PLAN-archive.md = closed items. Check: the live plan
