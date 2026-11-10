@@ -467,6 +467,7 @@ THE BUILD, IN ORDER
     fills them. THE ORDER: scout -> rank -> enrich top N -> rank again.
     The list is lawful and gap-scored without it; Google is who to
     approach first.
+    NOT JANUARY (10 Nov): the OSM sweep finds salons without the paid key. This waits behind the salon sweep and the first sends.
 
 [ ] ops.the_first_email — FOUND 4 Nov. The scout has 24 lawful email
     rows in Northumberland, each with a service and a follow_up_due.
@@ -475,6 +476,7 @@ THE BUILD, IN ORDER
     the reply is the proof the whole chain works. Four emails over 14
     days — day 1, 3, 7, 14 — and the butler's follow_up_queue holds the
     cadence.
+    UPDATE 10 Nov: the send now opens a client profile first. A send that is not an event on a profile is a send Jamie will forget by morning. The first five come from the four Northumberland salons plus one from the salon sweep; the sequence is the 20-years draft, and every email carries the legal signature and the opt-out.
 
 [x] gov.the_build_runs_cheap — DONE 5 Nov. THE COST OF A BUILD.
     The invoice build cost £2.98, and the usage log showed why: 21
@@ -628,6 +630,16 @@ THE BUILD, IN ORDER
     Evidence: Accord 4f99a24, tier 65/0. THE LESSON: a red with no item is a
     red with no owner — open it, or it outlives the session that found it.
 
+[ ] ops.the_salon_sweep — FOUND 10 Nov. The first real sweep: categories shop=hairdresser, shop=beauty, shop=barber, a fresh labelled run. The four Northumberland salons (Capelli Hair Design, Skullduggeri, Studio 19, JCC Hair) carry in. The old 24 rows are marked test and excluded from the send queue, not deleted — they prove the pipeline and must never be emailed. THE CHECK: the sweep produces a ranked CSV and every row has a source and a date.
+
+[ ] ops.the_five_facts — FOUND 10 Nov. Every row that can be emailed carries five facts: the Companies House number and matched name (corporate subscriber, outside PECR's consent rule); the source URL and the date the email was published; whether the email names a person or is a role address; the entity type (limited company or LLP — never a sole trader, who is an individual subscriber and needs consent); and a suppression flag. A row missing any fact does not go in the list. THE CHECK: every row in the send list has all five, and a missing one is a red, not a warning.
+
+[ ] ops.the_signature_is_legal — FOUND 10 Nov. Every email carries Bosly Limited's registered name, company number, place of registration and registered office (Companies Act 2006, business emails), and a clear opt-out line in all four emails, not just the first. "Reply and I'll leave you to it" is manners; the opt-out is the requirement. THE CHECK: a rendered email contains the company number, the registered office, and an explicit opt-out.
+
+[ ] ops.client_department — FOUND 10 Nov. Its own department, next to the plan and the memory, not inside the scout. One profile per email, created when the scout finds it, holding the five lawful facts and the site-audit note. Every send, reply, opt-out, not-now, consultation, call and consent is a dated event on the profile; the status is derived from the events, not typed. The queue is a query: in sequence and due, not-now dates reached, replies that need the founder. Two layers: the suppression key (email + opted-out flag, kept indefinitely) and the contact data (kept while lawful, deletable on request). THE CHECK: a reply, an opt-out and a not-now are each recorded and each change the queue; an opted-out address can never be selected for send.
+
+[ ] ops.no_stale_patchers — FOUND 10 Nov. The agreement says a patcher is committed, run, verified, then deleted. Twenty-nine were sitting in the repo root. THE CHECK: any patch_*.py older than a day fails the tier.
+
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry
     appends to the end of PLAN.md; it cannot attach an update to the
     item it names. Asked to record progress on accord.butler_knows_today,
@@ -701,6 +713,7 @@ THE BUILD, IN ORDER
     WHY, one line: six years of good ideas that did not compound. This
     is the thing that makes them compound — a record that does not
     forget when attention moves on.
+    UPDATE 10 Nov: the shape now includes the client department — one profile per email, dated events, a queue that is a query. The receptionist is multi-tenant config, not one salon. Bosly acts unattended only because it cannot act unrecorded.
 
 
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
@@ -1953,6 +1966,7 @@ Then add more.
     Consequence: never build a client's feature as a separate thing from
     the founder's — build the capability, prove it on the founder, then
     configure it.
+    UPDATE 10 Nov: the first capability sold is the receptionist, one engine with per-client config. The client department is what makes the record the client pays for.
 
 
 [x] gov.custodian_tools — THE CHIEF OF STAFF. BUILT 19 Oct.
@@ -4219,4 +4233,3 @@ Then add more.
 
 The class that has produced eight findings in two days. Each
 of these closes one instance.
-

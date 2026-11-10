@@ -78,4 +78,15 @@ doc += render(inprog, "[~]")
 doc += ["", f"## Not started ({len(notstarted)})", ""]
 doc += render(notstarted, "[ ]")
 pathlib.Path("/home/bosly_accord/bosly-gov/TODO.md").write_text("\n".join(doc) + "\n", encoding="utf-8")
+# NEXT.md is generated too — the mirror drifts when hand-kept, and it is
+# the last hand-kept file. Same active set, one line each, so
+# next_md_tracks_plan passes by construction.
+nextdoc = [f"# NEXT — generated {today} from PLAN.md", "",
+           f"**{len(inprog)+len(notstarted)} active: {len(inprog)} in progress, {len(notstarted)} not started.**", "",
+           "## Open items", ""]
+for _, pid, fs, so, ck in sorted(inprog + notstarted, key=lambda x: x[0]):
+    nextdoc.append(f"- [ ] {pid} — {fs}")
+pathlib.Path("/home/bosly_accord/bosly-gov/NEXT.md").write_text("\n".join(nextdoc) + "\n", encoding="utf-8")
+print(f"WROTE NEXT.md — {len(inprog)+len(notstarted)} open items, generated")
+
 print(f"WROTE TODO.md — {len(inprog)} in progress, {len(notstarted)} not started")
