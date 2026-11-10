@@ -477,6 +477,7 @@ THE BUILD, IN ORDER
     days — day 1, 3, 7, 14 — and the butler's follow_up_queue holds the
     cadence.
     UPDATE 10 Nov: the send now opens a client profile first. A send that is not an event on a profile is a send Jamie will forget by morning. The first five come from the four Northumberland salons plus one from the salon sweep; the sequence is the 20-years draft, and every email carries the legal signature and the opt-out.
+    10 Nov: the shape changed: 30 profiles, 15 email-route, drafts on all of them from the row's own facts (title, h1, product words, customer action). Nothing sent yet. The three strongest are Plaw Hatch, Lily Jacobs and Pooh Corner.
 
 [x] gov.the_build_runs_cheap — DONE 5 Nov. THE COST OF A BUILD.
     The invoice build cost £2.98, and the usage log showed why: 21
@@ -630,13 +631,20 @@ THE BUILD, IN ORDER
     Evidence: Accord 4f99a24, tier 65/0. THE LESSON: a red with no item is a
     red with no owner — open it, or it outlives the session that found it.
 
-[ ] ops.the_salon_sweep — FOUND 10 Nov. The first real sweep: categories shop=hairdresser, shop=beauty, shop=barber, a fresh labelled run. The four Northumberland salons (Capelli Hair Design, Skullduggeri, Studio 19, JCC Hair) carry in. The old 24 rows are marked test and excluded from the send queue, not deleted — they prove the pipeline and must never be emailed. THE CHECK: the sweep produces a ranked CSV and every row has a source and a date.
+[x] ops.the_salon_sweep — FOUND 10 Nov. The first real sweep: categories shop=hairdresser, shop=beauty, shop=barber, a fresh labelled run. The four Northumberland salons (Capelli Hair Design, Skullduggeri, Studio 19, JCC Hair) carry in. The old 24 rows are marked test and excluded from the send queue, not deleted — they prove the pipeline and must never be emailed. THE CHECK: the sweep produces a ranked CSV and every row has a source and a date.
+    CLOSED 10 Nov: done. East Sussex swept: 7,015 elements, 250 rows, every row with source and date. The sweep is now general — any Ltd with a provable website problem — not salon-only. The address check was added: 159 of 243 name matches were the wrong company and are rejected with the reason on the row.
 
 [ ] ops.the_five_facts — FOUND 10 Nov. Every row that can be emailed carries five facts: the Companies House number and matched name (corporate subscriber, outside PECR's consent rule); the source URL and the date the email was published; whether the email names a person or is a role address; the entity type (limited company or LLP — never a sole trader, who is an individual subscriber and needs consent); and a suppression flag. A row missing any fact does not go in the list. THE CHECK: every row in the send list has all five, and a missing one is a red, not a warning.
+    PART DONE 10 Nov: ch_address, match_verified and match_reason landed — a match is only claimed when the Companies House address is in the salon's town. STILL OPEN: email_type (named vs role), source_date per row, and the suppressed flag, which arrives with the department's suppression layer.
 
 [ ] ops.the_signature_is_legal — FOUND 10 Nov. Every email carries Bosly Limited's registered name, company number, place of registration and registered office (Companies Act 2006, business emails), and a clear opt-out line in all four emails, not just the first. "Reply and I'll leave you to it" is manners; the opt-out is the requirement. THE CHECK: a rendered email contains the company number, the registered office, and an explicit opt-out.
+    PART DONE 10 Nov: the email body is done — two sentences, four beats, body only. The signature moves to IONOS. STILL OPEN: the IONOS signature must carry the registered name, company number, place of registration, registered office, and the opt-out line must be in every email.
 
 [ ] ops.client_department — FOUND 10 Nov. Its own department, next to the plan and the memory, not inside the scout. One profile per email, created when the scout finds it, holding the five lawful facts and the site-audit note. Every send, reply, opt-out, not-now, consultation, call and consent is a dated event on the profile; the status is derived from the events, not typed. The queue is a query: in sequence and due, not-now dates reached, replies that need the founder. Two layers: the suppression key (email + opted-out flag, kept indefinitely) and the contact data (kept while lawful, deletable on request). THE CHECK: a reply, an opt-out and a not-now are each recorded and each change the queue; an opted-out address can never be selected for send.
+    PART DONE 10 Nov: built as a department: routers/clients.py, one profile per verified business as a thing of kind 'client', 30 profiles, a dated timeline, pipeline state in the body and store status active/lost. Drafts are generated from the profile's own evidence. STILL OPEN: the queue as a query, recording the send, recording the reply, and the suppression layer.
+
+[ ] ops.no_stale_patchers — FOUND 10 Nov. The agreement says a patcher is committed, run, verified, then deleted. Twenty-nine were sitting in the repo root. THE CHECK: any patch_*.py older than a day fails the tier.
+    10 Nov: still open — the housekeeping ran, no check exists yet.
 
 [ ] ops.no_stale_patchers — FOUND 10 Nov. The agreement says a patcher is committed, run, verified, then deleted. Twenty-nine were sitting in the repo root. THE CHECK: any patch_*.py older than a day fails the tier.
 

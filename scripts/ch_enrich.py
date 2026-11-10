@@ -176,6 +176,7 @@ def enrich_one(name: str, town: str = "") -> Dict[str, Any]:
         "ch_name": "",
         "ch_status": "",
         "ch_incorporated": "",
+        "ch_address": "",
         "ch_sic": "",
         "ch_directors": "",
         "match_confidence": "none",
@@ -206,6 +207,15 @@ def enrich_one(name: str, town: str = "") -> Dict[str, Any]:
     out["ch_name"] = company.get("company_name") or best.get("title") or ""
     out["ch_status"] = company.get("company_status") or best.get("company_status") or ""
     out["ch_incorporated"] = company.get("date_of_creation") or ""
+    # The registered-office address is the fact that verifies the match.
+    # It was read for scoring and thrown away; keep it.
+    _reg = company.get("registered_office_address") or best.get("address") or {}
+    if isinstance(_reg, dict):
+        _parts = [_reg.get(k) for k in ("address_line_1","address_line_2","locality","region","postal_code") if _reg.get(k)]
+        _addr = ", ".join(str(x) for x in _parts)
+    else:
+        _addr = str(_reg)
+    out["ch_address"] = _addr or (best.get("address_snippet") or "")
     # Age in months, for the "too new to be a prospect" filter
     inc = out["ch_incorporated"]
     age_months = ""

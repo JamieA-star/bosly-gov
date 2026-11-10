@@ -108,6 +108,8 @@ def match(name: str, postcode: str = "") -> dict:
             continue
         # The postcode strengthens a medium match if the address matches.
         addr = (it.get("address") or {})
+        _ap = [addr.get(k) for k in ("address_line_1","address_line_2","locality","region","postal_code") if addr.get(k)]
+        addr_str = ", ".join(str(x) for x in _ap)
         pc = (addr.get("postal_code") or "").replace(" ", "").upper()
         wanted = (postcode or "").replace(" ", "").upper()
         if conf == "medium" and wanted and pc.startswith(wanted[:4]):
@@ -123,6 +125,7 @@ def match(name: str, postcode: str = "") -> dict:
                 "ch_number": it.get("company_number", ""),
                 "ch_status": it.get("company_status", ""),
                 "ch_incorporated": it.get("date_of_creation", ""),
+                "ch_address": addr_str,
                 "match_confidence": conf,
             }
     cache[key] = best or {}

@@ -95,7 +95,49 @@ def _host_of(url: str) -> str:
         return ""
 
 
-def audit_html(url: str, html: str) -> Dict[str, Any]:
+PRODUCT_WORDS = {
+    "shop=bicycle": ["bike", "bicycle", "repair", "service", "cycle", "e-bike"],
+    "shop=farm": ["veg box", "produce", "farm", "vegetable", "meat", "dairy"],
+    "shop=gift": ["gift", "hamper", "card", "present"],
+    "shop=clothes": ["dress", "bridal", "suit", "fitting", "alteration"],
+    "shop=cheese": ["cheese", "deli", "charcuterie", "platter"],
+    "shop=convenience": ["groceries", "essentials", "delivery", "collection"],
+    "shop=supermarket": ["groceries", "delivery", "collection"],
+    "shop=jewelry": ["ring", "necklace", "repair", "engraving", "bespoke"],
+    "shop=kitchen": ["kitchen", "worktop", "fitting", "design"],
+    "shop=flooring": ["flooring", "carpet", "fitting", "measure"],
+    "shop=mobile_phone": ["repair", "screen", "unlock", "phone"],
+    "shop=interior_decoration": ["interior", "design", "decor", "consultation"],
+}
+REPAIR_WORDS = ("repair", "fitting", "alteration", "service", "measure", "consultation")
+ACTION_BY_FAMILY = {"appointment": "book", "product": "order", "service": "enquire"}
+
+TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
+H1_RE = re.compile(r"<h1[^>]*>(.*?)</h1>", re.IGNORECASE | re.DOTALL)
+TAG_RE = re.compile(r"<[^>]+>")
+
+def _text(html: str) -> str:
+    return re.sub(r"\s+", " ", TAG_RE.sub(" ", html)).strip()
+
+def _sample(html: str, category: str = "") -> Dict[str, Any]:
+    """What the page says it sells — best effort, 'unknown' when it is thin."""
+    tm = TITLE_RE.search(html); hm = H1_RE.search(html)
+    title = _text(tm.group(1)).strip() if tm else ""
+    h1 = _text(hm.group(1)).strip() if hm else ""
+    body = _text(html).lower()
+    words = PRODUCT_WORDS.get(category, [])
+    found = [w for w in words if w in body or w in title.lower() or w in h1.lower()][:3]
+    if found and any(r in " ".join(found) for r in REPAIR_WORDS):
+        action = "book"
+    else:
+        action = "order" if words else "unknown"
+    if not (title or h1 or found):
+        return {"page_title": "", "h1": "", "products": [], "customer_action": "unknown"}
+    return {"page_title": title[:120], "h1": h1[:160],
+            "products": found, "customer_action": action}
+
+
+def audit_html(url: str, html: str, category: str = "") -> Dict[str, Any]:
     """Assess a page's HTML. Returns the audit dict."""
     # A page carries addresses that are not the business's: a Wix or
     # Sentry artefact, an image filename, a platform token. They are not
@@ -194,10 +236,11 @@ def audit_html(url: str, html: str) -> Dict[str, Any]:
         "social_links": socials,
         "page_bytes": len(html.encode("utf-8")),
         "audit_score": score,
+        **_sample(html, category or ""),
     }
 
 
-def audit_url(url: str) -> Dict[str, Any]:
+def audit_url(url: str, category: str = "") -> Dict[str, Any]:
     """Fetch and audit a URL. Returns a dict, never raises for a bad site."""
     url = _norm_url(url)
     if not url:
@@ -208,7 +251,7 @@ def audit_url(url: str) -> Dict[str, Any]:
         return {"url": url, "error": str(e)[:200]}
     if status != 200:
         return {"url": final, "error": f"HTTP {status}"}
-    out = audit_html(final, html)
+    out = audit_html(final, html, category)
     out["status"] = status
     return out
 

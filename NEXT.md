@@ -26,10 +26,10 @@
 - [ ] ops.client_department — Its own department, next to the plan and the memory, not inside the scout
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
+- [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_five_facts — Every row that can be emailed carries five facts: the Companies House number and matched name (corporate subscriber, outside PECR's consent…
-- [ ] ops.the_salon_sweep — The first real sweep: categories shop=hairdresser, shop=beauty, shop=barber, a fresh labelled run
 - [ ] ops.the_signature_is_legal — Every email carries Bosly Limited's registered name, company number, place of registration and registered office (Companies Act 2006,…
 - [ ] keep.price_cron_missing — Bosly Keep has no heartbeat

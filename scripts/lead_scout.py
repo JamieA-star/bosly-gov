@@ -223,6 +223,31 @@ def extract_rows(elements, gap: dict) -> list:
 
 
 
+def verify_ch_match(rows: list) -> list:
+    """A match is verified when the CH registered address is in the same town.
+
+    The address is the fact. A name-similarity score is a guess; a
+    registered office in the salon's town is checkable. Unknown is a
+    third state, not a pass: no address or no town means we cannot say.
+    """
+    for r in rows:
+        addr = (r.get("ch_address") or "").lower()
+        town = (r.get("city") or "").lower().strip()
+        if not (r.get("ch_number") or "").strip():
+            r["match_verified"] = "n/a"
+            r["match_reason"] = "no Companies House match"
+        elif not addr or not town:
+            r["match_verified"] = "unknown"
+            r["match_reason"] = "no address or no town to compare"
+        elif town in addr:
+            r["match_verified"] = "yes"
+            r["match_reason"] = f"CH address contains town {town!r}"
+        else:
+            r["match_verified"] = "no"
+            r["match_reason"] = f"CH address {addr[:60]!r} does not contain town {town!r}"
+    return rows
+
+
 def add_ch_match(rows: list) -> list:
     """Match each business to Companies House. A match is corporate
     evidence; no match is evidence of not-corporate. The ranker decides
@@ -267,7 +292,7 @@ def add_contact_route(rows: list, do_audit: bool = True) -> list:
             # contact_page.
             if url:
                 try:
-                    a = _audit_url(url)
+                    a = _audit_url(url, row.get("category", ""))
                 except Exception:
                     a = {}
                 if a and not a.get("error"):
@@ -280,6 +305,10 @@ def add_contact_route(rows: list, do_audit: bool = True) -> list:
                         "audit_https": "yes" if a.get("has_https") else "no",
                         "audit_copyright": str(a.get("copyright_year", "")),
                         "platform_site": "yes" if a.get("platform_site") else "no",
+                        "audit_title": a.get("page_title", ""),
+                        "audit_h1": a.get("h1", ""),
+                        "audit_products": ",".join(a.get("products") or []),
+                        "audit_action": a.get("customer_action", ""),
                     }
                     if a.get("email_found"):
                         route = "email"
@@ -308,8 +337,10 @@ def write_csv(rows: list, out: Path, area: str = "") -> None:
               "postcode", "phone", "osm_id", "has_website", "website_url",
               "contact_route", "audit_score", "audit_email", "audit_booking",
               "audit_contact_page", "audit_viewport", "audit_https",
-              "audit_copyright", "area",
+              "audit_copyright", "audit_title", "audit_h1",
+              "audit_products", "audit_action", "area",
               "ch_name", "ch_number", "ch_status", "ch_incorporated",
+              "ch_address", "match_verified", "match_reason",
               "match_confidence", "platform_site", "gap_type", "service",
               "email_1_due", "email_2_due", "email_3_due", "email_4_due",
               "contacted_at", "reply", "follow_up_due"]
@@ -447,6 +478,7 @@ def main() -> int:
     rows = add_contact_route(rows, do_audit=True)
     print("  matching to Companies House...")
     rows = add_ch_match(rows)
+    rows = verify_ch_match(rows)
     n_ch = sum(1 for r in rows if r.get("ch_name"))
     print(f"  Companies House matches: {n_ch}/{len(rows)}")
     n_email = sum(1 for r in rows if r.get("contact_route") == "email")
