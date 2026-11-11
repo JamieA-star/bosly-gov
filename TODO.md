@@ -1,4 +1,4 @@
-# TODO — generated 2026-11-10 from PLAN.md
+# TODO — generated 2026-11-11 from PLAN.md
 
 **29 active: 7 in progress, 22 not started.**
 Parked and done items are not shown.
