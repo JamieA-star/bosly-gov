@@ -19,6 +19,17 @@ If a convention stops fitting, remove it. This is alive.
 
 ---
 
+## Observations and measurements (11 Nov)
+
+- The scout measures. A person observes.
+- An observation goes in the record as an observation, with the device
+  and the time, and stays unverified until it is reproduced.
+- Before an observation goes in an email, it has to be reproduced —
+  tried twice, or confirmed by a strict fetch. One phone warning that
+  curl cannot see is a lead, not a fact.
+
+---
+
 ## Finishing a step outside the loop
 
 - `build_run` ticks after its check. Nothing else ticks.
