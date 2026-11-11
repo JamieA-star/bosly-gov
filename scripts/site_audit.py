@@ -39,6 +39,11 @@ import urllib.request
 from typing import Any, Dict
 
 USER_AGENT = "bosly-lead-scout/0.1 (contact: jr-arnott@outlook.com)"
+# The phone UA matters: a site can be fine on a laptop and a shut door on a phone.
+# Two of three small business sites checked by hand showed an insecure warning only
+# on mobile, and the owners had never seen it.
+PHONE_UA = ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1")
 HTTP_TIMEOUT = 15
 MAX_BYTES = 2_000_000  # 2 MB cap
 
@@ -55,6 +60,12 @@ SOCIAL_HOSTS = {
     "linkedin": ["linkedin.com"],
 }
 
+SHOP_WORDS = ("add to cart", "add to basket", "checkout", "your basket",
+              "your cart", "shop now", "buy now")
+SHOP_PLATFORMS = ("shopify", "woocommerce", "bigcommerce", "etsy.com",
+                  "squarespace", "stripe.com", "gumroad")
+SHOP_LINK_RE = re.compile(r'href=["\']([^"\']*(?:/shop|^shop\.)[^"\']*)["\']', re.I)
+
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")
 COPYRIGHT_RE = re.compile(r"(?:©|&copy;|copyright)\s*(?:19|20)(\d{2})", re.IGNORECASE)
 
@@ -68,12 +79,12 @@ def _norm_url(url: str) -> str:
     return url
 
 
-def fetch(url: str) -> tuple[str, str, int]:
+def fetch(url: str, ua: str = USER_AGENT) -> tuple[str, str, int]:
     """Fetch a page. Returns (final_url, html, status_code).
 
     Raises RuntimeError on transport errors. Caps the body at MAX_BYTES.
     """
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    req = urllib.request.Request(url, headers={"User-Agent": ua})
     try:
         with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as r:
             body = r.read(MAX_BYTES).decode("utf-8", errors="replace")
@@ -189,6 +200,21 @@ def audit_html(url: str, html: str, category: str = "") -> Dict[str, Any]:
             contact_hits.append(href)
     has_contact_page = bool(contact_hits)
 
+    # Shop: a cart, a shop platform, or a /shop link. This is the flag that
+    # tells "no way to order" from "a shop that sells a quarter of the farm".
+    # A shop needs visible evidence. WooCommerce and Shopify class names
+    # live in <style> and <script> blocks on sites that sell nothing, so
+    # strip those first and search only what a visitor can read.
+    _visible = re.sub(r"<script\b[^>]*>.*?</script>", " ", low, flags=re.S | re.I)
+    _visible = re.sub(r"<style\b[^>]*>.*?</style>", " ", _visible, flags=re.S | re.I)
+    _cart_hits = sum(1 for w in SHOP_WORDS if w in _visible)
+    has_shop = (
+        _cart_hits >= 2
+        or (any(p in _visible for p in SHOP_PLATFORMS)
+            and any(w in _visible for w in ("cart", "basket")))
+        or bool(SHOP_LINK_RE.search(_visible) and _cart_hits >= 1)
+    )
+
     # Copyright year: the latest 19xx/20xx in a © notice
     years = [int(y) for y in COPYRIGHT_RE.findall(html)]
     copyright_year = max(years) if years else 0
@@ -229,6 +255,7 @@ def audit_html(url: str, html: str, category: str = "") -> Dict[str, Any]:
         "email_found": sorted(emails)[:3],
         "platform_site": platform_site,
         "has_booking": has_booking,
+        "has_shop": has_shop,
         "booking_links": booking_hits[:3],
         "has_contact_page": has_contact_page,
         "contact_links": contact_hits[:3],
@@ -253,6 +280,19 @@ def audit_url(url: str, category: str = "") -> Dict[str, Any]:
         return {"url": final, "error": f"HTTP {status}"}
     out = audit_html(final, html, category)
     out["status"] = status
+    # The phone check: same URL, a phone's user-agent. What matters is whether
+    # it opens at all, and how much smaller the page is when it does.
+    try:
+        p_final, p_html, p_status = fetch(final, PHONE_UA)
+        out["phone_status"] = p_status
+        out["phone_bytes"] = len(p_html.encode("utf-8")) if p_html else 0
+        out["phone_ok"] = bool(p_status == 200 and p_html)
+        out["phone_ratio"] = round(len(p_html) / max(1, len(html)), 2) if p_html and html else 0
+    except RuntimeError as e:
+        out["phone_status"] = 0
+        out["phone_bytes"] = 0
+        out["phone_ok"] = False
+        out["phone_error"] = str(e)[:120]
     return out
 
 

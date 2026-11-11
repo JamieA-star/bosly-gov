@@ -195,6 +195,38 @@ def record_edit(thing_id: str, original: str, edited: str) -> Dict[str, Any]:
                       body=json.dumps(body), status="active", thing_id=thing_id)
 
 
+def record_observation(thing_id: str, text: str, device: str = "") -> Dict[str, Any]:
+    """What a person saw on a device. Not evidence: a lead.
+
+    The scout measures; the person observes. An observation goes in the
+    record as an observation. Before it goes in an email it has to be
+    reproduced — tried twice, or confirmed by a strict fetch.
+    """
+    r = read_thing(thing_id)
+    if not r.get("ok"):
+        return r
+    body = json.loads(r["result"].get("body") or "{}")
+    obs = body.setdefault("observations", [])
+    obs.append({"at": _now(), "text": text, "device": device or "unknown",
+                "verified": False})
+    return save_thing(kind="client", title=body["identity"]["name"],
+                      body=json.dumps(body), status="active", thing_id=thing_id)
+
+
+def confirm_observation(thing_id: str, index: int) -> Dict[str, Any]:
+    """Mark an observation reproduced. Only then may an email claim it."""
+    r = read_thing(thing_id)
+    if not r.get("ok"):
+        return r
+    body = json.loads(r["result"].get("body") or "{}")
+    obs = body.get("observations") or []
+    if index < 0 or index >= len(obs):
+        return {"ok": False, "error": f"observation {index} out of range"}
+    obs[index]["verified"] = True
+    return save_thing(kind="client", title=body["identity"]["name"],
+                      body=json.dumps(body), status="active", thing_id=thing_id)
+
+
 def draft_email(thing_id: str) -> Dict[str, Any]:
     """Draft from the profile's strongest checkable fact. Records 'drafted' first."""
     r = read_thing(thing_id)
@@ -221,3 +253,53 @@ def draft_email(thing_id: str) -> Dict[str, Any]:
             record_event(thing_id, "drafted", lead)
             return {"ok": True, "result": {"lead": lead, "family": fam, "text": text}}
     return {"ok": False, "error": f"no usable lead in {probs} for family {fam}"}
+
+
+def _supported_problems(gap: dict) -> list:
+    """Problems the evidence can actually support. A stale_site with no real
+    year is not a measured problem, and must not appear in the brief."""
+    ev = gap.get("evidence") or {}
+    out = []
+    for p in (gap.get("problems") or []):
+        if p == "stale_site":
+            y = (ev.get("copyright") or "").strip()
+            if not (y.isdigit() and 1900 <= int(y) <= 2100 and int(y) < 2023):
+                continue
+        if p == "no_booking" and not (ev.get("booking") or "").strip():
+            continue
+        out.append(p)
+    return out
+
+
+def brief_for(thing_id: str) -> Dict[str, Any]:
+    """What the person needs to write the email: measured facts first,
+    observations second, and a warning not to claim what isn't measured."""
+    r = read_thing(thing_id)
+    if not r.get("ok"):
+        return r
+    body = json.loads(r["result"].get("body") or "{}")
+    ident = body.get("identity", {})
+    lawful = body.get("lawful", {})
+    gap = body.get("gap", {})
+    ev = gap.get("evidence", {})
+    measured = {
+        "company": lawful.get("ch_name"),
+        "number": lawful.get("ch_number"),
+        "town": ident.get("city"),
+        "site": ev.get("website_url"),
+        "https": ev.get("https"),
+        "viewport": ev.get("viewport"),
+        "booking": ev.get("booking"),
+        "products": ev.get("products"),
+        "action": ev.get("customer_action"),
+        "copyright": ev.get("copyright"),
+        "problems": _supported_problems(gap),
+    }
+    obs = [o for o in (body.get("observations") or []) if not o.get("verified")]
+    return {"ok": True, "result": {
+        "name": ident.get("name"),
+        "measured": measured,
+        "observations_unverified": obs,
+        "rule": "An observation is not evidence. Claim only what is in measured; "
+                "use observations to decide what to look at on the site.",
+    }}
