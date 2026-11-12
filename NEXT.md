@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-12 from PLAN.md
 
-**31 active: 7 in progress, 24 not started.**
+**31 active: 8 in progress, 23 not started.**
 
 ## Open items
 
@@ -23,8 +23,8 @@
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.onboarding_state_write_dead — onboardingStep and onboardingComplete are read in three places (auth/signin/route.ts :52, user/route.ts:21, user/route.ts:104) and written…
 - [ ] accord.password_recovery_gap — The autoComplete="new-password" attribute was added to the signup form, and a warning about saving the password
-- [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders, briefing and data health are live; invoicing and finance are modelled…
-- [ ] ops.client_department — Its own department, next to the plan and the memory, not inside the scout
+- [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.client_department — PART DONE 12 Nov
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
