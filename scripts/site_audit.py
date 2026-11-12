@@ -106,6 +106,21 @@ def _host_of(url: str) -> str:
         return ""
 
 
+# Builders and platforms that mean somebody chose and maintains the site.
+# A host is only counted if it served something to the page (the reCAPTCHA
+# lesson: a policy link is not evidence). These are the "managed" sites.
+MANAGED_HOSTS = (
+    "wixstatic.com", "parastorage.com",          # Wix
+    "static1.squarespace.com", "squarespace-cdn.com",  # Squarespace
+    "cdn.shopify.com",                            # Shopify
+    "img1.wsimg.com",                             # GoDaddy
+    "website-files.com",                          # Webflow
+    "wp-content",                                 # WordPress
+    "jimstatic.com", "jimdo.com",                 # Jimdo
+    "editmysite.com", "duda.co",                  # Duda
+    "weebly.com", "editmysite",                   # Weebly
+)
+
 PRODUCT_WORDS = {
     "shop=bicycle": ["bike", "bicycle", "repair", "service", "cycle", "e-bike"],
     "shop=farm": ["veg box", "produce", "farm", "vegetable", "meat", "dairy"],
@@ -200,6 +215,22 @@ def audit_html(url: str, html: str, category: str = "") -> Dict[str, Any]:
             contact_hits.append(href)
     has_contact_page = bool(contact_hits)
 
+    # Managed: a builder's asset host served the page, or a footer links to
+    # an agency's own privacy/terms page. Either means someone maintains it.
+    _managed = [h for h in MANAGED_HOSTS if h in low]
+    _host = _host_of(url)
+    _agency = False
+    for href in _hrefs(html):
+        h = href.lower()
+        if not h.startswith("http"):
+            continue
+        other = _host_of(h)
+        if other and other != _host and any(k in h for k in ("privacy", "terms", "cookies")):
+            _agency = True
+            break
+    managed_platform = bool(_managed) or _agency
+    managed_evidence = ",".join(_managed) or ("agency-footer" if _agency else "")
+
     # Shop: a cart, a shop platform, or a /shop link. This is the flag that
     # tells "no way to order" from "a shop that sells a quarter of the farm".
     # A shop needs visible evidence. WooCommerce and Shopify class names
@@ -256,6 +287,8 @@ def audit_html(url: str, html: str, category: str = "") -> Dict[str, Any]:
         "platform_site": platform_site,
         "has_booking": has_booking,
         "has_shop": has_shop,
+        "managed_platform": managed_platform,
+        "managed_evidence": managed_evidence,
         "booking_links": booking_hits[:3],
         "has_contact_page": has_contact_page,
         "contact_links": contact_hits[:3],
