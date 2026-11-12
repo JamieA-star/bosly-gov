@@ -32,11 +32,17 @@ def main() -> int:
 
     if last["turns"] < 5:
         print("  NOTE: not enough history yet; the trend starts once there are turns")
+    elif this["turns"] < 50:
+        # One session moves a small-week average by a penny a turn. A trend
+        # on 34 turns is a snapshot, not a trend.
+        print(f"  NOTE: {this['turns']} turns this week is a small sample; a trend needs 50. Not failing.")
     else:
         rising = t["rising"]
         print(f"  rising: {rising}")
         ok = ok and not rising
 
+    # This breakdown is all-time, not the seven-day window above. Label it,
+    # or the reader does arithmetic that cannot work.
     tot = u.total()["result"]
     for model, m in sorted(tot.get("by_model", {}).items()):
         print(f"  {model}: {m['turns']} turns, {m['pence']}p, {m['batch']} in batch")

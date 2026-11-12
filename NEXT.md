@@ -1,6 +1,6 @@
-# NEXT — generated 2026-11-11 from PLAN.md
+# NEXT — generated 2026-11-12 from PLAN.md
 
-**29 active: 7 in progress, 22 not started.**
+**30 active: 7 in progress, 23 not started.**
 
 ## Open items
 
@@ -23,13 +23,14 @@
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.onboarding_state_write_dead — onboardingStep and onboardingComplete are read in three places (auth/signin/route.ts :52, user/route.ts:21, user/route.ts:104) and written…
 - [ ] accord.password_recovery_gap — The autoComplete="new-password" attribute was added to the signup form, and a warning about saving the password
+- [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders, briefing and data health are live; invoicing and finance are modelled…
 - [ ] ops.client_department — Its own department, next to the plan and the memory, not inside the scout
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
+- [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
-- [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
+- [ ] ops.onboarding_is_email_and_password — PARKED 12 Nov
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
-- [ ] ops.the_five_facts — Every row that can be emailed carries five facts: the Companies House number and matched name (corporate subscriber, outside PECR's consent…
-- [ ] ops.the_signature_is_legal — Every email carries Bosly Limited's registered name, company number, place of registration and registered office (Companies Act 2006,…
+- [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
 - [ ] keep.price_cron_missing — Bosly Keep has no heartbeat
