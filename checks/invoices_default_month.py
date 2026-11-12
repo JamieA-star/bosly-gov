@@ -31,12 +31,20 @@ TSX = Path("/home/bosly_accord/bosly-1.0/components/workspace/FinancePill.tsx")
 # (label, regex) — each must match somewhere in the component source.
 REQUIRED = [
     (
-        "mount sets selectedMonth to the current month",
-        r"setSelectedMonth\(\s*thisMonth\s*\)",
+        "selectedMonth is initialised in useState, not an effect",
+        r"const \[selectedMonth, setSelectedMonth\] = useState\(\(\)\s*=>",
     ),
     (
-        "current month is derived from today's date",
-        r"getFullYear\(\)\s*\+\s*\"-\"\s*\+\s*String\(\s*now\.getMonth\(\)\s*\+\s*1\s*\)\.padStart\(2,\s*\"0\"\)",
+        "the initial value comes from today's date",
+        r"getMonth\(\)",
+    ),
+    (
+        "the initial value is a YYYY-MM string",
+        r"padStart\(2,\s*\"0\"\)",
+    ),
+    (
+        "the default is not set in an effect (that caused the reset loop)",
+        r"(?!.*setSelectedMonth\(\s*thisMonth\s*\))",
     ),
     (
         "invoice list request is scoped by ?month=",

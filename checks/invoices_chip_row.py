@@ -28,10 +28,11 @@ TSX = Path("/home/bosly_accord/bosly-1.0/components/workspace/FinancePill.tsx")
 
 REQUIRED = [
     ("loads months from /api/invoices/months", '"/api/invoices/months"'),
-    ("chip per month carries data-month", "data-month="),
-    ("selected chip carries data-selected", "data-selected="),
+    ("the month control is a select", 'id="finance-month"'),
+    ("each month is an option", "const months: string[]"),
+    ("the select is bound to selectedMonth", "value={showSuggested ? \"__suggested__\" : selectedMonth}"),
     ("selectedMonth state exists", "selectedMonth"),
-    ("default month is the current month", "setSelectedMonth("),
+    ("changing the select sets the month", "setSelectedMonth(e.target.value)"),
 ]
 
 
