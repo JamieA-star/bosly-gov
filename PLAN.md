@@ -657,6 +657,8 @@ THE BUILD, IN ORDER
 
 [ ] ops.inbox_encryption_migration — PARKED 12 Nov. The code says it plainly: message content is encrypted while the session key is loaded and plaintext after a restart until the user signs in. That is the current steady state by design, not a temporary bridge. The safety page now says so. THE MIGRATION: client-side encryption for Inbox, tracked as accord.inbox_pill_encryption.
 
+[ ] ops.the_invoicing_case_study — FOUND 12 Nov. The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before (about 5 hours a month) against under 10 minutes for the month's batch now. Written to case-studies/2026-11-12-invoicing.md. It admits the anxiety — "I'd put it off" — which is the sentence a small business owner recognises. THE USE: the consulting page, a /invoicing page, or a one-page PDF for a client who asks what the app does. Named, with the portrait. THE CHECK: the page shows the workflow and the numbers, and every number is one the database returned.
+
 [ ] ops.the_first_send — FOUND 11 Nov. The loop is not closed until an email goes and the reply is recorded. Three went on 11 Nov: Plaw Hatch, Lily Jacobs, Pooh Corner. Each is two sentences from the row's own facts, with the signature in IONOS. THE SEND: record 'sent' on the profile before the email goes. THE REPLY: matched to the profile by sender address, or recorded by hand, and changes the state. THE CHECK: a sent email leaves a dated event, and a recorded reply changes the queue.
 
 [ ] gov.plan_updates_have_no_anchor — FOUND 26 Oct. append_plan_entry

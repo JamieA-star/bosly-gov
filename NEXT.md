@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-12 from PLAN.md
 
-**30 active: 7 in progress, 23 not started.**
+**31 active: 7 in progress, 24 not started.**
 
 ## Open items
 
@@ -33,4 +33,5 @@
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
+- [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
 - [ ] keep.price_cron_missing — Bosly Keep has no heartbeat

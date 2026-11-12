@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-12 from PLAN.md
 
-**30 active: 7 in progress, 23 not started.**
+**31 active: 7 in progress, 24 not started.**
 Parked and done items are not shown.
 
 ## In progress (7)
@@ -13,7 +13,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (23)
+## Not started (24)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.batch_is_for_many_turns — Batch is 50% off and designed for ASYNCHRONOUS WORK — large evaluations, bulk content, thousands of requests
@@ -38,3 +38,4 @@ Parked and done items are not shown.
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
+- [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
