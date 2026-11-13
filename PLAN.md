@@ -653,7 +653,7 @@ THE BUILD, IN ORDER
 
 [ ] ops.accord_manage_is_a_pa — FOUND 12 Nov. The audit found the product: calendar, contacts, tasks, reminders and briefing are live. Invoicing and the tax pack are ALSO live — the audit missed them because they live inside FinancePill rather than on their own page. The founder uses them monthly: 13 invoices in a month, and the tax pack as a CSV for the accountant. The workspace is five pills: active, inbox, calendar, contacts, finance. Social, health and data health are archived. THE OFFER: Accord.manage is a PA in your pocket — the app asks and does ("someone hasn't been invoiced; chase it? yes — done"). THE NEXT BUILD: onboarding — email and password, the wrapped key, the vault ceremony later — because the app is worth using and nobody can sign up for it yet. THE CHECK: a client can raise, chase and see an invoice without leaving the workspace.
 
-[ ] ops.onboarding_is_email_and_password — PARKED 12 Nov. Decided but not built: sign up with name, email, password; no key ceremony; the data key is wrapped and recoverable server-side so "forgot password" works; the important data is encrypted client-side; the vault ceremony becomes a later tier for regulated buyers. NOT DECIDED: what "forgot password" means in the privacy notice, and how the wrapped key is stored.
+[x] ops.onboarding_is_email_and_password — SUPERSEDED 13 Nov by accord.sign_in_link. The decided shape was email+password at signup with the key wrapped server-side. The decided shape now is: email → link → session; the password is the second credential, set in Settings, optional and removable; the link is the first credential and the account is created on first click. The key ceremony is not part of the product; it stays on accord.founder and (if the product wants encryption) moves to a Settings card. 'Forgot password' is 'send me a link'. See accord.sign_in_link and accord.retire_signup_ceremony.
 
 [ ] ops.inbox_encryption_migration — PARKED 12 Nov. The code says it plainly: message content is encrypted while the session key is loaded and plaintext after a restart until the user signs in. That is the current steady state by design, not a temporary bridge. The safety page now says so. THE MIGRATION: client-side encryption for Inbox, tracked as accord.inbox_pill_encryption.
 
@@ -744,6 +744,7 @@ THE BUILD, IN ORDER
     UPDATE 10 Nov: the shape now includes the client department — one profile per email, dated events, a queue that is a query. The receptionist is multi-tenant config, not one salon. Bosly acts unattended only because it cannot act unrecorded.
 
 
+[ ] accord.retire_signup_ceremony — FOUND 13 Nov. The founder keeps the key ceremony; the product does not have it at signup. THE SPLIT: accord.founder — isFounder true — keeps app/signup/keys, the phrase, the PIN, publicKey, and EncryptionBanner. accord — non-founder — signs up by link, lands in the workspace, and meets encryption only if it goes looking: a Settings → Security card that is the existing ceremony re-housed, unchanged inside. The banner is the quiet entry point; it is dismissable and never a modal. THE PRIVACY SPLIT: the product page says what is true for the product (data stored on our servers, not end-to-end encrypted by default; the assistant can work with it; it is never sent to an external AI provider). The founder's stronger claim lives on the founder's page, not the product's. THE ENCRYPTION SPLIT: invoices, contacts and calendar are client-encrypted and the server genuinely cannot read them — verified: POST /api/invoices and /api/contacts refuse plaintext (invalid_encrypted_payload), calendar writes title as '[encrypted]'. The chat memory was neutered 24 Sep for the same reason and its redesign is scoped in its own comment (compute in the browser, store encrypted). THE CHECK: no /signup/keys path is reachable without isFounder; the product privacy page names no encryption it does not have; the link routes never read publicKey.
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the
@@ -763,6 +764,7 @@ THE BUILD, IN ORDER
     field that would show it has never been written. Fix is open: wire the
     writes, or retire the fields and the reads that trust them.
     PART DONE 8 Nov: decision is wire. The client tracks pill usage in localStorage only; no server route receives a step, so onboardingStep/onboardingComplete stay unwritten. STILL OPEN: add a server write path that sets them at the step-complete moment (analytics/track already accepts onboarding_step_completed as an event — the user field is separate).
+    FACT 13 Nov: onboardingStep is read nowhere and written nowhere (grep app/ lib/ returns nothing); onboardingComplete is read in three places and written only by PUT /api/user. So the title is half wrong — one column is dead, the other is written but never at sign-in. The link build writes onboardingComplete on first successful sign-in; onboardingStep is left for the retire-signup-ceremony item to delete or explain.
 
 
 [x] gov.activity_event_write_dead — FOUND 26 Oct. ActivityEvent has a
@@ -3927,6 +3929,7 @@ Then add more.
     needs SMTP-from-server work. See accord.face_id_recovery for
     the related design.
     PART DONE 8 Nov: browser save prompt; STILL OPEN: recovery without the password
+    NOTE 13 Nov: with the link flow, 'forgot password' means 'send me a link' — the same flow as sign-in. The item's remaining work closes when the link flow lands and the settings password is optional and removable; it is not closed here because the route that makes it true does not exist yet.
 
 
 [ ] [GATED] accord.face_id_recovery — Build Face ID + PIN recovery as
