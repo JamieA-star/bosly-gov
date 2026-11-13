@@ -19,6 +19,16 @@ If a convention stops fitting, remove it. This is alive.
 
 ---
 
+## The readers move with the change (13 Nov)
+
+- A control that replaces another removes it in the same patch.
+- A check or test that reads the source moves in the same change as the source.
+- A check asserts the behaviour, not the implementation that produced it.
+- An effect may load. It must not set the state its own dependencies read.
+- A fact retyped is a fact that will drift. One file, imported everywhere.
+
+---
+
 ## Observations and measurements (11 Nov)
 
 - The scout measures. A person observes.
