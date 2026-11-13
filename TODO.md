@@ -1,15 +1,14 @@
 # TODO — generated 2026-11-13 from PLAN.md
 
-**32 active: 8 in progress, 24 not started.**
+**31 active: 7 in progress, 24 not started.**
 Parked and done items are not shown.
 
-## In progress (8)
+## In progress (7)
 
 - [~] gov.evolve_loop_feedback — The unknown-intents digest is live: lib/intent_classify.py labels each question bug / feature / question / other, evolve_feedback.py groups…
 - [~] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [~] accord.cross_pill_propagation — Half (b) is done
 - [~] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
-- [~] accord.password_recovery_gap — The autoComplete="new-password" attribute was added to the signup form, and a warning about saving the password
 - [~] ops.client_department — PART DONE 12 Nov  [STILL OPEN: the queue as a query, recording the send, recording the reply, and the suppression layer.]
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
@@ -29,14 +28,14 @@ Parked and done items are not shown.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration  check: gov.a_long_build_batches
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
-- [ ] accord.onboarding_state_write_dead — onboardingStep and onboardingComplete are read in three places (auth/signin/route.ts :52, user/route.ts:21, user/route.ts:104) and written…
-- [ ] accord.retire_signup_ceremony — The founder keeps the key ceremony; the product does not have it at signup
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.deploy_applies_migrations_first — deploy-safe.sh builds, backs up and restarts; it does not run prisma migrate deploy
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
+- [ ] ops.the_encryption_claim_is_one_file — The claim 'invoices, contacts and calendar are encrypted' is now true only for a user who has set up encryption; a link signup is plaintext…
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
 - [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
