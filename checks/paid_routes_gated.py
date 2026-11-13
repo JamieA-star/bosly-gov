@@ -36,8 +36,6 @@ PAID_ROUTES = [
     "finance/parse-statement",
     "finance/transactions",
     "finance/tax-pack",
-    "social/generate-captions",
-    "social/generate-ideas",
     "data-health/check",
     "data-health/identities",
     "chat",
