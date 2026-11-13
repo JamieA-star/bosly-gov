@@ -87,6 +87,9 @@ projects:
         - id: gov.orphaned_routes
           severity: medium
           command: python3 checks/orphaned_routes.py
+        - id: gov.no_anthropic_in_archived_routes
+          severity: high
+          command: python3 checks/no_anthropic_in_archived_routes.py
         - id: gov.vault_plaintext_calendar
           severity: high
           command: python3 checks/vault_plaintext_calendar.py
