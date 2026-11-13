@@ -30,10 +30,10 @@ Parked and done items are not shown.
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
 - [ ] accord.onboarding_state_write_dead — onboardingStep and onboardingComplete are read in three places (auth/signin/route.ts :52, user/route.ts:21, user/route.ts:104) and written…
+- [ ] accord.retire_signup_ceremony — The founder keeps the key ceremony; the product does not have it at signup
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
-- [ ] ops.onboarding_is_email_and_password — PARKED 12 Nov
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key

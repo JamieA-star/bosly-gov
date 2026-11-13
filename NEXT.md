@@ -23,12 +23,12 @@
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.onboarding_state_write_dead — onboardingStep and onboardingComplete are read in three places (auth/signin/route.ts :52, user/route.ts:21, user/route.ts:104) and written…
 - [ ] accord.password_recovery_gap — The autoComplete="new-password" attribute was added to the signup form, and a warning about saving the password
+- [ ] accord.retire_signup_ceremony — The founder keeps the key ceremony; the product does not have it at signup
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.client_department — PART DONE 12 Nov
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
-- [ ] ops.onboarding_is_email_and_password — PARKED 12 Nov
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
