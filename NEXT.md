@@ -1,6 +1,6 @@
-# NEXT — generated 2026-11-12 from PLAN.md
+# NEXT — generated 2026-11-13 from PLAN.md
 
-**31 active: 8 in progress, 23 not started.**
+**32 active: 8 in progress, 24 not started.**
 
 ## Open items
 
@@ -30,6 +30,7 @@
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.onboarding_is_email_and_password — PARKED 12 Nov
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
+- [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
