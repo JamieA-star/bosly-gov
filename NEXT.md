@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-14 from PLAN.md
 
-**35 active: 7 in progress, 28 not started.**
+**31 active: 8 in progress, 23 not started.**
 
 ## Open items
 
@@ -18,16 +18,12 @@
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration
 - [ ] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
-- [ ] accord.a_failed_check_is_not_a_no — checkBackup wrote setBackupState('no') on every attempt, including the first, which often runs before the session cookie is readable
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
 - [ ] accord.cross_pill_propagation — Half (b) is done
-- [ ] accord.encryption_prompt_is_founder_only — The ceremony split gated /signup/keys and the Settings cards, but EncryptionReminder's showSetup fired for every user with no key, so a…
-- [ ] accord.every_route_uses_the_session — app/api/auth/key-backup read only the legacy bosly_uid cookie, so it returned 401 in a tab that was fully signed in — setSession writes…
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
-- [ ] accord.vault_state_never_leaks_between_users — VaultProvider.boot() reset isReady but not aesKey, hasKeys, backupState or userId, so a browser that signed in as one account and then…
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.client_department — PART DONE 12 Nov
-- [ ] ops.deploy_applies_migrations_first — 1) deploy-safe.sh builds, backs up and restarts; it does not run prisma migrate deploy, and the deploy went out before the migration so the…
+- [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
