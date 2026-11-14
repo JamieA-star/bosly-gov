@@ -764,6 +764,8 @@ THE BUILD, IN ORDER
 
 [ ] accord.product_chat_ladder — FOUND 15 Nov. /api/chat is deterministic only; the saved-answer cache and the capped LLM are the next build on this route. Includes the monthly LLM cap (count calls, not questions — a deterministic answer costs nothing) and a log of the questions that reach the model, so common ones become workflows. The privacy sentence changes in the same commit that connects it.
 
+[ ] gov.checks_name_behaviour_not_paths — FOUND 15 Nov. Six checks went red or silent in one week because their subject moved: a route directory renamed, two routes deleted, a component split, a doc comment naming a URL. Each fix was right, and the pattern is the design — a check that hardcodes a path or a file name dies when the code moves. THE QUESTION: which checks can assert behaviour through the app's own interfaces (a route's response, a component's output) rather than by grepping a file that may not be there tomorrow? THE WORK: a pass over checks/ classifying each as behaviour, path, or prose, and rewriting the path ones that can be behaviour.
+
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the

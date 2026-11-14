@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-14 from PLAN.md
 
-**33 active: 8 in progress, 25 not started.**
+**34 active: 8 in progress, 26 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,11 +14,12 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (25)
+## Not started (26)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.batch_is_for_many_turns — Batch is 50% off and designed for ASYNCHRONOUS WORK — large evaluations, bulk content, thousands of requests
 - [ ] gov.build_quote_learns_from_real_builds — The quote calibrates turns-per-step from builds in the log, and the first build was not attributed (every turn said 'conversation')
+- [ ] gov.checks_name_behaviour_not_paths — Six checks went red or silent in one week because their subject moved: a route directory renamed, two routes deleted, a component split, a…
 - [ ] gov.corrections_become_checks — The founder is the tester
 - [ ] gov.ingest_summary — The founder works in a chat session as well as with the butler, and the chat writes summaries the butler never sees
 - [ ] gov.jarvis_shape — THE DESTINATION, named so the next sessions point at it and do not re-derive it
