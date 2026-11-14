@@ -22,7 +22,10 @@ from pathlib import Path
 ACCORD = Path(os.environ.get("ACCORD_ROOT", "/home/bosly_accord/bosly-1.0"))
 
 ALLOWED = {
-    "components/chat/ChatDrawer.tsx",  # until the FounderChat/ProductChat split
+    # FounderChat is the founder's component; naming /api/founder/ is
+    # its job. ProductChat names only /api/chat. Anything else in app/
+    # or components/ naming the butler's door still fails.
+    "components/chat/FounderChat.tsx",
 }
 SKIP_PREFIX = "app/api/founder/"  # the routes themselves
 
