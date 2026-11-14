@@ -756,6 +756,14 @@ THE BUILD, IN ORDER
 
 [x] accord.encryption_prompt_is_founder_only — DONE 14 Nov, folded into gov.accord_vault_and_encryption_invariants (cb252cf).  The ceremony split gated /signup/keys and the Settings cards, but EncryptionReminder's showSetup fired for every user with no key, so a link signup was told 'Your data isn't encrypted yet'. showSetup and showRecovery now both require isFounder. THE RULE: the founder gate applies to every component that mentions encryption or recovery, not only the route and the settings page. THE CHECK: every component naming encryption or recovery reads isFounder.
 
+[x] accord.everything_locks_after_seven_days — DONE 15 Nov. The trial is the account's age: `trialDaysLeft` in lib/usage-tracking, applied by hasAccord and by requireAccord alike. Twelve write routes under calendar, contacts and invoices gained the gate they never had; reads stay open so the workspace renders. check: gov.accord_every_write_route_is_gated.
+
+[x] accord.one_front_door — DONE 15 Nov. / is the front door: four true sentences, one email box that sends a link, password and passkey below. /signin keeps the doors without the marketing because eleven redirects land there. /signup redirects to /. The founder-only recovery link came off the customer page.
+
+[ ] ops.what_the_app_is_is_one_file — FOUND 15 Nov. docs/what-the-app-is.md states the pills, the trial, what is free and paid, the two doors, and the honest encryption position: built and enforced, but only the founder has a key, so no customer-facing page may say 'encrypted' until the Settings card exists. THE USE: the source for the privacy, terms and safety rewrite, so those pages stop claiming what the product does not do.
+
+[ ] accord.product_chat_ladder — FOUND 15 Nov. /api/chat is deterministic only; the saved-answer cache and the capped LLM are the next build on this route. Includes the monthly LLM cap (count calls, not questions — a deterministic answer costs nothing) and a log of the questions that reach the model, so common ones become workflows. The privacy sentence changes in the same commit that connects it.
+
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the
