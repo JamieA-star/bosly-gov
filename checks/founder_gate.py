@@ -13,7 +13,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROUTE = Path("/home/bosly_accord/bosly-1.0/app/api/executive/founder/route.ts")
+ROUTE = Path("/home/bosly_accord/bosly-1.0/app/api/founder/founder/route.ts")
 
 
 def main() -> int:

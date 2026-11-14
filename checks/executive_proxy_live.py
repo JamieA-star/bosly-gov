@@ -29,7 +29,7 @@ import sys
 
 REPORT_ONLY = True
 
-URL = "http://localhost:3100/api/executive/proxy"
+URL = "http://localhost:3100/api/founder/proxy"
 BODY = '{"messages":[{"role":"user","content":"health probe"}]}'
 
 # A pass is the route answering and being gated. 404 is the trap.

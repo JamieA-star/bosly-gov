@@ -34,9 +34,9 @@ def main() -> int:
 
     src = CLIENT.read_text(encoding="utf-8")
 
-    start = src.find('fetch("/api/executive/proxy"')
+    start = src.find('fetch("/api/founder/proxy"')
     if start == -1:
-        start = src.find("fetch('/api/executive/proxy'")
+        start = src.find("fetch('/api/founder/proxy'")
     if start == -1:
         print("  COULD NOT EVALUATE: proxy fetch not found")
         print("")

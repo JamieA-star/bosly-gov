@@ -3,7 +3,7 @@
 Check: the Executive proxy has no path to the database.
 
 The promise: the LLM never sees a user's sensitive business data. The
-structural guarantee: /api/executive/proxy relays a prompt the browser
+structural guarantee: /api/founder/proxy relays a prompt the browser
 built; it does not read the database. This check fails if the proxy
 route file imports prisma directly, or calls a Prisma model query.
 
@@ -20,7 +20,7 @@ import re
 import sys
 from pathlib import Path
 
-ROUTE = Path("/home/bosly_accord/bosly-1.0/app/api/executive/proxy/route.ts")
+ROUTE = Path("/home/bosly_accord/bosly-1.0/app/api/founder/proxy/route.ts")
 
 # Direct prisma import, or a direct model query, in the proxy file.
 PATTERNS = [

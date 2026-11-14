@@ -22,7 +22,7 @@ from pathlib import Path
 
 REPORT_ONLY = True
 
-ROUTE = Path("/home/bosly_accord/bosly-1.0/app/api/executive/proxy/route.ts")
+ROUTE = Path("/home/bosly_accord/bosly-1.0/app/api/founder/proxy/route.ts")
 
 
 def main() -> int:

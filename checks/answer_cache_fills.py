@@ -3,7 +3,7 @@
 
 The cache has two halves. The loop CHECKING it is proven by the drawer
 (Accord's own chat, 3100). The UI STORING to it is the other half: the
-UI is served by Gov on 3102 and POSTs to /gov/api/executive/cache, a
+UI is served by Gov on 3102 and POSTs to /gov/api/founder/cache, a
 route Gov does not have. On 1 Nov that POST returned 404, so the UI's
 half never filled. This check asks a question with a unique marker,
 then asserts the marker landed in the cache file.
@@ -30,7 +30,7 @@ REPORT_ONLY = False
 # The route is Accord's, on 3100 — not Gov's. The founder bearer
 # token is what the butler uses to reach Accord's routes without a
 # browser session; it is in Gov's own environment (proven 1 Nov).
-ROUTE_URL = "http://localhost:3100/api/executive/cache"
+ROUTE_URL = "http://localhost:3100/api/founder/cache"
 CACHE_DIR = Path("/mnt/bosly/bosly-data/copilot-knowledge/bosly-gov/answer-cache")
 # Digit-free and value-free by design: the route's looksSensitive()
 # refuses any question containing a digit, and its already_cached guard
