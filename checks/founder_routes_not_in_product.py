@@ -16,6 +16,7 @@ Found 14 Nov: ChatDrawer called /api/executive/proxy for every user
 and relied on hasProduct — a row a grant can set — to refuse.
 """
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -41,7 +42,12 @@ for base in (ACCORD / "app", ACCORD / "components"):
             text = p.read_text(encoding="utf-8", errors="ignore")
         except Exception:
             continue
-        if "/api/founder/" in text:
+        # Strip comments: the chooser's doc comment names the URL to say
+        # it does not call it. The rule is about calls, not prose.
+        code = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+        code = re.sub(r"(?m)^\s*//.*$", "", code)
+        code = re.sub(r"(?m)\s//\s.*$", "", code)
+        if "/api/founder/" in code:
             hits.append(rel)
 
 if hits:
