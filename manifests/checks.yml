@@ -93,6 +93,9 @@ projects:
         - id: gov.accord_route_uses_the_session
           severity: high
           command: python3 checks/route_uses_the_session.py
+        - id: gov.accord_vault_and_encryption_invariants
+          severity: high
+          command: python3 checks/vault_and_encryption_invariants.py
         - id: gov.vault_plaintext_calendar
           severity: high
           command: python3 checks/vault_plaintext_calendar.py
