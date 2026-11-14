@@ -99,6 +99,9 @@ projects:
         - id: gov.accord_founder_routes_not_in_product
           severity: high
           command: python3 checks/founder_routes_not_in_product.py
+        - id: gov.accord_every_write_route_is_gated
+          severity: high
+          command: python3 checks/every_write_route_is_gated.py
         - id: gov.vault_plaintext_calendar
           severity: high
           command: python3 checks/vault_plaintext_calendar.py
