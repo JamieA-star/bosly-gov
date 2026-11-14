@@ -90,6 +90,9 @@ projects:
         - id: gov.no_anthropic_in_archived_routes
           severity: high
           command: python3 checks/no_anthropic_in_archived_routes.py
+        - id: gov.accord_route_uses_the_session
+          severity: high
+          command: python3 checks/route_uses_the_session.py
         - id: gov.vault_plaintext_calendar
           severity: high
           command: python3 checks/vault_plaintext_calendar.py
