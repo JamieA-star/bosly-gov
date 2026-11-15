@@ -1,6 +1,6 @@
-# TODO — generated 2026-11-14 from PLAN.md
+# TODO — generated 2026-11-15 from PLAN.md
 
-**34 active: 8 in progress, 26 not started.**
+**35 active: 8 in progress, 27 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,7 +14,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (26)
+## Not started (27)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.batch_is_for_many_turns — Batch is 50% off and designed for ASYNCHRONOUS WORK — large evaluations, bulk content, thousands of requests
@@ -32,6 +32,7 @@ Parked and done items are not shown.
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
 - [ ] accord.product_chat_ladder — /api/chat is deterministic only; the saved-answer cache and the capped LLM are the next build on this route
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.audit_the_footer_links_against_the_code — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE

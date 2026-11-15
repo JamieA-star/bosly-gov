@@ -1,6 +1,6 @@
-# NEXT — generated 2026-11-14 from PLAN.md
+# NEXT — generated 2026-11-15 from PLAN.md
 
-**34 active: 8 in progress, 26 not started.**
+**35 active: 8 in progress, 27 not started.**
 
 ## Open items
 
@@ -24,6 +24,7 @@
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.product_chat_ladder — /api/chat is deterministic only; the saved-answer cache and the capped LLM are the next build on this route
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.audit_the_footer_links_against_the_code — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] ops.client_department — PART DONE 12 Nov
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
