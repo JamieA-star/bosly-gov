@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-15 from PLAN.md
 
-**35 active: 8 in progress, 27 not started.**
+**36 active: 8 in progress, 28 not started.**
 
 ## Open items
 
@@ -19,10 +19,12 @@
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration
 - [ ] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
+- [ ] accord.ceremony_password_step_409 — The ceremony's password step calls PUT /api/user/password without a current password
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
 - [ ] accord.cross_pill_propagation — Half (b) is done
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.product_chat_ladder — /api/chat is deterministic only; the saved-answer cache and the capped LLM are the next build on this route
+- [ ] accord.sign_out_is_not_forget_the_key — Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable…
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.audit_the_footer_links_against_the_code — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] ops.client_department — PART DONE 12 Nov
@@ -33,9 +35,8 @@
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
-- [ ] ops.the_encryption_claim_is_one_file — The claim 'invoices, contacts and calendar are encrypted' is now true only for a user who has set up encryption; a link signup is plaintext…
+- [ ] ops.the_encryption_claim_is_one_file — The FAQ's fourteen wrong answers and Safety's zero-access section are rewritten; both now name the state a user is in
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
 - [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
-- [ ] ops.what_the_app_is_is_one_file — docs/what-the-app-is.md states the pills, the trial, what is free and paid, the two doors, and the honest encryption position: built and…
 - [ ] keep.price_cron_missing — Bosly Keep has no heartbeat
