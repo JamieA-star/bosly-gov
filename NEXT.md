@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-16 from PLAN.md
 
-**36 active: 8 in progress, 28 not started.**
+**35 active: 8 in progress, 27 not started.**
 
 ## Open items
 
@@ -24,7 +24,6 @@
 - [ ] accord.cross_pill_propagation — Half (b) is done
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
-- [ ] accord.the_signature_is_the_users — The draft ends at the body, with no signature, because a user with their own mail signature does not want one
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.client_department — PART DONE 12 Nov
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
