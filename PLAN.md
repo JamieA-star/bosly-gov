@@ -325,7 +325,7 @@ THE BUILD, IN ORDER
     which is why the logging came first.
 
 
-[ ] gov.overnight_build_uses_batch — SUPERSEDED 7 Nov by gov.the_batch_is_a_policy_not_a_flag. Kept for its catch: batch cannot do multi-turn tool use inside one entry; each turn is batched, not the whole build. Do not build this as a separate item. The build loop runs
+[x] gov.overnight_build_uses_batch — SUPERSEDED 7 Nov by gov.the_batch_is_a_policy_not_a_flag. Kept for its catch: batch cannot do multi-turn tool use inside one entry; each turn is batched, not the whole build. Do not build this as a separate item. The build loop runs
     at night; nothing is waiting on the response. Route each turn
     through the provider's batch API for 50% off, stacking with the
     cache. THE CATCH: batch cannot do multi-turn tool use inside one
@@ -776,7 +776,7 @@ THE BUILD, IN ORDER
 
 [x] accord.ceremony_password_step_409 — DONE 16 Nov. /api/auth/me reports hasPassword; the ceremony starts at the disclaimer and its intro button says Continue when one exists. The ceremony's password step calls PUT /api/user/password without a current password. If the account already has one — a user who set a password and abandoned the ceremony, or one whose browser key was lost — the route returns 409 current_required and the ceremony stops at the first screen. THE FIX: /api/auth/me reports whether a password exists, and the ceremony skips the step when it does, going straight to the disclaimer. THE CHECK: a user with a password and no browser key can reach 'complete' again.
 
-[ ] accord.sign_out_is_not_forget_the_key — DONE 15 Nov, recorded so it is not undone. Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable after an ordinary sign-in. The key is durable and device-bound; sign-out clears the session, and 'Forget this device' in the security tab is the explicit action. check: gov.accord_vault_and_encryption_invariants covers the provider; nothing yet asserts that sign-out does not clear the keystore.
+[x] accord.sign_out_is_not_forget_the_key — DONE 15 Nov, recorded so it is not undone. Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable after an ordinary sign-in. The key is durable and device-bound; sign-out clears the session, and 'Forget this device' in the security tab is the explicit action. check: gov.accord_vault_and_encryption_invariants covers the provider; nothing yet asserts that sign-out does not clear the keystore.
 
 [x] accord.the_browser_fills_the_money_answers — DONE 16 Nov. who-owes-me and how-much-owed both return needsKey with a count; ProductChat decrypts the unpaid invoices with decryptFromServer and answers with names-and-total or total-only, depending on what was asked. Proved: 'who owes me money' → 'Dave — £27.60 outstanding across 1 invoice'; 'how much am I owed' → '£27.60 outstanding across 1 invoice'. Without a key the count stands. The server never sees an amount.  who-owes-me now returns needsKey beside the count; ProductChat decrypts the unpaid invoices with decryptFromServer and replaces the sentence with names and a total — proved: 'Dave — £27.60 outstanding across 1 invoice'. Without a key the count stands. REMAINING: the same fill for how-much-am-I-owed and what-did-I-earn-last-month, which are the same build with a different filter.  Three workflows return a count and a marker because the amounts are inside encryptedData: who owes you money, how much am I owed, what did I earn. THE BUILD: the workflow returns needsKey with the count; ProductChat sees it, asks the vault for the key, decrypts the rows and replaces the sentence with the total; without a key the count stands and the sentence says 'open Finance to see who and how much'. The same pattern as the rest of the app — the best answer if the key is there, an honest answer if it isn't. THE CHECK: a user with a key never sees the count-only sentence.
 
@@ -933,7 +933,7 @@ THE BUILD, IN ORDER
     NOT YET: the door, the trigger, the delivery test.
 
 
-[ ] [LIVE] ops.priority_to_january — DECIDED 21 Oct. SUPERSEDED by
+[x] [LIVE] ops.priority_to_january — DECIDED 21 Oct. SUPERSEDED by
     ops.plan_to_january_v2 (23 Oct). Kept for the record; where they
     differ, v2 wins.
 
@@ -1108,7 +1108,7 @@ THE BUILD, IN ORDER
     through the butler and returned the calendar.
 
 
-[ ] [LIVE] ops.butler_test_day — DECIDED 23 Oct. Tomorrow: test the
+[x] [LIVE] ops.butler_test_day — DECIDED 23 Oct. Tomorrow: test the
     app butler and the UI butler, and build a few small items.
 
     THE TEST: ask the butler the real questions, in both doors — the
@@ -3629,26 +3629,7 @@ Then add more.
     transparently).
 
 
-[ ] [LIVE] ops.gate_private_hostnames — DONE 19 Oct. The Custodian
-    and Keep were both publicly readable on the internet:
-    gov.bosly.app returned 200 and /api/projects returned the
-    names of all three repos; keep.bosly.app was equally open.
-    Both are now behind Cloudflare Access (Zero Trust): a
-    self-hosted application per hostname, an Allow policy
-    matching jr-arnott@outlook.com, deny by default. Access
-    remembers the browser for 24 hours, so a second hostname
-    opens without a prompt once you have logged in once — that
-    is SSO, not a misconfiguration. bosly.app (Accord) stays
-    public, which is correct.
-
-    What is not done: the tunnel's "Protect with Access"
-    toggle (defence in depth — validates the JWT at cloudflared,
-    not required for the prompt but worth turning on). Any new
-    hostname added to the tunnel must be gated the same way
-    before it goes live.
-
-
-[ ] [LIVE] ops.gate_private_hostnames — DONE 19 Oct. The Custodian
+[x] [LIVE] ops.gate_private_hostnames — DONE 19 Oct. The Custodian
     and Keep were both publicly readable on the internet:
     gov.bosly.app returned 200 and /api/projects returned the
     names of all three repos; keep.bosly.app was equally open.
