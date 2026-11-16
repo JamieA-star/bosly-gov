@@ -151,6 +151,39 @@ This applies to everything we write together.
 
 ---
 
+## Closing a session: plan, memory, capsule (16 Nov)
+
+Three artefacts, three purposes. Each is written by a patcher, never by hand.
+
+- **Plan** — `bosly-gov/PLAN.md`. What to do. A patcher replaces the `[ ]`
+  line with a `[x]` line that says what was done and what proves it.
+  Evidence is the check's output, not the claim. Then run
+  `python3 scripts/gen_todo.py` — it regenerates `TODO.md` and `NEXT.md`,
+  and `gov.next_md_tracks_plan` fails if you forget.
+- **Memory** — `copilot-knowledge/bosly-gov/memory.json`. What was learned.
+  A JSON list; each entry needs `id` (`pattern-YYYYMMDD-slug`),
+  `project_slug`, `item_type`, `content`. Schema-checked. Outside git,
+  backed up by the corpus backup, so a `.bak` before you write.
+- **Capsule** — `copilot-knowledge/bosly-gov/capsules/YYYY-MM-DD-name.md`.
+  The session's arc: what was built, what went wrong, the lessons, what's
+  next. Appended to the day's capsule, never rewritten.
+
+The order is plan, then memory, then capsule. A plan tick with no memory
+entry is a closed door with nothing behind it. A capsule with no plan tick
+is a story with no evidence.
+
+The plan is a text file of one-line items; a patcher replaces the line.
+Every anchor is matched by content, and the patcher aborts if it is
+missing — never a partial edit. The memory and capsule are written by
+patcher too, with a `.bak` first.
+
+The three-file routine is worth a single script — `scripts/close_session.py`
+taking plan anchors, memory entries, and capsule text — so a session ends
+in one command instead of three. It does not exist yet. Until it does, the
+three patchers are the routine.
+
+---
+
 ## How to Start a Session
 To start a session:
 
