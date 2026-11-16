@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-16 from PLAN.md
 
-**36 active: 8 in progress, 28 not started.**
+**35 active: 8 in progress, 27 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,7 +14,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (28)
+## Not started (27)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.batch_is_for_many_turns — Batch is 50% off and designed for ASYNCHRONOUS WORK — large evaluations, bulk content, thousands of requests
@@ -31,7 +31,6 @@ Parked and done items are not shown.
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
 - [ ] accord.sign_out_is_not_forget_the_key — Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable…  check: gov.accord_vault_and_encryption_invariants
-- [ ] accord.the_browser_fills_the_money_answers — Three workflows return a count and a marker because the amounts are inside encryptedData: who owes you money, how much am I owed, what did…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.audit_the_footer_links_against_the_code — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
