@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-16 from PLAN.md
 
-**38 active: 8 in progress, 30 not started.**
+**36 active: 8 in progress, 28 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,7 +14,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (30)
+## Not started (28)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -24,7 +24,6 @@ Parked and done items are not shown.
 - [ ] gov.corrections_become_checks — The founder is the tester
 - [ ] gov.ingest_summary — The founder works in a chat session as well as with the butler, and the chat writes summaries the butler never sees
 - [ ] gov.jarvis_shape — THE DESTINATION, named so the next sessions point at it and do not re-derive it
-- [ ] gov.overnight_build_uses_batch — SUPERSEDED 7 Nov by gov.the_batch_is_a_policy_not_a_flag
 - [ ] gov.plan_has_a_status_view — The founder felt anxiety at "86 open items"
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry appends to the end of PLAN.md; it cannot attach an update to the item it names
 - [ ] gov.sonnet_turns_are_decisions — The first build cost £2.98: Haiku 5.5 ran 155 turns for 26p, Sonnet ran 21 turns for 272p — 91% of the bill on 12% of the calls
@@ -32,7 +31,6 @@ Parked and done items are not shown.
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
-- [ ] accord.sign_out_is_not_forget_the_key — Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable…  check: gov.accord_vault_and_encryption_invariants
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] accord.the_signature_is_the_users — The draft ends at the body, with no signature, because a user with their own mail signature does not want one
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live

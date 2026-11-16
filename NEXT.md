@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-16 from PLAN.md
 
-**38 active: 8 in progress, 30 not started.**
+**36 active: 8 in progress, 28 not started.**
 
 ## Open items
 
@@ -13,7 +13,6 @@
 - [ ] gov.evolve_loop_feedback — The unknown-intents digest is live: lib/intent_classify.py labels each question bug / feature / question / other, evolve_feedback.py groups…
 - [ ] gov.ingest_summary — The founder works in a chat session as well as with the butler, and the chat writes summaries the butler never sees
 - [ ] gov.jarvis_shape — THE DESTINATION, named so the next sessions point at it and do not re-derive it
-- [ ] gov.overnight_build_uses_batch — SUPERSEDED 7 Nov by gov.the_batch_is_a_policy_not_a_flag
 - [ ] gov.plan_has_a_status_view — The founder felt anxiety at "86 open items"
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry appends to the end of PLAN.md; it cannot attach an update to the item it names
 - [ ] gov.sonnet_turns_are_decisions — The first build cost £2.98: Haiku 5.5 ran 155 turns for 26p, Sonnet ran 21 turns for 272p — 91% of the bill on 12% of the calls
@@ -24,7 +23,6 @@
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.cross_pill_propagation — Half (b) is done
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
-- [ ] accord.sign_out_is_not_forget_the_key — Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] accord.the_signature_is_the_users — The draft ends at the body, with no signature, because a user with their own mail signature does not want one
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
