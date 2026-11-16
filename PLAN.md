@@ -782,6 +782,10 @@ THE BUILD, IN ORDER
 
 [ ] accord.the_signature_is_the_users — FOUND 16 Nov. The draft ends at the body, with no signature, because a user with their own mail signature does not want one. A user without one currently has no way to say 'put my details in' — the branding is in Settings and the draft does not append it. THE BUILD: a user preference, 'sign my emails with my branding', default off; when on, the draft appends the branding block from settings. THE CHECK: a user who turns it on sees the signature in the draft before sending.
 
+[x] accord.the_engine_knows_the_business — DONE 16 Nov. Sixteen workflows. The second batch added money-this-month, invoice-status, next-appointment and invoiced-last-month, all metadata-only, classified specific-before-general so 'how many invoices last month' gets the month in its answer. docs/manual-test.md is tracked and names the five failures this week produced, so the walk survives the session.
+
+[ ] ops.read_the_question_log_weekly — FOUND 16 Nov. data/llm-questions.jsonl records every shape that reached the model. Every entry is a phrase the engine could not read, in the user's own words. THE ROUTINE: read it weekly, add the top three to classify.ts and the workflow catalogue, and the model's share falls. The first entry closed this way was invoice-count. THE CHECK: the log is non-empty and the count of engine answers is rising.
+
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the

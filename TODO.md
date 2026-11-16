@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-16 from PLAN.md
 
-**36 active: 8 in progress, 28 not started.**
+**37 active: 8 in progress, 29 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,7 +14,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (28)
+## Not started (29)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.batch_is_for_many_turns — Batch is 50% off and designed for ASYNCHRONOUS WORK — large evaluations, bulk content, thousands of requests
@@ -39,6 +39,7 @@ Parked and done items are not shown.
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
+- [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_encryption_claim_is_one_file — The FAQ's fourteen wrong answers and Safety's zero-access section are rewritten; both now name the state a user is in
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
