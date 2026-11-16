@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-16 from PLAN.md
 
-**35 active: 8 in progress, 27 not started.**
+**36 active: 8 in progress, 28 not started.**
 
 ## Open items
 
@@ -24,6 +24,7 @@
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.sign_out_is_not_forget_the_key — Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
+- [ ] accord.the_signature_is_the_users — The draft ends at the body, with no signature, because a user with their own mail signature does not want one
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.audit_the_footer_links_against_the_code — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] ops.client_department — PART DONE 12 Nov

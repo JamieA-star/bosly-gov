@@ -778,6 +778,10 @@ THE BUILD, IN ORDER
 
 [ ] accord.the_question_log_is_the_backlog — FOUND 16 Nov. data/llm-questions.jsonl records every shape that reached the model. Read it weekly; write the top three as workflows; the model's share falls. The first entry closed this way was 'how many invoices do I have for this month', which became invoice-count. Seven workflows now exist. THE RULE: a question the model answers is a workflow not yet written, and the log is the only honest roadmap because it is what people typed.
 
+[x] accord.the_first_action — DONE 16 Nov. The chat finds the invoice, asks which one, builds the draft in the browser, takes a revision, shows it again, queues it in the outbox with a one-minute delay and a cancel, and the cron attaches the PDF and sends. Proved: 'can you invoice Dave?' → confirm → draft → 'take out green gayte .co and end with Many thanks Jamie' → revised → 'yes send' → queued → [cron/outbox] sent. The model saw only text; the server never saw Dave, the amount or the PDF. KNOWN: an invoice with no client email says so rather than sending; a user without a signature has no way to add branding yet; the outbox holds the PDF for a minute.
+
+[ ] accord.the_signature_is_the_users — FOUND 16 Nov. The draft ends at the body, with no signature, because a user with their own mail signature does not want one. A user without one currently has no way to say 'put my details in' — the branding is in Settings and the draft does not append it. THE BUILD: a user preference, 'sign my emails with my branding', default off; when on, the draft appends the branding block from settings. THE CHECK: a user who turns it on sees the signature in the draft before sending.
+
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
     already in read_accord: dates, times, contactId, isAllDay, source.
     The content is in encryptedData, client-side. The app holds the
