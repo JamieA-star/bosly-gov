@@ -1,4 +1,4 @@
-# NEXT — generated 2026-11-15 from PLAN.md
+# NEXT — generated 2026-11-16 from PLAN.md
 
 **36 active: 8 in progress, 28 not started.**
 
@@ -19,12 +19,12 @@
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration
 - [ ] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
-- [ ] accord.ceremony_password_step_409 — The ceremony's password step calls PUT /api/user/password without a current password
 - [ ] accord.client_side_calendar_join — The shape is already in read_accord: dates, times, contactId, isAllDay, source
 - [ ] accord.cross_pill_propagation — Half (b) is done
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
-- [ ] accord.product_chat_ladder — /api/chat is deterministic only; the saved-answer cache and the capped LLM are the next build on this route
 - [ ] accord.sign_out_is_not_forget_the_key — Sign-out called clearKeystore, so every sign-out destroyed the encryption key and a product user's encrypted invoices became unreadable…
+- [ ] accord.the_browser_fills_the_money_answers — Three workflows return a count and a marker because the amounts are inside encryptedData: who owes you money, how much am I owed, what did…
+- [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.audit_the_footer_links_against_the_code — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] ops.client_department — PART DONE 12 Nov
