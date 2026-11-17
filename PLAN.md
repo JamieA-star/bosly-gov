@@ -788,6 +788,30 @@ THE BUILD, IN ORDER
 
 [x] accord.the_engine_knows_the_business — DONE 16 Nov. Sixteen workflows. The second batch added money-this-month, invoice-status, next-appointment and invoiced-last-month, all metadata-only, classified specific-before-general so 'how many invoices last month' gets the month in its answer. docs/manual-test.md is tracked and names the five failures this week produced, so the walk survives the session.
 
+[ ] ops.feature_usage_is_anonymous — FOUND 17 Nov. The only per-user
+tracking that stays is UsageTracking (AI calls, the 20-a-month cap) —
+per-user by necessity, disclosed as billing. Everything else becomes
+anonymous feature counts so the founder can see what is used. THE MODEL:
+FeatureUsage (feature, month, count), no userId, no relation. THE
+CATALOGUE, fixed before the code writes so two sessions cannot invent two
+names: pills tracked are pill:active, pill:inbox, pill:calendar,
+pill:contacts, pill:finance. Actions: action:email_read, email_reply_sent,
+email_deleted; event_created, event_updated, event_deleted, ics_imported;
+contact_created, contact_updated, contact_enriched; transaction_added,
+transaction_imported, receipt_uploaded, statement_parsed, category_set,
+tax_position_viewed; invoice_created, invoice_sent, invoice_marked_paid,
+invoice_feedback; card_created, card_completed. Chat, five outcomes kept
+separate: chat_engine, chat_cache, chat_llm, chat_capped, chat_none —
+capped is pricing, none is a missing workflow, llm is cost. NOT TRACKED,
+with reasons: pill:health, pill:dataHealth, pill:invoiceAnalytics (render
+only when expanded; if unused, no number needed); auth, billing and
+internal routes (billing already knows; not product signals); settings and
+one-off actions. THE HELPER: recordFeatureUse(feature) upserts (feature,
+month) and increments; best-effort, never blocks the action. THE CAP IS
+NOT TOUCHED. THE PRIVACY PAGE then says usage is counted anonymously by
+feature and month. THE CHECK: no analytics table has a userId column.
+BUILD NEXT SESSION against this catalogue.
+
 [ ] ops.usage_is_anonymous — FOUND 17 Nov. lib/usage-tracking.ts keys
 UsageTracking by userId_feature_month, so the analytics identify a user.
 The tier cap is per-user by necessity and stays. THE BUILD: split the

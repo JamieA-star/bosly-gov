@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-17 from PLAN.md
 
-**37 active: 8 in progress, 29 not started.**
+**38 active: 8 in progress, 30 not started.**
 
 ## Open items
 
@@ -28,6 +28,7 @@
 - [ ] ops.client_department — PART DONE 12 Nov
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
+- [ ] ops.feature_usage_is_anonymous — The only per-user
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
