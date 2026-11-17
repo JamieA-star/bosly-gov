@@ -788,6 +788,8 @@ THE BUILD, IN ORDER
 
 [x] accord.the_engine_knows_the_business — DONE 16 Nov. Sixteen workflows. The second batch added money-this-month, invoice-status, next-appointment and invoiced-last-month, all metadata-only, classified specific-before-general so 'how many invoices last month' gets the month in its answer. docs/manual-test.md is tracked and names the five failures this week produced, so the walk survives the session.
 
+[x] ops.the_consent_banner_is_gone — DONE 17 Nov. The banner asked about usage tracking and marketing attribution, both archived; the only tracking left is the AI-call cap, which is billing. It also appeared every time because two copies of the component wrote the same cookie-consent key. Deleted both copies, the key, the lib/tracking.ts writer, and the two privacy rows that named them. Evidence: commit d841079, 5 files, 293 deletions, and a clean npx tsc --noEmit.
+
 [ ] ops.feature_usage_is_anonymous — FOUND 17 Nov. The only per-user
 tracking that stays is UsageTracking (AI calls, the 20-a-month cap) —
 per-user by necessity, disclosed as billing. Everything else becomes
