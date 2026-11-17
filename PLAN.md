@@ -788,6 +788,30 @@ THE BUILD, IN ORDER
 
 [x] accord.the_engine_knows_the_business — DONE 16 Nov. Sixteen workflows. The second batch added money-this-month, invoice-status, next-appointment and invoiced-last-month, all metadata-only, classified specific-before-general so 'how many invoices last month' gets the month in its answer. docs/manual-test.md is tracked and names the five failures this week produced, so the walk survives the session.
 
+[ ] ops.usage_is_anonymous — FOUND 17 Nov. lib/usage-tracking.ts keys
+UsageTracking by userId_feature_month, so the analytics identify a user.
+The tier cap is per-user by necessity and stays. THE BUILD: split the
+model — a FeatureUsage row (feature, month, count, no userId) written
+alongside the cap's per-user count. THE PRIVACY PAGE then says usage is
+counted anonymously by feature and month, with no retention number it
+cannot enforce. THE CHECK: the analytics table has no userId column, and
+no legal page states a retention period the code does not have.
+
+[ ] ops.the_footer_is_true_line_by_line — FOUND 17 Nov. 7b2558f fixed the
+cookie table and half of §5. The live privacy page still states five
+things the code does not do. THE FIXES, ready to apply: (1) §5 line 60
+"Cloud infrastructure providers" contradicts §10 and Safety, which both
+say self-hosted — match §10. (2) §7 "Log files: 90 days automatically
+purged" — no purge job exists (no scripts/, no cron) — cut the number,
+state logs are kept for security and debugging, not profiling. (3) §7
+"Usage tracking: 12 months" — UsageTracking is never purged — cut the
+number; this is the item ops.usage_is_anonymous writes the real sentence
+for. (4) §6 bosly_tracking "30 days" — lib/tracking.ts sets it with no
+TTL — say "Until you clear it". (5) §7 "Contacts, cards, and tasks" —
+tasks is not a pill — drop it. THE CHECK: no legal page states a
+retention period, a cookie duration, or a hosting claim the code does not
+have.
+
 [ ] ops.read_the_question_log_weekly — FOUND 16 Nov. data/llm-questions.jsonl records every shape that reached the model. Every entry is a phrase the engine could not read, in the user's own words. THE ROUTINE: read it weekly, add the top three to classify.ts and the workflow catalogue, and the model's share falls. The first entry closed this way was invoice-count. THE CHECK: the log is non-empty and the count of engine answers is rising.
 
 [ ] accord.client_side_calendar_join — FOUND 26 Oct. The shape is
