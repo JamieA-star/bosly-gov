@@ -790,7 +790,9 @@ THE BUILD, IN ORDER
 
 [x] ops.the_consent_banner_is_gone — DONE 17 Nov. The banner asked about usage tracking and marketing attribution, both archived; the only tracking left is the AI-call cap, which is billing. It also appeared every time because two copies of the component wrote the same cookie-consent key. Deleted both copies, the key, the lib/tracking.ts writer, and the two privacy rows that named them. Evidence: commit d841079, 5 files, 293 deletions, and a clean npx tsc --noEmit.
 
-[ ] ops.feature_usage_is_anonymous — FOUND 17 Nov. The only per-user
+[ ] ops.the_action_call_sites_fire — FOUND 18 Nov. The catalogue's 27 actions are accepted by the allow-list but nothing fires them. Each is a one-line analytics call at its route, tool: "bosly", event from the catalogue. No decisions left; mechanical. THE CHECK: a sent invoice records invoice_sent once.
+
+[x] ops.feature_usage_is_anonymous — DONE 18 Nov. THE TABLE WAS ALREADY THERE. AnalyticsEvent has no userId; product events go in it under tool: "bosly", kept separate from the invoice-generator funnel by the tool column. No FeatureUsage table was built — a second mechanism for the same job. Evidence: d106a9f (pill filter + tool bosly), d03fa17 (allow-list: the catalogue's actions and the five chat outcomes), ab4ba2c (five chat calls, prisma, best-effort). REMAINING: the 27 action call sites fire nothing yet — the mechanism works for pill_opened and chat_*, the routes are tomorrow's mechanical edit. THE PRIVACY PAGE then says usage is counted anonymously under tool bosly. — FOUND 17 Nov. The only per-user
 tracking that stays is UsageTracking (AI calls, the 20-a-month cap) —
 per-user by necessity, disclosed as billing. Everything else becomes
 anonymous feature counts so the founder can see what is used. THE MODEL:

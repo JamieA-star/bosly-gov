@@ -1,4 +1,4 @@
-# TODO — generated 2026-11-17 from PLAN.md
+# TODO — generated 2026-11-18 from PLAN.md
 
 **38 active: 8 in progress, 30 not started.**
 Parked and done items are not shown.
@@ -33,13 +33,13 @@ Parked and done items are not shown.
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
-- [ ] ops.feature_usage_is_anonymous — The only per-user
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
+- [ ] ops.the_action_call_sites_fire — The catalogue's 27 actions are accepted by the allow-list but nothing fires them
 - [ ] ops.the_encryption_claim_is_one_file — The FAQ's fourteen wrong answers and Safety's zero-access section are rewritten; both now name the state a user is in
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
