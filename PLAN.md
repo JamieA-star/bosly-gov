@@ -790,32 +790,9 @@ THE BUILD, IN ORDER
 
 [x] ops.the_consent_banner_is_gone — DONE 17 Nov. The banner asked about usage tracking and marketing attribution, both archived; the only tracking left is the AI-call cap, which is billing. It also appeared every time because two copies of the component wrote the same cookie-consent key. Deleted both copies, the key, the lib/tracking.ts writer, and the two privacy rows that named them. Evidence: commit d841079, 5 files, 293 deletions, and a clean npx tsc --noEmit.
 
-[ ] ops.the_action_call_sites_fire — FOUND 18 Nov. The catalogue's 27 actions are accepted by the allow-list but nothing fires them. Each is a one-line analytics call at its route, tool: "bosly", event from the catalogue. No decisions left; mechanical. THE CHECK: a sent invoice records invoice_sent once.
+[ ] ops.the_action_call_sites_fire — FOUND 18 Nov. The catalogue's 27 actions are accepted by the allow-list but nothing fires them. Each is a one-line analytics call at its route, tool: "bosly", event from the catalogue. No decisions left; mechanical. THE CHECK: a sent invoice records invoice_sent once. THE MAPPING: finance → transaction_added, transaction_imported, receipt_uploaded, statement_parsed, category_set, tax_position_viewed, invoice_created, invoice_sent, invoice_marked_paid, invoice_feedback; contacts → contact_created, contact_updated, contact_enriched; calendar → event_created, event_updated, event_deleted, ics_imported; inbox → email_read, email_reply_sent, email_deleted; active → card_created, card_completed. Each call carries metadata: { pill: "<pill>" }; "is the pill used" is the count of its actions, not a view. NOT TRACKED: health, dataHealth, invoiceAnalytics — no actions, render only when expanded; auth, billing and internal routes — not product signals.
 
 [ ] ops.feature_usage_is_anonymous — PART DONE 18 Nov. THE TABLE WAS ALREADY THERE. AnalyticsEvent has no userId; product events go in it under tool: "bosly", kept separate from the invoice-generator funnel by the tool column. No FeatureUsage table was built — a second mechanism for the same job. Evidence: d106a9f (pill filter + tool bosly), d03fa17 (allow-list: the catalogue's actions and the five chat outcomes), ab4ba2c (five chat calls, prisma, best-effort). REMAINING: the 27 action call sites fire nothing yet — the mechanism is proven by one real chat_llm row; the pill-open fetch could never fire (pills render in sequence, nothing opens one) and is removed. THE PRIVACY PAGE then says usage is counted anonymously under tool bosly.
-tracking that stays is UsageTracking (AI calls, the 20-a-month cap) —
-per-user by necessity, disclosed as billing. Everything else becomes
-anonymous feature counts so the founder can see what is used. THE MODEL:
-FeatureUsage (feature, month, count), no userId, no relation. THE
-CATALOGUE, fixed before the code writes so two sessions cannot invent two
-names: pills tracked are pill:active, pill:inbox, pill:calendar,
-pill:contacts, pill:finance. Actions: action:email_read, email_reply_sent,
-email_deleted; event_created, event_updated, event_deleted, ics_imported;
-contact_created, contact_updated, contact_enriched; transaction_added,
-transaction_imported, receipt_uploaded, statement_parsed, category_set,
-tax_position_viewed; invoice_created, invoice_sent, invoice_marked_paid,
-invoice_feedback; card_created, card_completed. Chat, five outcomes kept
-separate: chat_engine, chat_cache, chat_llm, chat_capped, chat_none —
-capped is pricing, none is a missing workflow, llm is cost. NOT TRACKED,
-with reasons: pill:health, pill:dataHealth, pill:invoiceAnalytics (render
-only when expanded; if unused, no number needed); auth, billing and
-internal routes (billing already knows; not product signals); settings and
-one-off actions. THE HELPER: recordFeatureUse(feature) upserts (feature,
-month) and increments; best-effort, never blocks the action. THE CAP IS
-NOT TOUCHED. THE PRIVACY PAGE then says usage is counted anonymously by
-feature and month. THE CHECK: no analytics table has a userId column.
-BUILD NEXT SESSION against this catalogue.
-
 [x] ops.usage_is_anonymous — SUPERSEDED 18 Nov by ops.feature_usage_is_anonymous. The plan proposed splitting UsageTracking; the code already had AnalyticsEvent, anonymous, under tool bosly. Kept for the record: the cap is per-user by necessity and the analytics must not be.
 [ ] ops.the_footer_is_true_line_by_line — FOUND 17 Nov. 7b2558f fixed the
 cookie table and half of §5. The live privacy page still states five
