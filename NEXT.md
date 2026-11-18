@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-18 from PLAN.md
 
-**39 active: 8 in progress, 31 not started.**
+**38 active: 8 in progress, 30 not started.**
 
 ## Open items
 
@@ -41,5 +41,4 @@
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
 - [ ] ops.the_footer_is_true_line_by_line — 7b2558f fixed the
 - [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
-- [ ] ops.usage_is_anonymous — lib/usage-tracking.ts keys
 - [ ] keep.price_cron_missing — Bosly Keep has no heartbeat

@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-18 from PLAN.md
 
-**39 active: 8 in progress, 31 not started.**
+**38 active: 8 in progress, 30 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,7 +14,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (31)
+## Not started (30)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -46,4 +46,3 @@ Parked and done items are not shown.
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
 - [ ] ops.the_footer_is_true_line_by_line — 7b2558f fixed the
 - [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
-- [ ] ops.usage_is_anonymous — lib/usage-tracking.ts keys

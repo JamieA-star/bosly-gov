@@ -792,7 +792,7 @@ THE BUILD, IN ORDER
 
 [ ] ops.the_action_call_sites_fire — FOUND 18 Nov. The catalogue's 27 actions are accepted by the allow-list but nothing fires them. Each is a one-line analytics call at its route, tool: "bosly", event from the catalogue. No decisions left; mechanical. THE CHECK: a sent invoice records invoice_sent once.
 
-[ ] ops.feature_usage_is_anonymous — PART DONE 18 Nov. THE TABLE WAS ALREADY THERE. AnalyticsEvent has no userId; product events go in it under tool: "bosly", kept separate from the invoice-generator funnel by the tool column. No FeatureUsage table was built — a second mechanism for the same job. Evidence: d106a9f (pill filter + tool bosly), d03fa17 (allow-list: the catalogue's actions and the five chat outcomes), ab4ba2c (five chat calls, prisma, best-effort). REMAINING: the 27 action call sites fire nothing yet — the mechanism works for pill_opened and chat_*, the routes are tomorrow's mechanical edit. THE PRIVACY PAGE then says usage is counted anonymously under tool bosly. — FOUND 17 Nov. The only per-user
+[ ] ops.feature_usage_is_anonymous — PART DONE 18 Nov. THE TABLE WAS ALREADY THERE. AnalyticsEvent has no userId; product events go in it under tool: "bosly", kept separate from the invoice-generator funnel by the tool column. No FeatureUsage table was built — a second mechanism for the same job. Evidence: d106a9f (pill filter + tool bosly), d03fa17 (allow-list: the catalogue's actions and the five chat outcomes), ab4ba2c (five chat calls, prisma, best-effort). REMAINING: the 27 action call sites fire nothing yet — the mechanism is proven by one real chat_llm row; the pill-open fetch could never fire (pills render in sequence, nothing opens one) and is removed. THE PRIVACY PAGE then says usage is counted anonymously under tool bosly.
 tracking that stays is UsageTracking (AI calls, the 20-a-month cap) —
 per-user by necessity, disclosed as billing. Everything else becomes
 anonymous feature counts so the founder can see what is used. THE MODEL:
@@ -816,15 +816,7 @@ NOT TOUCHED. THE PRIVACY PAGE then says usage is counted anonymously by
 feature and month. THE CHECK: no analytics table has a userId column.
 BUILD NEXT SESSION against this catalogue.
 
-[ ] ops.usage_is_anonymous — FOUND 17 Nov. lib/usage-tracking.ts keys
-UsageTracking by userId_feature_month, so the analytics identify a user.
-The tier cap is per-user by necessity and stays. THE BUILD: split the
-model — a FeatureUsage row (feature, month, count, no userId) written
-alongside the cap's per-user count. THE PRIVACY PAGE then says usage is
-counted anonymously by feature and month, with no retention number it
-cannot enforce. THE CHECK: the analytics table has no userId column, and
-no legal page states a retention period the code does not have.
-
+[x] ops.usage_is_anonymous — SUPERSEDED 18 Nov by ops.feature_usage_is_anonymous. The plan proposed splitting UsageTracking; the code already had AnalyticsEvent, anonymous, under tool bosly. Kept for the record: the cap is per-user by necessity and the analytics must not be.
 [ ] ops.the_footer_is_true_line_by_line — FOUND 17 Nov. 7b2558f fixed the
 cookie table and half of §5. The live privacy page still states five
 things the code does not do. THE FIXES, ready to apply: (1) §5 line 60
