@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-18 from PLAN.md
 
-**38 active: 8 in progress, 30 not started.**
+**39 active: 8 in progress, 31 not started.**
 Parked and done items are not shown.
 
 ## In progress (8)
@@ -14,7 +14,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (30)
+## Not started (31)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -33,6 +33,7 @@ Parked and done items are not shown.
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
