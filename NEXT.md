@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-21 from PLAN.md
 
-**38 active: 8 in progress, 30 not started.**
+**39 active: 8 in progress, 31 not started.**
 
 ## Open items
 
@@ -23,6 +23,7 @@
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.cross_pill_propagation — Half (b) is done
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
+- [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.client_department — PART DONE 12 Nov
