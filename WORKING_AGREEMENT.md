@@ -248,6 +248,28 @@ improves it over time — this is deliberate. It is the teaching loop.
 - Reports: `/mnt/bosly/bosly-data/reports/YYYY-MM-DD/`
 - Data: `/mnt/bosly/bosly-data`
 
+**Deploying**
+
+A push is not a deploy. The box has the code; it serves the old build until
+it is built and restarted. The founder runs this, per the trust contract.
+
+    cd /home/bosly_accord/bosly-1.0
+    npm run build 2>&1 | tail -3 && ./deploy-safe.sh
+
+The build prints only its last three lines; the deploy runs only if the
+build passed. `deploy-safe.sh` verifies `.next/standalone` exists, backs it
+up, regenerates the Prisma client, builds, checks the standalone entry
+point, restarts pm2, and smoke-tests `http://localhost:3100/api/health/smoke`.
+If the smoke test fails it rolls back to the previous build and restarts.
+It replaces `deploy.sh`, which called systemctl for a service that did not
+exist and so never restarted the running process.
+
+The tell that a deploy did not happen: `pm2 list` shows the process up
+longer than the last commit is old. A build without a restart, or a push
+without a build, both leave the app serving old code. On 18 Nov pm2 showed
+two days' uptime after three commits; the app was stale, and the calendar
+"failed" until the restart fixed it.
+
 **Orientation command**
 
 Type `bosly` to print a summary: pipeline state, top open plan items,
