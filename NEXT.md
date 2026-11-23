@@ -1,4 +1,4 @@
-# NEXT — generated 2026-11-21 from PLAN.md
+# NEXT — generated 2026-11-23 from PLAN.md
 
 **39 active: 8 in progress, 31 not started.**
 
@@ -40,6 +40,6 @@
 - [ ] ops.the_encryption_claim_is_one_file — The FAQ's fourteen wrong answers and Safety's zero-access section are rewritten; both now name the state a user is in
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due
 - [ ] ops.the_first_send — The loop is not closed until an email goes and the reply is recorded
-- [ ] ops.the_footer_is_true_line_by_line — 7b2558f fixed the
 - [ ] ops.the_invoicing_case_study — The founder's own use, with numbers from the database: 13 invoices from 5 Oct to 3 Nov, 11 paid, 2 outstanding; 25 minutes each before…
+- [ ] ops.the_legal_check_is_built — The legal pages are true as of 39f7c9c; nothing keeps them true as the code moves
 - [ ] keep.price_cron_missing — Bosly Keep has no heartbeat
