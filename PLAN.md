@@ -1,5 +1,5 @@
 BOSLY GOV — PLAN
-Last updated: 23 October 2026
+Last updated: 24 November 2026
 
 ================================================================
 THE SHAPE OF BOSLY  (read this first)
@@ -4315,3 +4315,44 @@ Then add more.
 
 The class that has produced eight findings in two days. Each
 of these closes one instance.
+
+
+[x] ops.data_folder_not_world_readable — DONE 24 Nov. /mnt/bosly/bosly-data was 755 with a 664 database dump (db-20260930-1445.sql) inside: every account on the box, www-data included, could read it. chmod 750. Evidence: sudo -u claude-audit ls → Permission denied; smoke 200.
+
+[~] ops.anthropic_key_out_of_the_repo — PART DONE 24 Nov. A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed. Revoked in the console 15:48.  [STILL OPEN: the key out of the file and into .env; both ecosystem configs untracked; a new key wired for Gov — Gov's Copilot is down until then.]
+
+[x] accord.the_unsigned_cookie_is_not_identity — DONE 24 Nov. getSession fell back to bosly_uid, an unsigned cookie holding the user id: setting it made you that user. db5d317 dead readers deleted (social-db trusted an email cookie), 50995c6 chat tier and key-backup on getSession, f6ac2c6 passkey off, a6721d4 fallback removed and the cookie no longer set. Evidence: curl with bosly_uid=<founder id> → {"error":"Not authenticated"}; email-link sign-in, chat and Settings work in the browser.
+
+[x] accord.passkey_off — DONE 24 Nov (f6ac2c6). verify accepted any credential for a user with no passkey and checked no signature: an email address was enough to sign in as anyone, the founder included. Evidence: GET /api/auth/passkey → 410.
+
+[ ] accord.passkey_rebuilt — PARKED 24 Nov. Not on the paying-user path. Rebuild with a real WebAuthn verifier; store the public key (it stored the credential id); use setSession. Hide the sign-in button until then.
+
+[ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov (audit, cold read, not yet verified). A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
+
+[ ] ops.encryption_is_a_choice — DECIDED 24 Nov (confirms 13 Nov, ops.onboarding_is_email_and_password). Encryption is opt-in: a default user's data is readable and recoverable by Bosly; a user can turn on zero-access in Settings (password + 24-word phrase) and owns their recovery. Bosly explains the pros and cons of both in plain words. Reason: testers did not understand full encryption. STILL TO DO: the agreement's "non-negotiable" line, the claude.ai project description, the pitch, and the privacy and safety pages say this. Later option: encrypt at rest with a Bosly-held key by default.
+
+[ ] accord.me_sends_no_password_hash — FOUND 24 Nov (audit, unverified). app/api/auth/me/route.ts:42 returns the password hash to the browser.
+
+[ ] accord.privacy_names_anthropic — FOUND 24 Nov (audit, unverified). The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript.
+
+[ ] accord.stripe_price_is_25 — FOUND 24 Nov. JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses. Check the live price in Stripe.
+
+[ ] accord.google_session_email — FOUND 24 Nov. google/callback calls setSession(res, uid, proto): the session's email is the protocol. One line.
+
+[ ] accord.signup_link_existing_user — FOUND 24 Nov. An existing address on the signup form gets no email; it should get a sign-in link. login-link and login comments say the account is created on the click; signup-link creates it on the request.
+
+[ ] accord.fewer_doors — FOUND 24 Nov. Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth. Close the ones no page uses.
+
+[ ] accord.one_session_reader — FOUND 24 Nov. lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it.
+
+[ ] accord.prisma_has_no_shared_user — FOUND 24 Nov. lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS. Find callers; delete or prove.
+
+[ ] accord.data_dir_not_in_git — FOUND 24 Nov. bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data. UK GDPR risk. Untrack, then check history.
+
+[ ] gov.enquiry_status_clears — FOUND 24 Nov. Nothing moves a consultancy enquiry off "new": a test sent 10 Nov showed as "1 new enquiry" in every orientation for 14 days.
+
+[ ] gov.waiting_well_cron_runs — FOUND 24 Nov. waiting_well has not run since 4 Nov; 3 claims stale.
+
+[ ] gov.executive_cache_route — FOUND 24 Nov (audit). routers/tools.py:689 calls /api/executive/cache, which Accord no longer has.
+
+[ ] gov.plan_ids_are_unique — FOUND 24 Nov. accord.client_side_calendar_join appears twice in TODO, both describing the four trust pages.

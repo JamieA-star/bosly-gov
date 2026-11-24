@@ -1,20 +1,21 @@
-# TODO — generated 2026-11-23 from PLAN.md
+# TODO — generated 2026-11-24 from PLAN.md
 
-**39 active: 8 in progress, 31 not started.**
+**56 active: 9 in progress, 47 not started.**
 Parked and done items are not shown.
 
-## In progress (8)
+## In progress (9)
 
 - [~] gov.evolve_loop_feedback — The unknown-intents digest is live: lib/intent_classify.py labels each question bug / feature / question / other, evolve_feedback.py groups…
 - [~] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [~] accord.cross_pill_propagation — Half (b) is done
 - [~] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
+- [~] ops.anthropic_key_out_of_the_repo — A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed  [STILL OPEN: the key out of the file and into .]
 - [~] ops.client_department — PART DONE 12 Nov  [STILL OPEN: the queue as a query, recording the send, recording the reply, and the suppression layer.]
 - [~] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here  [STILL OPEN: clause 3 — nothing checks that DATABASE_URL is non-empty before a deploy or a migration runs; the URL must be read from pm2 jlist, not .]
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (31)
+## Not started (47)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -22,18 +23,34 @@ Parked and done items are not shown.
 - [ ] gov.build_quote_learns_from_real_builds — The quote calibrates turns-per-step from builds in the log, and the first build was not attributed (every turn said 'conversation')
 - [ ] gov.checks_name_behaviour_not_paths — Six checks went red or silent in one week because their subject moved: a route directory renamed, two routes deleted, a component split, a…
 - [ ] gov.corrections_become_checks — The founder is the tester
+- [ ] gov.enquiry_status_clears — Nothing moves a consultancy enquiry off "new": a test sent 10 Nov showed as "1 new enquiry" in every orientation for 14 days
+- [ ] gov.executive_cache_route — routers/tools.py:689 calls /api/executive/cache, which Accord no longer has
 - [ ] gov.ingest_summary — The founder works in a chat session as well as with the butler, and the chat writes summaries the butler never sees
 - [ ] gov.jarvis_shape — THE DESTINATION, named so the next sessions point at it and do not re-derive it
 - [ ] gov.plan_has_a_status_view — The founder felt anxiety at "86 open items"
+- [ ] gov.plan_ids_are_unique — accord.client_side_calendar_join appears twice in TODO, both describing the four trust pages
 - [ ] gov.plan_updates_have_no_anchor — append_plan_entry appends to the end of PLAN.md; it cannot attach an update to the item it names
 - [ ] gov.sonnet_turns_are_decisions — The first build cost £2.98: Haiku 5.5 ran 155 turns for 26p, Sonnet ran 21 turns for 272p — 91% of the bill on 12% of the calls
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration  check: gov.a_long_build_batches
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
+- [ ] gov.waiting_well_cron_runs — waiting_well has not run since 4 Nov; 3 claims stale
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
+- [ ] accord.data_dir_not_in_git — bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data
+- [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
+- [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
+- [ ] accord.me_sends_no_password_hash — app/api/auth/me/route.ts:42 returns the password hash to the browser
+- [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
+- [ ] accord.passkey_rebuilt — PARKED 24 Nov
+- [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
+- [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript
+- [ ] accord.signup_link_existing_user — An existing address on the signup form gets no email; it should get a sign-in link
+- [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
+- [ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov (audit, cold read, not yet verified)
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
