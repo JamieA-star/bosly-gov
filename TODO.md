@@ -48,7 +48,7 @@ Parked and done items are not shown.
 - [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
-- [ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov (audit, cold read, not yet verified)
+- [ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says…
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE

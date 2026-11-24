@@ -4327,7 +4327,7 @@ of these closes one instance.
 
 [ ] accord.passkey_rebuilt — PARKED 24 Nov. Not on the paying-user path. Rebuild with a real WebAuthn verifier; store the public key (it stored the credential id); use setSession. Hide the sign-in button until then.
 
-[ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov (audit, cold read, not yet verified). A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
+[ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says "Unlocking your data…". A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
 
 [ ] ops.encryption_is_a_choice — DECIDED 24 Nov (confirms 13 Nov, ops.onboarding_is_email_and_password). Encryption is opt-in: a default user's data is readable and recoverable by Bosly; a user can turn on zero-access in Settings (password + 24-word phrase) and owns their recovery. Bosly explains the pros and cons of both in plain words. Reason: testers did not understand full encryption. STILL TO DO: the agreement's "non-negotiable" line, the claude.ai project description, the pitch, and the privacy and safety pages say this. Later option: encrypt at rest with a Bosly-held key by default.
 
