@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-25 from PLAN.md
 
-**66 active: 9 in progress, 57 not started.**
+**64 active: 9 in progress, 55 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -15,7 +15,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (57)
+## Not started (55)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -41,7 +41,6 @@ Parked and done items are not shown.
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
-- [ ] accord.no_sign_in_before_the_email_is_proved — md, unverified)
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
 - [ ] accord.option1_decisions — OPEN 25 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
@@ -50,7 +49,6 @@ Parked and done items are not shown.
 - [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
 - [ ] accord.send_is_bounded — md)
 - [ ] accord.sessions_expire_on_the_server — md)
-- [ ] accord.signup_cannot_delete_by_email — md, unverified)
 - [ ] accord.signup_link_existing_user — An existing address on the signup form gets no email; it should get a sign-in link
 - [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…

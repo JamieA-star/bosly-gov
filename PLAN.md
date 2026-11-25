@@ -4371,7 +4371,7 @@ of these closes one instance.
 
 [x] accord.outbox_get_gone — DONE 25 Nov (965d802). GET /api/messages/send had no session check: it returned the whole shared outbox (every user's queued emails, invoice PDFs included) and ?cancel= cancelled anyone's send. Nothing called it. Removed. Evidence: signed in, the URL shows an empty page; a test email from the app was sent and received.
 
-[ ] accord.signup_cannot_delete_by_email — FOUND 25 Nov (ROUTES.md, unverified). auth/signup/route.ts:52-55 deletes an account named by the email in the request, with no session, if it is older than 10 minutes with a "pending" key. Email-link accounts are not hit.
+[x] accord.signup_cannot_delete_by_email — DONE 25 Nov (59ea114): signup and create-profile switched off (410); nothing called them. Evidence: curl POST to both → 410; a fresh sign-up by email link still arrives (jr-arnott+test2). Was: auth/signup/route.ts:52-55 deletes an account named by the email in the request, with no session, if it is older than 10 minutes with a "pending" key. Email-link accounts are not hit.
 
 [ ] accord.inbox_delete_checks_owner — FOUND 25 Nov (ROUTES.md, unverified). inbox/delete:83 does not check who owns the account it deletes from.
 
@@ -4379,7 +4379,7 @@ of these closes one instance.
 
 [ ] accord.transcript_write_is_founder_only — FOUND 25 Nov (ROUTES.md, unverified). transcript:24 lets any trial or paying user write to Gov's transcript.
 
-[ ] accord.no_sign_in_before_the_email_is_proved — FOUND 25 Nov (ROUTES.md, unverified). signup and create-profile sign a person in before the email is proved, so a stranger can pre-register someone's address and keep the password. Joins accord.fewer_doors.
+[x] accord.no_sign_in_before_the_email_is_proved — DONE 25 Nov (59ea114): signup and create-profile switched off (410); nothing called them. Evidence: curl POST to both → 410; a fresh sign-up by email link still arrives (jr-arnott+test2). Was: signup and create-profile sign a person in before the email is proved, so a stranger can pre-register someone's address and keep the password. Joins accord.fewer_doors.
 
 [ ] accord.sessions_expire_on_the_server — FOUND 25 Nov (ROUTES.md). The signed token has iat, but the server never refuses an old one; only the cookie's one-day maxAge ends it.
 
