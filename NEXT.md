@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-25 from PLAN.md
 
-**56 active: 9 in progress, 47 not started.**
+**59 active: 9 in progress, 50 not started.**
 
 ## Open items
 
@@ -30,15 +30,17 @@
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
-- [ ] accord.me_sends_no_password_hash — app/api/auth/me/route.ts:42 returns the password hash to the browser
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
+- [ ] accord.option1_decisions — OPEN 25 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript
+- [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
 - [ ] accord.signup_link_existing_user — An existing address on the signup form gets no email; it should get a sign-in link
 - [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
+- [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
 - [ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says…
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.anthropic_key_out_of_the_repo — A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed
@@ -52,6 +54,7 @@
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model
+- [ ] ops.reboot_brings_bosly_back — The server says "System restart required"
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.the_action_call_sites_fire — invoice_sent fires and is proven by one row: event invoice_sent, tool bosly, metadata {pill: finance}
 - [ ] ops.the_encryption_claim_is_one_file — The FAQ's fourteen wrong answers and Safety's zero-access section are rewritten; both now name the state a user is in

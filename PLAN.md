@@ -4331,7 +4331,7 @@ of these closes one instance.
 
 [ ] ops.encryption_is_a_choice — DECIDED 24 Nov (confirms 13 Nov, ops.onboarding_is_email_and_password). REVISED 24 Nov 16:46, Option 1: every user is encrypted by default with a key Bosly also holds (the browser makes the key at signup; Bosly keeps a copy wrapped with a server key kept in .env), so Bosly can recover a default user's data; a user can turn on zero-access in Settings (password + 24-word phrase) and owns their recovery. Turning it on re-wraps the key with their own secret and deletes Bosly's copy. Bosly explains the pros and cons of both in plain words. Reason: testers did not understand full encryption. STILL TO DO: the agreement's "non-negotiable" line, the claude.ai project description, the pitch, and the privacy and safety pages say this. This also solves accord.workspace_works_without_a_key: every user has a key, so the pills need no second path.
 
-[ ] accord.me_sends_no_password_hash — FOUND 24 Nov (audit, unverified). app/api/auth/me/route.ts:42 returns the password hash to the browser.
+[x] accord.me_sends_no_password_hash — DONE 25 Nov (0562f69). /me spread the password hash into its response and returned the stored key as exportedKey, which nothing read. Both gone; hasPassword kept. Evidence: /api/auth/me in the browser shows no password and no exportedKey, hasPassword true.
 
 [ ] accord.privacy_names_anthropic — FOUND 24 Nov (audit, unverified). The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript.
 
@@ -4356,3 +4356,14 @@ of these closes one instance.
 [ ] gov.executive_cache_route — FOUND 24 Nov (audit). routers/tools.py:689 calls /api/executive/cache, which Accord no longer has.
 
 [ ] gov.plan_ids_are_unique — FOUND 24 Nov. accord.client_side_calendar_join appears twice in TODO, both describing the four trust pages.
+
+
+[x] accord.update_key_writes_nothing — DONE 25 Nov (bae8dcf). update-key took userId or an email from the body and wrote publicKey and the salt with no session check, and /me handed that column to the browser. Its 404 confirmed which emails had accounts. Its callers send no key, so it is now a no-op. Evidence: POST with an unknown email and a key → {"ok":true}.
+
+[ ] accord.update_key_callers_gone — FOUND 25 Nov. settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key. Remove the calls, then the route.
+
+[ ] accord.raw_keys_on_the_server — FOUND 25 Nov. The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76) and returns it on GET (:39). Users who finished that setup were never zero-access. Count them, then fix inside the Option 1 build.
+
+[ ] accord.option1_decisions — OPEN 25 Nov. The terminal Claude's report is ~/audit/OPTION1.md on the claude-audit user: no pill code changes (ContactsPill reads the key at :45, POSTs encryptedData at :223); 7 changes to unblock; the key is made on first workspace load, not at signup-link. Four decisions wait: a separate encryption password?; the same key at opt-in?; existing device-only users; the founder left out?
+
+[ ] ops.reboot_brings_bosly_back — FOUND 25 Nov. The server says "System restart required". Before rebooting, prove pm2 startup and pm2 save bring every process back.
