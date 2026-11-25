@@ -1,4 +1,4 @@
-# NEXT — generated 2026-11-24 from PLAN.md
+# NEXT — generated 2026-11-25 from PLAN.md
 
 **56 active: 9 in progress, 47 not started.**
 
