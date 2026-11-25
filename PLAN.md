@@ -4367,3 +4367,20 @@ of these closes one instance.
 [ ] accord.option1_decisions — OPEN 25 Nov. The terminal Claude's report is ~/audit/OPTION1.md on the claude-audit user: no pill code changes (ContactsPill reads the key at :45, POSTs encryptedData at :223); 7 changes to unblock; the key is made on first workspace load, not at signup-link. Four decisions wait: a separate encryption password?; the same key at opt-in?; existing device-only users; the founder left out?
 
 [ ] ops.reboot_brings_bosly_back — FOUND 25 Nov. The server says "System restart required". Before rebooting, prove pm2 startup and pm2 save bring every process back.
+
+
+[x] accord.outbox_get_gone — DONE 25 Nov (965d802). GET /api/messages/send had no session check: it returned the whole shared outbox (every user's queued emails, invoice PDFs included) and ?cancel= cancelled anyone's send. Nothing called it. Removed. Evidence: signed in, the URL shows an empty page; a test email from the app was sent and received.
+
+[ ] accord.signup_cannot_delete_by_email — FOUND 25 Nov (ROUTES.md, unverified). auth/signup/route.ts:52-55 deletes an account named by the email in the request, with no session, if it is older than 10 minutes with a "pending" key. Email-link accounts are not hit.
+
+[ ] accord.inbox_delete_checks_owner — FOUND 25 Nov (ROUTES.md, unverified). inbox/delete:83 does not check who owns the account it deletes from.
+
+[ ] accord.cron_routes_need_a_secret — FOUND 25 Nov (ROUTES.md, unverified). cron/sync-email:6 has no secret; smtp/deliver:50 and two cron routes are open if their secret is unset. Check .env, then fail closed when a secret is missing.
+
+[ ] accord.transcript_write_is_founder_only — FOUND 25 Nov (ROUTES.md, unverified). transcript:24 lets any trial or paying user write to Gov's transcript.
+
+[ ] accord.no_sign_in_before_the_email_is_proved — FOUND 25 Nov (ROUTES.md, unverified). signup and create-profile sign a person in before the email is proved, so a stranger can pre-register someone's address and keep the password. Joins accord.fewer_doors.
+
+[ ] accord.sessions_expire_on_the_server — FOUND 25 Nov (ROUTES.md). The signed token has iat, but the server never refuses an old one; only the cookie's one-day maxAge ends it.
+
+[ ] accord.send_is_bounded — FOUND 25 Nov (ROUTES.md). Any signed-in user can send any text from Bosly's address via POST /api/messages/send; cancelling may not stop a queued send. Rate limit, sender rules, and an honest cancel.

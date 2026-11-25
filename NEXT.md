@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-25 from PLAN.md
 
-**59 active: 9 in progress, 50 not started.**
+**66 active: 9 in progress, 57 not started.**
 
 ## Open items
 
@@ -25,21 +25,28 @@
 - [ ] gov.waiting_well_cron_runs — waiting_well has not run since 4 Nov; 3 claims stale
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
+- [ ] accord.cron_routes_need_a_secret — md, unverified)
 - [ ] accord.cross_pill_propagation — Half (b) is done
 - [ ] accord.data_dir_not_in_git — bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
+- [ ] accord.inbox_delete_checks_owner — md, unverified)
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
+- [ ] accord.no_sign_in_before_the_email_is_proved — md, unverified)
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
 - [ ] accord.option1_decisions — OPEN 25 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript
 - [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
+- [ ] accord.send_is_bounded — md)
+- [ ] accord.sessions_expire_on_the_server — md)
+- [ ] accord.signup_cannot_delete_by_email — md, unverified)
 - [ ] accord.signup_link_existing_user — An existing address on the signup form gets no email; it should get a sign-in link
 - [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
+- [ ] accord.transcript_write_is_founder_only — md, unverified)
 - [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
 - [ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says…
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
