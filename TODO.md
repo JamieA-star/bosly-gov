@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-26 from PLAN.md
 
-**63 active: 9 in progress, 54 not started.**
+**68 active: 9 in progress, 59 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -15,7 +15,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (54)
+## Not started (59)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -38,24 +38,27 @@ Parked and done items are not shown.
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.cron_routes_need_a_secret — md, unverified)
 - [ ] accord.data_dir_not_in_git — bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data
+- [ ] accord.faq_is_true — The FAQ says five pills are free indefinitely (Accord is £25 after the trial), the chatbot uses no cloud AI (chat goes to Anthropic:…
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
+- [ ] accord.option1_part_b — OPEN 26 Nov
+- [ ] accord.option1_words_everywhere — OPEN 26 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript
 - [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
 - [ ] accord.send_is_bounded — md)
 - [ ] accord.sessions_expire_on_the_server — md)
-- [ ] accord.signup_link_existing_user — An existing address on the signup form gets no email; it should get a sign-in link
+- [ ] accord.stale_page_after_deploy — A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh
 - [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] accord.transcript_write_is_founder_only — md, unverified)
 - [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
-- [ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says…
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.db_password_rotated — The bosly_user database password was printed into a chat (from ~/.bashrc:122)
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
@@ -65,6 +68,8 @@ Parked and done items are not shown.
 - [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model
 - [ ] ops.reboot_brings_bosly_back — The server says "System restart required"
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
+- [ ] ops.server_key_kept_apart — BOSLY_SERVER_KEY is in .env.production, which the build copies into .next/standalone, and deploy-safe backs up .next/standalone
+- [ ] ops.test_accounts_marked — NOTE 26 Nov
 - [ ] ops.the_action_call_sites_fire — invoice_sent fires and is proven by one row: event invoice_sent, tool bosly, metadata {pill: finance}
 - [ ] ops.the_encryption_claim_is_one_file — The FAQ's fourteen wrong answers and Safety's zero-access section are rewritten; both now name the state a user is in
 - [ ] ops.the_first_email — The scout has 24 lawful email rows in Northumberland, each with a service and a follow_up_due

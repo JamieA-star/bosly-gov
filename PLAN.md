@@ -4327,7 +4327,7 @@ of these closes one instance.
 
 [ ] accord.passkey_rebuilt — PARKED 24 Nov. Not on the paying-user path. Rebuild with a real WebAuthn verifier; store the public key (it stored the credential id); use setSession. Hide the sign-in button until then.
 
-[ ] accord.workspace_works_without_a_key — BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says "Unlocking your data…". A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
+[x] accord.workspace_works_without_a_key — DONE 26 Nov. Option 1 Part A: b6cadef columns, d43bc83 server wrap, 0d3d982 /api/auth/vault-key, 218dda4 VaultProvider adopts or makes the first key, a3f09dd safety and FAQ say so. Evidence: a fresh sign-up (jr-arnott+test3) gets pills, a contact survives a refresh, and a private window gets the same contact back; founder unchanged; vault-key GET answers founder_excluded for the founder, none for a new account, default with the phrase after the first POST, and already_set on a second. Was: BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says "Unlocking your data…". A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
 
 [ ] ops.encryption_is_a_choice — DECIDED 24 Nov (confirms 13 Nov, ops.onboarding_is_email_and_password). REVISED 24 Nov 16:46, Option 1: every user is encrypted by default with a key Bosly also holds (the browser makes the key at signup; Bosly keeps a copy wrapped with a server key kept in .env), so Bosly can recover a default user's data; a user can turn on zero-access in Settings (password + 24-word phrase) and owns their recovery. Turning it on re-wraps the key with their own secret and deletes Bosly's copy. Bosly explains the pros and cons of both in plain words. Reason: testers did not understand full encryption. STILL TO DO: the agreement's "non-negotiable" line, the claude.ai project description, the pitch, and the privacy and safety pages say this. This also solves accord.workspace_works_without_a_key: every user has a key, so the pills need no second path.
 
@@ -4339,7 +4339,7 @@ of these closes one instance.
 
 [ ] accord.google_session_email — FOUND 24 Nov. google/callback calls setSession(res, uid, proto): the session's email is the protocol. One line.
 
-[ ] accord.signup_link_existing_user — FOUND 24 Nov. An existing address on the signup form gets no email; it should get a sign-in link. login-link and login comments say the account is created on the click; signup-link creates it on the request.
+[x] accord.signup_link_existing_user — DONE 26 Nov (df993a5). The home page's only link button calls signup-link, which sent nothing to an existing address: returning users could not sign in from the front door. It now sends a sign-in link, founder excluded. Evidence: +test3 signs in from a private window. Was: FOUND 24 Nov. An existing address on the signup form gets no email; it should get a sign-in link. login-link and login comments say the account is created on the click; signup-link creates it on the request.
 
 [ ] accord.fewer_doors — FOUND 24 Nov. Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth. Close the ones no page uses.
 
@@ -4384,3 +4384,18 @@ of these closes one instance.
 [ ] accord.sessions_expire_on_the_server — FOUND 25 Nov (ROUTES.md). The signed token has iat, but the server never refuses an old one; only the cookie's one-day maxAge ends it.
 
 [ ] accord.send_is_bounded — FOUND 25 Nov (ROUTES.md). Any signed-in user can send any text from Bosly's address via POST /api/messages/send; cancelling may not stop a queued send. Rate limit, sender rules, and an honest cancel.
+
+
+[ ] accord.option1_part_b — OPEN 26 Nov. Opt-in zero-access, from ~/audit/OPTION1.md: B1 encrypt page shows the existing words and never makes a new key (it makes one at encrypt/page.tsx:222 today, which would make a default user's data unreadable), B2 password not PIN and no exportedKey in the blob, B3 key-backup in one transaction nulls boslyWrappedKey and publicKey and sets keyMode, B4 recovery asks for the password, B5 Settings shows default / zero-access / locked, B7 recover signs in first. Until B ships, keep /settings/encrypt away from default users.
+
+[ ] accord.option1_words_everywhere — OPEN 26 Nov. C1 changed safety and FAQ only. Still to say Option 1: docs/ACCORD.md, the welcome email, TrustDashboard, WORKING_AGREEMENT.md:132, lib/managed.ts:8, schema.prisma:69. And A5: replace the endless "Unlocking your data…" with retry or recover.
+
+[ ] accord.faq_is_true — FOUND 26 Nov. The FAQ says five pills are free indefinitely (Accord is £25 after the trial), the chatbot uses no cloud AI (chat goes to Anthropic: accord.privacy_names_anthropic), and describes a duress phrase. The safety page says backups are AES-256 GPG encrypted; today's dump is a plain .sql.gz. Make every line true.
+
+[ ] ops.db_password_rotated — FOUND 26 Nov. The bosly_user database password was printed into a chat (from ~/.bashrc:122). Postgres listens on localhost only. Rotate: ALTER USER, then .bashrc, .env.production, rebuild and deploy, and any other app that uses it.
+
+[ ] ops.server_key_kept_apart — FOUND 26 Nov. BOSLY_SERVER_KEY is in .env.production, which the build copies into .next/standalone, and deploy-safe backs up .next/standalone. Find where those backups go; the key must not sit next to the database backups. The founder holds a copy off the server.
+
+[ ] accord.stale_page_after_deploy — FOUND 26 Nov. A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh. Check the service worker's caching so a deploy reaches returning visitors.
+
+[ ] ops.test_accounts_marked — NOTE 26 Nov. jr-arnott+test2 holds the public BIP39 test phrase (abandon … art): a throwaway. +test3 is the working test account. Remove both before launch.
