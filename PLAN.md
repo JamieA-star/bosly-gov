@@ -4392,7 +4392,7 @@ of these closes one instance.
 
 [ ] accord.faq_is_true — FOUND 26 Nov. The FAQ says five pills are free indefinitely (Accord is £25 after the trial), the chatbot uses no cloud AI (chat goes to Anthropic: accord.privacy_names_anthropic), and describes a duress phrase. The safety page says backups are AES-256 GPG encrypted; today's dump is a plain .sql.gz. Make every line true.
 
-[ ] ops.db_password_rotated — FOUND 26 Nov. The bosly_user database password was printed into a chat (from ~/.bashrc:122). Postgres listens on localhost only. Rotate: ALTER USER, then .bashrc, .env.production, rebuild and deploy, and any other app that uses it.
+[x] ops.db_password_rotated — DONE 26 Nov 18:48. New random password via ALTER USER; ~/.bashrc and .env.production updated, bosly rebuilt and deployed, bosly-gov restarted, pm2 saved. Evidence: migrate:status 'up to date' on the new password; smoke OK; +test3 loads its contact. The old password was also in bosly-1.0 git history (so on GitHub); it is dead now. Was: FOUND 26 Nov. The bosly_user database password was printed into a chat (from ~/.bashrc:122). Postgres listens on localhost only. Rotate: ALTER USER, then .bashrc, .env.production, rebuild and deploy, and any other app that uses it.
 
 [ ] ops.server_key_kept_apart — FOUND 26 Nov. BOSLY_SERVER_KEY is in .env.production, which the build copies into .next/standalone, and deploy-safe backs up .next/standalone. Find where those backups go; the key must not sit next to the database backups. The founder holds a copy off the server.
 

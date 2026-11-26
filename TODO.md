@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-26 from PLAN.md
 
-**68 active: 9 in progress, 59 not started.**
+**67 active: 9 in progress, 58 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -15,7 +15,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (59)
+## Not started (58)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -58,7 +58,6 @@ Parked and done items are not shown.
 - [ ] accord.transcript_write_is_founder_only — md, unverified)
 - [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
-- [ ] ops.db_password_rotated — The bosly_user database password was printed into a chat (from ~/.bashrc:122)
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov

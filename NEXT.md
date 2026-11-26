@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-26 from PLAN.md
 
-**68 active: 9 in progress, 59 not started.**
+**67 active: 9 in progress, 58 not started.**
 
 ## Open items
 
@@ -51,7 +51,6 @@
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.anthropic_key_out_of_the_repo — A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed
 - [ ] ops.client_department — PART DONE 12 Nov
-- [ ] ops.db_password_rotated — The bosly_user database password was printed into a chat (from ~/.bashrc:122)
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
