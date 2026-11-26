@@ -1,6 +1,6 @@
-# NEXT — generated 2026-11-25 from PLAN.md
+# NEXT — generated 2026-11-26 from PLAN.md
 
-**64 active: 9 in progress, 55 not started.**
+**63 active: 9 in progress, 54 not started.**
 
 ## Open items
 
@@ -33,7 +33,6 @@
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
-- [ ] accord.option1_decisions — OPEN 25 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript

@@ -4364,7 +4364,7 @@ of these closes one instance.
 
 [ ] accord.raw_keys_on_the_server — FOUND 25 Nov. The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76) and returns it on GET (:39). Users who finished that setup were never zero-access. Count them, then fix inside the Option 1 build.
 
-[ ] accord.option1_decisions — OPEN 25 Nov. The terminal Claude's report is ~/audit/OPTION1.md on the claude-audit user: no pill code changes (ContactsPill reads the key at :45, POSTs encryptedData at :223); 7 changes to unblock; the key is made on first workspace load, not at signup-link. Four decisions wait: a separate encryption password?; the same key at opt-in?; existing device-only users; the founder left out?
+[x] accord.option1_decisions — DECIDED 26 Nov: (1) a separate encryption password plus the 24-word phrase; (2) the same key at opt-in, with Bosly's copy deleted and the backups that still hold it named plainly; (3) existing device-only users stay zero-access and are offered a Bosly copy only if they agree; (4) the founder is left out. Was: OPEN 25 Nov. The terminal Claude's report is ~/audit/OPTION1.md on the claude-audit user: no pill code changes (ContactsPill reads the key at :45, POSTs encryptedData at :223); 7 changes to unblock; the key is made on first workspace load, not at signup-link. Four decisions wait: a separate encryption password?; the same key at opt-in?; existing device-only users; the founder left out?
 
 [ ] ops.reboot_brings_bosly_back — FOUND 25 Nov. The server says "System restart required". Before rebooting, prove pm2 startup and pm2 save bring every process back.
 

@@ -1,6 +1,6 @@
-# TODO — generated 2026-11-25 from PLAN.md
+# TODO — generated 2026-11-26 from PLAN.md
 
-**64 active: 9 in progress, 55 not started.**
+**63 active: 9 in progress, 54 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -15,7 +15,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (55)
+## Not started (54)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -42,7 +42,6 @@ Parked and done items are not shown.
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
-- [ ] accord.option1_decisions — OPEN 25 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript
