@@ -4405,8 +4405,15 @@ of these closes one instance.
 
 [x] accord.claude_key_replaced — DONE 27 Nov. Chat's CLAUDE_API_KEY was the key revoked on 24 Nov, so the assistant's model calls had failed since then. A new key with a console spend limit went into .env.production by getpass (never shown), and CLAUDE_MODEL changed from claude-sonnet-5 to claude-haiku-5-5. Evidence: a direct call from the server returned status 200 from claude-haiku-5-5. Gov's Copilot still needs a key through its own .env (ops.anthropic_key_out_of_the_repo).
 
-[ ] accord.chat_misroutes — FOUND 27 Nov. The built-in engine answers before the model and grabs too much: "How should I word a polite reminder for an overdue invoice?" and "What's a friendly way to open a business email to a new client?" both got invoice-chasing answers, and neither reached Claude (llmCallsThisMonth stayed 0). Match intents on the whole question, and fall through to the model when unsure.
+[x] accord.chat_misroutes — DONE 27 Nov (0b55bb7, 6551957). Advice questions skip the workflows; email-invoice needs the invoice. Behind it were three faults: the revoked key, pm2 holding the old key and model over .env.production, and claude-haiku-5-5 putting a thinking block before the text block, which askModel read as model_failed. Evidence: +test4 asked how to word an overdue-invoice reminder and got a written answer; llmCallsThisMonth 0 → 1. Was: FOUND 27 Nov. The built-in engine answers before the model and grabs too much: "How should I word a polite reminder for an overdue invoice?" and "What's a friendly way to open a business email to a new client?" both got invoice-chasing answers, and neither reached Claude (llmCallsThisMonth stayed 0). Match intents on the whole question, and fall through to the model when unsure.
 
 [ ] ops.backups_encrypted — FOUND 27 Nov. backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files. The safety page now says so. Encrypt them, and keep the key away from the dumps (ops.server_key_kept_apart).
 
 [ ] accord.duress_verified — FOUND 27 Nov. DuressSettings is shown on the Security tab, but nobody has verified that a duress phrase unlocks a decoy, or what it means for a default user under Option 1. The FAQ answer was removed until it is proven.
+
+
+[ ] accord.chat_says_why_it_failed — FOUND 27 Nov. When askModel returns ok:false (not_configured, model_failed, accord_required), /api/chat logs nothing and shows the same 'I don't have a way to answer that yet' as an unknown question. Three faults hid behind that one sentence. Log the reason, and tell the user when the model is unavailable rather than unknown.
+
+[ ] ops.env_one_source — FOUND 27 Nov. pm2's saved environment overrides .env.production for any key it already holds: process.env wins in getEnvVar and in Next's env loading. The revoked CLAUDE_API_KEY and claude-sonnet-5 stayed live after the file changed. Until fixed, a secret change needs its value loaded into the shell before deploy (set -a; eval the line; restart --update-env; pm2 save). Fix: recreate the processes so secrets come only from .env.production.
+
+[ ] accord.chat_memory_route_errors — FOUND 27 Nov. pm2 logs show a repeated stack trace from .next/server/app/api/chat/memory/route.js. Find and fix.

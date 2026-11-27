@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-27 from PLAN.md
 
-**67 active: 9 in progress, 58 not started.**
+**69 active: 9 in progress, 60 not started.**
 
 ## Open items
 
@@ -23,7 +23,8 @@
 - [ ] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] gov.waiting_well_cron_runs — waiting_well has not run since 4 Nov; 3 claims stale
-- [ ] accord.chat_misroutes — The built-in engine answers before the model and grabs too much: "How should I word a polite reminder for an overdue invoice?" and "What's…
+- [ ] accord.chat_memory_route_errors — pm2 logs show a repeated stack trace from .next/server/app/api/chat/memory/route.js
+- [ ] accord.chat_says_why_it_failed — When askModel returns ok:false (not_configured, model_failed, accord_required), /api/chat logs nothing and shows the same 'I don't have a…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.cron_routes_need_a_secret — md, unverified)
@@ -55,6 +56,7 @@
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
+- [ ] ops.env_one_source — pm2's saved environment overrides .env.production for any key it already holds: process.env wins in getEnvVar and in Next's env loading
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted

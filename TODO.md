@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-27 from PLAN.md
 
-**67 active: 9 in progress, 58 not started.**
+**69 active: 9 in progress, 60 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -15,7 +15,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (58)
+## Not started (60)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -34,7 +34,8 @@ Parked and done items are not shown.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration  check: gov.a_long_build_batches
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] gov.waiting_well_cron_runs — waiting_well has not run since 4 Nov; 3 claims stale
-- [ ] accord.chat_misroutes — The built-in engine answers before the model and grabs too much: "How should I word a polite reminder for an overdue invoice?" and "What's…
+- [ ] accord.chat_memory_route_errors — pm2 logs show a repeated stack trace from .next/server/app/api/chat/memory/route.js
+- [ ] accord.chat_says_why_it_failed — When askModel returns ok:false (not_configured, model_failed, accord_required), /api/chat logs nothing and shows the same 'I don't have a…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.cron_routes_need_a_secret — md, unverified)
@@ -60,6 +61,7 @@ Parked and done items are not shown.
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.backups_encrypted — backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
+- [ ] ops.env_one_source — pm2's saved environment overrides .env.production for any key it already holds: process.env wins in getEnvVar and in Next's env loading
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
