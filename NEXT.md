@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-27 from PLAN.md
 
-**69 active: 9 in progress, 60 not started.**
+**70 active: 9 in progress, 61 not started.**
 
 ## Open items
 
@@ -63,6 +63,7 @@
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model
+- [ ] ops.reboot_brings_bosly_back — REOPENED 27 Nov
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.server_key_kept_apart — BOSLY_SERVER_KEY is in .env.production, which the build copies into .next/standalone, and deploy-safe backs up .next/standalone
 - [ ] ops.test_accounts_marked — NOTE 26 Nov
