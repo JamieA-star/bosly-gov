@@ -1,6 +1,6 @@
 # TODO — generated 2026-11-27 from PLAN.md
 
-**70 active: 9 in progress, 61 not started.**
+**72 active: 9 in progress, 63 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -15,7 +15,7 @@ Parked and done items are not shown.
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (61)
+## Not started (63)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -34,6 +34,7 @@ Parked and done items are not shown.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration  check: gov.a_long_build_batches
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] gov.waiting_well_cron_runs — waiting_well has not run since 4 Nov; 3 claims stale
+- [ ] accord.activity_log_keeps_typed_text — logInteraction stores the user's typed message (500 characters) and 200 characters of the reply in activityLog
 - [ ] accord.chat_memory_route_errors — pm2 logs show a repeated stack trace from .next/server/app/api/chat/memory/route.js
 - [ ] accord.chat_says_why_it_failed — When askModel returns ok:false (not_configured, model_failed, accord_required), /api/chat logs nothing and shows the same 'I don't have a…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
@@ -49,22 +50,23 @@ Parked and done items are not shown.
 - [ ] accord.option1_words_everywhere — OPEN 26 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
-- [ ] accord.privacy_names_anthropic — The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript
 - [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
 - [ ] accord.send_is_bounded — md)
 - [ ] accord.sessions_expire_on_the_server — md)
 - [ ] accord.stale_page_after_deploy — A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
-- [ ] accord.transcript_write_is_founder_only — md, unverified)
 - [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.anthropic_dpa_checked — The privacy page says transfers to Anthropic use Standard Contractual Clauses
 - [ ] ops.backups_encrypted — backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.env_one_source — pm2's saved environment overrides .env.production for any key it already holds: process.env wins in getEnvVar and in Next's env loading
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
+- [ ] ops.ico_fee — A UK controller must pay the ICO data protection fee unless exempt: tier 1 is £52 (£47 by direct debit), and the fixed penalty for not…
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
+- [ ] ops.old_transcripts_cleaned — Gov's chat-transcript-*.jsonl files from before 82ace98 may hold customers' decrypted client names and totals, mixed with the founder's
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model

@@ -4333,7 +4333,7 @@ of these closes one instance.
 
 [x] accord.me_sends_no_password_hash — DONE 25 Nov (0562f69). /me spread the password hash into its response and returned the stored key as exportedKey, which nothing read. Both gone; hasPassword kept. Evidence: /api/auth/me in the browser shows no password and no exportedKey, hasPassword true.
 
-[ ] accord.privacy_names_anthropic — FOUND 24 Nov (audit, unverified). The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript.
+[x] accord.privacy_names_anthropic — DONE 27 Nov (878e99d). The claims sweep (~/audit/CLAIMS.md) found 26 false sentences; all fixed: Anthropic named, with what is sent, across privacy, terms, safety, home, Billing and the welcome email; no free plan anywhere (including Google's JSON-LD); the £15 and Social pill gone; send delays as coded; company name, number and registered office on privacy, terms, footers and emails; Cloudflare named as a processor. Evidence: the founder read the home footer, privacy and Billing in the browser. Was: FOUND 24 Nov (audit, unverified). The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript.
 
 [x] accord.stripe_price_is_25 — OBSERVED 27 Nov: the founder ran the Stripe payment loop and it charged £25. An observation, not a check. Was: FOUND 24 Nov. JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses. Check the live price in Stripe.
 
@@ -4377,7 +4377,7 @@ of these closes one instance.
 
 [ ] accord.cron_routes_need_a_secret — FOUND 25 Nov (ROUTES.md, unverified). cron/sync-email:6 has no secret; smtp/deliver:50 and two cron routes are open if their secret is unset. Check .env, then fail closed when a secret is missing.
 
-[ ] accord.transcript_write_is_founder_only — FOUND 25 Nov (ROUTES.md, unverified). transcript:24 lets any trial or paying user write to Gov's transcript.
+[x] accord.transcript_write_is_founder_only — DONE 27 Nov (82ace98). Worse than found: the browser decrypted invoices to answer, then posted that reply and the raw message to /api/transcript, which Gov wrote in plain text with no user id, for every trial and paid customer. Non-founder posts are now accepted and dropped. Evidence: Gov's chat-transcript-2026-W48.jsonl stayed at 26 lines while +test4 chatted. Was: FOUND 25 Nov (ROUTES.md, unverified). transcript:24 lets any trial or paying user write to Gov's transcript.
 
 [x] accord.no_sign_in_before_the_email_is_proved — DONE 25 Nov (59ea114): signup and create-profile switched off (410); nothing called them. Evidence: curl POST to both → 410; a fresh sign-up by email link still arrives (jr-arnott+test2). Was: signup and create-profile sign a person in before the email is proved, so a stranger can pre-register someone's address and keep the password. Joins accord.fewer_doors.
 
@@ -4417,3 +4417,12 @@ of these closes one instance.
 [ ] ops.env_one_source — FOUND 27 Nov. pm2's saved environment overrides .env.production for any key it already holds: process.env wins in getEnvVar and in Next's env loading. The revoked CLAUDE_API_KEY and claude-sonnet-5 stayed live after the file changed. Until fixed, a secret change needs its value loaded into the shell before deploy (set -a; eval the line; restart --update-env; pm2 save). Fix: recreate the processes so secrets come only from .env.production.
 
 [ ] accord.chat_memory_route_errors — FOUND 27 Nov. pm2 logs show a repeated stack trace from .next/server/app/api/chat/memory/route.js. Find and fix.
+
+
+[ ] ops.old_transcripts_cleaned — FOUND 27 Nov. Gov's chat-transcript-*.jsonl files from before 82ace98 may hold customers' decrypted client names and totals, mixed with the founder's. Check which entries are not the founder's, and delete them. Keeping what we should not have is a UK GDPR problem.
+
+[ ] accord.activity_log_keeps_typed_text — FOUND 27 Nov. logInteraction stores the user's typed message (500 characters) and 200 characters of the reply in activityLog. A typed client name is kept in plain text. Store the shape, or less.
+
+[ ] ops.anthropic_dpa_checked — FOUND 27 Nov. The privacy page says transfers to Anthropic use Standard Contractual Clauses. Confirm Anthropic's commercial terms include a data processing agreement that covers it, and record where.
+
+[ ] ops.ico_fee — FOUND 27 Nov. A UK controller must pay the ICO data protection fee unless exempt: tier 1 is £52 (£47 by direct debit), and the fixed penalty for not paying is £400. Confirm Bosly Limited is registered.
