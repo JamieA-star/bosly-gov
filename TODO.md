@@ -1,4 +1,4 @@
-# TODO — generated 2026-11-26 from PLAN.md
+# TODO — generated 2026-11-27 from PLAN.md
 
 **67 active: 9 in progress, 58 not started.**
 Parked and done items are not shown.
@@ -34,11 +34,12 @@ Parked and done items are not shown.
 - [ ] gov.the_batch_is_a_policy_not_a_flag — The night job sets use_batch=True for every build, so a three-step build batches and the loop's threshold is decoration  check: gov.a_long_build_batches
 - [ ] gov.the_learning_loop — DESIGN FIRST, THEN BUILD
 - [ ] gov.waiting_well_cron_runs — waiting_well has not run since 4 Nov; 3 claims stale
+- [ ] accord.chat_misroutes — The built-in engine answers before the model and grabs too much: "How should I word a polite reminder for an overdue invoice?" and "What's…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.client_side_calendar_join — The four pages a customer can check you against — Privacy, Terms, Safety, Support — must be true line by line, and the first pass through…
 - [ ] accord.cron_routes_need_a_secret — md, unverified)
 - [ ] accord.data_dir_not_in_git — bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data
-- [ ] accord.faq_is_true — The FAQ says five pills are free indefinitely (Accord is £25 after the trial), the chatbot uses no cloud AI (chat goes to Anthropic:…
+- [ ] accord.duress_verified — DuressSettings is shown on the Security tab, but nobody has verified that a duress phrase unlocks a decoy, or what it means for a default…
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
@@ -52,12 +53,12 @@ Parked and done items are not shown.
 - [ ] accord.send_is_bounded — md)
 - [ ] accord.sessions_expire_on_the_server — md)
 - [ ] accord.stale_page_after_deploy — A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh
-- [ ] accord.stripe_price_is_25 — JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
 - [ ] accord.the_question_log_is_the_backlog — data/llm-questions.jsonl records every shape that reached the model
 - [ ] accord.transcript_write_is_founder_only — md, unverified)
 - [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
+- [ ] ops.backups_encrypted — backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
@@ -65,7 +66,6 @@ Parked and done items are not shown.
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
 - [ ] ops.one_place_says_what_the_product_is — The old product was described in eight files — privacy, safety, terms, the FAQ three times, the layout schema, settings, billing and the…
 - [ ] ops.read_the_question_log_weekly — data/llm-questions.jsonl records every shape that reached the model
-- [ ] ops.reboot_brings_bosly_back — The server says "System restart required"
 - [ ] ops.scout_google_after_rank — The Google pass waits for a paid key
 - [ ] ops.server_key_kept_apart — BOSLY_SERVER_KEY is in .env.production, which the build copies into .next/standalone, and deploy-safe backs up .next/standalone
 - [ ] ops.test_accounts_marked — NOTE 26 Nov

@@ -4327,7 +4327,7 @@ of these closes one instance.
 
 [ ] accord.passkey_rebuilt — PARKED 24 Nov. Not on the paying-user path. Rebuild with a real WebAuthn verifier; store the public key (it stored the credential id); use setSession. Hide the sign-in button until then.
 
-[x] accord.workspace_works_without_a_key — DONE 26 Nov. Option 1 Part A: b6cadef columns, d43bc83 server wrap, 0d3d982 /api/auth/vault-key, 218dda4 VaultProvider adopts or makes the first key, a3f09dd safety and FAQ say so. Evidence: a fresh sign-up (jr-arnott+test3) gets pills, a contact survives a refresh, and a private window gets the same contact back; founder unchanged; vault-key GET answers founder_excluded for the founder, none for a new account, default with the phrase after the first POST, and already_set on a second. Was: BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says "Unlocking your data…". A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
+[x] accord.workspace_works_without_a_key — DONE 26 Nov. Option 1 Part A: b6cadef columns, d43bc83 server wrap, 0d3d982 /api/auth/vault-key, 218dda4 VaultProvider adopts or makes the first key, a3f09dd safety and FAQ say so. Evidence: a fresh sign-up (jr-arnott+test4) gets pills, a contact survives a refresh, and a private window gets the same contact back; founder unchanged; vault-key GET answers founder_excluded for the founder, none for a new account, default with the phrase after the first POST, and already_set on a second. Was: BLOCKER, FOUND 24 Nov, CONFIRMED 16:40: a fresh email-link account signs in and chat works, but no pills render and the screen says "Unlocking your data…". A new email-link user sees "Unlocking your data…" and no pills: app/workspace/page.tsx:598 renders pills only with a key, and saves need one. Under ops.encryption_is_a_choice a default user has no key. THE CHECK: a fresh email-link account sees five working pills and can save.
 
 [ ] ops.encryption_is_a_choice — DECIDED 24 Nov (confirms 13 Nov, ops.onboarding_is_email_and_password). REVISED 24 Nov 16:46, Option 1: every user is encrypted by default with a key Bosly also holds (the browser makes the key at signup; Bosly keeps a copy wrapped with a server key kept in .env), so Bosly can recover a default user's data; a user can turn on zero-access in Settings (password + 24-word phrase) and owns their recovery. Turning it on re-wraps the key with their own secret and deletes Bosly's copy. Bosly explains the pros and cons of both in plain words. Reason: testers did not understand full encryption. STILL TO DO: the agreement's "non-negotiable" line, the claude.ai project description, the pitch, and the privacy and safety pages say this. This also solves accord.workspace_works_without_a_key: every user has a key, so the pills need no second path.
 
@@ -4335,11 +4335,11 @@ of these closes one instance.
 
 [ ] accord.privacy_names_anthropic — FOUND 24 Nov (audit, unverified). The pages say nothing goes to an outside AI; chat sends to Anthropic, and decrypted client names and amounts can reach Gov's transcript.
 
-[ ] accord.stripe_price_is_25 — FOUND 24 Nov. JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses. Check the live price in Stripe.
+[x] accord.stripe_price_is_25 — OBSERVED 27 Nov: the founder ran the Stripe payment loop and it charged £25. An observation, not a check. Was: FOUND 24 Nov. JOURNAL.md:1088 says £15; .env.example lists three old tiers and not STRIPE_PRICE_ACCORD, which the code uses. Check the live price in Stripe.
 
 [ ] accord.google_session_email — FOUND 24 Nov. google/callback calls setSession(res, uid, proto): the session's email is the protocol. One line.
 
-[x] accord.signup_link_existing_user — DONE 26 Nov (df993a5). The home page's only link button calls signup-link, which sent nothing to an existing address: returning users could not sign in from the front door. It now sends a sign-in link, founder excluded. Evidence: +test3 signs in from a private window. Was: FOUND 24 Nov. An existing address on the signup form gets no email; it should get a sign-in link. login-link and login comments say the account is created on the click; signup-link creates it on the request.
+[x] accord.signup_link_existing_user — DONE 26 Nov (df993a5). The home page's only link button calls signup-link, which sent nothing to an existing address: returning users could not sign in from the front door. It now sends a sign-in link, founder excluded. Evidence: +test4 signs in from a private window. Was: FOUND 24 Nov. An existing address on the signup form gets no email; it should get a sign-in link. login-link and login comments say the account is created on the click; signup-link creates it on the request.
 
 [ ] accord.fewer_doors — FOUND 24 Nov. Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth. Close the ones no page uses.
 
@@ -4366,7 +4366,7 @@ of these closes one instance.
 
 [x] accord.option1_decisions — DECIDED 26 Nov: (1) a separate encryption password plus the 24-word phrase; (2) the same key at opt-in, with Bosly's copy deleted and the backups that still hold it named plainly; (3) existing device-only users stay zero-access and are offered a Bosly copy only if they agree; (4) the founder is left out. Was: OPEN 25 Nov. The terminal Claude's report is ~/audit/OPTION1.md on the claude-audit user: no pill code changes (ContactsPill reads the key at :45, POSTs encryptedData at :223); 7 changes to unblock; the key is made on first workspace load, not at signup-link. Four decisions wait: a separate encryption password?; the same key at opt-in?; existing device-only users; the founder left out?
 
-[ ] ops.reboot_brings_bosly_back — FOUND 25 Nov. The server says "System restart required". Before rebooting, prove pm2 startup and pm2 save bring every process back.
+[x] ops.reboot_brings_bosly_back — DONE 27 Nov. The server rebooted between 26 and 27 Nov and every process came back by itself (pm2 restart counts reset to 0-3, all online, smoke OK). pm2 save ran on 26 Nov. Was: FOUND 25 Nov. The server says "System restart required". Before rebooting, prove pm2 startup and pm2 save bring every process back.
 
 
 [x] accord.outbox_get_gone — DONE 25 Nov (965d802). GET /api/messages/send had no session check: it returned the whole shared outbox (every user's queued emails, invoice PDFs included) and ?cancel= cancelled anyone's send. Nothing called it. Removed. Evidence: signed in, the URL shows an empty page; a test email from the app was sent and received.
@@ -4390,7 +4390,7 @@ of these closes one instance.
 
 [ ] accord.option1_words_everywhere — OPEN 26 Nov. C1 changed safety and FAQ only. Still to say Option 1: docs/ACCORD.md, the welcome email, TrustDashboard, WORKING_AGREEMENT.md:132, lib/managed.ts:8, schema.prisma:69. And A5: replace the endless "Unlocking your data…" with retry or recover.
 
-[ ] accord.faq_is_true — FOUND 26 Nov. The FAQ says five pills are free indefinitely (Accord is £25 after the trial), the chatbot uses no cloud AI (chat goes to Anthropic: accord.privacy_names_anthropic), and describes a duress phrase. The safety page says backups are AES-256 GPG encrypted; today's dump is a plain .sql.gz. Make every line true.
+[x] accord.faq_is_true — DONE 27 Nov (868838a). The FAQ said free indefinitely, no external AI, a free tier after cancelling, and described a duress phrase; the safety page said backups were GPG-encrypted. Now: £25 after a seven-day trial; questions go to Claude as a shape, email rewrites send the draft; the duress answer is removed until verified; backups are not yet separately encrypted. Was: FOUND 26 Nov. The FAQ says five pills are free indefinitely (Accord is £25 after the trial), the chatbot uses no cloud AI (chat goes to Anthropic: accord.privacy_names_anthropic), and describes a duress phrase. The safety page says backups are AES-256 GPG encrypted; today's dump is a plain .sql.gz. Make every line true.
 
 [x] ops.db_password_rotated — DONE 26 Nov 18:48. New random password via ALTER USER; ~/.bashrc and .env.production updated, bosly rebuilt and deployed, bosly-gov restarted, pm2 saved. Evidence: migrate:status 'up to date' on the new password; smoke OK; +test3 loads its contact. The old password was also in bosly-1.0 git history (so on GitHub); it is dead now. Was: FOUND 26 Nov. The bosly_user database password was printed into a chat (from ~/.bashrc:122). Postgres listens on localhost only. Rotate: ALTER USER, then .bashrc, .env.production, rebuild and deploy, and any other app that uses it.
 
@@ -4398,4 +4398,15 @@ of these closes one instance.
 
 [ ] accord.stale_page_after_deploy — FOUND 26 Nov. A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh. Check the service worker's caching so a deploy reaches returning visitors.
 
-[ ] ops.test_accounts_marked — NOTE 26 Nov. jr-arnott+test2 holds the public BIP39 test phrase (abandon … art): a throwaway. +test3 is the working test account. Remove both before launch.
+[ ] ops.test_accounts_marked — NOTE 26 Nov. jr-arnott+test2 holds the public BIP39 test phrase (abandon … art): a throwaway. +test4 is the working test account (there is no +test3). Remove both before launch.
+
+
+[x] accord.encrypt_page_parked — DONE 27 Nov (d285577). /settings/encrypt checked only this device for a key, and an error let the ceremony run, so a default user on a new device after one failed boot could be given a new key that orphans their data. It now asks vault-key and stops at already_on on anything but a definite none. Evidence: +test4 in a private window opens /settings/encrypt and sees "Encryption is already on". Part B replaces the page.
+
+[x] accord.claude_key_replaced — DONE 27 Nov. Chat's CLAUDE_API_KEY was the key revoked on 24 Nov, so the assistant's model calls had failed since then. A new key with a console spend limit went into .env.production by getpass (never shown), and CLAUDE_MODEL changed from claude-sonnet-5 to claude-haiku-5-5. Evidence: a direct call from the server returned status 200 from claude-haiku-5-5. Gov's Copilot still needs a key through its own .env (ops.anthropic_key_out_of_the_repo).
+
+[ ] accord.chat_misroutes — FOUND 27 Nov. The built-in engine answers before the model and grabs too much: "How should I word a polite reminder for an overdue invoice?" and "What's a friendly way to open a business email to a new client?" both got invoice-chasing answers, and neither reached Claude (llmCallsThisMonth stayed 0). Match intents on the whole question, and fall through to the model when unsure.
+
+[ ] ops.backups_encrypted — FOUND 27 Nov. backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files. The safety page now says so. Encrypt them, and keep the key away from the dumps (ops.server_key_kept_apart).
+
+[ ] accord.duress_verified — FOUND 27 Nov. DuressSettings is shown on the Security tab, but nobody has verified that a duress phrase unlocks a decoy, or what it means for a default user under Option 1. The FAQ answer was removed until it is proven.
