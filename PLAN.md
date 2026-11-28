@@ -4319,7 +4319,7 @@ of these closes one instance.
 
 [x] ops.data_folder_not_world_readable — DONE 24 Nov. /mnt/bosly/bosly-data was 755 with a 664 database dump (db-20260930-1445.sql) inside: every account on the box, www-data included, could read it. chmod 750. Evidence: sudo -u claude-audit ls → Permission denied; smoke 200.
 
-[~] ops.anthropic_key_out_of_the_repo — PART DONE 24 Nov. A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed. Revoked in the console 15:48.  [STILL OPEN: the key out of the file and into .env; both ecosystem configs untracked; a new key wired for Gov — Gov's Copilot is down until then.]
+[x] ops.anthropic_key_out_of_the_repo — DONE 28 Nov. Gov's Claude key lives in bosly-gov/.env (mode 600, ignored by git); tool_loop reads only CLAUDE_API_KEY, CLAUDE_MODEL and CHEAP_MODEL from it (396fb5a), and no longer loads Accord's whole .env.production into Gov; the stale committed config is gone (f4e135c). Models: claude-sonnet-5-5 strong, claude-haiku-5-5 cheap. Evidence: both models returned 200 from the server; the founder chat answers. Was: PART DONE 24 Nov. A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed. Revoked in the console 15:48.  [STILL OPEN: the key out of the file and into .env; both ecosystem configs untracked; a new key wired for Gov — Gov's Copilot is down until then.]
 
 [x] accord.the_unsigned_cookie_is_not_identity — DONE 24 Nov. getSession fell back to bosly_uid, an unsigned cookie holding the user id: setting it made you that user. db5d317 dead readers deleted (social-db trusted an email cookie), 50995c6 chat tier and key-backup on getSession, f6ac2c6 passkey off, a6721d4 fallback removed and the cookie no longer set. Evidence: curl with bosly_uid=<founder id> → {"error":"Not authenticated"}; email-link sign-in, chat and Settings work in the browser.
 
@@ -4383,7 +4383,7 @@ of these closes one instance.
 
 [ ] accord.sessions_expire_on_the_server — FOUND 25 Nov (ROUTES.md). The signed token has iat, but the server never refuses an old one; only the cookie's one-day maxAge ends it.
 
-[ ] accord.send_is_bounded — FOUND 25 Nov (ROUTES.md). Any signed-in user can send any text from Bosly's address via POST /api/messages/send; cancelling may not stop a queued send. Rate limit, sender rules, and an honest cancel.
+[~] accord.send_is_bounded — PART DONE 28 Nov (b4c46b0). cron/outbox sent every queued email from noreply@bosly.app; it now sends through sendMail from the user's own connected mailbox, fails closed without CRON_SECRET, and skips cancelled entries. Inbox replies now carry to, text and userId (the cron had been dropping them). CRON_SECRET was rotated (it was printed into a chat). Evidence: cron with no secret → 401, new secret → 200.  [STILL OPEN: the founder's real send test (Inbox reply and assistant email arrive from his own address), a daily cap per user, and telling the user at queue time when no mailbox is connected.] Was: FOUND 25 Nov (ROUTES.md). Any signed-in user can send any text from Bosly's address via POST /api/messages/send; cancelling may not stop a queued send. Rate limit, sender rules, and an honest cancel.
 
 
 [ ] accord.option1_part_b — OPEN 26 Nov. Opt-in zero-access, from ~/audit/OPTION1.md: B1 encrypt page shows the existing words and never makes a new key (it makes one at encrypt/page.tsx:222 today, which would make a default user's data unreadable), B2 password not PIN and no exportedKey in the blob, B3 key-backup in one transaction nulls boslyWrappedKey and publicKey and sets keyMode, B4 recovery asks for the password, B5 Settings shows default / zero-access / locked, B7 recover signs in first. Until B ships, keep /settings/encrypt away from default users.
@@ -4426,3 +4426,12 @@ of these closes one instance.
 [ ] ops.anthropic_dpa_checked — FOUND 27 Nov. The privacy page says transfers to Anthropic use Standard Contractual Clauses. Confirm Anthropic's commercial terms include a data processing agreement that covers it, and record where.
 
 [ ] ops.ico_fee — FOUND 27 Nov. A UK controller must pay the ICO data protection fee unless exempt: tier 1 is £52 (£47 by direct debit), and the fixed penalty for not paying is £400. Confirm Bosly Limited is registered.
+
+
+[ ] accord.founder_workspace_loads_slowly — FOUND 28 Nov (founder observation). Signing in to the founder account takes a long time to show data and often needs a refresh. Likely the vault boot: /me retried three times a second apart, then for the founder vault-key answers founder_excluded and boot falls through to the key-backup check, three more tries a second apart. Measure before changing.
+
+[ ] accord.home_screen_app_can_refresh — FOUND 28 Nov (founder observation). Saved to the home screen, the app has no way to refresh, so the founder deletes and re-adds it. Add pull-to-refresh or a reload control, and check the service worker serves the new build after a deploy (accord.stale_page_after_deploy).
+
+[ ] accord.inbox_shows_mail — FOUND 28 Nov (founder observation). No emails have appeared in the Inbox pill for a while. Check cron/sync-email (no secret, ROUTES.md), the connected-account password decrypt (sendMail falls back to ENCRYPTION_KEY), and the sync logs.
+
+[ ] accord.inbox_compose_new — FEATURE 28 Nov. The Inbox can only reply to someone who has already emailed. A customer wants to write a new email to any client, from their own mailbox.

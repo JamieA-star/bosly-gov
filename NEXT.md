@@ -1,6 +1,6 @@
-# NEXT — generated 2026-11-27 from PLAN.md
+# NEXT — generated 2026-11-28 from PLAN.md
 
-**72 active: 9 in progress, 63 not started.**
+**75 active: 9 in progress, 66 not started.**
 
 ## Open items
 
@@ -33,8 +33,12 @@
 - [ ] accord.data_dir_not_in_git — bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data
 - [ ] accord.duress_verified — DuressSettings is shown on the Security tab, but nobody has verified that a duress phrase unlocks a decoy, or what it means for a default…
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
+- [ ] accord.founder_workspace_loads_slowly — Signing in to the founder account takes a long time to show data and often needs a refresh
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
+- [ ] accord.home_screen_app_can_refresh — Saved to the home screen, the app has no way to refresh, so the founder deletes and re-adds it
+- [ ] accord.inbox_compose_new — FEATURE 28 Nov
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
+- [ ] accord.inbox_shows_mail — No emails have appeared in the Inbox pill for a while
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
 - [ ] accord.option1_part_b — OPEN 26 Nov
@@ -42,7 +46,7 @@
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
-- [ ] accord.send_is_bounded — md)
+- [ ] accord.send_is_bounded — cron/outbox sent every queued email from noreply@bosly.app; it now sends through sendMail from the user's own connected mailbox, fails…
 - [ ] accord.sessions_expire_on_the_server — md)
 - [ ] accord.stale_page_after_deploy — A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
@@ -50,7 +54,6 @@
 - [ ] accord.update_key_callers_gone — settings/encrypt/page.tsx:247 and signin/recover/page.tsx:77 still call the no-op update-key
 - [ ] ops.accord_manage_is_a_pa — The audit found the product: calendar, contacts, tasks, reminders and briefing are live
 - [ ] ops.anthropic_dpa_checked — The privacy page says transfers to Anthropic use Standard Contractual Clauses
-- [ ] ops.anthropic_key_out_of_the_repo — A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed
 - [ ] ops.backups_encrypted — backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files
 - [ ] ops.client_department — PART DONE 12 Nov
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here

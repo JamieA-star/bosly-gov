@@ -1,6 +1,6 @@
-# TODO — generated 2026-11-27 from PLAN.md
+# TODO — generated 2026-11-28 from PLAN.md
 
-**72 active: 9 in progress, 63 not started.**
+**75 active: 9 in progress, 66 not started.**
 Parked and done items are not shown.
 
 ## In progress (9)
@@ -9,13 +9,13 @@ Parked and done items are not shown.
 - [~] gov.the_corpus_is_outside_git — PART DONE 7 Nov: the backup is fresh, the cron is restored with a log, and the restore is proven — gov.the_corpus_can_be_restored (245…
 - [~] accord.cross_pill_propagation — Half (b) is done
 - [~] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
-- [~] ops.anthropic_key_out_of_the_repo — A live Anthropic key sat in bosly-1.0/bosly-gov-ecosystem.config.cjs, committed  [STILL OPEN: the key out of the file and into .]
+- [~] accord.send_is_bounded — cron/outbox sent every queued email from noreply@bosly.app; it now sends through sendMail from the user's own connected mailbox, fails…  [STILL OPEN: the founder's real send test (Inbox reply and assistant email arrive from his own address), a daily cap per user, and telling the user at queue time when no mailbox is connected.]
 - [~] ops.client_department — PART DONE 12 Nov  [STILL OPEN: the queue as a query, recording the send, recording the reply, and the suppression layer.]
 - [~] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here  [STILL OPEN: clause 3 — nothing checks that DATABASE_URL is non-empty before a deploy or a migration runs; the URL must be read from pm2 jlist, not .]
 - [~] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
 - [~] keep.price_cron_missing — Bosly Keep has no heartbeat  [STILL OPEN: nothing calls it — no cron line anywhere.]
 
-## Not started (63)
+## Not started (66)
 
 - [ ] gov.a_build_that_asks_teaches_the_next_one — A build that parks on a question adds a decision to its own spec — but only if a human writes it
 - [ ] gov.a_page_that_restates_a_mechanism_drifts — Four times this week a page described something that was not there: nine pills, a duress phrase, a recovery phrase at signup, two cookies…
@@ -43,15 +43,18 @@ Parked and done items are not shown.
 - [ ] accord.data_dir_not_in_git — bosly-1.0/.data/ is committed (governor transcripts, consent-log, bosly-memory.txt) and may hold personal data
 - [ ] accord.duress_verified — DuressSettings is shown on the Security tab, but nobody has verified that a duress phrase unlocks a decoy, or what it means for a default…
 - [ ] accord.fewer_doors — Nine sign-in routes: signup, signup-link, signin, login, login-link, passkey, google, facebook, nextauth
+- [ ] accord.founder_workspace_loads_slowly — Signing in to the founder account takes a long time to show data and often needs a refresh
 - [ ] accord.google_session_email — google/callback calls setSession(res, uid, proto): the session's email is the protocol
+- [ ] accord.home_screen_app_can_refresh — Saved to the home screen, the app has no way to refresh, so the founder deletes and re-adds it
+- [ ] accord.inbox_compose_new — FEATURE 28 Nov
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
+- [ ] accord.inbox_shows_mail — No emails have appeared in the Inbox pill for a while
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
 - [ ] accord.option1_part_b — OPEN 26 Nov
 - [ ] accord.option1_words_everywhere — OPEN 26 Nov
 - [ ] accord.passkey_rebuilt — PARKED 24 Nov
 - [ ] accord.prisma_has_no_shared_user — lib/prisma.ts setCurrentUserId keeps the user in one module variable shared by every request; its comment claims database RLS
 - [ ] accord.raw_keys_on_the_server — The encrypt page's PIN backup sends the raw AES key (encrypt/page.tsx:357) and key-backup stores it in publicKey (key-backup/route.ts:76)…
-- [ ] accord.send_is_bounded — md)
 - [ ] accord.sessions_expire_on_the_server — md)
 - [ ] accord.stale_page_after_deploy — A cached copy of the home page sent sign-up requests that never reached the server until a hard refresh
 - [ ] accord.the_email_failure_says_what_to_fix — The invoice send returned 'Invalid login: 535 Authentication credentials invalid' to the founder, who had no idea what it meant and changed…
