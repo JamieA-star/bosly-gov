@@ -46,14 +46,20 @@ from typing import Any, Dict, Generator, Iterable, List
 # Load CLAUDE_API_KEY from the same env file direct_llm.py reads, so
 # the loop works standalone (a plain python3 shell does not inherit
 # pm2's environment). Mirrors routers/direct_llm.py.
-_ENV_FILE = "/home/bosly_accord/bosly-1.0/.env.production"
+# Gov's own env file, and only the Claude settings. It used to read
+# Accord's .env.production whole, which put every Accord secret (the
+# database password, BOSLY_SERVER_KEY) into Gov's environment and into
+# every command and agent Gov runs.
+_ENV_FILE = "/home/bosly_accord/bosly-gov/.env"
+_ALLOWED = {"CLAUDE_API_KEY", "CLAUDE_MODEL", "CHEAP_MODEL"}
 if os.path.exists(_ENV_FILE):
     with open(_ENV_FILE, "r", encoding="utf-8", errors="replace") as _f:
         for _line in _f:
             _line = _line.strip()
             if _line and not _line.startswith("#") and "=" in _line:
                 _k, _v = _line.split("=", 1)
-                os.environ.setdefault(_k, _v.strip('"\''))
+                if _k.strip() in _ALLOWED:
+                    os.environ.setdefault(_k.strip(), _v.strip('"\''))
 
 # The tools registry. Imported once, at the top.
 sys.path.insert(0, "/home/bosly_accord/bosly-gov")
