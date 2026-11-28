@@ -4432,6 +4432,17 @@ of these closes one instance.
 
 [ ] accord.home_screen_app_can_refresh — FOUND 28 Nov (founder observation). Saved to the home screen, the app has no way to refresh, so the founder deletes and re-adds it. Add pull-to-refresh or a reload control, and check the service worker serves the new build after a deploy (accord.stale_page_after_deploy).
 
-[ ] accord.inbox_shows_mail — FOUND 28 Nov (founder observation). No emails have appeared in the Inbox pill for a while. Check cron/sync-email (no secret, ROUTES.md), the connected-account password decrypt (sendMail falls back to ENCRYPTION_KEY), and the sync logs.
+[x] accord.inbox_shows_mail — DONE 28 Nov. The code was fine: the crontab had lost every job but the backup and the outbox on or about 4 Nov, so mail sync never ran (lastSyncAt 2026-11-04). A hand-run sync fetched 8 messages with no errors; the crontab was restored from ~/audit/CRON.md (sync every 10 min, reminders hourly, state backup 03:30, monitor 03:15, checks 06:00 and 07:00), secrets filled from .env.production, never printed. Settings now shows every provider so a second IONOS mailbox can be added (45f2ded), and the duplicate /connections/email page, the dead AddAccountModal and their two routes are gone (a1ba546). Evidence: both mailboxes show lastSyncAt 2026-11-28 16:42; mail shows in the Inbox pill; contact@bosly.app added to the founder account from Settings. Was: FOUND 28 Nov (founder observation). No emails have appeared in the Inbox pill for a while. Check cron/sync-email (no secret, ROUTES.md), the connected-account password decrypt (sendMail falls back to ENCRYPTION_KEY), and the sync logs.
 
 [ ] accord.inbox_compose_new — FEATURE 28 Nov. The Inbox can only reply to someone who has already emailed. A customer wants to write a new email to any client, from their own mailbox.
+
+
+[ ] ops.crontab_matches_the_list — FOUND 28 Nov. cron_sanity and cron_has_no_clashes compare the live crontab only against itself, so a deleted job passes both: the mail sync and waiting_well were gone for 24 days. Keep the intended crontab in the repo (from ~/audit/CRON.md) and add a check that fails when a listed job is missing from crontab -l.
+
+[ ] ops.cron_routes_fail_closed — FOUND 28 Nov (CRON.md). sync-email checks no secret, and anyone can trigger IMAP logins for every account; reminders fails open when CRON_SECRET is unset; Keep's /api/prices has no auth. Give all three the outbox's fail-closed check, and send the secret in a header, not ?secret=.
+
+[ ] ops.night_build_and_leads_scheduled — DECISION 28 Nov. Gov's night build (every 10 min; it calls Claude, so it costs money) and the three lead-scout jobs were left out of the restored crontab on purpose. Jamie decides whether they come back.
+
+[ ] accord.invoice_from_any_contact — FEATURE 28 Nov. From the Inbox or a contact, the founder wants to start an invoice or a new email for any contact, not only someone who has already emailed. Design together with accord.inbox_compose_new.
+
+[ ] ops.duplicate_mailbox_removed — NOTE 28 Nov. contact@bosly.app is connected to both jr-arnott@outlook.com and the founder account, so it is synced twice. Remove it from jr-arnott.

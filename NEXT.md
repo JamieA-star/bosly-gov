@@ -1,6 +1,6 @@
 # NEXT — generated 2026-11-28 from PLAN.md
 
-**75 active: 9 in progress, 66 not started.**
+**79 active: 9 in progress, 70 not started.**
 
 ## Open items
 
@@ -38,8 +38,8 @@
 - [ ] accord.home_screen_app_can_refresh — Saved to the home screen, the app has no way to refresh, so the founder deletes and re-adds it
 - [ ] accord.inbox_compose_new — FEATURE 28 Nov
 - [ ] accord.inbox_delete_checks_owner — md, unverified)
-- [ ] accord.inbox_shows_mail — No emails have appeared in the Inbox pill for a while
 - [ ] accord.invoice_aggregates_client_appointments — The schema (invoicedAt + invoiceId on CalendarEvent and two composite indexes), a shared nextInvoiceNumber in lib/invoices/numbering.ts,…
+- [ ] accord.invoice_from_any_contact — FEATURE 28 Nov
 - [ ] accord.one_session_reader — lib/auth/session.ts repeats lib/session.ts; only app/api/user uses it
 - [ ] accord.option1_part_b — OPEN 26 Nov
 - [ ] accord.option1_words_everywhere — OPEN 26 Nov
@@ -56,13 +56,17 @@
 - [ ] ops.anthropic_dpa_checked — The privacy page says transfers to Anthropic use Standard Contractual Clauses
 - [ ] ops.backups_encrypted — backup_full.sh does no encryption; the database dumps and the env copies (now holding BOSLY_SERVER_KEY) are plain files
 - [ ] ops.client_department — PART DONE 12 Nov
+- [ ] ops.cron_routes_fail_closed — md)
+- [ ] ops.crontab_matches_the_list — cron_sanity and cron_has_no_clashes compare the live crontab only against itself, so a deleted job passes both: the mail sync and…
 - [ ] ops.deploy_applies_migrations_first — Clauses 1 and 2 are closed: prisma generate now runs before the build (commit c7169f1), and the order is documented here
 - [ ] ops.deploy_smoke_test_covers_routes — The deploy smoke test is http://localhost:3100/api/health/smoke only
+- [ ] ops.duplicate_mailbox_removed — NOTE 28 Nov
 - [ ] ops.encryption_is_a_choice — onboarding_is_email_and_password)
 - [ ] ops.env_one_source — pm2's saved environment overrides .env.production for any key it already holds: process.env wins in getEnvVar and in Next's env loading
 - [ ] ops.feature_usage_is_anonymous — THE TABLE WAS ALREADY THERE
 - [ ] ops.ico_fee — A UK controller must pay the ICO data protection fee unless exempt: tier 1 is £52 (£47 by direct debit), and the fixed penalty for not…
 - [ ] ops.inbox_encryption_migration — PARKED 12 Nov
+- [ ] ops.night_build_and_leads_scheduled — DECISION 28 Nov
 - [ ] ops.no_stale_patchers — The agreement says a patcher is committed, run, verified, then deleted
 - [ ] ops.old_transcripts_cleaned — Gov's chat-transcript-*.jsonl files from before 82ace98 may hold customers' decrypted client names and totals, mixed with the founder's
 - [ ] ops.one_butler_capabilities_as_products — THE PRINCIPLE
