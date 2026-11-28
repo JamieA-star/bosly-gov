@@ -4434,7 +4434,7 @@ of these closes one instance.
 
 [x] accord.inbox_shows_mail — DONE 28 Nov. The code was fine: the crontab had lost every job but the backup and the outbox on or about 4 Nov, so mail sync never ran (lastSyncAt 2026-11-04). A hand-run sync fetched 8 messages with no errors; the crontab was restored from ~/audit/CRON.md (sync every 10 min, reminders hourly, state backup 03:30, monitor 03:15, checks 06:00 and 07:00), secrets filled from .env.production, never printed. Settings now shows every provider so a second IONOS mailbox can be added (45f2ded), and the duplicate /connections/email page, the dead AddAccountModal and their two routes are gone (a1ba546). Evidence: both mailboxes show lastSyncAt 2026-11-28 16:42; mail shows in the Inbox pill; contact@bosly.app added to the founder account from Settings. Was: FOUND 28 Nov (founder observation). No emails have appeared in the Inbox pill for a while. Check cron/sync-email (no secret, ROUTES.md), the connected-account password decrypt (sendMail falls back to ENCRYPTION_KEY), and the sync logs.
 
-[ ] accord.inbox_compose_new — FEATURE 28 Nov. The Inbox can only reply to someone who has already emailed. A customer wants to write a new email to any client, from their own mailbox.
+[x] accord.inbox_compose_new — DONE 28 Nov. New email in the Inbox pill beside Scan and Refresh: From (pick a connected mailbox, primary first), To (any address, with suggestions from contacts decrypted in the browser), Subject, Message; queued through /api/chat/fulfil from the chosen mailbox with the 60-second delay (881afb3, efdf883); after a send to a new address, Save as contact, encrypted in the browser (e773cb1). Also an Invoice button on each contact (fb824be). Evidence: the founder sent from Green Gayte; the log shows it sent; the new contact appeared in Contacts. Was: FEATURE 28 Nov. The Inbox can only reply to someone who has already emailed. A customer wants to write a new email to any client, from their own mailbox.
 
 
 [ ] ops.crontab_matches_the_list — FOUND 28 Nov. cron_sanity and cron_has_no_clashes compare the live crontab only against itself, so a deleted job passes both: the mail sync and waiting_well were gone for 24 days. Keep the intended crontab in the repo (from ~/audit/CRON.md) and add a check that fails when a listed job is missing from crontab -l.
@@ -4446,3 +4446,12 @@ of these closes one instance.
 [ ] accord.invoice_from_any_contact — FEATURE 28 Nov. From the Inbox or a contact, the founder wants to start an invoice or a new email for any contact, not only someone who has already emailed. Design together with accord.inbox_compose_new.
 
 [ ] ops.duplicate_mailbox_removed — NOTE 28 Nov. contact@bosly.app is connected to both jr-arnott@outlook.com and the founder account, so it is synced twice. Remove it from jr-arnott.
+
+
+[ ] accord.mailbox_signature — FEATURE 28 Nov. Mail sent through Bosly has no signature: the founder's Green Gayte signature lives in IONOS webmail, which adds it there and not over SMTP. Add a signature per connected mailbox in Settings → Connections, appended by sendMail. Decide at the same time whether customers' mail carries the 'Sent with Bosly' footer.
+
+[ ] accord.reply_says_sent_when_it_failed — FOUND 28 Nov (COMPOSE.md step 9). The Inbox Reply says sent even when the send fails.
+
+[ ] accord.undo_cancels_queued_email — FOUND 28 Nov (COMPOSE.md step 8). Undo cannot cancel an email queued by compose or the assistant; the compose box tells the user to ask Bosly to cancel it instead.
+
+[ ] accord.email_preview_modal_deleted — DECIDED 28 Nov. EmailPreviewModal is used nowhere; delete it in its own commit.
